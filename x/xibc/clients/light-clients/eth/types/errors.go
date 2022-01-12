@@ -11,7 +11,7 @@ const (
 	moduleName    = host.ModuleName + "-" + SubModuleName
 )
 
-// XIBC evm client sentinel errors
+// BIBC evm client sentinel errors
 var (
 	ErrInvalidGenesisBlock = sdkerrors.Register(moduleName, 2, "invalid genesis block")
 	ErrFutureBlock         = sdkerrors.Register(moduleName, 3, "block in the future")

@@ -5,13 +5,13 @@ import (
 	clienttypes "github.com/teleport-network/teleport/x/xibc/core/client/types"
 	host "github.com/teleport-network/teleport/x/xibc/core/host"
 	"github.com/teleport-network/teleport/x/xibc/exported"
-	xibctesting "github.com/teleport-network/teleport/x/xibc/testing"
+	bibctesting "github.com/teleport-network/teleport/x/xibc/testing"
 )
 
 func (suite *TendermintTestSuite) TestGetConsensusState() {
 	var (
 		height exported.Height
-		path   *xibctesting.Path
+		path   *bibctesting.Path
 	)
 
 	testCases := []struct {
@@ -40,7 +40,7 @@ func (suite *TendermintTestSuite) TestGetConsensusState() {
 		suite.Run(tc.name, func() {
 			suite.SetupTest()
 
-			path = xibctesting.NewPath(suite.chainA, suite.chainB)
+			path = bibctesting.NewPath(suite.chainA, suite.chainB)
 			suite.coordinator.SetupClients(path)
 
 			clientState := path.EndpointA.GetClientState()
@@ -66,11 +66,11 @@ func (suite *TendermintTestSuite) TestGetConsensusState() {
 
 func (suite *TendermintTestSuite) TestGetProcessedTime() {
 	// setup
-	path := xibctesting.NewPath(suite.chainA, suite.chainB)
+	path := bibctesting.NewPath(suite.chainA, suite.chainB)
 
 	suite.coordinator.UpdateTime()
 	// coordinator increments time before creating client
-	expectedTime := suite.chainA.CurrentHeader.Time.Add(xibctesting.TimeIncrement)
+	expectedTime := suite.chainA.CurrentHeader.Time.Add(bibctesting.TimeIncrement)
 
 	// Verify ProcessedTime on CreateClient
 	err := path.EndpointA.CreateClient()
@@ -86,7 +86,7 @@ func (suite *TendermintTestSuite) TestGetProcessedTime() {
 
 	suite.coordinator.UpdateTime()
 	// coordinator increments time before updating client
-	expectedTime = suite.chainA.CurrentHeader.Time.Add(xibctesting.TimeIncrement)
+	expectedTime = suite.chainA.CurrentHeader.Time.Add(bibctesting.TimeIncrement)
 
 	// Verify ProcessedTime on UpdateClient
 	err = path.EndpointA.UpdateClient()
