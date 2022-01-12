@@ -1,0 +1,17 @@
+syntax = "proto3";
+package xibc.clients.tssclient.v1;
+
+option go_package = "github.com/teleport-network/teleport/x/xibc/clients/tss-client/types";
+
+import "gogoproto/gogo.proto";
+
+// ClientState from Tss tracks the current tss address, and a possible frozen
+// height.
+message ClientState {
+  option (gogoproto.goproto_getters) = false;
+
+  string chain_id = 1;
+  string tss_address = 2;
+}
+
+message Header { string tss_address = 1; }

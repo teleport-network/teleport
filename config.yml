@@ -1,0 +1,39 @@
+accounts:
+  - name: alice
+    coins: ["100000000uatom", "100000000000000000000atele"]
+  - name: bob
+    coins: ["5000000000000atele"]
+validator:
+  name: alice
+  staked: "100000000000000000000atele"
+faucet:
+  name: bob
+  coins: ["10atele"]
+build:
+  binary: "teleport"
+init:
+  home: "$HOME/.teleport"
+  app:
+    evm-rpc:
+      address: "0.0.0.0:8545" # change the JSON-RPC address and port
+      ws-address: "0.0.0.0:8546" # change the JSON-RPC websocket address and port
+genesis:
+  chain_id: "teleport_9000-1"
+  app_state:
+    staking:
+      params:
+        bond_denom: "atele"
+    mint:
+      params:
+        mint_denom: "atele"
+    crisis:
+      constant_fee:
+        denom: "atele"
+    gov:
+      deposit_params:
+        min_deposit:
+          - amount: "10000000"
+            denom: "atele"
+    evm:
+      params:
+        evm_denom: "atele"

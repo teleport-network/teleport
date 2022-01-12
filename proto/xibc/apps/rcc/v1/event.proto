@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+package xibc.apps.rcc.v1;
+
+import "gogoproto/gogo.proto";
+
+option go_package = "github.com/teleport-network/teleport/x/xibc/apps/rcc/types";
+
+// EventRecvPacket is emitted on receive packet
+message EventRecvPacket {
+  string src_chain = 1;
+  string dest_chain = 2;
+  string sender = 3;
+  string contract_address = 4;
+  bytes data = 5;
+  bytes result = 6;
+  string message = 7;
+}
+
+// EventAckPacket is emitted on acknowledgement packet
+message EventAckPacket {
+  string src_chain = 1;
+  string dest_chain = 2;
+  string sender = 3;
+  string contract_address = 4;
+  bytes data = 5;
+  bytes result = 6;
+}

@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package xibc.apps.transfer.v1;
+
+option go_package = "github.com/teleport-network/teleport/x/xibc/apps/transfer/types";
+
+import "gogoproto/gogo.proto";
+
+// FungibleTokenPacketData defines a struct for the packet payload
+message FungibleTokenPacketData {
+  string src_chain = 1;
+  string dest_chain = 2;
+  string sender = 3;
+  string receiver = 4;
+  bytes amount = 5;
+  string token = 6;
+  string ori_token = 7;
+}

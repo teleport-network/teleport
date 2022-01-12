@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package xibc.apps.rcc.v1;
+
+option go_package = "github.com/teleport-network/teleport/x/xibc/apps/rcc/types";
+
+import "gogoproto/gogo.proto";
+
+// RCCPacketData defines a struct for the packet payload
+message RCCPacketData {
+  string src_chain = 1;
+  string dest_chain = 2;
+  string sender = 3;
+  string contract_address = 4;
+  bytes data = 5;
+}

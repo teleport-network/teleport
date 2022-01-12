@@ -1,0 +1,72 @@
+package keeper
+
+import (
+	"encoding/json"
+
+	sdk "github.com/cosmos/cosmos-sdk/types"
+
+	"github.com/ethereum/go-ethereum/common"
+	ethtypes "github.com/ethereum/go-ethereum/core/types"
+
+	evmtypes "github.com/tharsis/ethermint/x/evm/types"
+
+	multicall "github.com/teleport-network/teleport/syscontracts/xibc_multicall"
+	"github.com/teleport-network/teleport/x/xibc/apps/multicall/types"
+)
+
+var _ evmtypes.EvmHooks = (*Keeper)(nil)
+
+func (k Keeper) PostTxProcessing(
+	ctx sdk.Context,
+	from common.Address,
+	to *common.Address,
+	receipt *ethtypes.Receipt,
+) error {
+	multicallContract := multicall.MultiCallContract.ABI
+
+	for i, log := range receipt.Logs {
+		if log.Address != multicall.MultiCallContractAddress {
+			continue
+		}
+
+		if len(log.Topics) == 0 {
+			continue
+		}
+
+		eventID := log.Topics[0]
+		event, err := multicallContract.EventByID(eventID)
+		if err != nil {
+			return err
+		}
+
+		sendPacketEvent, err := multicallContract.Unpack(event.Name, log.Data)
+		if err != nil {
+			k.Logger(ctx).Error("failed to unpack send packet event", "error", err.Error())
+			return err
+		}
+
+		sender := sendPacketEvent[0].(common.Address)
+		bz, err := json.Marshal(sendPacketEvent[1])
+		if err != nil {
+			return err
+		}
+
+		var calldata types.MultiCallData
+		if err := json.Unmarshal(bz, &calldata); err != nil {
+			return err
+		}
+
+		// send cross chain contract call
+		if err := k.SendMultiCall(ctx, sender, calldata); err != nil {
+			k.Logger(ctx).Debug(
+				"failed to process EVM hook for XIBC RCC",
+				"tx-hash", receipt.TxHash.Hex(),
+				"log-idx", i,
+				"error", err.Error(),
+			)
+			return err
+		}
+	}
+
+	return nil
+}
