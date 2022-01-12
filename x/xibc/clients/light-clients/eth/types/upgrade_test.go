@@ -62,6 +62,7 @@ func (suite *ETHTestSuite) TestUpgradeClient() {
 	suite.Require().True(exist)
 	suite.Require().Equal(upgradeClientState.GetLatestHeight().GetRevisionHeight(), clientState.GetLatestHeight().GetRevisionHeight())
 	state, exist = suite.app.XIBCKeeper.ClientKeeper.GetClientConsensusState(suite.ctx, chainName, number)
+	suite.Require().True(exist)
 	suite.Require().Equal(upgradeHeader.Root.Bytes(), state.GetRoot())
 
 	for i, updateHeader := range updateHeaders[4:5] {
