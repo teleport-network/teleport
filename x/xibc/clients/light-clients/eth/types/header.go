@@ -66,15 +66,9 @@ func (h Header) ValidateBasic() error {
 
 func (h Header) ToEthHeader() EthHeader {
 	difficulty := new(big.Int)
-	difficulty, ok := difficulty.SetString(h.Difficulty, 10)
-	if !ok {
-		return EthHeader{}
-	}
+	difficulty.SetBytes(h.Difficulty)
 	baseFee := new(big.Int)
-	baseFee, ok = baseFee.SetString(h.BaseFee, 10)
-	if !ok {
-		return EthHeader{}
-	}
+	baseFee.SetBytes(h.BaseFee)
 	return EthHeader{
 		ParentHash:  common.BytesToHash(h.ParentHash),
 		UncleHash:   common.BytesToHash(h.UncleHash),
@@ -97,15 +91,9 @@ func (h Header) ToEthHeader() EthHeader {
 
 func (h Header) ToVerifyHeader() *types.Header {
 	difficulty := new(big.Int)
-	difficulty, ok := difficulty.SetString(h.Difficulty, 10)
-	if !ok {
-		return &types.Header{}
-	}
+	difficulty.SetBytes(h.Difficulty)
 	baseFee := new(big.Int)
-	baseFee, ok = baseFee.SetString(h.BaseFee, 10)
-	if !ok {
-		return &types.Header{}
-	}
+	baseFee.SetBytes(h.BaseFee)
 	return &types.Header{
 		ParentHash:  common.BytesToHash(h.ParentHash),
 		UncleHash:   common.BytesToHash(h.UncleHash),

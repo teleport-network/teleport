@@ -15,73 +15,76 @@ func (suite *ETHTestSuite) TestUpgradeClient() {
 	err := json.Unmarshal(updateHeadersBz, &updateHeaders)
 	suite.Require().NoError(err)
 	suite.GreaterOrEqual(len(updateHeaders), 1)
-	// 13286181
+
 	header := updateHeaders[0]
 
-	number := clienttypes.NewHeight(0, header.Number.Uint64())
+	height := clienttypes.NewHeight(0, header.Number.Uint64())
 
-	consensusState := exported.ConsensusState(&xibcethtypes.ConsensusState{
-		Timestamp: header.Time,
-		Number:    number,
-		Root:      header.Root[:],
-	})
-
-	suite.app.XIBCKeeper.ClientKeeper.SetClientConsensusState(suite.ctx, chainName, number, consensusState)
-	protoHeader := header.ToHeader()
-	store := suite.app.XIBCKeeper.ClientKeeper.ClientStore(suite.ctx, chainName)
-	headerBytes, err := suite.app.AppCodec().MarshalInterface(&protoHeader)
-	suite.Require().NoError(err)
-
-	xibcethtypes.SetEthHeaderIndex(store, protoHeader, headerBytes)
-	xibcethtypes.SetEthConsensusRoot(store, protoHeader.Height.RevisionHeight, protoHeader.ToEthHeader().Root, header.Hash())
-
-	// upgrade client to 3
-	upgradeHeader := updateHeaders[3]
-	protoHeader = upgradeHeader.ToHeader()
-	suite.Require().NoError(err)
-
-	number = clienttypes.NewHeight(0, upgradeHeader.Number.Uint64())
 	clientState := exported.ClientState(&xibcethtypes.ClientState{
-		Header:          upgradeHeader.ToHeader(),
+		Header:          header.ToHeader(),
 		ChainId:         1,
 		ContractAddress: []byte("0x00"),
-		TrustingPeriod:  200001,
+		TrustingPeriod:  99999999,
 		TimeDelay:       0,
 		BlockDelay:      1,
 	})
-	consensusState = exported.ConsensusState(&xibcethtypes.ConsensusState{
+
+	consensusState := exported.ConsensusState(&xibcethtypes.ConsensusState{
+		Timestamp: header.Time,
+		Height:    height,
+		Root:      header.Root[:],
+	})
+	err = suite.app.XIBCKeeper.ClientKeeper.CreateClient(suite.ctx, chainName, clientState, consensusState)
+	suite.Require().NoError(err)
+	state, exist := suite.app.XIBCKeeper.ClientKeeper.GetClientConsensusState(suite.ctx, chainName, height)
+	suite.Require().True(exist)
+	suite.Equal(state.GetRoot(), consensusState.GetRoot())
+
+	// upgrade client to 3
+	upgradeHeader := updateHeaders[3]
+	height = clienttypes.NewHeight(0, upgradeHeader.Number.Uint64())
+	upgradeClientState := exported.ClientState(&xibcethtypes.ClientState{
+		Header:          upgradeHeader.ToHeader(),
+		ChainId:         1,
+		ContractAddress: []byte("0x00"),
+		TrustingPeriod:  99999999,
+		TimeDelay:       0,
+		BlockDelay:      1,
+	})
+	upgradeConsensusState := exported.ConsensusState(&xibcethtypes.ConsensusState{
 		Timestamp: upgradeHeader.Time,
-		Number:    number,
+		Height:    height,
 		Root:      upgradeHeader.Root[:],
 	})
-
-	err = clientState.UpgradeState(
-		suite.ctx,
-		suite.app.AppCodec(),
-		suite.app.XIBCKeeper.ClientKeeper.ClientStore(suite.ctx, chainName), // pass in chainName prefixed clientStore
-		consensusState,
-	)
-
+	err = suite.app.XIBCKeeper.ClientKeeper.UpgradeClient(suite.ctx, chainName, upgradeClientState, upgradeConsensusState)
 	suite.Require().NoError(err)
-	suite.Require().Equal(upgradeHeader.Number.Uint64(), clientState.GetLatestHeight().GetRevisionHeight())
-	suite.app.XIBCKeeper.ClientKeeper.SetClientConsensusState(suite.ctx, chainName, number, consensusState)
+	clientState, exist = suite.app.XIBCKeeper.ClientKeeper.GetClientState(suite.ctx, chainName)
+	suite.Require().True(exist)
+	suite.Require().Equal(upgradeClientState.GetLatestHeight().GetRevisionHeight(), clientState.GetLatestHeight().GetRevisionHeight())
+	state, exist = suite.app.XIBCKeeper.ClientKeeper.GetClientConsensusState(suite.ctx, chainName, height)
+	suite.Require().True(exist)
+	suite.Require().Equal(upgradeHeader.Root.Bytes(), state.GetRoot())
 
-	for _, updateHeader := range updateHeaders[4:5] {
+	for i, updateHeader := range updateHeaders[4:5] {
 		protoHeader := updateHeader.ToHeader()
 		suite.Require().NoError(err)
-
-		clientState, consensusState, err = clientState.CheckHeaderAndUpdateState(
-			suite.ctx,
-			suite.app.AppCodec(),
-			suite.app.XIBCKeeper.ClientKeeper.ClientStore(suite.ctx, chainName), // pass in chainName prefixed clientStore
-			&protoHeader,
-		)
-
+		err = suite.app.XIBCKeeper.ClientKeeper.UpdateClient(suite.ctx, chainName, &protoHeader)
 		suite.Require().NoError(err)
 
-		number.RevisionHeight = protoHeader.Height.RevisionHeight
-		suite.app.XIBCKeeper.ClientKeeper.SetClientConsensusState(suite.ctx, chainName, number, consensusState)
+		height.RevisionHeight = protoHeader.Height.RevisionHeight
+		getClientState, exist := suite.app.XIBCKeeper.ClientKeeper.GetClientState(suite.ctx, chainName)
+		suite.Require().True(exist)
+		suite.Equal(getClientState.GetLatestHeight().GetRevisionHeight(), height.RevisionHeight)
+		state, exist = suite.app.XIBCKeeper.ClientKeeper.GetClientConsensusState(suite.ctx, chainName, height)
+		suite.Require().True(exist)
+		suite.Equal(state.GetRoot(), protoHeader.Root)
 
-		suite.Require().Equal(updateHeader.Number.Uint64(), clientState.GetLatestHeight().GetRevisionHeight())
+		gm := make([]exported.GenesisMetadata, 0)
+		callback := func(key, val []byte) bool {
+			gm = append(gm, clienttypes.NewGenesisMetadata(key, val))
+			return false
+		}
+		xibcethtypes.IteratorEthMetaDataByPrefix(suite.app.XIBCKeeper.ClientKeeper.ClientStore(suite.ctx, chainName), xibcethtypes.KeyIndexEthHeaderPrefix, callback)
+		suite.Equal(len(gm), i+3)
 	}
 }

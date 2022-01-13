@@ -133,7 +133,7 @@ func update(
 ) {
 	cs := &ConsensusState{
 		Timestamp: header.Time,
-		Number:    header.Height,
+		Height:    header.Height,
 		Root:      header.Root,
 	}
 	headerInterface, err := cdc.MarshalInterface(header)
@@ -261,7 +261,7 @@ func (m ClientState) RestrictChain(cdc codec.BinaryCodec, store sdk.KVStore, new
 		}
 		consensusState := &ConsensusState{
 			Timestamp: tmpHeader.Time,
-			Number:    tmpHeader.Height,
+			Height:    tmpHeader.Height,
 			Root:      tmpHeader.Root[:],
 		}
 		consensusStateBytes, err := cdc.MarshalInterface(consensusState)

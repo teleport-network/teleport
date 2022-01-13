@@ -1,12 +1,12 @@
 syntax = "proto3";
-package xibc.clients.lightclients.eth.v1;
+package xibc.clients.lightclients.bsc.v1;
 
-option go_package = "github.com/teleport-network/teleport/x/xibc/clients/light-clients/eth/types";
+option go_package = "github.com/teleport-network/teleport/x/xibc/clients/light-clients/bsc/types";
 
 import "gogoproto/gogo.proto";
 import "xibc/core/client/v1/client.proto";
 
-// Header defines the eth client consensus Header.
+// Header defines the bsc client consensus Header.
 message Header {
   option (gogoproto.goproto_getters) = false;
 
@@ -24,24 +24,35 @@ message Header {
   uint64 time = 12;
   bytes extra = 13;
   bytes mix_digest = 14;
-  uint64 nonce = 15;
-  bytes baseFee = 16;
+  bytes nonce = 15;
 }
 
-// ClientState from eth tracks the current validator set, latest height, and a
-// possible frozen height.
+// ClientState from bsc tracks the current validator set, latest height,
+// and a possible frozen height.
 message ClientState {
   option (gogoproto.goproto_getters) = false;
 
   Header header = 1 [ (gogoproto.nullable) = false ];
   uint64 chain_id = 2;
-  bytes contract_address = 3;
-  uint64 trusting_period = 4;
-  uint64 timeDelay = 5;
-  uint64 blockDelay = 6;
+  uint64 epoch = 3;
+  uint64 block_inteval = 4;
+  repeated bytes validators = 5;
+  bytes contract_address = 6;
+  uint64 trusting_period = 7;
 }
 
-// ConsensusState defines the consensus state from eth.
+message Signer {
+  xibc.core.client.v1.Height height = 1 [ (gogoproto.nullable) = false ];
+  bytes validator = 2;
+}
+
+message SignerSet {
+  repeated Signer signers = 1 [ (gogoproto.nullable) = false ];
+}
+
+message ValidatorSet { repeated bytes validators = 1; }
+
+// ConsensusState defines the consensus state from bsc.
 message ConsensusState {
   option (gogoproto.goproto_getters) = false;
 
