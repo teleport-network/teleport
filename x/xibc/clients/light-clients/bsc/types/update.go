@@ -139,7 +139,7 @@ func update(
 
 	cs := &ConsensusState{
 		Timestamp: header.Time,
-		Number:    header.Height,
+		Height:    header.Height,
 		Root:      header.Root,
 	}
 

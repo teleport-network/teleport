@@ -14,10 +14,10 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/teleport-network/teleport/app"
-	bibctmtypes "github.com/teleport-network/teleport/x/xibc/clients/light-clients/tendermint/types"
+	xibctmtypes "github.com/teleport-network/teleport/x/xibc/clients/light-clients/tendermint/types"
 	clienttypes "github.com/teleport-network/teleport/x/xibc/core/client/types"
-	bibctesting "github.com/teleport-network/teleport/x/xibc/testing"
-	bibctestingmock "github.com/teleport-network/teleport/x/xibc/testing/mock"
+	xibctesting "github.com/teleport-network/teleport/x/xibc/testing"
+	xibctestingmock "github.com/teleport-network/teleport/x/xibc/testing/mock"
 )
 
 const (
@@ -35,11 +35,11 @@ var height = clienttypes.NewHeight(0, 4)
 type TendermintTestSuite struct {
 	suite.Suite
 
-	coordinator *bibctesting.Coordinator
+	coordinator *xibctesting.Coordinator
 
 	// testing chains used for convenience and readability
-	chainA *bibctesting.TestChain
-	chainB *bibctesting.TestChain
+	chainA *xibctesting.TestChain
+	chainB *xibctesting.TestChain
 
 	// TODO: deprecate usage in favor of testing package
 	ctx        sdk.Context
@@ -47,16 +47,16 @@ type TendermintTestSuite struct {
 	privVal    tmtypes.PrivValidator
 	valSet     *tmtypes.ValidatorSet
 	valsHash   tmbytes.HexBytes
-	header     *bibctmtypes.Header
+	header     *xibctmtypes.Header
 	now        time.Time
 	headerTime time.Time
 	clientTime time.Time
 }
 
 func (suite *TendermintTestSuite) SetupTest() {
-	suite.coordinator = bibctesting.NewCoordinator(suite.T(), 2)
-	suite.chainA = suite.coordinator.GetChain(bibctesting.GetChainID(0))
-	suite.chainB = suite.coordinator.GetChain(bibctesting.GetChainID(1))
+	suite.coordinator = xibctesting.NewCoordinator(suite.T(), 2)
+	suite.chainA = suite.coordinator.GetChain(xibctesting.GetChainID(0))
+	suite.chainB = suite.coordinator.GetChain(xibctesting.GetChainID(1))
 	// commit some blocks so that QueryProof returns valid proof (cannot return valid query if height <= 1)
 	suite.coordinator.CommitNBlocks(suite.chainA, 2)
 	suite.coordinator.CommitNBlocks(suite.chainB, 2)
@@ -74,7 +74,7 @@ func (suite *TendermintTestSuite) SetupTest() {
 	// Header time is intended to be time for any new header used for updates
 	suite.headerTime = time.Date(2020, 1, 2, 0, 0, 0, 0, time.UTC)
 
-	suite.privVal = bibctestingmock.NewPV()
+	suite.privVal = xibctestingmock.NewPV()
 
 	pubKey, err := suite.privVal.GetPubKey()
 	suite.Require().NoError(err)

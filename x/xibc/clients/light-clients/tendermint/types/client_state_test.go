@@ -9,8 +9,8 @@ import (
 	host "github.com/teleport-network/teleport/x/xibc/core/host"
 	packettypes "github.com/teleport-network/teleport/x/xibc/core/packet/types"
 	"github.com/teleport-network/teleport/x/xibc/exported"
-	bibctesting "github.com/teleport-network/teleport/x/xibc/testing"
-	bibcmock "github.com/teleport-network/teleport/x/xibc/testing/mock"
+	xibctesting "github.com/teleport-network/teleport/x/xibc/testing"
+	xibcmock "github.com/teleport-network/teleport/x/xibc/testing/mock"
 )
 
 var (
@@ -82,7 +82,7 @@ func (suite *TendermintTestSuite) TestInitialize() {
 		expPass:        true,
 	}}
 
-	path := bibctesting.NewPath(suite.chainA, suite.chainB)
+	path := xibctesting.NewPath(suite.chainA, suite.chainB)
 	err := path.EndpointA.CreateClient()
 	suite.Require().NoError(err)
 
@@ -137,7 +137,7 @@ func (suite *TendermintTestSuite) TestVerifyPacketCommitment() {
 			suite.SetupTest() // reset
 
 			// setup testing conditions
-			path := bibctesting.NewPath(suite.chainA, suite.chainB)
+			path := xibctesting.NewPath(suite.chainA, suite.chainB)
 
 			suite.coordinator.SetupClients(path)
 
@@ -148,7 +148,7 @@ func (suite *TendermintTestSuite) TestVerifyPacketCommitment() {
 			suite.Require().Equal(path.EndpointB.Chain.SenderAcc.String(), relayerBs[0], "relayer does not match")
 
 			// setup testing conditions
-			packet := packettypes.NewPacket(1, path.EndpointA.ChainName, path.EndpointB.ChainName, "", []string{bibctesting.MockPort}, [][]byte{bibctesting.TestHash})
+			packet := packettypes.NewPacket(1, path.EndpointA.ChainName, path.EndpointB.ChainName, "", []string{xibctesting.MockPort}, [][]byte{xibctesting.TestHash})
 
 			err := path.EndpointA.SendPacket(packet)
 			suite.Require().NoError(err)
@@ -219,10 +219,10 @@ func (suite *TendermintTestSuite) TestVerifyPacketAcknowledgement() {
 			suite.SetupTest() // reset
 
 			// setup testing conditions
-			path := bibctesting.NewPath(suite.chainA, suite.chainB)
+			path := xibctesting.NewPath(suite.chainA, suite.chainB)
 			suite.coordinator.SetupClients(path)
 
-			packet := packettypes.NewPacket(1, path.EndpointA.ChainName, path.EndpointB.ChainName, "", []string{bibctesting.MockPort}, [][]byte{bibctesting.TestHash})
+			packet := packettypes.NewPacket(1, path.EndpointA.ChainName, path.EndpointB.ChainName, "", []string{xibctesting.MockPort}, [][]byte{xibctesting.TestHash})
 
 			// send packet
 			err := path.EndpointA.SendPacket(packet)
@@ -258,7 +258,7 @@ func (suite *TendermintTestSuite) TestVerifyPacketAcknowledgement() {
 				packet.GetSourceChain(),
 				packet.GetDestChain(),
 				packet.GetSequence(),
-				packettypes.CommitAcknowledgement(bibcmock.MockAcknowledgement),
+				packettypes.CommitAcknowledgement(xibcmock.MockAcknowledgement),
 			)
 
 			if tc.expPass {

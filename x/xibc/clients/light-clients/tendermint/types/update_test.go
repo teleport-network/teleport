@@ -11,8 +11,8 @@ import (
 	clienttypes "github.com/teleport-network/teleport/x/xibc/core/client/types"
 	commitmenttypes "github.com/teleport-network/teleport/x/xibc/core/commitment/types"
 	"github.com/teleport-network/teleport/x/xibc/exported"
-	bibctesting "github.com/teleport-network/teleport/x/xibc/testing"
-	bibctestingmock "github.com/teleport-network/teleport/x/xibc/testing/mock"
+	xibctesting "github.com/teleport-network/teleport/x/xibc/testing"
+	xibctestingmock "github.com/teleport-network/teleport/x/xibc/testing/mock"
 )
 
 func (suite *TendermintTestSuite) TestCheckHeaderAndUpdateState() {
@@ -28,7 +28,7 @@ func (suite *TendermintTestSuite) TestCheckHeaderAndUpdateState() {
 	)
 
 	// Setup different validators and signers for testing different types of updates
-	altPrivVal := bibctestingmock.NewPV()
+	altPrivVal := xibctestingmock.NewPV()
 	altPubKey, err := altPrivVal.GetPubKey()
 	suite.Require().NoError(err)
 
@@ -231,7 +231,7 @@ func (suite *TendermintTestSuite) TestCheckHeaderAndUpdateState() {
 
 			// Create signer array and ensure it is in same order as bothValSet
 			_, suiteVal := suite.valSet.GetByIndex(0)
-			bothSigners = bibctesting.CreateSortedSignerArray(altPrivVal, suite.privVal, altVal, suiteVal)
+			bothSigners = xibctesting.CreateSortedSignerArray(altPrivVal, suite.privVal, altVal, suiteVal)
 
 			consStateHeight = height // must be explicitly changed
 			// setup test
@@ -282,7 +282,7 @@ func (suite *TendermintTestSuite) TestCheckHeaderAndUpdateState() {
 
 func (suite *TendermintTestSuite) TestPruneConsensusState() {
 	// create path and setup clients
-	path := bibctesting.NewPath(suite.chainA, suite.chainB)
+	path := xibctesting.NewPath(suite.chainA, suite.chainB)
 	suite.coordinator.SetupClients(path)
 
 	// get the first height as it will be pruned first.

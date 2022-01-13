@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"io/ioutil"
 
-	bibcbsctypes "github.com/teleport-network/teleport/x/xibc/clients/light-clients/bsc/types"
+	xibcbsctypes "github.com/teleport-network/teleport/x/xibc/clients/light-clients/bsc/types"
 	clienttypes "github.com/teleport-network/teleport/x/xibc/core/client/types"
 	"github.com/teleport-network/teleport/x/xibc/exported"
 )
@@ -24,12 +24,12 @@ func (suite *BSCTestSuite) TestCheckHeaderAndUpdateState() {
 	header := genesisState.GenesisHeader
 	genesisValidatorHeader := genesisState.GenesisValidatorHeader
 
-	genesisValidators, err := bibcbsctypes.ParseValidators(genesisValidatorHeader.Extra)
+	genesisValidators, err := xibcbsctypes.ParseValidators(genesisValidatorHeader.Extra)
 	suite.NoError(err)
 
 	number := clienttypes.NewHeight(0, header.Number.Uint64())
 
-	clientState := exported.ClientState(&bibcbsctypes.ClientState{
+	clientState := exported.ClientState(&xibcbsctypes.ClientState{
 		Header:          header.ToHeader(),
 		ChainId:         56,
 		Epoch:           epoch,
@@ -39,9 +39,9 @@ func (suite *BSCTestSuite) TestCheckHeaderAndUpdateState() {
 		TrustingPeriod:  999999999,
 	})
 
-	consensusState := exported.ConsensusState(&bibcbsctypes.ConsensusState{
+	consensusState := exported.ConsensusState(&xibcbsctypes.ConsensusState{
 		Timestamp: header.Time,
-		Number:    number,
+		Height:    number,
 		Root:      header.Root[:],
 	})
 	err = suite.app.XIBCKeeper.ClientKeeper.CreateClient(suite.ctx, chainName, clientState, consensusState)
@@ -51,7 +51,7 @@ func (suite *BSCTestSuite) TestCheckHeaderAndUpdateState() {
 	equal := bytes.Equal(state.GetRoot(), consensusState.GetRoot())
 	suite.True(equal)
 
-	var updateHeaders []*bibcbsctypes.BscHeader
+	var updateHeaders []*xibcbsctypes.BscHeader
 	updateHeadersBz, _ := ioutil.ReadFile("testdata/update_headers.json")
 	err = json.Unmarshal(updateHeadersBz, &updateHeaders)
 	suite.NoError(err)
@@ -72,10 +72,10 @@ func (suite *BSCTestSuite) TestCheckHeaderAndUpdateState() {
 		suite.True(exist)
 		suite.Equal(clientState.GetLatestHeight().GetRevisionHeight(), protoHeader.Height.RevisionHeight)
 
-		recentSigners, err2 := bibcbsctypes.GetRecentSigners(suite.app.XIBCKeeper.ClientKeeper.ClientStore(suite.ctx, chainName))
+		recentSigners, err2 := xibcbsctypes.GetRecentSigners(suite.app.XIBCKeeper.ClientKeeper.ClientStore(suite.ctx, chainName))
 		suite.NoError(err2)
 
-		validatorCount := len(clientState.(*bibcbsctypes.ClientState).Validators)
+		validatorCount := len(clientState.(*xibcbsctypes.ClientState).Validators)
 		if i+2 <= validatorCount/2+1 {
 			suite.Equal(i+2, len(recentSigners))
 		} else {
@@ -85,6 +85,6 @@ func (suite *BSCTestSuite) TestCheckHeaderAndUpdateState() {
 }
 
 type GenesisState struct {
-	GenesisHeader          *bibcbsctypes.BscHeader `json:"genesis_header"`
-	GenesisValidatorHeader *bibcbsctypes.BscHeader `json:"genesis_validator_header"`
+	GenesisHeader          *xibcbsctypes.BscHeader `json:"genesis_header"`
+	GenesisValidatorHeader *xibcbsctypes.BscHeader `json:"genesis_validator_header"`
 }
