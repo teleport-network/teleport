@@ -36,7 +36,6 @@ import (
 	"github.com/tharsis/ethermint/encoding"
 	ethermintserver "github.com/tharsis/ethermint/server"
 	servercfg "github.com/tharsis/ethermint/server/config"
-	srvflags "github.com/tharsis/ethermint/server/flags"
 
 	"github.com/teleport-network/teleport/app"
 	teleporttypes "github.com/teleport-network/teleport/types"
@@ -117,7 +116,7 @@ func NewRootCmd() (*cobra.Command, params.EncodingConfig) {
 		txCommand(),
 		ethermintclient.KeyCommands(app.DefaultNodeHome),
 	)
-	rootCmd, err := srvflags.AddTxFlags(rootCmd)
+	rootCmd, err := AddTxFlags(rootCmd)
 	if err != nil {
 		panic(err)
 	}
