@@ -21,10 +21,10 @@ type ETHTestSuite struct {
 }
 
 func (suite *ETHTestSuite) SetupTest() {
-	bitos := app.Setup(false, nil)
+	teleport := app.Setup(false, nil)
 
-	suite.ctx = bitos.BaseApp.NewContext(false, tmproto.Header{Time: time.Now()})
-	suite.app = bitos
+	suite.ctx = teleport.BaseApp.NewContext(false, tmproto.Header{Time: time.Now()})
+	suite.app = teleport
 }
 
 func TestETHTestSuite(t *testing.T) {

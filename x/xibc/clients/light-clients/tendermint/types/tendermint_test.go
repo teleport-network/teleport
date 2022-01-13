@@ -63,9 +63,9 @@ func (suite *TendermintTestSuite) SetupTest() {
 
 	// TODO: deprecate usage in favor of testing package
 	checkTx := false
-	bitos := app.Setup(checkTx, nil)
+	teleprot := app.Setup(checkTx, nil)
 
-	suite.cdc = bitos.AppCodec()
+	suite.cdc = teleprot.AppCodec()
 
 	// now is the time of the current chain, must be after the updating header
 	// mocks ctx.BlockTime()
@@ -85,7 +85,7 @@ func (suite *TendermintTestSuite) SetupTest() {
 	suite.valSet = tmtypes.NewValidatorSet([]*tmtypes.Validator{val})
 	suite.valsHash = suite.valSet.Hash()
 	suite.header = suite.chainA.CreateTMClientHeader(chainID, int64(height.RevisionHeight), heightMinus1, suite.now, suite.valSet, suite.valSet, []tmtypes.PrivValidator{suite.privVal})
-	suite.ctx = bitos.BaseApp.NewContext(checkTx, tmproto.Header{Height: 1, Time: suite.now})
+	suite.ctx = teleprot.BaseApp.NewContext(checkTx, tmproto.Header{Height: 1, Time: suite.now})
 }
 
 func TestTendermintTestSuite(t *testing.T) {
