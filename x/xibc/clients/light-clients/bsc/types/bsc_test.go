@@ -21,10 +21,10 @@ type BSCTestSuite struct {
 }
 
 func (suite *BSCTestSuite) SetupTest() {
-	teleprot := app.Setup(false, nil)
+	teleport := app.Setup(false, nil)
 
-	suite.ctx = teleprot.BaseApp.NewContext(false, tmproto.Header{Time: time.Now()})
-	suite.app = teleprot
+	suite.ctx = teleport.BaseApp.NewContext(false, tmproto.Header{Time: time.Now()})
+	suite.app = teleport
 }
 
 func TestBSCTestSuite(t *testing.T) {
