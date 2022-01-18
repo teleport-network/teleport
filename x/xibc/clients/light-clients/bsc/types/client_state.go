@@ -104,6 +104,9 @@ func (m ClientState) UpgradeState(
 	store sdk.KVStore,
 	state exported.ConsensusState,
 ) error {
+	if m.Header.Height.RevisionHeight%m.Epoch != 0 {
+		return sdkerrors.Wrap(ErrInvalidGenesisBlock, "header")
+	}
 	// Check the earliest consensus state to see if it is expired, if so then set the prune height
 	// so that we can delete consensus state and all associated metadata.
 	var (
@@ -368,6 +371,7 @@ func verifyMerkleProof(
 
 func checkProofResult(result, value []byte) bool {
 	var tempBytes []byte
+
 	if err := rlp.DecodeBytes(result, &tempBytes); err != nil {
 		return false
 	}
