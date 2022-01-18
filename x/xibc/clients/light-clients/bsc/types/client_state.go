@@ -371,17 +371,16 @@ func verifyMerkleProof(
 
 func checkProofResult(result, value []byte) bool {
 	var tempBytes []byte
-	err := rlp.DecodeBytes(result, &tempBytes)
-	if err != nil {
+
+	if err := rlp.DecodeBytes(result, &tempBytes); err != nil {
 		return false
 	}
-	//
 	var s []byte
 	for i := len(tempBytes); i < 32; i++ {
 		s = append(s, 0)
 	}
 	s = append(s, tempBytes...)
 	// TODO
-	//hash := crypto.Keccak256(value)
+	// hash := crypto.Keccak256(value)
 	return bytes.Equal(s, value)
 }

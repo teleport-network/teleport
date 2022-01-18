@@ -4,9 +4,10 @@ import (
 	"bytes"
 	"sort"
 
+	"github.com/ethereum/go-ethereum/common"
+
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/ethereum/go-ethereum/common"
 )
 
 // validatorsAscending implements the sort interface to allow sorting a list of addresses

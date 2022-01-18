@@ -29,8 +29,7 @@ func (h Header) GetHeight() exported.Height {
 	return h.Height
 }
 
-// Hash returns the block hash of the header, which is simply the keccak256 hash of its
-// RLP encoding.
+// Hash returns the block hash of the header, which is simply the keccak256 hash of its RLP encoding.
 func (h *Header) Hash() common.Hash {
 	return rlpHash(h.ToBscHeader())
 }
@@ -160,7 +159,6 @@ func verifySeal(
 	clientState *ClientState,
 	header Header,
 ) error {
-
 	number := header.Height.RevisionHeight
 	// Resolve the authorization key and check against validators
 	signer, err := ecrecover(header, big.NewInt(int64(clientState.ChainId)))
@@ -236,7 +234,7 @@ func sealHash(header Header, chainId *big.Int) (hash common.Hash) {
 }
 
 func encodeSigHeader(w io.Writer, header Header, chainId *big.Int) {
-	err := rlp.Encode(w, []interface{}{
+	if err := rlp.Encode(w, []interface{}{
 		chainId,
 		header.ParentHash,
 		header.UncleHash,
@@ -253,8 +251,7 @@ func encodeSigHeader(w io.Writer, header Header, chainId *big.Int) {
 		header.Extra[:len(header.Extra)-65], // this will panic if extra is too short, should check before calling encodeSigHeader
 		header.MixDigest,
 		header.Nonce,
-	})
-	if err != nil {
+	}); err != nil {
 		panic("can't encode: " + err.Error())
 	}
 }
