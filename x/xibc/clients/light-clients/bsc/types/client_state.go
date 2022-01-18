@@ -104,6 +104,9 @@ func (m ClientState) UpgradeState(
 	store sdk.KVStore,
 	state exported.ConsensusState,
 ) error {
+	if m.Header.Height.RevisionHeight%m.Epoch != 0 {
+		return sdkerrors.Wrap(ErrInvalidGenesisBlock, "header")
+	}
 	// Check the earliest consensus state to see if it is expired, if so then set the prune height
 	// so that we can delete consensus state and all associated metadata.
 	var (
