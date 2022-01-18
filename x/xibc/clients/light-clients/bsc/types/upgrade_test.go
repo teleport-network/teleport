@@ -51,8 +51,7 @@ func (suite *BSCTestSuite) TestCheckHeaderAndUpgrade() {
 	err = json.Unmarshal(updateHeadersBz, &updateHeaders)
 	suite.NoError(err)
 	suite.Equal(int(1.5*float64(epoch)), len(updateHeaders))
-
-	header = updateHeaders[4]
+	header = updateHeaders[199]
 	number = clienttypes.NewHeight(0, header.Number.Uint64())
 	upgradeClientState := exported.ClientState(&xibcbsctypes.ClientState{
 		Header:          header.ToHeader(),
@@ -80,7 +79,7 @@ func (suite *BSCTestSuite) TestCheckHeaderAndUpgrade() {
 	suite.True(exist)
 	suite.Equal(state.GetRoot(), upgradeConsensusState.GetRoot())
 
-	for i, updateHeader := range updateHeaders[5:6] {
+	for i, updateHeader := range updateHeaders[200:201] {
 		protoHeader := updateHeader.ToHeader()
 		suite.NoError(err)
 

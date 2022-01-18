@@ -3,10 +3,10 @@ package types
 import (
 	"math/big"
 
-	host "github.com/teleport-network/teleport/x/xibc/core/host"
-
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/crypto"
+
+	"github.com/teleport-network/teleport/x/xibc/core/host"
 )
 
 const (
