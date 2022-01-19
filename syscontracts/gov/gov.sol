@@ -1,9 +1,14 @@
-//SPDX-License-Identifier: Apache-2.0
-pragma solidity ^0.8.0;
+// SPDX-License-Identifier: Apache-2.0
+pragma solidity ^0.6.8;
+pragma experimental ABIEncoderV2;
 
 contract Gov {
     event Voted(address voter, uint64 proposalId, uint32 voteOption);
-    event VotedWeighted(address voter, uint64 proposalId, OptionWeight[] options);
+    event VotedWeighted(
+        address voter,
+        uint64 proposalId,
+        OptionWeight[] options
+    );
 
     struct OptionWeight {
         uint32 option;
@@ -14,7 +19,7 @@ contract Gov {
         emit Voted(msg.sender, proposalId, voteOption);
     }
 
-    function vote(uint64 proposalId, OptionWeight[] memory options) external {
+    function vote(uint64 proposalId, OptionWeight[] calldata options) external {
         emit VotedWeighted(msg.sender, proposalId, options);
     }
 }

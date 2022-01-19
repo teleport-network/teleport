@@ -11,7 +11,7 @@ import (
 )
 
 var (
-	//go:embed MultiCall.json
+	//go:embed multicall.json
 	MultiCallJSON []byte // nolint: golint
 
 	// MultiCallContract is the compiled multicall contract

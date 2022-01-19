@@ -11,7 +11,7 @@ import (
 )
 
 var (
-	//go:embed Transfer.json
+	//go:embed transfer.json
 	TransferJSON []byte // nolint: golint
 
 	// TransferContract is the compiled transfer contract
