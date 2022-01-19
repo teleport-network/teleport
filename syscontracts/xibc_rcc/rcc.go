@@ -11,7 +11,7 @@ import (
 )
 
 var (
-	//go:embed RCC.json
+	//go:embed rcc.json
 	RCCJSON []byte // nolint: golint
 
 	// RCCContract is the compiled rcc contract
