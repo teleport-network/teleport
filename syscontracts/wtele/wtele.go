@@ -11,7 +11,7 @@ import (
 )
 
 var (
-	//go:embed WTELE.json
+	//go:embed wtele.json
 	WTELEJSON []byte // nolint: golint
 
 	// WTELEContract is the compiled wtele contract
