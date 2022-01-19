@@ -17,6 +17,7 @@ import (
 	"github.com/tharsis/ethermint/tests"
 	evm "github.com/tharsis/ethermint/x/evm/types"
 
+	wtelecontract "github.com/teleport-network/teleport/syscontracts/wtele"
 	transfercontract "github.com/teleport-network/teleport/syscontracts/xibc_transfer"
 	erc20contracts "github.com/teleport-network/teleport/x/aggregate/types/contracts"
 	"github.com/teleport-network/teleport/x/xibc/apps/transfer/types"
@@ -126,7 +127,6 @@ func (suite *TransferTestSuite) TestTransferBase() {
 	// check balance
 	recvBalance := suite.BalanceOf(suite.chainB, erc20Address, suite.chainB.SenderAddress)
 	suite.Require().Equal(amount.String(), recvBalance.String())
-
 }
 
 func (suite *TransferTestSuite) TestTransferBaseBack() {
@@ -303,8 +303,6 @@ func (suite *TransferTestSuite) TestTransferERC20() {
 
 func (suite *TransferTestSuite) TestTransferERC20Back() {
 	path := xibctesting.NewPath(suite.chainA, suite.chainB)
-	suite.coordinator.SetupClients(path)
-
 	amount := big.NewInt(1000)
 
 	suite.TestTransferERC20()
@@ -382,6 +380,182 @@ func (suite *TransferTestSuite) TestTransferERC20Back() {
 		suite.chainB.ChainID,
 	)
 	suite.Require().Equal("0", outAmount.String())
+}
+
+func (suite *TransferTestSuite) TestTransferWTele() {
+	path := xibctesting.NewPath(suite.chainA, suite.chainB)
+	suite.coordinator.SetupClients(path)
+
+	amount := big.NewInt(10000000000)
+	out := big.NewInt(1000)
+
+	suite.DepositWTeleToken(suite.chainA, amount)
+
+	// check balance
+	recvBalance := suite.BalanceOf(suite.chainA, wtelecontract.WTELEContractAddress, suite.chainA.SenderAddress)
+	suite.Require().Equal(amount.String(), recvBalance.String())
+
+	// Approve erc20 to transfer
+	suite.Approve(suite.chainA, wtelecontract.WTELEContractAddress, out)
+
+	// deploy ERC20 on chainB
+	chainBERC20Address := suite.DeployERC20ByTransfer(suite.chainB)
+
+	// add erc20 trace on chainB
+	err := suite.chainB.App.AggregateKeeper.RegisterERC20Trace(
+		suite.chainB.GetContext(),
+		chainBERC20Address,
+		strings.ToLower(wtelecontract.WTELEContractAddress.String()),
+		suite.chainA.ChainID,
+	)
+	suite.Require().NoError(err)
+
+	// check ERC20 trace
+	_, _, exist, err := suite.chainB.App.AggregateKeeper.QueryERC20Trace(
+		suite.chainB.GetContext(),
+		chainBERC20Address,
+		suite.chainA.ChainID,
+	)
+	suite.Require().NoError(err)
+	suite.Require().True(exist)
+
+	// send transferBase on chainA
+	suite.SendTransferERC20(
+		suite.chainA,
+		types.ERC20TransferData{
+			TokenAddress: wtelecontract.WTELEContractAddress,
+			Receiver:     suite.chainB.SenderAddress.String(),
+			Amount:       out,
+			DestChain:    suite.chainB.ChainID,
+			RelayChain:   "",
+		},
+		big.NewInt(0),
+	)
+	recvBalance = suite.BalanceOf(suite.chainA, wtelecontract.WTELEContractAddress, suite.chainA.SenderAddress)
+	suite.Require().Equal(strconv.FormatUint(amount.Uint64()-out.Uint64(), 10), recvBalance.String())
+
+	// check chainA token out
+	outAmount := suite.OutTokens(
+		suite.chainA,
+		wtelecontract.WTELEContractAddress,
+		suite.chainB.ChainID,
+	)
+	suite.Require().Equal(out.String(), outAmount.String())
+
+	// relay packet
+	packetData := types.NewFungibleTokenPacketData(
+		path.EndpointA.ChainName,
+		path.EndpointB.ChainName,
+		strings.ToLower(suite.chainA.SenderAddress.String()),
+		strings.ToLower(suite.chainB.SenderAddress.String()),
+		out.Bytes(),
+		strings.ToLower(wtelecontract.WTELEContractAddress.String()),
+		strings.ToLower(""),
+	)
+	packet := packettypes.NewPacket(
+		1,
+		path.EndpointA.ChainName,
+		path.EndpointB.ChainName,
+		"",
+		[]string{types.PortID},
+		[][]byte{packetData.GetBytes()},
+	)
+
+	// commit block
+	suite.coordinator.CommitBlock(suite.chainA, suite.chainB)
+
+	ack := packettypes.NewResultAcknowledgement([][]byte{{byte(1)}})
+	err = path.RelayPacket(packet, ack.GetBytes())
+	suite.Require().NoError(err)
+
+	// check balance
+	recvBalance = suite.BalanceOf(suite.chainB, chainBERC20Address, suite.chainB.SenderAddress)
+	suite.Require().Equal(out.String(), recvBalance.String())
+}
+
+func (suite *TransferTestSuite) TestTransferWTeleBack() {
+	path := xibctesting.NewPath(suite.chainA, suite.chainB)
+	total := big.NewInt(10000000000)
+	amount := big.NewInt(1000)
+
+	suite.TestTransferWTele()
+
+	chainBERC20Address := crypto.CreateAddress(transfercontract.TransferContractAddress, 0)
+
+	// check chainA token out
+	outAmount := suite.OutTokens(
+		suite.chainA,
+		wtelecontract.WTELEContractAddress,
+		suite.chainB.ChainID,
+	)
+	suite.Require().Equal(amount.String(), outAmount.String())
+
+	// check ERC20 trace
+	_, _, exist, err := suite.chainB.App.AggregateKeeper.QueryERC20Trace(
+		suite.chainB.GetContext(),
+		chainBERC20Address,
+		suite.chainA.ChainID,
+	)
+	suite.Require().NoError(err)
+	suite.Require().True(exist)
+
+	// check balance
+	recvBalance := suite.BalanceOf(suite.chainB, chainBERC20Address, suite.chainB.SenderAddress)
+	suite.Require().Equal(amount.String(), recvBalance.String())
+
+	// Approve erc20 to transfer
+	suite.Approve(suite.chainB, chainBERC20Address, amount)
+
+	suite.SendTransferERC20(
+		suite.chainB,
+		types.ERC20TransferData{
+			TokenAddress: chainBERC20Address,
+			Receiver:     suite.chainA.SenderAddress.String(),
+			Amount:       amount,
+			DestChain:    suite.chainA.ChainID,
+			RelayChain:   "",
+		},
+		big.NewInt(0),
+	)
+
+	recvBalance = suite.BalanceOf(suite.chainB, chainBERC20Address, suite.chainB.SenderAddress)
+	suite.Require().Equal("0", recvBalance.String())
+
+	// relay packet
+	packetData := types.NewFungibleTokenPacketData(
+		path.EndpointB.ChainName,
+		path.EndpointA.ChainName,
+		strings.ToLower(suite.chainB.SenderAddress.String()),
+		strings.ToLower(suite.chainA.SenderAddress.String()),
+		amount.Bytes(),
+		strings.ToLower(chainBERC20Address.String()),
+		strings.ToLower(wtelecontract.WTELEContractAddress.String()),
+	)
+
+	packet := packettypes.NewPacket(
+		1,
+		path.EndpointB.ChainName,
+		path.EndpointA.ChainName,
+		"",
+		[]string{types.PortID},
+		[][]byte{packetData.GetBytes()},
+	)
+
+	ack := packettypes.NewResultAcknowledgement([][]byte{{byte(1)}})
+	err = path.RelayPacket(packet, ack.GetBytes())
+	suite.Require().NoError(err)
+
+	// check chainA token out
+	outAmount = suite.OutTokens(
+		suite.chainA,
+		wtelecontract.WTELEContractAddress,
+		suite.chainB.ChainID,
+	)
+	suite.Require().Equal("0", outAmount.String())
+
+	// check chainA WTele balance
+	balance := suite.BalanceOf(suite.chainA, wtelecontract.WTELEContractAddress, suite.chainA.SenderAddress)
+	suite.Require().Equal(total.String(), balance.String())
 }
 
 // ================================================================================================================
@@ -491,6 +665,14 @@ func (suite *TransferTestSuite) OutTokens(fromChain *xibctesting.TestChain, toke
 	suite.Require().NoError(err)
 
 	return amount.Value
+}
+
+func (suite *TransferTestSuite) DepositWTeleToken(fromChain *xibctesting.TestChain, amount *big.Int) {
+	ctorArgs, err := wtelecontract.WTELEContract.ABI.Pack("deposit")
+	suite.Require().NoError(err)
+
+	_ = suite.SendTx(fromChain, wtelecontract.WTELEContractAddress, amount, ctorArgs)
+	suite.coordinator.CommitBlock(suite.chainA, suite.chainB)
 }
 
 // ================================================================================================================
