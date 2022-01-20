@@ -14,7 +14,7 @@ import (
 
 	tmconfig "github.com/tendermint/tendermint/config"
 	tmrand "github.com/tendermint/tendermint/libs/rand"
-	"github.com/tendermint/tendermint/types"
+	tmtypes "github.com/tendermint/tendermint/types"
 	tmtime "github.com/tendermint/tendermint/types/time"
 
 	"github.com/cosmos/cosmos-sdk/client"
@@ -43,7 +43,7 @@ import (
 	evmtypes "github.com/tharsis/ethermint/x/evm/types"
 
 	"github.com/teleport-network/teleport/testutil/network"
-	teleporttypes "github.com/teleport-network/teleport/types"
+	"github.com/teleport-network/teleport/types"
 )
 
 var (
@@ -87,7 +87,7 @@ func addTestnetFlagsToCmd(cmd *cobra.Command) {
 	cmd.Flags().Int(flagNumValidators, 4, "Number of validators to initialize the testnet with")
 	cmd.Flags().StringP(flagOutputDir, "o", "./.testnets", "Directory to store initialization data for the testnet")
 	cmd.Flags().String(flags.FlagChainID, "", "genesis file chain-id, if left blank will be randomly created")
-	cmd.Flags().String(sdkserver.FlagMinGasPrices, fmt.Sprintf("0.000006%s", teleporttypes.AttoTele), "Minimum gas prices to accept for transactions; All fees in a tx must meet this minimum (e.g. 0.01tele,0.001stake)")
+	cmd.Flags().String(sdkserver.FlagMinGasPrices, fmt.Sprintf("0.000006%s", types.AttoTele), "Minimum gas prices to accept for transactions; All fees in a tx must meet this minimum (e.g. 0.01tele,0.001stake)")
 	cmd.Flags().String(flags.FlagKeyAlgorithm, string(hd.EthSecp256k1Type), "Key signing algorithm to generate keys for")
 }
 
@@ -288,9 +288,9 @@ func initTestnetFiles(
 			return err
 		}
 
-		accStakingTokens := sdk.TokensFromConsensusPower(5000, teleporttypes.PowerReduction)
+		accStakingTokens := sdk.TokensFromConsensusPower(5000, types.PowerReduction)
 		coins := sdk.Coins{
-			sdk.NewCoin(teleporttypes.AttoTele, accStakingTokens),
+			sdk.NewCoin(types.AttoTele, accStakingTokens),
 		}
 
 		genBalances = append(genBalances, banktypes.Balance{Address: addr.String(), Coins: coins.Sort()})
@@ -299,11 +299,11 @@ func initTestnetFiles(
 			CodeHash:    common.BytesToHash(evmtypes.EmptyCodeHash).Hex(),
 		})
 
-		valTokens := sdk.TokensFromConsensusPower(100, teleporttypes.PowerReduction)
+		valTokens := sdk.TokensFromConsensusPower(100, types.PowerReduction)
 		createValMsg, err := stakingtypes.NewMsgCreateValidator(
 			sdk.ValAddress(addr),
 			valPubKeys[i],
-			sdk.NewCoin(teleporttypes.AttoTele, valTokens),
+			sdk.NewCoin(types.AttoTele, valTokens),
 			stakingtypes.NewDescription(nodeDirName, "", "", "", ""),
 			stakingtypes.NewCommissionRates(sdk.OneDec(), sdk.OneDec(), sdk.OneDec()),
 			sdk.OneInt(),
@@ -339,7 +339,7 @@ func initTestnetFiles(
 			return err
 		}
 
-		customAppTemplate, customAppConfig := config.AppConfig(teleporttypes.AttoTele)
+		customAppTemplate, customAppConfig := config.AppConfig(types.AttoTele)
 		srvconfig.SetConfigTemplate(customAppTemplate)
 		if err := sdkserver.InterceptConfigsPreRunHandler(cmd, customAppTemplate, customAppConfig); err != nil {
 			return err
@@ -348,7 +348,7 @@ func initTestnetFiles(
 		srvconfig.WriteConfigFile(filepath.Join(nodeDir, "config/app.toml"), appConfig)
 	}
 
-	if err := initGenFiles(clientCtx, mbm, args.chainID, teleporttypes.AttoTele, genAccounts, genBalances, genFiles, numValidators); err != nil {
+	if err := initGenFiles(clientCtx, mbm, args.chainID, types.AttoTele, genAccounts, genBalances, genFiles, numValidators); err != nil {
 		return err
 	}
 
@@ -430,7 +430,7 @@ func initGenFiles(
 		return err
 	}
 
-	genDoc := types.GenesisDoc{
+	genDoc := tmtypes.GenesisDoc{
 		ChainID:    chainID,
 		AppState:   appGenStateJSON,
 		Validators: nil,
@@ -465,7 +465,7 @@ func collectGenFiles(
 		nodeID, valPubKey := nodeIDs[i], valPubKeys[i]
 		initCfg := genutiltypes.NewInitConfig(chainID, gentxsDir, nodeID, valPubKey)
 
-		genDoc, err := types.GenesisDocFromFile(nodeConfig.GenesisFile())
+		genDoc, err := tmtypes.GenesisDocFromFile(nodeConfig.GenesisFile())
 		if err != nil {
 			return err
 		}

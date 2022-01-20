@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"math/big"
 
+	"github.com/ethereum/go-ethereum/common"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
-
-	"github.com/ethereum/go-ethereum/common"
 
 	"github.com/teleport-network/teleport/x/aggregate/types"
 )
@@ -70,8 +70,8 @@ func (suite *KeeperTestSuite) TestConvertCoinNativeCoin() {
 				sender,
 			)
 
-			suite.Require().NoError(suite.app.BankKeeper.MintCoins(suite.ctx, types.ModuleName, coins))
-			suite.Require().NoError(suite.app.BankKeeper.SendCoinsFromModuleToAccount(suite.ctx, types.ModuleName, sender, coins))
+			suite.app.BankKeeper.MintCoins(suite.ctx, types.ModuleName, coins)
+			suite.app.BankKeeper.SendCoinsFromModuleToAccount(suite.ctx, types.ModuleName, sender, coins)
 
 			res, err := suite.app.AggregateKeeper.ConvertCoin(ctx, msg)
 			expRes := &types.MsgConvertCoinResponse{}
@@ -106,7 +106,7 @@ func (suite *KeeperTestSuite) TestConvertCoinNativeCoin() {
 	suite.mintFeeCollector = false
 }
 
-func (suite *KeeperTestSuite) TestConvertECR20NativeCoin() {
+func (suite *KeeperTestSuite) TestConvertERC20NativeCoin() {
 	testCases := []struct {
 		name      string
 		mint      int64
@@ -129,8 +129,8 @@ func (suite *KeeperTestSuite) TestConvertECR20NativeCoin() {
 			// Precondition: Convert Coin to ERC20
 			coins := sdk.NewCoins(sdk.NewCoin(cosmosTokenBase, sdk.NewInt(tc.mint)))
 			sender := sdk.AccAddress(suite.address.Bytes())
-			suite.Require().NoError(suite.app.BankKeeper.MintCoins(suite.ctx, types.ModuleName, coins))
-			suite.Require().NoError(suite.app.BankKeeper.SendCoinsFromModuleToAccount(suite.ctx, types.ModuleName, sender, coins))
+			suite.app.BankKeeper.MintCoins(suite.ctx, types.ModuleName, coins)
+			suite.app.BankKeeper.SendCoinsFromModuleToAccount(suite.ctx, types.ModuleName, sender, coins)
 			msg := types.NewMsgConvertCoin(
 				sdk.NewCoin(cosmosTokenBase, sdk.NewInt(tc.burn)),
 				suite.address,
@@ -174,21 +174,45 @@ func (suite *KeeperTestSuite) TestConvertECR20NativeCoin() {
 	suite.mintFeeCollector = false
 }
 
-func (suite *KeeperTestSuite) TestConvertECR20NativeERC20() {
+func (suite *KeeperTestSuite) TestConvertERC20NativeERC20() {
 	var contractAddr common.Address
 
 	testCases := []struct {
-		name               string
-		mint               int64
-		burn               int64
-		malleate           func(common.Address)
-		isMaliciousDelayed bool
-		selfdestructed     bool
-		expPass            bool
+		name           string
+		mint           int64
+		transfer       int64
+		malleate       func(common.Address)
+		contractType   int
+		expPass        bool
+		selfdestructed bool
 	}{
-		{"ok - sufficient funds", 100, 10, func(common.Address) {}, false, false, true},
-		{"ok - equal funds", 10, 10, func(common.Address) {}, false, false, true},
-		{"ok - equal funds", 10, 10, func(common.Address) {}, false, false, true},
+		{
+			"ok - sufficient funds",
+			100,
+			10,
+			func(common.Address) {},
+			contractMinterBurner,
+			true,
+			false,
+		},
+		{
+			"ok - equal funds",
+			10,
+			10,
+			func(common.Address) {},
+			contractMinterBurner,
+			true,
+			false,
+		},
+		{
+			"ok - equal funds",
+			10,
+			10,
+			func(common.Address) {},
+			contractMinterBurner,
+			true,
+			false,
+		},
 		{
 			"ok - suicided contract",
 			10,
@@ -199,11 +223,19 @@ func (suite *KeeperTestSuite) TestConvertECR20NativeERC20() {
 				suite.Require().True(ok)
 				suite.Require().NoError(stateDb.Commit())
 			},
-			false,
+			contractMinterBurner,
 			true,
 			true,
 		},
-		{"fail - insufficient funds - callEVM", 0, 10, func(common.Address) {}, false, false, false},
+		{
+			"fail - insufficient funds - callEVM",
+			0,
+			10,
+			func(common.Address) {},
+			contractMinterBurner,
+			false,
+			false,
+		},
 		{
 			"fail - minting disabled",
 			100,
@@ -213,7 +245,16 @@ func (suite *KeeperTestSuite) TestConvertECR20NativeERC20() {
 				params.EnableAggregate = false
 				suite.app.AggregateKeeper.SetParams(suite.ctx, params)
 			},
+			contractMinterBurner,
 			false,
+			false,
+		},
+		{
+			"fail - direct balance manipulation contract",
+			100,
+			10,
+			func(common.Address) {},
+			contractDirectBalanceManipulation,
 			false,
 			false,
 		},
@@ -221,10 +262,8 @@ func (suite *KeeperTestSuite) TestConvertECR20NativeERC20() {
 			"fail - delayed malicious contract",
 			10,
 			10,
-			func(common.Address) {
-				contractAddr = suite.setupRegisterERC20PairMaliciousDelayed()
-			},
-			true,
+			func(common.Address) {},
+			contractMaliciousDelayed,
 			false,
 			false,
 		},
@@ -233,26 +272,28 @@ func (suite *KeeperTestSuite) TestConvertECR20NativeERC20() {
 		suite.Run(fmt.Sprintf("Case %s", tc.name), func() {
 			suite.mintFeeCollector = true
 			suite.SetupTest()
-			contractAddr = suite.setupRegisterERC20Pair()
-			suite.Require().NotNil(contractAddr)
+
+			contractAddr = suite.setupRegisterERC20Pair(tc.contractType)
 
 			tc.malleate(contractAddr)
+			suite.Require().NotNil(contractAddr)
 			suite.Commit()
 
 			coinName := types.CreateDenom(contractAddr.String())
 			sender := sdk.AccAddress(suite.address.Bytes())
 			msg := types.NewMsgConvertERC20(
-				sdk.NewInt(tc.burn),
+				sdk.NewInt(tc.transfer),
 				sender,
 				contractAddr,
 				suite.address,
 			)
 
-			suite.MintERC20Token(contractAddr, suite.address, suite.address, big.NewInt(tc.mint), tc.isMaliciousDelayed)
+			suite.MintERC20Token(contractAddr, suite.address, suite.address, big.NewInt(tc.mint))
 			suite.Commit()
 			ctx := sdk.WrapSDKContext(suite.ctx)
 
 			res, err := suite.app.AggregateKeeper.ConvertERC20(ctx, msg)
+
 			expRes := &types.MsgConvertERC20Response{}
 			suite.Commit()
 			balance := suite.BalanceOf(contractAddr, suite.address)
@@ -273,8 +314,8 @@ func (suite *KeeperTestSuite) TestConvertECR20NativeERC20() {
 					suite.Require().False(found)
 				} else {
 					suite.Require().Equal(expRes, res)
-					suite.Require().Equal(cosmosBalance.Amount, sdk.NewInt(tc.burn))
-					suite.Require().Equal(balance.(*big.Int).Int64(), big.NewInt(tc.mint-tc.burn).Int64())
+					suite.Require().Equal(cosmosBalance.Amount, sdk.NewInt(tc.transfer))
+					suite.Require().Equal(balance.(*big.Int).Int64(), big.NewInt(tc.mint-tc.transfer).Int64())
 				}
 			} else {
 				suite.Require().Error(err, tc.name)
@@ -288,26 +329,51 @@ func (suite *KeeperTestSuite) TestConvertCoinNativeERC20() {
 	var contractAddr common.Address
 
 	testCases := []struct {
-		name               string
-		mint               int64
-		burn               int64
-		reconvert          int64
-		malleate           func(common.Address)
-		isMaliciousDelayed bool
-		expPass            bool
+		name         string
+		mint         int64
+		convert      int64
+		malleate     func(common.Address)
+		contractType int
+		expPass      bool
 	}{
-		{"ok - sufficient funds", 100, 10, 5, func(common.Address) {}, false, true},
-		{"ok - equal funds", 10, 10, 10, func(common.Address) {}, false, true},
-		{"fail - insufficient funds", 10, 1, 5, func(common.Address) {}, false, false},
 		{
-			"fail - delayed malicious contract",
+			"ok - sufficient funds",
 			100,
 			10,
-			5,
-			func(common.Address) {
-				contractAddr = suite.setupRegisterERC20PairMaliciousDelayed()
-			},
+			func(common.Address) {},
+			contractMinterBurner,
 			true,
+		},
+		{
+			"ok - equal funds",
+			100,
+			100,
+			func(common.Address) {},
+			contractMinterBurner,
+			true,
+		},
+		{
+			"fail - insufficient funds",
+			100,
+			200,
+			func(common.Address) {},
+			contractMinterBurner,
+			false,
+		},
+		{
+			"fail - direct balance manipulation contract",
+			100,
+			10,
+			func(common.Address) {},
+			contractDirectBalanceManipulation,
+			false,
+		},
+		{
+			"fail - malicious delayed contract",
+			100,
+			10,
+			func(common.Address) {},
+			contractMaliciousDelayed,
 			false,
 		},
 	}
@@ -315,58 +381,49 @@ func (suite *KeeperTestSuite) TestConvertCoinNativeERC20() {
 		suite.Run(fmt.Sprintf("Case %s", tc.name), func() {
 			suite.mintFeeCollector = true
 			suite.SetupTest()
-			contractAddr = suite.setupRegisterERC20Pair()
+			contractAddr = suite.setupRegisterERC20Pair(tc.contractType)
 			suite.Require().NotNil(contractAddr)
+
+			id := suite.app.AggregateKeeper.GetTokenPairID(suite.ctx, contractAddr.String())
+			pair, _ := suite.app.AggregateKeeper.GetTokenPair(suite.ctx, id)
+			coins := sdk.NewCoins(sdk.NewCoin(pair.Denom, sdk.NewInt(tc.mint)))
+			coinName := types.CreateDenom(contractAddr.String())
+			sender := sdk.AccAddress(suite.address.Bytes())
+
+			// Precondition: Mint Coins to convert on sender account
+			suite.app.BankKeeper.MintCoins(suite.ctx, types.ModuleName, coins)
+			suite.app.BankKeeper.SendCoinsFromModuleToAccount(suite.ctx, types.ModuleName, sender, coins)
+			cosmosBalance := suite.app.BankKeeper.GetBalance(suite.ctx, sender, coinName)
+			suite.Require().Equal(sdk.NewInt(tc.mint), cosmosBalance.Amount)
+
+			// Precondition: Mint escrow tokens on module account
+			suite.GrantERC20Token(contractAddr, suite.address, types.ModuleAddress, "MINTER_ROLE")
+			suite.MintERC20Token(contractAddr, types.ModuleAddress, types.ModuleAddress, big.NewInt(tc.mint))
+			tokenBalance := suite.BalanceOf(contractAddr, types.ModuleAddress)
+			suite.Require().Equal(big.NewInt(tc.mint), tokenBalance)
 
 			tc.malleate(contractAddr)
 			suite.Commit()
 
-			// Precondition: Convert ERC20 to Coins
-			coinName := types.CreateDenom(contractAddr.String())
-			sender := sdk.AccAddress(suite.address.Bytes())
-			suite.MintERC20Token(contractAddr, suite.address, suite.address, big.NewInt(tc.mint), tc.isMaliciousDelayed)
-			suite.Commit()
-
-			msgConvertERC20 := types.NewMsgConvertERC20(
-				sdk.NewInt(tc.burn),
-				sender,
-				contractAddr,
-				suite.address,
-			)
-
-			ctx := sdk.WrapSDKContext(suite.ctx)
-			_, err := suite.app.AggregateKeeper.ConvertERC20(ctx, msgConvertERC20)
-			suite.Commit()
-			balance := suite.BalanceOf(contractAddr, suite.address)
-			cosmosBalance := suite.app.BankKeeper.GetBalance(suite.ctx, sender, coinName)
-
-			if tc.isMaliciousDelayed {
-				suite.Require().Error(err)
-			} else {
-				suite.Require().NoError(err)
-				suite.Require().Equal(cosmosBalance.Amount, sdk.NewInt(tc.burn))
-				suite.Require().Equal(balance.(*big.Int).Int64(), big.NewInt(tc.mint-tc.burn).Int64())
-			}
-
 			// Convert Coins back to ERC20s
-			ctx = sdk.WrapSDKContext(suite.ctx)
+			receiver := suite.address
+			ctx := sdk.WrapSDKContext(suite.ctx)
 			msg := types.NewMsgConvertCoin(
-				sdk.NewCoin(coinName, sdk.NewInt(tc.reconvert)),
-				suite.address,
+				sdk.NewCoin(coinName, sdk.NewInt(tc.convert)),
+				receiver,
 				sender,
 			)
-
 			res, err := suite.app.AggregateKeeper.ConvertCoin(ctx, msg)
+
 			expRes := &types.MsgConvertCoinResponse{}
 			suite.Commit()
-			balance = suite.BalanceOf(contractAddr, suite.address)
+			tokenBalance = suite.BalanceOf(contractAddr, suite.address)
 			cosmosBalance = suite.app.BankKeeper.GetBalance(suite.ctx, sender, coinName)
 			if tc.expPass {
 				suite.Require().NoError(err, tc.name)
 				suite.Require().Equal(expRes, res)
-				suite.Require().Equal(cosmosBalance.Amount.Int64(), sdk.NewInt(tc.burn-tc.reconvert).Int64())
-				suite.Require().Equal(balance.(*big.Int).Int64(), big.NewInt(tc.mint-tc.burn+tc.reconvert).Int64())
-
+				suite.Require().Equal(sdk.NewInt(tc.mint-tc.convert), cosmosBalance.Amount)
+				suite.Require().Equal(big.NewInt(tc.convert), tokenBalance.(*big.Int))
 			} else {
 				suite.Require().Error(err, tc.name)
 			}

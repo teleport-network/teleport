@@ -13,7 +13,7 @@ import (
 // This is an evil token. Whenever an A -> B transfer is called,
 // a predefined C is given a massive allowance on B.
 var (
-	//go:embed ERC20MaliciousDelayed.json
+	//go:embed erc20_malicious_delayed.json
 	ERC20MaliciousDelayedJSON []byte // nolint: golint
 
 	// ERC20MaliciousDelayedContract is the compiled erc20 contract

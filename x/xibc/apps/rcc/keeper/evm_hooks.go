@@ -10,9 +10,19 @@ import (
 	rcc "github.com/teleport-network/teleport/syscontracts/xibc_rcc"
 )
 
-var _ evmtypes.EvmHooks = (*Keeper)(nil)
+// Hooks wrapper struct for erc20 keeper
+type Hooks struct {
+	k Keeper
+}
 
-func (k Keeper) PostTxProcessing(
+var _ evmtypes.EvmHooks = Hooks{}
+
+// Return the wrapper struct
+func (k Keeper) Hooks() Hooks {
+	return Hooks{k}
+}
+
+func (h Hooks) PostTxProcessing(
 	ctx sdk.Context,
 	from common.Address,
 	to *common.Address,
@@ -37,7 +47,7 @@ func (k Keeper) PostTxProcessing(
 
 		sendPacketEvent, err := rccContract.Unpack(event.Name, log.Data)
 		if err != nil {
-			k.Logger(ctx).Error("failed to unpack send packet event", "error", err.Error())
+			h.k.Logger(ctx).Error("failed to unpack send packet event", "error", err.Error())
 			return err
 		}
 
@@ -49,7 +59,7 @@ func (k Keeper) PostTxProcessing(
 		data := sendPacketEvent[5].([]byte)
 
 		// send cross chain contract call
-		if err := k.SendRemoteContractCall(
+		if err := h.k.SendRemoteContractCall(
 			ctx,
 			destChain,
 			relayChain,
@@ -57,7 +67,7 @@ func (k Keeper) PostTxProcessing(
 			contractAddress,
 			data,
 		); err != nil {
-			k.Logger(ctx).Debug(
+			h.k.Logger(ctx).Debug(
 				"failed to process EVM hook for XIBC RCC",
 				"tx-hash", receipt.TxHash.Hex(),
 				"log-idx", i,
