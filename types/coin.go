@@ -14,7 +14,12 @@ const (
 	// - Governance parameters: denomination used for spam prevention in proposal deposits
 	// - Crisis parameters: constant fee denomination used for spam prevention to check broken invariant
 	// - EVM parameters: denomination used for running EVM state transitions in Teleport.
-	AttoTele string = "atele"
+	AttoTele = "atele"
+
+	// DisplayDenom defines the denomination displayed to users in client applications.
+	DisplayDenom = "tele"
+	// BaseDenom defines to the default denomination used in Teleport (staking, EVN, governance, etc)
+	BaseDenom = AttoTele
 
 	// BaseDenomUnit defines the base denomination unit for Teles.
 	// 1 tele = 1x10^{BaseDenomUnit} atele

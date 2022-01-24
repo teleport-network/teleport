@@ -839,10 +839,10 @@ func NewTeleport(
 		evmkeeper.NewMultiEvmHooks(
 			stakingHook,
 			govHook,
-			app.AggregateKeeper,
-			app.XIBCTransferKeeper,
-			app.XIBCRCCKeeper,
-			app.XIBCMultiCallKeeper,
+			app.AggregateKeeper.Hooks(),
+			app.XIBCTransferKeeper.Hooks(),
+			app.XIBCRCCKeeper.Hooks(),
+			app.XIBCMultiCallKeeper.Hooks(),
 		),
 	)
 	return app

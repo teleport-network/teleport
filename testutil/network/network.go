@@ -56,7 +56,7 @@ import (
 	evmtypes "github.com/tharsis/ethermint/x/evm/types"
 
 	"github.com/teleport-network/teleport/app"
-	teleporttypes "github.com/teleport-network/teleport/types"
+	"github.com/teleport-network/teleport/types"
 )
 
 // package-wide network lock to only allow one test network at a time
@@ -129,11 +129,11 @@ func DefaultConfig() Config {
 		TimeoutCommit:     2 * time.Second,
 		ChainID:           fmt.Sprintf("teleport_%d-1", tmrand.Int63n(9999999999999)+1),
 		NumValidators:     4,
-		BondDenom:         teleporttypes.AttoTele,
-		MinGasPrices:      fmt.Sprintf("0.000006%s", teleporttypes.AttoTele),
-		AccountTokens:     sdk.TokensFromConsensusPower(1000, teleporttypes.PowerReduction),
-		StakingTokens:     sdk.TokensFromConsensusPower(500, teleporttypes.PowerReduction),
-		BondedTokens:      sdk.TokensFromConsensusPower(100, teleporttypes.PowerReduction),
+		BondDenom:         types.AttoTele,
+		MinGasPrices:      fmt.Sprintf("0.000006%s", types.AttoTele),
+		AccountTokens:     sdk.TokensFromConsensusPower(1000, types.PowerReduction),
+		StakingTokens:     sdk.TokensFromConsensusPower(500, types.PowerReduction),
+		BondedTokens:      sdk.TokensFromConsensusPower(100, types.PowerReduction),
 		PruningStrategy:   storetypes.PruningOptionNothing,
 		CleanupDir:        true,
 		SigningAlgo:       string(hd.EthSecp256k1Type),
@@ -475,7 +475,7 @@ func New(l Logger, baseDir string, cfg Config) (*Network, error) {
 			return nil, err
 		}
 
-		customAppTemplate, _ := config.AppConfig(teleporttypes.AttoTele)
+		customAppTemplate, _ := config.AppConfig(types.AttoTele)
 		srvconfig.SetConfigTemplate(customAppTemplate)
 		srvconfig.WriteConfigFile(filepath.Join(nodeDir, "config/app.toml"), appCfg)
 

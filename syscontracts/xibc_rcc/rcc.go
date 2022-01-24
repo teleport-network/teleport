@@ -1,4 +1,4 @@
-package transfer
+package rcc
 
 import (
 	_ "embed" // embed compiled smart contract
