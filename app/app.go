@@ -877,7 +877,7 @@ func (app *Teleport) InitChainer(ctx sdk.Context, req abci.RequestInitChain) abc
 	app.SetEVMCode(ctx, common.HexToAddress(syscontracts.RCCContractAddress), rcccontract.RCCContract.Bin)
 	app.SetEVMCode(ctx, common.HexToAddress(syscontracts.MultiCallContractAddress), multicallcontract.MultiCallContract.Bin)
 	app.SetEVMCode(ctx, common.HexToAddress(syscontracts.WTELEContractAddress), wtelecontract.WTELEContract.Bin)
-	app.SetEVMCode(ctx, common.HexToAddress(syscontracts.CUSTODIANContractAddress), agent.AGENTContract.Bin)
+	app.SetEVMCode(ctx, common.HexToAddress(syscontracts.AgentContractAddress), agent.AGENTContract.Bin)
 
 	return res
 }

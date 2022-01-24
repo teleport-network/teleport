@@ -22,7 +22,7 @@ var (
 )
 
 func init() {
-	AGENTContractAddress = common.HexToAddress(syscontracts.CUSTODIANContractAddress)
+	AGENTContractAddress = common.HexToAddress(syscontracts.AgentContractAddress)
 
 	if err := json.Unmarshal(AGENTJSON, &AGENTContract); err != nil {
 		panic(err)
