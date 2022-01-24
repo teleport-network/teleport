@@ -199,7 +199,7 @@ func (suite *MultiCallTestSuite) TestTransferBaseBackCall() {
 		Functions:  []uint8{0},
 		Data:       [][]byte{transferBaseBackDataBytes},
 	}
-	suite.SendMultiCall(suite.chainB, amount, data)
+	suite.SendMultiCall(suite.chainB, big.NewInt(0), data)
 
 	// commit block
 	suite.coordinator.CommitBlock(suite.chainA, suite.chainB)

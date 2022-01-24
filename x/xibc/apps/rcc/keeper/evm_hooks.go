@@ -50,7 +50,9 @@ func (h Hooks) PostTxProcessing(
 			h.k.Logger(ctx).Error("failed to unpack send packet event", "error", err.Error())
 			return err
 		}
-
+		if event.Name == "Ack" {
+			return nil
+		}
 		// srcChain := sendPacketEvent[0].(string)
 		destChain := sendPacketEvent[1].(string)
 		relayChain := sendPacketEvent[2].(string)
