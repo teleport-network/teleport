@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io/ioutil"
 	"os"
 	"path/filepath"
 
@@ -56,6 +57,7 @@ var (
 	flagRPCAddress     = "rpc.address"
 	flagAPIAddress     = "api.address"
 	flagPrintMnemonic  = "print-mnemonic"
+	mnemonicPath       = "/key_seed.json"
 )
 
 type initArgs struct {
@@ -81,6 +83,10 @@ type startArgs struct {
 	numValidators  int
 	enableLogging  bool
 	printMnemonic  bool
+}
+
+type KeySeed struct {
+	Secret string `json:"secret"`
 }
 
 func addTestnetFlagsToCmd(cmd *cobra.Command) {
@@ -270,10 +276,39 @@ func initTestnetFiles(
 			return err
 		}
 
-		addr, secret, err := sdkserver.GenerateSaveCoinKey(kb, nodeDirName, true, algo)
+		var secret string
+		var keyseed KeySeed
+		var addr sdk.AccAddress
+
+		//whether the pre-mnemonic existed
+		_, err = os.Stat(nodeDir + mnemonicPath)
 		if err != nil {
-			_ = os.RemoveAll(args.outputDir)
-			return err
+			addr, secret, err = sdkserver.GenerateSaveCoinKey(kb, nodeDirName, true, algo)
+			if err != nil {
+				_ = os.RemoveAll(args.outputDir)
+				return err
+			}
+		} else {
+			//remove the pre-keyring which may be still existed in the os
+			_ = kb.Delete(nodeDirName)
+
+			//restore the pre-mnemonic that had stored in key_seed.json
+			mnemonicBytes, err := ioutil.ReadFile(mnemonicPath)
+			if err != nil {
+				return nil
+			}
+
+			err = json.Unmarshal(mnemonicBytes, &keyseed)
+			if err != nil {
+				return nil
+			}
+
+			info, err := kb.NewAccount(nodeDirName, keyseed.Secret, keyring.DefaultBIP39Passphrase, sdk.GetConfig().GetFullBIP44Path(), algo)
+			if err != nil {
+				return nil
+			}
+			addr = sdk.AccAddress(info.GetPubKey().Address())
+			secret = keyseed.Secret
 		}
 
 		info := map[string]string{"secret": secret}
