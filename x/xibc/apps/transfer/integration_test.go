@@ -806,6 +806,7 @@ func (suite *TransferTestSuite) TestRemoteContractCallAgentBack() {
 		RelayChain:   "",
 	}
 	agentPayload, err := agentcontract.AGENTContract.ABI.Pack("send", agentData)
+	suite.Require().NoError(err)
 	TupleRCCData, err := abi.NewType(
 		"tuple", "",
 		[]abi.ArgumentMarshaling{
@@ -820,6 +821,7 @@ func (suite *TransferTestSuite) TestRemoteContractCallAgentBack() {
 			Data:            agentPayload,
 		},
 	)
+	suite.Require().NoError(err)
 	// send multi call
 	TupleTransferErc20Data, err := abi.NewType(
 		"tuple", "",
@@ -837,6 +839,8 @@ func (suite *TransferTestSuite) TestRemoteContractCallAgentBack() {
 			Amount:       deposit,
 		},
 	)
+	suite.Require().NoError(err)
+
 	// transfer Erc20 chainC to chainB
 	MultiCallData := multicalltypes.MultiCallData{
 		DestChain:  suite.chainB.ChainID,
@@ -852,7 +856,6 @@ func (suite *TransferTestSuite) TestRemoteContractCallAgentBack() {
 
 	balances := suite.BalanceOf(suite.chainC, chainCERC20, suite.chainC.SenderAddress)
 	suite.Require().Equal("0", balances.String())
-	suite.Require().NoError(err)
 	// relay packet
 	ERC20PacketData := types.NewFungibleTokenPacketData(
 		pathCtoB.EndpointA.ChainName,
