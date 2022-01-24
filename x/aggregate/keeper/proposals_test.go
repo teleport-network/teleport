@@ -3,15 +3,21 @@ package keeper_test
 import (
 	"fmt"
 
+	"github.com/ethereum/go-ethereum/common"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
 
-	"github.com/ethereum/go-ethereum/common"
-
 	"github.com/tharsis/ethermint/tests"
 
 	"github.com/teleport-network/teleport/x/aggregate/types"
+)
+
+const (
+	contractMinterBurner = iota + 1
+	contractDirectBalanceManipulation
+	contractMaliciousDelayed
 )
 
 const (
@@ -25,18 +31,21 @@ const (
 	zeroExponent       = uint32(0)
 )
 
-func (suite *KeeperTestSuite) setupRegisterERC20Pair() common.Address {
+func (suite *KeeperTestSuite) setupRegisterERC20Pair(contractType int) common.Address {
 	suite.SetupTest()
-	contractAddr := suite.DeployContract(erc20Name, erc20Symbol, erc20Decimals)
+
+	var contractAddr common.Address
+	// Deploy contract
+	switch contractType {
+	case contractDirectBalanceManipulation:
+		contractAddr = suite.DeployContractDirectBalanceManipulation(erc20Name, erc20Symbol)
+	case contractMaliciousDelayed:
+		contractAddr = suite.DeployContractMaliciousDelayed(erc20Name, erc20Symbol)
+	default:
+		contractAddr = suite.DeployContract(erc20Name, erc20Symbol, erc20Decimals)
+	}
 	suite.Commit()
-	_, err := suite.app.AggregateKeeper.RegisterERC20(suite.ctx, contractAddr)
-	suite.Require().NoError(err)
-	return contractAddr
-}
-func (suite *KeeperTestSuite) setupRegisterERC20PairMaliciousDelayed() common.Address {
-	suite.SetupTest()
-	contractAddr := suite.DeployContractMaliciousDelayed(erc20Name, erc20Symbol)
-	suite.Commit()
+
 	_, err := suite.app.AggregateKeeper.RegisterERC20(suite.ctx, contractAddr)
 	suite.Require().NoError(err)
 	return contractAddr
@@ -305,7 +314,7 @@ func (suite KeeperTestSuite) TestToggleRelay() {
 		{
 			"disable relay",
 			func() {
-				contractAddr = suite.setupRegisterERC20Pair()
+				contractAddr = suite.setupRegisterERC20Pair(contractMinterBurner)
 				id = suite.app.AggregateKeeper.GetTokenPairID(suite.ctx, contractAddr.String())
 				pair, _ = suite.app.AggregateKeeper.GetTokenPair(suite.ctx, id)
 			},
@@ -315,7 +324,7 @@ func (suite KeeperTestSuite) TestToggleRelay() {
 		{
 			"disable and enable relay",
 			func() {
-				contractAddr = suite.setupRegisterERC20Pair()
+				contractAddr = suite.setupRegisterERC20Pair(contractMinterBurner)
 				id = suite.app.AggregateKeeper.GetTokenPairID(suite.ctx, contractAddr.String())
 				pair, _ = suite.app.AggregateKeeper.GetTokenPair(suite.ctx, id)
 				pair, _ = suite.app.AggregateKeeper.ToggleRelay(suite.ctx, contractAddr.String())
@@ -397,7 +406,7 @@ func (suite KeeperTestSuite) TestUpdateTokenPairERC20() {
 		{
 			"newErc20 not found",
 			func() {
-				contractAddr = suite.setupRegisterERC20Pair()
+				contractAddr = suite.setupRegisterERC20Pair(contractMinterBurner)
 				newContractAddr = common.Address{}
 			},
 			false,
@@ -406,7 +415,7 @@ func (suite KeeperTestSuite) TestUpdateTokenPairERC20() {
 			"empty denom units",
 			func() {
 				var found bool
-				contractAddr = suite.setupRegisterERC20Pair()
+				contractAddr = suite.setupRegisterERC20Pair(contractMinterBurner)
 				id := suite.app.AggregateKeeper.GetTokenPairID(suite.ctx, contractAddr.String())
 				pair, found = suite.app.AggregateKeeper.GetTokenPair(suite.ctx, id)
 				suite.Require().True(found)
@@ -422,7 +431,7 @@ func (suite KeeperTestSuite) TestUpdateTokenPairERC20() {
 			"metadata ERC20 details mismatch",
 			func() {
 				var found bool
-				contractAddr = suite.setupRegisterERC20Pair()
+				contractAddr = suite.setupRegisterERC20Pair(contractMinterBurner)
 				id := suite.app.AggregateKeeper.GetTokenPairID(suite.ctx, contractAddr.String())
 				pair, found = suite.app.AggregateKeeper.GetTokenPair(suite.ctx, id)
 				suite.Require().True(found)
@@ -439,7 +448,7 @@ func (suite KeeperTestSuite) TestUpdateTokenPairERC20() {
 			"no denom unit with ERC20 name",
 			func() {
 				var found bool
-				contractAddr = suite.setupRegisterERC20Pair()
+				contractAddr = suite.setupRegisterERC20Pair(contractMinterBurner)
 				id := suite.app.AggregateKeeper.GetTokenPairID(suite.ctx, contractAddr.String())
 				pair, found = suite.app.AggregateKeeper.GetTokenPair(suite.ctx, id)
 				suite.Require().True(found)
@@ -456,7 +465,7 @@ func (suite KeeperTestSuite) TestUpdateTokenPairERC20() {
 			"denom unit and ERC20 decimals mismatch",
 			func() {
 				var found bool
-				contractAddr = suite.setupRegisterERC20Pair()
+				contractAddr = suite.setupRegisterERC20Pair(contractMinterBurner)
 				id := suite.app.AggregateKeeper.GetTokenPairID(suite.ctx, contractAddr.String())
 				pair, found = suite.app.AggregateKeeper.GetTokenPair(suite.ctx, id)
 				suite.Require().True(found)
@@ -473,7 +482,7 @@ func (suite KeeperTestSuite) TestUpdateTokenPairERC20() {
 			"ok",
 			func() {
 				var found bool
-				contractAddr = suite.setupRegisterERC20Pair()
+				contractAddr = suite.setupRegisterERC20Pair(contractMinterBurner)
 				id := suite.app.AggregateKeeper.GetTokenPairID(suite.ctx, contractAddr.String())
 				pair, found = suite.app.AggregateKeeper.GetTokenPair(suite.ctx, id)
 				suite.Require().True(found)

@@ -8,7 +8,7 @@ import (
 )
 
 var (
-	//go:embed ERC20Burnable.json
+	//go:embed erc20_burnable.json
 	erc20BurnableJSON []byte
 
 	// ERC20BurnableContract is the compiled ERC20Burnable contract
