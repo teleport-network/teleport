@@ -121,7 +121,7 @@ func (suite *RCCTestSuite) SendRemoteContractCall(fromChain *xibctesting.TestCha
 	rccData, err := rcccontract.RCCContract.ABI.Pack("sendRemoteContractCall", data)
 	suite.Require().NoError(err)
 
-	_ = suite.SendTx(fromChain, rcccontract.RCCContractAddress, rccData)
+	_ = suite.SendTx(fromChain, rcccontract.RCCContractAddress, big.NewInt(0), rccData)
 }
 
 func (suite *RCCTestSuite) DeployERC20(fromChain *xibctesting.TestChain) common.Address {
@@ -192,7 +192,7 @@ func (suite *RCCTestSuite) RCCAcks(fromChain *xibctesting.TestChain, hash [32]by
 // EVM transaction (return events)
 // ================================================================================================================
 
-func (suite *RCCTestSuite) SendTx(fromChain *xibctesting.TestChain, contractAddr common.Address, transferData []byte) *evm.MsgEthereumTx {
+func (suite *RCCTestSuite) SendTx(fromChain *xibctesting.TestChain, contractAddr common.Address, amount *big.Int, transferData []byte) *evm.MsgEthereumTx {
 	ctx := sdk.WrapSDKContext(fromChain.GetContext())
 	chainID := fromChain.App.EvmKeeper.ChainID()
 	signer := tests.NewSigner(fromChain.SenderPrivKey)
@@ -202,7 +202,7 @@ func (suite *RCCTestSuite) SendTx(fromChain *xibctesting.TestChain, contractAddr
 		chainID,
 		nonce,
 		&contractAddr,
-		big.NewInt(0),
+		amount,
 		25000000,
 		big.NewInt(0),
 		big.NewInt(0),

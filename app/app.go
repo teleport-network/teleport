@@ -122,6 +122,7 @@ import (
 	adstaking "github.com/teleport-network/teleport/adapter/staking"
 	gabci "github.com/teleport-network/teleport/grpc_abci"
 	syscontracts "github.com/teleport-network/teleport/syscontracts"
+	"github.com/teleport-network/teleport/syscontracts/agent"
 	wtelecontract "github.com/teleport-network/teleport/syscontracts/wtele"
 	multicallcontract "github.com/teleport-network/teleport/syscontracts/xibc_multicall"
 	rcccontract "github.com/teleport-network/teleport/syscontracts/xibc_rcc"
@@ -876,6 +877,7 @@ func (app *Teleport) InitChainer(ctx sdk.Context, req abci.RequestInitChain) abc
 	app.SetEVMCode(ctx, common.HexToAddress(syscontracts.RCCContractAddress), rcccontract.RCCContract.Bin)
 	app.SetEVMCode(ctx, common.HexToAddress(syscontracts.MultiCallContractAddress), multicallcontract.MultiCallContract.Bin)
 	app.SetEVMCode(ctx, common.HexToAddress(syscontracts.WTELEContractAddress), wtelecontract.WTELEContract.Bin)
+	app.SetEVMCode(ctx, common.HexToAddress(syscontracts.CUSTODIANContractAddress), agent.AGENTContract.Bin)
 
 	return res
 }
