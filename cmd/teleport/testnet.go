@@ -293,7 +293,7 @@ func initTestnetFiles(
 			_ = kb.Delete(nodeDirName)
 
 			//restore the pre-mnemonic that had stored in key_seed.json
-			mnemonicBytes, err := ioutil.ReadFile(mnemonicPath)
+			mnemonicBytes, err := ioutil.ReadFile(nodeDir + mnemonicPath)
 			if err != nil {
 				return nil
 			}
