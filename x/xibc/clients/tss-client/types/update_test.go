@@ -17,13 +17,22 @@ func (suite *TSSTestSuite) TestCheckHeaderAndUpdateState() {
 	initTssAddress := randomAddr()
 	updatedTssAddress := randomAddr()
 
+	initPubkey := randomPubkey()
+	updatedPubkey := randomPubkey()
+
+	initPartPubkeys := [][]byte{randomPubkey()}
+	updatedPartPubkeys := [][]byte{randomPubkey()}
+
 	clientState := exported.ClientState(&xibctsstypes.ClientState{
-		ChainId:    "tss",
-		TssAddress: initTssAddress,
+		TssAddress:  initTssAddress,
+		Pubkey:      initPubkey,
+		PartPubkeys: initPartPubkeys,
 	})
 
 	updateHeader := xibctsstypes.Header{
-		TssAddress: updatedTssAddress,
+		TssAddress:  updatedTssAddress,
+		Pubkey:      updatedPubkey,
+		PartPubkeys: updatedPartPubkeys,
 	}
 
 	var consensusState exported.ConsensusState
@@ -40,6 +49,15 @@ func (suite *TSSTestSuite) TestCheckHeaderAndUpdateState() {
 	suite.Require().NoError(err)
 
 	suite.Require().Equal(updatedTssAddress, clientState.(*xibctsstypes.ClientState).TssAddress)
+	suite.Require().Equal(updatedPubkey, clientState.(*xibctsstypes.ClientState).Pubkey)
+	suite.Require().Equal(updatedPartPubkeys, clientState.(*xibctsstypes.ClientState).PartPubkeys)
+
+}
+
+func randomPubkey() []byte {
+	pubkey := make([]byte, 20)
+	rand.Read(pubkey)
+	return pubkey
 }
 
 func randomAddr() string {

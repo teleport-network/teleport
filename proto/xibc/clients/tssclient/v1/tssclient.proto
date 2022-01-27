@@ -10,8 +10,13 @@ import "gogoproto/gogo.proto";
 message ClientState {
   option (gogoproto.goproto_getters) = false;
 
-  string chain_id = 1;
-  string tss_address = 2;
+  string tss_address = 1;
+  bytes pubkey = 2;
+  repeated bytes part_pubkeys = 3;
 }
 
-message Header { string tss_address = 1; }
+message Header {
+  string tss_address = 1;
+  bytes pubkey = 2;
+  repeated bytes part_pubkeys = 3;
+}
