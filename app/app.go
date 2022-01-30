@@ -146,6 +146,7 @@ import (
 	xibcclientcli "github.com/teleport-network/teleport/x/xibc/core/client/client"
 	xibcclienttypes "github.com/teleport-network/teleport/x/xibc/core/client/types"
 	xibchost "github.com/teleport-network/teleport/x/xibc/core/host"
+	xibcpackettypes "github.com/teleport-network/teleport/x/xibc/core/packet/types"
 	xibcroutingtypes "github.com/teleport-network/teleport/x/xibc/core/routing/types"
 	xibckeeper "github.com/teleport-network/teleport/x/xibc/keeper"
 	xibcmodule "github.com/teleport-network/teleport/x/xibc/module"
@@ -227,6 +228,7 @@ var (
 		govtypes.ModuleName:            {authtypes.Burner},
 		ibctransfertypes.ModuleName:    {authtypes.Minter, authtypes.Burner},
 		evmtypes.ModuleName:            {authtypes.Minter, authtypes.Burner}, // used for secure addition and subtraction of balance using module account
+		xibcpackettypes.SubModuleName:  nil,
 		xibctransfertypes.ModuleName:   nil,
 		xibcrcctypes.ModuleName:        nil,
 		aggregatetypes.ModuleName:      {authtypes.Minter, authtypes.Burner},

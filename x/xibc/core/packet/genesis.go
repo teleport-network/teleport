@@ -9,6 +9,11 @@ import (
 
 // InitGenesis initializes the xibc packet submodule's state from a provided genesis state.
 func InitGenesis(ctx sdk.Context, k keeper.Keeper, gs types.GenesisState) {
+	// ensure xibc transfer module account is set on genesis
+	if acc := k.GetModuleAccount(ctx); acc == nil {
+		panic("the xibc packet module account has not been set")
+	}
+
 	for _, ack := range gs.Acknowledgements {
 		k.SetPacketAcknowledgement(ctx, ack.SourceChain, ack.DestinationChain, ack.Sequence, ack.Data)
 	}
