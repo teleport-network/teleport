@@ -122,9 +122,10 @@ import (
 	adstaking "github.com/teleport-network/teleport/adapter/staking"
 	gabci "github.com/teleport-network/teleport/grpc_abci"
 	syscontracts "github.com/teleport-network/teleport/syscontracts"
-	"github.com/teleport-network/teleport/syscontracts/agent"
+	agentcontract "github.com/teleport-network/teleport/syscontracts/agent"
 	wtelecontract "github.com/teleport-network/teleport/syscontracts/wtele"
 	multicallcontract "github.com/teleport-network/teleport/syscontracts/xibc_multicall"
+	packetcontract "github.com/teleport-network/teleport/syscontracts/xibc_packet"
 	rcccontract "github.com/teleport-network/teleport/syscontracts/xibc_rcc"
 	transfercontract "github.com/teleport-network/teleport/syscontracts/xibc_transfer"
 	"github.com/teleport-network/teleport/x/aggregate"
@@ -882,7 +883,8 @@ func (app *Teleport) InitChainer(ctx sdk.Context, req abci.RequestInitChain) abc
 	app.SetEVMCode(ctx, common.HexToAddress(syscontracts.RCCContractAddress), rcccontract.RCCContract.Bin)
 	app.SetEVMCode(ctx, common.HexToAddress(syscontracts.MultiCallContractAddress), multicallcontract.MultiCallContract.Bin)
 	app.SetEVMCode(ctx, common.HexToAddress(syscontracts.WTELEContractAddress), wtelecontract.WTELEContract.Bin)
-	app.SetEVMCode(ctx, common.HexToAddress(syscontracts.AgentContractAddress), agent.AgentContract.Bin)
+	app.SetEVMCode(ctx, common.HexToAddress(syscontracts.AgentContractAddress), agentcontract.AgentContract.Bin)
+	app.SetEVMCode(ctx, common.HexToAddress(syscontracts.PacketContractAddress), packetcontract.PacketContract.Bin)
 
 	return res
 }
