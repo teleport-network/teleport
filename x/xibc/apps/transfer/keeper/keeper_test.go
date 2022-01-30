@@ -67,6 +67,9 @@ func TestKeeperTestSuite(t *testing.T) {
 
 func (suite *KeeperTestSuite) SetupTest() {
 	suite.DoSetupTest(suite.T())
+
+	println(common.Address(common.BytesToAddress(authtypes.NewModuleAddress("FT").Bytes())).String())
+	println(common.Address(common.BytesToAddress(authtypes.NewModuleAddress("packet").Bytes())).String())
 }
 
 func (suite *KeeperTestSuite) DoSetupTest(t require.TestingT) {

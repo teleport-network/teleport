@@ -632,7 +632,7 @@ func (suite *TransferTestSuite) TestRemoteContractCallAgent() {
 		suite.chainA,
 		types.ERC20TransferData{
 			TokenAddress: wtelecontract.WTELEContractAddress,
-			Receiver:     strings.ToLower(agentcontract.AGENTContractAddress.String()),
+			Receiver:     strings.ToLower(agentcontract.AgentContractAddress.String()),
 			Amount:       out,
 			DestChain:    suite.chainB.ChainID,
 			RelayChain:   "",
@@ -653,7 +653,7 @@ func (suite *TransferTestSuite) TestRemoteContractCallAgent() {
 		pathAtoB.EndpointA.ChainName,
 		pathAtoB.EndpointB.ChainName,
 		strings.ToLower(suite.chainA.SenderAddress.String()),
-		strings.ToLower(agentcontract.AGENTContractAddress.String()),
+		strings.ToLower(agentcontract.AgentContractAddress.String()),
 		out.Bytes(),
 		strings.ToLower(wtelecontract.WTELEContractAddress.String()),
 		strings.ToLower(""),
@@ -675,7 +675,7 @@ func (suite *TransferTestSuite) TestRemoteContractCallAgent() {
 	suite.Require().NoError(err)
 
 	// check balance
-	recvBalance = suite.BalanceOf(suite.chainB, chainBErc20, agentcontract.AGENTContractAddress)
+	recvBalance = suite.BalanceOf(suite.chainB, chainBErc20, agentcontract.AgentContractAddress)
 	suite.Require().Equal(out.String(), recvBalance.String())
 
 	// send remote contract call
@@ -686,11 +686,11 @@ func (suite *TransferTestSuite) TestRemoteContractCallAgent() {
 		DestChain:    suite.chainC.ChainID,
 		RelayChain:   "",
 	}
-	agentPayload, err := agentcontract.AGENTContract.ABI.Pack("send", agentData)
+	agentPayload, err := agentcontract.AgentContract.ABI.Pack("send", agentData)
 	suite.Require().NoError(err)
 
 	data := rcctypes.CallRCCData{
-		ContractAddress: strings.ToLower(agentcontract.AGENTContractAddress.String()),
+		ContractAddress: strings.ToLower(agentcontract.AgentContractAddress.String()),
 		Data:            agentPayload,
 		DestChain:       pathAtoB.EndpointB.ChainName,
 		RelayChain:      "",
@@ -702,7 +702,7 @@ func (suite *TransferTestSuite) TestRemoteContractCallAgent() {
 		pathAtoB.EndpointA.ChainName,
 		pathAtoB.EndpointB.ChainName,
 		strings.ToLower(suite.chainA.SenderAddress.String()),
-		strings.ToLower(agentcontract.AGENTContractAddress.String()),
+		strings.ToLower(agentcontract.AgentContractAddress.String()),
 		agentPayload,
 	)
 	agentPacket := packettypes.NewPacket(
@@ -729,7 +729,7 @@ func (suite *TransferTestSuite) TestRemoteContractCallAgent() {
 	suite.Require().Equal(result, ackBZ)
 
 	// check chainB balance
-	chainBbalances := suite.BalanceOf(suite.chainB, chainBErc20, agentcontract.AGENTContractAddress)
+	chainBbalances := suite.BalanceOf(suite.chainB, chainBErc20, agentcontract.AgentContractAddress)
 	suite.Require().Equal(strconv.FormatUint(out.Uint64()-deposit.Uint64(), 10), chainBbalances.String())
 	// check chainB token out
 	outAmount = suite.OutTokens(
@@ -743,7 +743,7 @@ func (suite *TransferTestSuite) TestRemoteContractCallAgent() {
 	BtoCTransferErc20PacketData := types.NewFungibleTokenPacketData(
 		pathBtoC.EndpointA.ChainName,
 		pathBtoC.EndpointB.ChainName,
-		strings.ToLower(agentcontract.AGENTContractAddress.String()),
+		strings.ToLower(agentcontract.AgentContractAddress.String()),
 		strings.ToLower(suite.chainC.SenderAddress.String()),
 		deposit.Bytes(),
 		strings.ToLower(chainBErc20.String()),
@@ -805,7 +805,7 @@ func (suite *TransferTestSuite) TestRemoteContractCallAgentBack() {
 		DestChain:    suite.chainA.ChainID,
 		RelayChain:   "",
 	}
-	agentPayload, err := agentcontract.AGENTContract.ABI.Pack("send", agentData)
+	agentPayload, err := agentcontract.AgentContract.ABI.Pack("send", agentData)
 	suite.Require().NoError(err)
 	TupleRCCData, err := abi.NewType(
 		"tuple", "",
@@ -817,7 +817,7 @@ func (suite *TransferTestSuite) TestRemoteContractCallAgentBack() {
 	suite.Require().NoError(err)
 	rccDataBytes, err := abi.Arguments{{Type: TupleRCCData}}.Pack(
 		multicalltypes.RCCData{
-			ContractAddress: strings.ToLower(agentcontract.AGENTContractAddress.String()),
+			ContractAddress: strings.ToLower(agentcontract.AgentContractAddress.String()),
 			Data:            agentPayload,
 		},
 	)
@@ -835,7 +835,7 @@ func (suite *TransferTestSuite) TestRemoteContractCallAgentBack() {
 	transferBaseDataBytes, err := abi.Arguments{{Type: TupleTransferErc20Data}}.Pack(
 		multicalltypes.ERC20TransferData{
 			TokenAddress: chainCERC20,
-			Receiver:     strings.ToLower(agentcontract.AGENTContractAddress.String()),
+			Receiver:     strings.ToLower(agentcontract.AgentContractAddress.String()),
 			Amount:       deposit,
 		},
 	)
@@ -861,7 +861,7 @@ func (suite *TransferTestSuite) TestRemoteContractCallAgentBack() {
 		pathCtoB.EndpointA.ChainName,
 		pathCtoB.EndpointB.ChainName,
 		strings.ToLower(suite.chainC.SenderAddress.String()),
-		strings.ToLower(agentcontract.AGENTContractAddress.String()),
+		strings.ToLower(agentcontract.AgentContractAddress.String()),
 		deposit.Bytes(),
 		strings.ToLower(chainCERC20.String()),
 		strings.ToLower(chainBERC20.String()),
@@ -871,7 +871,7 @@ func (suite *TransferTestSuite) TestRemoteContractCallAgentBack() {
 		pathCtoB.EndpointA.ChainName,
 		pathCtoB.EndpointB.ChainName,
 		strings.ToLower(suite.chainC.SenderAddress.String()),
-		strings.ToLower(agentcontract.AGENTContractAddress.String()),
+		strings.ToLower(agentcontract.AgentContractAddress.String()),
 		agentPayload,
 	)
 	multiCallPacket := packettypes.NewPacket(
@@ -897,7 +897,7 @@ func (suite *TransferTestSuite) TestRemoteContractCallAgentBack() {
 	BToATransferErc20PacketData := types.NewFungibleTokenPacketData(
 		pathBtoA.EndpointA.ChainName,
 		pathBtoA.EndpointB.ChainName,
-		strings.ToLower(agentcontract.AGENTContractAddress.String()),
+		strings.ToLower(agentcontract.AgentContractAddress.String()),
 		strings.ToLower(suite.chainA.SenderAddress.String()),
 		agentOut.Bytes(),
 		strings.ToLower(chainBERC20.String()),
@@ -969,13 +969,13 @@ func (suite *TransferTestSuite) RCCAcks(fromChain *xibctesting.TestChain, hash [
 }
 
 func (suite *TransferTestSuite) AgentBalances(fromChain *xibctesting.TestChain, sender string, token common.Address) *big.Int {
-	cus := agentcontract.AGENTContract.ABI
+	cus := agentcontract.AgentContract.ABI
 
 	res, err := fromChain.App.XIBCTransferKeeper.CallEVM(
 		fromChain.GetContext(),
 		cus,
 		types.ModuleAddress,
-		agentcontract.AGENTContractAddress,
+		agentcontract.AgentContractAddress,
 		"balances",
 		sender,
 		token,
@@ -990,13 +990,13 @@ func (suite *TransferTestSuite) AgentBalances(fromChain *xibctesting.TestChain, 
 }
 
 func (suite *TransferTestSuite) AgentSupplies(fromChain *xibctesting.TestChain, token common.Address) *big.Int {
-	cus := agentcontract.AGENTContract.ABI
+	cus := agentcontract.AgentContract.ABI
 
 	res, err := fromChain.App.XIBCTransferKeeper.CallEVM(
 		fromChain.GetContext(),
 		cus,
 		types.ModuleAddress,
-		agentcontract.AGENTContractAddress,
+		agentcontract.AgentContractAddress,
 		"supplies",
 		token,
 	)

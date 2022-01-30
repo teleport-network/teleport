@@ -474,7 +474,12 @@ func NewTeleport(
 
 	// Create XIBC Keeper
 	app.XIBCKeeper = xibckeeper.NewKeeper(
-		appCodec, keys[xibchost.StoreKey], app.GetSubspace(xibchost.ModuleName), app.StakingKeeper,
+		appCodec,
+		keys[xibchost.StoreKey],
+		app.GetSubspace(xibchost.ModuleName),
+		app.StakingKeeper,
+		app.AccountKeeper,
+		app.EvmKeeper,
 	)
 
 	// register the proposal types
@@ -877,7 +882,7 @@ func (app *Teleport) InitChainer(ctx sdk.Context, req abci.RequestInitChain) abc
 	app.SetEVMCode(ctx, common.HexToAddress(syscontracts.RCCContractAddress), rcccontract.RCCContract.Bin)
 	app.SetEVMCode(ctx, common.HexToAddress(syscontracts.MultiCallContractAddress), multicallcontract.MultiCallContract.Bin)
 	app.SetEVMCode(ctx, common.HexToAddress(syscontracts.WTELEContractAddress), wtelecontract.WTELEContract.Bin)
-	app.SetEVMCode(ctx, common.HexToAddress(syscontracts.AgentContractAddress), agent.AGENTContract.Bin)
+	app.SetEVMCode(ctx, common.HexToAddress(syscontracts.AgentContractAddress), agent.AgentContract.Bin)
 
 	return res
 }

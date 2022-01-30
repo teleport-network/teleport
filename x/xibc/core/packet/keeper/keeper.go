@@ -18,17 +18,27 @@ import (
 
 // Keeper defines the XIBC packet keeper
 type Keeper struct {
-	storeKey     sdk.StoreKey
-	cdc          codec.BinaryCodec
-	clientKeeper types.ClientKeeper
+	storeKey      sdk.StoreKey
+	cdc           codec.BinaryCodec
+	clientKeeper  types.ClientKeeper
+	accountKeeper types.AccountKeeper
+	evmKeeper     types.EVMKeeper
 }
 
 // NewKeeper creates a new xibc packet Keeper instance
-func NewKeeper(cdc codec.BinaryCodec, key sdk.StoreKey, clientKeeper types.ClientKeeper) Keeper {
+func NewKeeper(
+	cdc codec.BinaryCodec,
+	key sdk.StoreKey,
+	clientKeeper types.ClientKeeper,
+	accountKeeper types.AccountKeeper,
+	evmKeeper types.EVMKeeper,
+) Keeper {
 	return Keeper{
-		storeKey:     key,
-		cdc:          cdc,
-		clientKeeper: clientKeeper,
+		storeKey:      key,
+		cdc:           cdc,
+		clientKeeper:  clientKeeper,
+		accountKeeper: accountKeeper,
+		evmKeeper:     evmKeeper,
 	}
 }
 

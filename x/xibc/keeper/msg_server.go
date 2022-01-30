@@ -69,6 +69,11 @@ func (k Keeper) RecvPacket(goCtx context.Context, msg *packettypes.MsgRecvPacket
 					return nil, err
 				}
 
+				// set sequence in packet contract
+				if _, err := k.PacketKeeper.CallPacket(ctx, "setAckStatus", msg.Packet.GetSourceChain(), msg.Packet.GetDestChain(), msg.Packet.Sequence, uint8(2)); err != nil {
+					return nil, err
+				}
+
 				return &packettypes.MsgRecvPacketResponse{}, nil
 			}
 
@@ -76,6 +81,11 @@ func (k Keeper) RecvPacket(goCtx context.Context, msg *packettypes.MsgRecvPacket
 		}
 
 		if err := k.PacketKeeper.WriteAcknowledgement(ctx, msg.Packet, packettypes.NewResultAcknowledgement(results).GetBytes()); err != nil {
+			return nil, err
+		}
+
+		// set sequence in packet contract
+		if _, err := k.PacketKeeper.CallPacket(ctx, "setAckStatus", msg.Packet.GetSourceChain(), msg.Packet.GetDestChain(), msg.Packet.Sequence, uint8(1)); err != nil {
 			return nil, err
 		}
 	}
