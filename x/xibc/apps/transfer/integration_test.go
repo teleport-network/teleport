@@ -928,6 +928,105 @@ func (suite *TransferTestSuite) TestRemoteContractCallAgentBack() {
 	suite.Require().Equal(strconv.FormatUint(out.Uint64()-agentOut.Uint64(), 10), outAmount.String())
 }
 
+// todo fix
+func (suite *TransferTestSuite) TestAgentRefund() {
+	pathAtoB := xibctesting.NewPath(suite.chainA, suite.chainB)
+	pathBtoC := xibctesting.NewPath(suite.chainB, suite.chainC)
+
+	suite.coordinator.SetupClients(pathAtoB)
+	suite.coordinator.SetupClients(pathBtoC)
+
+	chainBErc20 := suite.DeployERC20ByTransfer(suite.chainB)
+
+	amount := big.NewInt(10000000000)
+	out := big.NewInt(10000)
+
+	suite.DepositWTeleToken(suite.chainA, amount)
+
+	// check balance
+	recvBalance := suite.BalanceOf(suite.chainA, wtelecontract.WTELEContractAddress, suite.chainA.SenderAddress)
+	suite.Require().Equal(amount.String(), recvBalance.String())
+
+	// Approve erc20 to transfer
+	suite.Approve(suite.chainA, wtelecontract.WTELEContractAddress, out)
+
+	// register erc20 trace chainA to chainB
+	err := suite.chainB.App.AggregateKeeper.RegisterERC20Trace(
+		suite.chainB.GetContext(),
+		chainBErc20,
+		strings.ToLower(wtelecontract.WTELEContractAddress.String()),
+		suite.chainA.ChainID,
+	)
+	suite.Require().NoError(err)
+	// check ERC20 trace
+	_, _, exist, err := suite.chainB.App.AggregateKeeper.QueryERC20Trace(
+		suite.chainB.GetContext(),
+		chainBErc20,
+		suite.chainA.ChainID,
+	)
+	suite.Require().NoError(err)
+	suite.Require().True(exist)
+
+	// send remote contract call
+	agentData := types.ERC20TransferData{
+		TokenAddress: chainBErc20,
+		Receiver:     strings.ToLower(suite.chainC.SenderAddress.String()),
+		Amount:       out,
+		DestChain:    suite.chainC.ChainID,
+		RelayChain:   "",
+	}
+	agentPayload, err := agentcontract.AgentContract.ABI.Pack("send", agentData)
+	suite.Require().NoError(err)
+	TupleRCCData, err := abi.NewType(
+		"tuple", "",
+		[]abi.ArgumentMarshaling{
+			{Name: "contract_address", Type: "string"},
+			{Name: "data", Type: "bytes"},
+		},
+	)
+	suite.Require().NoError(err)
+	rccDataBytes, err := abi.Arguments{{Type: TupleRCCData}}.Pack(
+		multicalltypes.RCCData{
+			ContractAddress: strings.ToLower(agentcontract.AgentContractAddress.String()),
+			Data:            agentPayload,
+		},
+	)
+	suite.Require().NoError(err)
+	suite.Require().NotNil(rccDataBytes)
+	// send multi call
+	TupleTransferErc20Data, err := abi.NewType(
+		"tuple", "",
+		[]abi.ArgumentMarshaling{
+			{Name: "token_address", Type: "address"},
+			{Name: "receiver", Type: "string"},
+			{Name: "amount", Type: "uint256"},
+		},
+	)
+	suite.Require().NoError(err)
+	transferERC20DataBytes, err := abi.Arguments{{Type: TupleTransferErc20Data}}.Pack(
+		multicalltypes.ERC20TransferData{
+			TokenAddress: wtelecontract.WTELEContractAddress,
+			Receiver:     strings.ToLower(agentcontract.AgentContractAddress.String()),
+			Amount:       out,
+		},
+	)
+	suite.Require().NoError(err)
+
+	// transfer Erc20 chainC to chainB
+	MultiCallData := multicalltypes.MultiCallData{
+		DestChain:  suite.chainB.ChainID,
+		RelayChain: "",
+		Functions:  []uint8{0, 2},
+		Data:       [][]byte{transferERC20DataBytes, rccDataBytes},
+	}
+
+	// Approve erc20 to transfer
+	suite.Approve(suite.chainA, wtelecontract.WTELEContractAddress, out)
+
+	suite.SendMultiCall(suite.chainA, big.NewInt(0), MultiCallData)
+	suite.coordinator.CommitBlock(suite.chainA, suite.chainB, suite.chainC)
+}
+
 // ================================================================================================================
 // Functions for step
 // ================================================================================================================
