@@ -23,6 +23,7 @@ import (
 	agentcontract "github.com/teleport-network/teleport/syscontracts/agent"
 	wtelecontract "github.com/teleport-network/teleport/syscontracts/wtele"
 	multicallcontract "github.com/teleport-network/teleport/syscontracts/xibc_multicall"
+	packetcontract "github.com/teleport-network/teleport/syscontracts/xibc_packet"
 	rcccontract "github.com/teleport-network/teleport/syscontracts/xibc_rcc"
 	transfercontract "github.com/teleport-network/teleport/syscontracts/xibc_transfer"
 	erc20contracts "github.com/teleport-network/teleport/x/aggregate/types/contracts"
@@ -1025,11 +1026,173 @@ func (suite *TransferTestSuite) TestAgentRefund() {
 
 	suite.SendMultiCall(suite.chainA, big.NewInt(0), MultiCallData)
 	suite.coordinator.CommitBlock(suite.chainA, suite.chainB, suite.chainC)
+	suite.Equal("0", suite.AgentBalances(suite.chainB, strings.ToLower(suite.chainA.SenderAddress.String()), wtelecontract.WTELEContractAddress).String())
+
+	// relay packet
+	ERC20PacketData := types.NewFungibleTokenPacketData(
+		pathAtoB.EndpointA.ChainName,
+		pathAtoB.EndpointB.ChainName,
+		strings.ToLower(suite.chainA.SenderAddress.String()),
+		strings.ToLower(agentcontract.AgentContractAddress.String()),
+		out.Bytes(),
+		strings.ToLower(wtelecontract.WTELEContractAddress.String()),
+		"",
+	)
+	// rcc packet data
+	rccPacketData := rcctypes.NewRCCPacketData(
+		pathAtoB.EndpointA.ChainName,
+		pathAtoB.EndpointB.ChainName,
+		strings.ToLower(suite.chainA.SenderAddress.String()),
+		strings.ToLower(agentcontract.AgentContractAddress.String()),
+		agentPayload,
+	)
+	multiCallPacket := packettypes.NewPacket(
+		1,
+		pathAtoB.EndpointA.ChainName,
+		pathAtoB.EndpointB.ChainName,
+		"",
+		[]string{types.PortID, rcctypes.PortID},
+		[][]byte{ERC20PacketData.GetBytes(), rccPacketData.GetBytes()},
+	)
+	resultTransferErc20 := []byte{byte(1)}
+	resultRcc, err := hex.DecodeString("0000000000000000000000000000000000000000000000000000000000000001")
+	suite.Require().NoError(err)
+	ack := packettypes.NewResultAcknowledgement([][]byte{resultTransferErc20, resultRcc})
+
+	err = pathAtoB.RelayPacket(multiCallPacket, ack.GetBytes())
+	suite.Require().NoError(err)
+	suite.coordinator.CommitBlock(suite.chainA, suite.chainB, suite.chainC)
+	suite.Equal(suite.OutTokens(suite.chainB, chainBErc20, suite.chainC.ChainID).String(), out.String())
+	suite.Equal("0", suite.AgentBalances(suite.chainB, strings.ToLower(suite.chainA.SenderAddress.String()), chainBErc20).String())
+
+	// relay packet
+	BtoCERC20PacketData := types.NewFungibleTokenPacketData(
+		pathBtoC.EndpointA.ChainName,
+		pathBtoC.EndpointB.ChainName,
+		strings.ToLower(agentcontract.AgentContractAddress.String()),
+		strings.ToLower(suite.chainC.SenderAddress.String()),
+		out.Bytes(),
+		strings.ToLower(chainBErc20.String()),
+		"",
+	)
+
+	BtoCTransferErc20packet := packettypes.NewPacket(
+		1,
+		pathBtoC.EndpointA.ChainName,
+		pathBtoC.EndpointB.ChainName,
+		"",
+		[]string{types.PortID},
+		[][]byte{BtoCERC20PacketData.GetBytes()},
+	)
+	// commit block
+	errAck := packettypes.NewErrorAcknowledgement("onRecvPackt: binding is not exist")
+	err = pathBtoC.RelayPacket(BtoCTransferErc20packet, errAck.GetBytes())
+	suite.coordinator.CommitBlock(suite.chainA, suite.chainB, suite.chainC)
+
+	suite.Equal(suite.OutTokens(suite.chainB, chainBErc20, suite.chainC.ChainID).String(), "0")
+	suite.Equal(suite.AckStatus(suite.chainB, pathBtoC.EndpointA.ChainName, pathBtoC.EndpointB.ChainName, 1), uint8(2))
+	suite.Equal(suite.GetAgentPacketExist(suite.chainB, pathBtoC.EndpointA.ChainName, pathBtoC.EndpointB.ChainName, "1"), true)
+	suite.Equal("0", suite.AgentBalances(suite.chainB, strings.ToLower(suite.chainA.SenderAddress.String()), chainBErc20).String())
+
+	suite.AgentRefund(suite.chainB, pathBtoC.EndpointA.ChainName, pathBtoC.EndpointB.ChainName, 1)
+	suite.Equal(out.String(), suite.AgentBalances(suite.chainB, strings.ToLower(suite.chainA.SenderAddress.String()), chainBErc20).String())
+	suite.Require().True(suite.Refund(suite.chainB, pathBtoC.EndpointA.ChainName, pathBtoC.EndpointB.ChainName, "1"))
 }
 
 // ================================================================================================================
 // Functions for step
 // ================================================================================================================
+func (suite *TransferTestSuite) Refund(fromChain *xibctesting.TestChain, srcChain, destChain, sequence string) bool {
+	cus := agentcontract.AgentContract.ABI
+	res, err := fromChain.App.XIBCTransferKeeper.CallEVM(
+		fromChain.GetContext(),
+		cus,
+		types.ModuleAddress,
+		agentcontract.AgentContractAddress,
+		"refunded",
+		srcChain+"/"+destChain+"/"+sequence,
+	)
+	suite.Require().NoError(err)
+
+	var refunded bool
+	err = cus.UnpackIntoInterface(&refunded, "refunded", res.Ret)
+	suite.Require().NoError(err)
+
+	return refunded
+}
+
+func (suite *TransferTestSuite) AckStatus(fromChain *xibctesting.TestChain, srcChain, destChain string, sequence uint64) uint8 {
+	cus := packetcontract.PacketContract.ABI
+	res, err := fromChain.App.XIBCTransferKeeper.CallEVM(
+		fromChain.GetContext(),
+		cus,
+		types.ModuleAddress,
+		packetcontract.PacketContractAddress,
+		"getAckStatus",
+		srcChain,
+		destChain,
+		sequence,
+	)
+	suite.Require().NoError(err)
+
+	var status uint8
+	err = cus.UnpackIntoInterface(&status, "getAckStatus", res.Ret)
+	suite.Require().NoError(err)
+
+	return status
+}
+
+func (suite *TransferTestSuite) GetNextSequenceSend(fromChain *xibctesting.TestChain, srcChain, destChain string) uint64 {
+	cus := packetcontract.PacketContract.ABI
+	res, err := fromChain.App.XIBCTransferKeeper.CallEVM(
+		fromChain.GetContext(),
+		cus,
+		types.ModuleAddress,
+		packetcontract.PacketContractAddress,
+		"getNextSequenceSend",
+		srcChain,
+		destChain,
+	)
+	suite.Require().NoError(err)
+
+	var seq uint64
+	err = cus.UnpackIntoInterface(&seq, "getNextSequenceSend", res.Ret)
+	suite.Require().NoError(err)
+
+	return seq
+}
+
+func (suite *TransferTestSuite) GetAgentPacketExist(fromChain *xibctesting.TestChain, srcChain, destChain, sequences string) bool {
+	cus := agentcontract.AgentContract.ABI
+	res, err := fromChain.App.XIBCTransferKeeper.CallEVM(
+		fromChain.GetContext(),
+		cus,
+		types.ModuleAddress,
+		agentcontract.AgentContractAddress,
+		"sequences",
+		srcChain+"/"+destChain+"/"+sequences,
+	)
+	suite.Require().NoError(err)
+
+	var exist struct {
+		Sent         bool
+		Sender       string
+		TokenAddress common.Address
+		Amount       *big.Int
+	}
+	err = cus.UnpackIntoInterface(&exist, "sequences", res.Ret)
+	suite.Require().NoError(err)
+
+	return exist.Sent
+}
+
+func (suite *TransferTestSuite) AgentRefund(fromChain *xibctesting.TestChain, srcChain, destChain string, sequence uint64) {
+	agentData, err := agentcontract.AgentContract.ABI.Pack("refund", srcChain, destChain, sequence)
+	suite.Require().NoError(err)
+
+	_ = suite.SendTx(fromChain, agentcontract.AgentContractAddress, big.NewInt(0), agentData)
+	suite.coordinator.CommitBlock(suite.chainA, suite.chainB, suite.chainC)
+}
 
 func (suite *TransferTestSuite) SendMultiCall(fromChain *xibctesting.TestChain, amount *big.Int, data multicalltypes.MultiCallData) {
 	multiCallData, err := multicallcontract.MultiCallContract.ABI.Pack("multiCall", data)

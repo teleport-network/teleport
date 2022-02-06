@@ -69,11 +69,6 @@ func (k Keeper) RecvPacket(goCtx context.Context, msg *packettypes.MsgRecvPacket
 					return nil, err
 				}
 
-				// set sequence in packet contract
-				if _, err := k.PacketKeeper.CallPacket(ctx, "setAckStatus", msg.Packet.GetSourceChain(), msg.Packet.GetDestChain(), msg.Packet.Sequence, uint8(2)); err != nil {
-					return nil, err
-				}
-
 				return &packettypes.MsgRecvPacketResponse{}, nil
 			}
 
@@ -81,11 +76,6 @@ func (k Keeper) RecvPacket(goCtx context.Context, msg *packettypes.MsgRecvPacket
 		}
 
 		if err := k.PacketKeeper.WriteAcknowledgement(ctx, msg.Packet, packettypes.NewResultAcknowledgement(results).GetBytes()); err != nil {
-			return nil, err
-		}
-
-		// set sequence in packet contract
-		if _, err := k.PacketKeeper.CallPacket(ctx, "setAckStatus", msg.Packet.GetSourceChain(), msg.Packet.GetDestChain(), msg.Packet.Sequence, uint8(1)); err != nil {
 			return nil, err
 		}
 	}
@@ -119,9 +109,17 @@ func (k Keeper) Acknowledgement(goCtx context.Context, msg *packettypes.MsgAckno
 			if _, err := cbs.OnAcknowledgementPacket(ctx, msg.Packet.GetDataList()[i], ack.Results[i]); err != nil {
 				return nil, sdkerrors.Wrap(err, "acknowledge packet callback failed")
 			}
+			// set sequence in packet contract
+			if _, err := k.PacketKeeper.CallPacket(ctx, "setAckStatus", msg.Packet.GetSourceChain(), msg.Packet.GetDestChain(), msg.Packet.Sequence, uint8(1)); err != nil {
+				return nil, err
+			}
 		} else {
 			if _, err := cbs.OnAcknowledgementPacket(ctx, msg.Packet.GetDataList()[i], []byte{}); err != nil {
 				return nil, sdkerrors.Wrap(err, "acknowledge packet callback failed")
+			}
+			// set sequence in packet contract
+			if _, err := k.PacketKeeper.CallPacket(ctx, "setAckStatus", msg.Packet.GetSourceChain(), msg.Packet.GetDestChain(), msg.Packet.Sequence, uint8(2)); err != nil {
+				return nil, err
 			}
 		}
 	}
