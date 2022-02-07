@@ -241,7 +241,10 @@ func initTestnetFiles(
 	// If the total-balance is 100,000,000, the numvalidators is 11,
 	// 0-9 validators' balance is 9,000,000, named lowBalance
 	// the 10 validator's balance is 10,000,000, named highBlance
-	totalBalance, _ := strconv.ParseInt(args.totalBalance, 10, 64)
+	totalBalance, parseErr := strconv.ParseInt(args.totalBalance, 10, 64)
+	if parseErr != nil {
+		panic(parseErr)
+	}
 	var lowBalance, highBalance int64
 	if totalBalance%int64(numValidators) != 0 {
 		avgBalance := strconv.FormatInt(totalBalance/int64(numValidators), 10)
