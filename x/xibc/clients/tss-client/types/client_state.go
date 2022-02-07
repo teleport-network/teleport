@@ -1,8 +1,6 @@
 package types
 
 import (
-	"strings"
-
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -21,10 +19,6 @@ func (cs ClientState) GetLatestHeight() exported.Height {
 }
 
 func (cs ClientState) Validate() error {
-	if strings.TrimSpace(cs.ChainId) == "" {
-		return sdkerrors.Wrap(ErrInvalidChainID, "chain id cannot be empty string")
-	}
-
 	if _, err := sdk.AccAddressFromBech32(cs.TssAddress); err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "string could not be parsed as address: %v", err)
 	}

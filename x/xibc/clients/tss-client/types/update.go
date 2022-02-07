@@ -24,5 +24,7 @@ func (cs ClientState) CheckHeaderAndUpdateState(
 		return nil, nil, sdkerrors.Wrapf(clienttypes.ErrInvalidHeader, "expected type %T, got %T", &Header{}, header)
 	}
 	cs.TssAddress = tssHeader.TssAddress
+	cs.Pubkey = tssHeader.Pubkey
+	cs.PartPubkeys = tssHeader.PartPubkeys
 	return &cs, nil, nil
 }
