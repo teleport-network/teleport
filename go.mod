@@ -5,8 +5,8 @@ go 1.17
 require (
 	github.com/armon/go-metrics v0.3.10
 	github.com/confio/ics23/go v0.6.6
-	github.com/cosmos/cosmos-sdk v0.44.5
-	github.com/cosmos/ibc-go/v3 v3.0.0-alpha2
+	github.com/cosmos/cosmos-sdk v0.45.0
+	github.com/cosmos/ibc-go/v3 v3.0.0-beta1
 	github.com/edsrzf/mmap-go v1.1.0
 	github.com/ethereum/go-ethereum v1.10.11
 	github.com/gogo/protobuf v1.3.3
@@ -25,7 +25,7 @@ require (
 	github.com/tharsis/ethermint v0.10.0-alpha1
 	golang.org/x/crypto v0.0.0-20220126234351-aa10faf2a1f8
 	google.golang.org/genproto v0.0.0-20220126215142-9970aeb2e350
-	google.golang.org/grpc v1.43.0
+	google.golang.org/grpc v1.44.0
 	google.golang.org/protobuf v1.27.1
 )
 
