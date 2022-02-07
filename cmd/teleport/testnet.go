@@ -8,8 +8,10 @@ import (
 	"errors"
 	"fmt"
 	"io/ioutil"
+	"math/big"
 	"os"
 	"path/filepath"
+	"strconv"
 
 	"github.com/spf13/cobra"
 
@@ -37,6 +39,7 @@ import (
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 
 	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/common/math"
 	"github.com/tharsis/ethermint/crypto/hd"
 	"github.com/tharsis/ethermint/server/config"
 	srvflags "github.com/tharsis/ethermint/server/flags"
@@ -52,6 +55,7 @@ var (
 	flagNumValidators  = "v"
 	flagOutputDir      = "output-dir"
 	flagNodeDaemonHome = "node-daemon-home"
+	flagTotalBalance   = "total-balance"
 	flagIPAddrs        = "ip-addresses"
 	flagEnableLogging  = "enable-logging"
 	flagRPCAddress     = "rpc.address"
@@ -65,6 +69,7 @@ type initArgs struct {
 	chainID        string
 	keyringBackend string
 	minGasPrices   string
+	totalBalance   string
 	nodeDaemonHome string
 	nodeDirPrefix  string
 	outputDir      string
@@ -92,6 +97,7 @@ type KeySeed struct {
 func addTestnetFlagsToCmd(cmd *cobra.Command) {
 	cmd.Flags().Int(flagNumValidators, 4, "Number of validators to initialize the testnet with")
 	cmd.Flags().StringP(flagOutputDir, "o", "./.testnets", "Directory to store initialization data for the testnet")
+	cmd.Flags().StringP(flagTotalBalance, "", "55000", "total balance of chain")
 	cmd.Flags().String(flags.FlagChainID, "", "genesis file chain-id, if left blank will be randomly created")
 	cmd.Flags().String(sdkserver.FlagMinGasPrices, fmt.Sprintf("0.000006%s", types.AttoTele), "Minimum gas prices to accept for transactions; All fees in a tx must meet this minimum (e.g. 0.01tele,0.001stake)")
 	cmd.Flags().String(flags.FlagKeyAlgorithm, string(hd.EthSecp256k1Type), "Key signing algorithm to generate keys for")
@@ -146,6 +152,7 @@ Example:
 			args.nodeDirPrefix, _ = cmd.Flags().GetString(flagNodeDirPrefix)
 			args.nodeDaemonHome, _ = cmd.Flags().GetString(flagNodeDaemonHome)
 			args.ipAddresses, _ = cmd.Flags().GetStringSlice(flagIPAddrs)
+			args.totalBalance, _ = cmd.Flags().GetString(flagTotalBalance)
 			args.algo, _ = cmd.Flags().GetString(flags.FlagKeyAlgorithm)
 			if len(args.ipAddresses) == 0 {
 				return errors.New("IP address list cannot be empty")
@@ -230,6 +237,24 @@ func initTestnetFiles(
 	appConfig.Telemetry.PrometheusRetentionTime = 60
 	appConfig.Telemetry.EnableHostnameLabel = false
 	appConfig.Telemetry.GlobalLabels = [][]string{{"chain_id", args.chainID}}
+
+	// If the total-balance is 100,000,000, the numvalidators is 11,
+	// 0-9 validators' balance is 9,000,000, named lowBalance
+	// the 10 validator's balance is 10,000,000, named highBlance
+	totalBalance, parseErr := strconv.ParseInt(args.totalBalance, 10, 64)
+	if parseErr != nil {
+		panic(parseErr)
+	}
+	var lowBalance, highBalance int64
+	if totalBalance%int64(numValidators) != 0 {
+		avgBalance := strconv.FormatInt(totalBalance/int64(numValidators), 10)
+		topDigit, _ := strconv.Atoi(avgBalance[0:1])
+		lowBalance = int64(topDigit) * (math.Exp(big.NewInt(10), big.NewInt(int64(len(avgBalance)-1))).Int64())
+		highBalance = totalBalance - lowBalance*int64(numValidators-1)
+	} else {
+		highBalance = totalBalance / int64(numValidators)
+		lowBalance = highBalance
+	}
 
 	var (
 		genAccounts []authtypes.GenesisAccount
@@ -323,7 +348,12 @@ func initTestnetFiles(
 			return err
 		}
 
-		accStakingTokens := sdk.TokensFromConsensusPower(5000, types.PowerReduction)
+		var accStakingTokens sdk.Int
+		if i != numValidators-1 {
+			accStakingTokens = sdk.TokensFromConsensusPower(lowBalance, types.PowerReduction)
+		} else {
+			accStakingTokens = sdk.TokensFromConsensusPower(highBalance, types.PowerReduction)
+		}
 		coins := sdk.Coins{
 			sdk.NewCoin(types.AttoTele, accStakingTokens),
 		}
