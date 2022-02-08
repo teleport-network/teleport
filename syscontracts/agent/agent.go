@@ -12,23 +12,23 @@ import (
 
 var (
 	//go:embed agent.json
-	AGENTJSON []byte // nolint: golint
+	AgentJSON []byte // nolint: golint
 
-	// AGENTContract is the compiled agent contract
-	AGENTContract evmtypes.CompiledContract
+	// AgentContract is the compiled agent contract
+	AgentContract evmtypes.CompiledContract
 
-	// AGENTContractAddress is the deployed agent contract address
-	AGENTContractAddress common.Address
+	// AgentContractAddress is the deployed agent contract address
+	AgentContractAddress common.Address
 )
 
 func init() {
-	AGENTContractAddress = common.HexToAddress(syscontracts.AgentContractAddress)
+	AgentContractAddress = common.HexToAddress(syscontracts.AgentContractAddress)
 
-	if err := json.Unmarshal(AGENTJSON, &AGENTContract); err != nil {
+	if err := json.Unmarshal(AgentJSON, &AgentContract); err != nil {
 		panic(err)
 	}
 
-	if len(AGENTContract.Bin) == 0 {
+	if len(AgentContract.Bin) == 0 {
 		panic("load contract failed")
 	}
 }

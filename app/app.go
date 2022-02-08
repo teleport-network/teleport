@@ -122,9 +122,10 @@ import (
 	adstaking "github.com/teleport-network/teleport/adapter/staking"
 	gabci "github.com/teleport-network/teleport/grpc_abci"
 	syscontracts "github.com/teleport-network/teleport/syscontracts"
-	"github.com/teleport-network/teleport/syscontracts/agent"
+	agentcontract "github.com/teleport-network/teleport/syscontracts/agent"
 	wtelecontract "github.com/teleport-network/teleport/syscontracts/wtele"
 	multicallcontract "github.com/teleport-network/teleport/syscontracts/xibc_multicall"
+	packetcontract "github.com/teleport-network/teleport/syscontracts/xibc_packet"
 	rcccontract "github.com/teleport-network/teleport/syscontracts/xibc_rcc"
 	transfercontract "github.com/teleport-network/teleport/syscontracts/xibc_transfer"
 	"github.com/teleport-network/teleport/x/aggregate"
@@ -145,6 +146,7 @@ import (
 	xibcclientcli "github.com/teleport-network/teleport/x/xibc/core/client/client"
 	xibcclienttypes "github.com/teleport-network/teleport/x/xibc/core/client/types"
 	xibchost "github.com/teleport-network/teleport/x/xibc/core/host"
+	xibcpackettypes "github.com/teleport-network/teleport/x/xibc/core/packet/types"
 	xibcroutingtypes "github.com/teleport-network/teleport/x/xibc/core/routing/types"
 	xibckeeper "github.com/teleport-network/teleport/x/xibc/keeper"
 	xibcmodule "github.com/teleport-network/teleport/x/xibc/module"
@@ -226,6 +228,7 @@ var (
 		govtypes.ModuleName:            {authtypes.Burner},
 		ibctransfertypes.ModuleName:    {authtypes.Minter, authtypes.Burner},
 		evmtypes.ModuleName:            {authtypes.Minter, authtypes.Burner}, // used for secure addition and subtraction of balance using module account
+		xibcpackettypes.SubModuleName:  nil,
 		xibctransfertypes.ModuleName:   nil,
 		xibcrcctypes.ModuleName:        nil,
 		aggregatetypes.ModuleName:      {authtypes.Minter, authtypes.Burner},
@@ -474,7 +477,12 @@ func NewTeleport(
 
 	// Create XIBC Keeper
 	app.XIBCKeeper = xibckeeper.NewKeeper(
-		appCodec, keys[xibchost.StoreKey], app.GetSubspace(xibchost.ModuleName), app.StakingKeeper,
+		appCodec,
+		keys[xibchost.StoreKey],
+		app.GetSubspace(xibchost.ModuleName),
+		app.StakingKeeper,
+		app.AccountKeeper,
+		app.EvmKeeper,
 	)
 
 	// register the proposal types
@@ -877,7 +885,8 @@ func (app *Teleport) InitChainer(ctx sdk.Context, req abci.RequestInitChain) abc
 	app.SetEVMCode(ctx, common.HexToAddress(syscontracts.RCCContractAddress), rcccontract.RCCContract.Bin)
 	app.SetEVMCode(ctx, common.HexToAddress(syscontracts.MultiCallContractAddress), multicallcontract.MultiCallContract.Bin)
 	app.SetEVMCode(ctx, common.HexToAddress(syscontracts.WTELEContractAddress), wtelecontract.WTELEContract.Bin)
-	app.SetEVMCode(ctx, common.HexToAddress(syscontracts.AgentContractAddress), agent.AGENTContract.Bin)
+	app.SetEVMCode(ctx, common.HexToAddress(syscontracts.AgentContractAddress), agentcontract.AgentContract.Bin)
+	app.SetEVMCode(ctx, common.HexToAddress(syscontracts.PacketContractAddress), packetcontract.PacketContract.Bin)
 
 	return res
 }

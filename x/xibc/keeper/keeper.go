@@ -8,6 +8,7 @@ import (
 	clientkeeper "github.com/teleport-network/teleport/x/xibc/core/client/keeper"
 	clienttypes "github.com/teleport-network/teleport/x/xibc/core/client/types"
 	packetkeeper "github.com/teleport-network/teleport/x/xibc/core/packet/keeper"
+	packettypes "github.com/teleport-network/teleport/x/xibc/core/packet/types"
 	routingkeeper "github.com/teleport-network/teleport/x/xibc/core/routing/keeper"
 	routingtypes "github.com/teleport-network/teleport/x/xibc/core/routing/types"
 	"github.com/teleport-network/teleport/x/xibc/types"
@@ -31,10 +32,12 @@ func NewKeeper(
 	key sdk.StoreKey,
 	paramSpace paramtypes.Subspace,
 	stakingKeeper clienttypes.StakingKeeper,
+	accountKeeper packettypes.AccountKeeper,
+	evmKeeper packettypes.EVMKeeper,
 ) *Keeper {
 	clientKeeper := clientkeeper.NewKeeper(cdc, key, paramSpace, stakingKeeper)
 	routingKeeper := routingkeeper.NewKeeper(key)
-	packetkeeper := packetkeeper.NewKeeper(cdc, key, clientKeeper)
+	packetkeeper := packetkeeper.NewKeeper(cdc, key, clientKeeper, accountKeeper, evmKeeper)
 
 	return &Keeper{
 		cdc:           cdc,
