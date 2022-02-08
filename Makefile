@@ -402,7 +402,7 @@ benchmark:
 ###############################################################################
 
 lint:
-	golangci-lint run --out-format=tab
+	golangci-lint run --out-format=tab --timeout 10m
 
 lint-contracts:
 	@cd contracts && \
