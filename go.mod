@@ -5,8 +5,8 @@ go 1.17
 require (
 	github.com/armon/go-metrics v0.3.10
 	github.com/confio/ics23/go v0.6.6
-	github.com/cosmos/cosmos-sdk v0.44.5
-	github.com/cosmos/ibc-go/v3 v3.0.0-alpha2
+	github.com/cosmos/cosmos-sdk v0.45.0
+	github.com/cosmos/ibc-go/v3 v3.0.0-beta1
 	github.com/edsrzf/mmap-go v1.1.0
 	github.com/ethereum/go-ethereum v1.10.11
 	github.com/gogo/protobuf v1.3.3
@@ -22,10 +22,10 @@ require (
 	github.com/stretchr/testify v1.7.0
 	github.com/tendermint/tendermint v0.34.15
 	github.com/tendermint/tm-db v0.6.7-0.20211203155021-4fa83b55a0b5
-	github.com/tharsis/ethermint v0.10.0-alpha1
+	github.com/tharsis/ethermint v0.10.0-alpha2
 	golang.org/x/crypto v0.0.0-20220126234351-aa10faf2a1f8
 	google.golang.org/genproto v0.0.0-20220126215142-9970aeb2e350
-	google.golang.org/grpc v1.43.0
+	google.golang.org/grpc v1.44.0
 	google.golang.org/protobuf v1.27.1
 )
 
@@ -151,7 +151,6 @@ require (
 
 replace (
 	github.com/99designs/keyring => github.com/cosmos/keyring v1.1.7-0.20210622111912-ef00f8ac3d76
-	github.com/cosmos/cosmos-sdk => github.com/cosmos/cosmos-sdk v0.44.6-0.20220104141845-0be9863cfed1
 	github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1
 	google.golang.org/grpc => google.golang.org/grpc v1.33.2
 )
