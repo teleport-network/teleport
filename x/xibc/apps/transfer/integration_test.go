@@ -687,7 +687,16 @@ func (suite *TransferTestSuite) TestRemoteContractCallAgent() {
 		DestChain:    suite.chainC.ChainID,
 		RelayChain:   "",
 	}
-	agentPayload, err := agentcontract.AgentContract.ABI.Pack("send", agentData)
+	id := sha256.Sum256([]byte(suite.chainA.ChainID + "/" + suite.chainB.ChainID + "/" + "2"))
+	agentPayload, err := agentcontract.AgentContract.ABI.Pack(
+		"send",
+		id[:],
+		agentData.TokenAddress,
+		agentData.Receiver,
+		agentData.Amount,
+		agentData.DestChain,
+		agentData.RelayChain,
+	)
 	suite.Require().NoError(err)
 
 	data := rcctypes.CallRCCData{
@@ -806,7 +815,16 @@ func (suite *TransferTestSuite) TestRemoteContractCallAgentBack() {
 		DestChain:    suite.chainA.ChainID,
 		RelayChain:   "",
 	}
-	agentPayload, err := agentcontract.AgentContract.ABI.Pack("send", agentData)
+	id := sha256.Sum256([]byte(suite.chainC.ChainID + "/" + suite.chainB.ChainID + "/" + "1"))
+	agentPayload, err := agentcontract.AgentContract.ABI.Pack(
+		"send",
+		id[:],
+		agentData.TokenAddress,
+		agentData.Receiver,
+		agentData.Amount,
+		agentData.DestChain,
+		agentData.RelayChain,
+	)
 	suite.Require().NoError(err)
 	TupleRCCData, err := abi.NewType(
 		"tuple", "",
@@ -929,7 +947,6 @@ func (suite *TransferTestSuite) TestRemoteContractCallAgentBack() {
 	suite.Require().Equal(strconv.FormatUint(out.Uint64()-agentOut.Uint64(), 10), outAmount.String())
 }
 
-// todo fix
 func (suite *TransferTestSuite) TestAgentRefund() {
 	pathAtoB := xibctesting.NewPath(suite.chainA, suite.chainB)
 	pathBtoC := xibctesting.NewPath(suite.chainB, suite.chainC)
@@ -976,7 +993,16 @@ func (suite *TransferTestSuite) TestAgentRefund() {
 		DestChain:    suite.chainC.ChainID,
 		RelayChain:   "",
 	}
-	agentPayload, err := agentcontract.AgentContract.ABI.Pack("send", agentData)
+	id := sha256.Sum256([]byte(suite.chainA.ChainID + "/" + suite.chainB.ChainID + "/" + "2"))
+	agentPayload, err := agentcontract.AgentContract.ABI.Pack(
+		"send",
+		id[:],
+		agentData.TokenAddress,
+		agentData.Receiver,
+		agentData.Amount,
+		agentData.DestChain,
+		agentData.RelayChain,
+	)
 	suite.Require().NoError(err)
 	TupleRCCData, err := abi.NewType(
 		"tuple", "",
@@ -1087,6 +1113,7 @@ func (suite *TransferTestSuite) TestAgentRefund() {
 	// commit block
 	errAck := packettypes.NewErrorAcknowledgement("onRecvPackt: binding is not exist")
 	err = pathBtoC.RelayPacket(BtoCTransferErc20packet, errAck.GetBytes())
+	suite.NoError(err)
 	suite.coordinator.CommitBlock(suite.chainA, suite.chainB, suite.chainC)
 
 	suite.Equal(suite.OutTokens(suite.chainB, chainBErc20, suite.chainC.ChainID).String(), "0")
