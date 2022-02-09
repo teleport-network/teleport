@@ -947,6 +947,180 @@ func (suite *TransferTestSuite) TestRemoteContractCallAgentBack() {
 	suite.Require().Equal(strconv.FormatUint(out.Uint64()-agentOut.Uint64(), 10), outAmount.String())
 }
 
+func (suite *TransferTestSuite) TestAgentSendBase() {
+	pathBtoA := xibctesting.NewPath(suite.chainB, suite.chainA)
+	pathAtoC := xibctesting.NewPath(suite.chainA, suite.chainC)
+	suite.coordinator.SetupClients(pathBtoA)
+	suite.coordinator.SetupClients(pathAtoC)
+
+	amount := big.NewInt(100)
+	agentOut := big.NewInt(10)
+	// chainA transferBase to chainB
+	suite.TestTransferBase()
+	suite.Equal(suite.OutTokens(suite.chainA, common.BigToAddress(big.NewInt(0)), suite.chainB.ChainID), amount)
+
+	chainBERC20 := crypto.CreateAddress(transfercontract.TransferContractAddress, 0)
+	balances := suite.BalanceOf(suite.chainB, chainBERC20, suite.chainB.SenderAddress)
+	suite.Require().Equal(amount.String(), balances.String())
+	// check ERC20 trace
+	_, _, exist, err := suite.chainB.App.AggregateKeeper.QueryERC20Trace(
+		suite.chainB.GetContext(),
+		chainBERC20,
+		suite.chainA.ChainID,
+	)
+	suite.Require().NoError(err)
+	suite.Require().True(exist)
+	// deploy ERC20 on chainC
+	chainCERC20 := suite.DeployERC20ByTransfer(suite.chainC)
+	// add erc20 trace on chainC
+	err = suite.chainC.App.AggregateKeeper.RegisterERC20Trace(
+		suite.chainC.GetContext(),
+		chainCERC20,
+		common.BigToAddress(big.NewInt(0)).String(),
+		suite.chainA.ChainID,
+	)
+	suite.Require().NoError(err)
+	// check ERC20 trace
+	_, _, exist, err = suite.chainC.App.AggregateKeeper.QueryERC20Trace(
+		suite.chainC.GetContext(),
+		chainCERC20,
+		suite.chainA.ChainID,
+	)
+	suite.Require().NoError(err)
+	suite.Require().True(exist)
+
+	// chainA transferBase to ChainC
+	agentData := types.ERC20TransferData{
+		TokenAddress: common.BigToAddress(big.NewInt(0)),
+		Receiver:     strings.ToLower(suite.chainC.SenderAddress.String()),
+		Amount:       agentOut,
+		DestChain:    suite.chainC.ChainID,
+		RelayChain:   "",
+	}
+	// id = sha256(srcChain/destChain/seq)
+	id := sha256.Sum256([]byte(suite.chainB.ChainID + "/" + suite.chainA.ChainID + "/" + "1"))
+	agentPayload, err := agentcontract.AgentContract.ABI.Pack(
+		"send",
+		id[:],
+		agentData.TokenAddress,
+		agentData.Receiver,
+		agentData.Amount,
+		agentData.DestChain,
+		agentData.RelayChain,
+	)
+	suite.Require().NoError(err)
+	TupleRCCData, err := abi.NewType(
+		"tuple", "",
+		[]abi.ArgumentMarshaling{
+			{Name: "contract_address", Type: "string"},
+			{Name: "data", Type: "bytes"},
+		},
+	)
+	suite.Require().NoError(err)
+	rccDataBytes, err := abi.Arguments{{Type: TupleRCCData}}.Pack(
+		multicalltypes.RCCData{
+			ContractAddress: strings.ToLower(agentcontract.AgentContractAddress.String()),
+			Data:            agentPayload,
+		},
+	)
+	suite.Require().NoError(err)
+	// send multi call
+	TupleTransferErc20Data, err := abi.NewType(
+		"tuple", "",
+		[]abi.ArgumentMarshaling{
+			{Name: "token_address", Type: "address"},
+			{Name: "receiver", Type: "string"},
+			{Name: "amount", Type: "uint256"},
+		},
+	)
+	suite.Require().NoError(err)
+	transferBaseBackDataBytes, err := abi.Arguments{{Type: TupleTransferErc20Data}}.Pack(
+		multicalltypes.ERC20TransferData{
+			TokenAddress: chainBERC20,
+			Receiver:     strings.ToLower(agentcontract.AgentContractAddress.String()),
+			Amount:       amount,
+		},
+	)
+	suite.Require().NoError(err)
+
+	// transfer Erc20 chainC to chainB
+	MultiCallData := multicalltypes.MultiCallData{
+		DestChain:  suite.chainA.ChainID,
+		RelayChain: "",
+		Functions:  []uint8{0, 2},
+		Data:       [][]byte{transferBaseBackDataBytes, rccDataBytes},
+	}
+	// Approve erc20 to transfer
+	suite.Approve(suite.chainB, chainBERC20, amount)
+	suite.SendMultiCall(suite.chainB, big.NewInt(0), MultiCallData)
+	suite.coordinator.CommitBlock(suite.chainA, suite.chainB, suite.chainC)
+
+	balances = suite.BalanceOf(suite.chainB, chainBERC20, suite.chainB.SenderAddress)
+	suite.Require().Equal("0", balances.String())
+
+	// relay packet
+	ERC20PacketData := types.NewFungibleTokenPacketData(
+		pathBtoA.EndpointA.ChainName,
+		pathBtoA.EndpointB.ChainName,
+		strings.ToLower(suite.chainB.SenderAddress.String()),
+		strings.ToLower(agentcontract.AgentContractAddress.String()),
+		amount.Bytes(),
+		strings.ToLower(chainBERC20.String()),
+		strings.ToLower(common.BigToAddress(big.NewInt(0)).String()),
+	)
+	// rcc packet data
+	rccPacketData := rcctypes.NewRCCPacketData(
+		pathBtoA.EndpointA.ChainName,
+		pathBtoA.EndpointB.ChainName,
+		strings.ToLower(suite.chainB.SenderAddress.String()),
+		strings.ToLower(agentcontract.AgentContractAddress.String()),
+		agentPayload,
+	)
+	multiCallPacket := packettypes.NewPacket(
+		1,
+		pathBtoA.EndpointA.ChainName,
+		pathBtoA.EndpointB.ChainName,
+		"",
+		[]string{types.PortID, rcctypes.PortID},
+		[][]byte{ERC20PacketData.GetBytes(), rccPacketData.GetBytes()},
+	)
+
+	resultTransferErc20 := []byte{byte(1)}
+	resultRcc, err := hex.DecodeString("0000000000000000000000000000000000000000000000000000000000000001")
+	suite.Require().NoError(err)
+	ack := packettypes.NewResultAcknowledgement([][]byte{resultTransferErc20, resultRcc})
+
+	err = pathBtoA.RelayPacket(multiCallPacket, ack.GetBytes())
+	suite.Require().NoError(err)
+	suite.Equal(suite.OutTokens(suite.chainA, common.BigToAddress(big.NewInt(0)), suite.chainB.ChainID).String(), "0")
+	suite.Equal(suite.OutTokens(suite.chainA, common.BigToAddress(big.NewInt(0)), suite.chainC.ChainID).String(), agentOut.String())
+	suite.Equal(suite.AgentSupplies(suite.chainA, common.BigToAddress(big.NewInt(0))), big.NewInt(90))
+	suite.Equal(suite.AgentBalances(suite.chainA, strings.ToLower(suite.chainB.SenderAddress.String()), common.BigToAddress(big.NewInt(0))), big.NewInt(90))
+	AToCTransferBasePacketData := types.NewFungibleTokenPacketData(
+		pathAtoC.EndpointA.ChainName,
+		pathAtoC.EndpointB.ChainName,
+		strings.ToLower(agentcontract.AgentContractAddress.String()),
+		strings.ToLower(suite.chainC.SenderAddress.String()),
+		agentOut.Bytes(),
+		strings.ToLower(common.BigToAddress(big.NewInt(0)).String()),
+		strings.ToLower(""),
+	)
+	AToCTransferBasePacket := packettypes.NewPacket(
+		1,
+		pathAtoC.EndpointA.ChainName,
+		pathAtoC.EndpointB.ChainName,
+		"",
+		[]string{types.PortID},
+		[][]byte{AToCTransferBasePacketData.GetBytes()},
+	)
+	// commit block
+	suite.coordinator.CommitBlock(suite.chainA, suite.chainB, suite.chainC)
+	AToCTransferBaseAck := packettypes.NewResultAcknowledgement([][]byte{{byte(1)}})
+	err = pathAtoC.RelayPacket(AToCTransferBasePacket, AToCTransferBaseAck.GetBytes())
+	suite.Require().NoError(err)
+	suite.Equal(suite.BalanceOf(suite.chainC, chainCERC20, suite.chainC.SenderAddress), big.NewInt(10))
+}
+
 func (suite *TransferTestSuite) TestAgentRefund() {
 	pathAtoB := xibctesting.NewPath(suite.chainA, suite.chainB)
 	pathBtoC := xibctesting.NewPath(suite.chainB, suite.chainC)
