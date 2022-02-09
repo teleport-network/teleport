@@ -968,6 +968,8 @@ func (suite *TransferTestSuite) TestAgentSendBase() {
 		chainBERC20,
 		suite.chainA.ChainID,
 	)
+	suite.Require().NoError(err)
+	suite.Require().True(exist)
 	// deploy ERC20 on chainC
 	chainCERC20 := suite.DeployERC20ByTransfer(suite.chainC)
 	// add erc20 trace on chainC
