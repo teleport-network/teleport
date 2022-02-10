@@ -85,16 +85,18 @@ func (suite *RCCTestSuite) TestRemoteContractCall() {
 		strings.ToLower(erc20Adress.String()),
 		payload,
 	)
+	bz, err := packetData.GetBytes()
+	suite.NoError(err)
 	packet := packettypes.NewPacket(
 		1,
 		path.EndpointA.ChainName,
 		path.EndpointB.ChainName,
 		"",
 		[]string{types.PortID},
-		[][]byte{packetData.GetBytes()},
+		[][]byte{bz},
 	)
 
-	ackBZ := suite.RCCAcks(suite.chainA, sha256.Sum256(packetData.GetBytes()))
+	ackBZ := suite.RCCAcks(suite.chainA, sha256.Sum256(bz))
 	suite.Require().Equal([]byte{}, ackBZ)
 
 	result, err := hex.DecodeString("0000000000000000000000000000000000000000000000000000000000000001")
@@ -105,7 +107,7 @@ func (suite *RCCTestSuite) TestRemoteContractCall() {
 	suite.Require().NoError(err)
 
 	// check ack
-	ackBZ = suite.RCCAcks(suite.chainA, sha256.Sum256(packetData.GetBytes()))
+	ackBZ = suite.RCCAcks(suite.chainA, sha256.Sum256(bz))
 	suite.Require().Equal(result, ackBZ)
 
 	// check allowance

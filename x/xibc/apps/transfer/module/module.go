@@ -141,10 +141,10 @@ func (am AppModule) EndBlock(ctx sdk.Context, req abci.RequestEndBlock) []abci.V
 
 func (a AppModule) OnRecvPacket(ctx sdk.Context, packetData []byte) (*sdk.Result, packettypes.Result, error) {
 	var data types.FungibleTokenPacketData
-	if err := data.Unmarshal(packetData); err != nil {
-		return nil, packettypes.Result{}, sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest, "cannot unmarshal transfer packet data: %s", err.Error())
+	data.DecodeBytes(packetData)
+	if len(data.String()) == 0 {
+		return nil, packettypes.Result{}, sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest, "cannot unmarshal transfer packet data")
 	}
-
 	result, err := a.keeper.OnRecvPacket(ctx, data)
 	if err != nil {
 		return nil, packettypes.Result{}, err
@@ -169,10 +169,11 @@ func (a AppModule) OnRecvPacket(ctx sdk.Context, packetData []byte) (*sdk.Result
 
 func (a AppModule) OnAcknowledgementPacket(ctx sdk.Context, packetData []byte, result []byte) (*sdk.Result, error) {
 	var data types.FungibleTokenPacketData
-	if err := data.Unmarshal(packetData); err != nil {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest, "cannot unmarshal transfer packet data: %s", err.Error())
+	data.DecodeBytes(packetData)
+	data.DecodeBytes(packetData)
+	if len(data.String()) == 0 {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest, "cannot unmarshal transfer packet data")
 	}
-
 	if err := a.keeper.OnAcknowledgementPacket(ctx, data, result); err != nil {
 		return nil, err
 	}

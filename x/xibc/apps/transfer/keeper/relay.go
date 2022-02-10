@@ -41,7 +41,11 @@ func (k Keeper) SendTransfer(
 		strings.ToLower(token),
 		strings.ToLower(oriToken),
 	)
-	packet := packettypes.NewPacket(sequence, sourceChain, destChain, relayChain, []string{types.PortID}, [][]byte{packetData.GetBytes()})
+	packetDataBz, err := packetData.GetBytes()
+	if err != nil {
+		return sdkerrors.Wrapf(types.ErrScChainEqualToDestChain, "Get packet bytes err ")
+	}
+	packet := packettypes.NewPacket(sequence, sourceChain, destChain, relayChain, []string{types.PortID}, [][]byte{packetDataBz})
 
 	return k.packetKeeper.SendPacket(ctx, packet)
 }

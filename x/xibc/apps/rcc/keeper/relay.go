@@ -35,7 +35,11 @@ func (k Keeper) SendRemoteContractCall(
 		contractAddress,
 		data,
 	)
-	packet := packettypes.NewPacket(sequence, sourceChain, destChain, relayChain, []string{types.PortID}, [][]byte{packetData.GetBytes()})
+	packetBz, err := packetData.GetBytes()
+	if err != nil {
+		return err
+	}
+	packet := packettypes.NewPacket(sequence, sourceChain, destChain, relayChain, []string{types.PortID}, [][]byte{packetBz})
 
 	return k.packetKeeper.SendPacket(ctx, packet)
 }

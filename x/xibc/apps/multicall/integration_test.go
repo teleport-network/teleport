@@ -82,16 +82,7 @@ func (suite *MultiCallTestSuite) TestTransferBaseCall() {
 	suite.Require().NoError(err)
 	suite.Require().True(exist)
 
-	// send multi call
-	TupleTransferBaseData, err := abi.NewType(
-		"tuple", "",
-		[]abi.ArgumentMarshaling{
-			{Name: "receiver", Type: "string"},
-			{Name: "amount", Type: "uint256"},
-		},
-	)
-	suite.Require().NoError(err)
-	transferBaseDataBytes, err := abi.Arguments{{Type: TupleTransferBaseData}}.Pack(
+	transferBaseDataBytes, err := abi.Arguments{{Type: types.TupleBaseTransferData}}.Pack(
 		types.BaseTransferData{
 			Receiver: suite.chainB.SenderAddress.String(),
 			Amount:   amount,
@@ -132,13 +123,15 @@ func (suite *MultiCallTestSuite) TestTransferBaseCall() {
 		strings.ToLower(common.BigToAddress(big.NewInt(0)).String()),
 		strings.ToLower(""),
 	)
+	DataListBaseBz, err := transferBasePacketData.GetBytes()
+	suite.NoError(err)
 	packet := packettypes.NewPacket(
 		1,
 		path.EndpointA.ChainName,
 		path.EndpointB.ChainName,
 		"",
 		[]string{transfertypes.PortID},
-		[][]byte{transferBasePacketData.GetBytes()},
+		[][]byte{DataListBaseBz},
 	)
 
 	ack := packettypes.NewResultAcknowledgement([][]byte{{byte(1)}})
@@ -175,16 +168,7 @@ func (suite *MultiCallTestSuite) TestTransferBaseBackCall() {
 	suite.Approve(suite.chainB, erc20Address, amount)
 
 	// send multi call
-	TupleTransferBaseBackData, err := abi.NewType(
-		"tuple", "",
-		[]abi.ArgumentMarshaling{
-			{Name: "token_address", Type: "address"},
-			{Name: "receiver", Type: "string"},
-			{Name: "amount", Type: "uint256"},
-		},
-	)
-	suite.Require().NoError(err)
-	transferBaseBackDataBytes, err := abi.Arguments{{Type: TupleTransferBaseBackData}}.Pack(
+	transferBaseBackDataBytes, err := abi.Arguments{{Type: types.TupleERC20TransferData}}.Pack(
 		types.ERC20TransferData{
 			TokenAddress: erc20Address,
 			Receiver:     suite.chainA.SenderAddress.String(),
@@ -218,14 +202,15 @@ func (suite *MultiCallTestSuite) TestTransferBaseBackCall() {
 		strings.ToLower(erc20Address.String()),
 		strings.ToLower(common.BigToAddress(big.NewInt(0)).String()),
 	)
-
+	DataListERC20Bz, err := packetData.GetBytes()
+	suite.NoError(err)
 	packet := packettypes.NewPacket(
 		1,
 		path.EndpointB.ChainName,
 		path.EndpointA.ChainName,
 		"",
 		[]string{transfertypes.PortID},
-		[][]byte{packetData.GetBytes()},
+		[][]byte{DataListERC20Bz},
 	)
 
 	ack := packettypes.NewResultAcknowledgement([][]byte{{byte(1)}})
@@ -264,16 +249,7 @@ func (suite *MultiCallTestSuite) TestRCCCall() {
 	// send multi call
 	payload, err := erc20contracts.ERC20MinterBurnerDecimalsContract.ABI.Pack("approve", suite.chainA.SenderAddress, amount)
 	suite.Require().NoError(err)
-
-	TupleRCCData, err := abi.NewType(
-		"tuple", "",
-		[]abi.ArgumentMarshaling{
-			{Name: "contract_address", Type: "string"},
-			{Name: "data", Type: "bytes"},
-		},
-	)
-	suite.Require().NoError(err)
-	rccDataBytes, err := abi.Arguments{{Type: TupleRCCData}}.Pack(
+	rccDataBytes, err := abi.Arguments{{Type: types.TupleRCCData}}.Pack(
 		types.RCCData{
 			ContractAddress: strings.ToLower(erc20Address.String()),
 			Data:            payload,
@@ -300,13 +276,15 @@ func (suite *MultiCallTestSuite) TestRCCCall() {
 		strings.ToLower(erc20Address.String()),
 		payload,
 	)
+	bz, err := rccPacketData.GetBytes()
+	suite.NoError(err)
 	packet := packettypes.NewPacket(
 		1,
 		path.EndpointA.ChainName,
 		path.EndpointB.ChainName,
 		"",
 		[]string{rcctypes.PortID},
-		[][]byte{rccPacketData.GetBytes()},
+		[][]byte{bz},
 	)
 
 	resultRcc, err := hex.DecodeString("0000000000000000000000000000000000000000000000000000000000000001")
@@ -363,15 +341,7 @@ func (suite *MultiCallTestSuite) TestMultiCall_VV() {
 	payload, err := erc20contracts.ERC20MinterBurnerDecimalsContract.ABI.Pack("approve", suite.chainA.SenderAddress, amount)
 	suite.Require().NoError(err)
 
-	TupleRCCData, err := abi.NewType(
-		"tuple", "",
-		[]abi.ArgumentMarshaling{
-			{Name: "contract_address", Type: "string"},
-			{Name: "data", Type: "bytes"},
-		},
-	)
-	suite.Require().NoError(err)
-	rccDataBytes, err := abi.Arguments{{Type: TupleRCCData}}.Pack(
+	rccDataBytes, err := abi.Arguments{{Type: types.TupleRCCData}}.Pack(
 		types.RCCData{
 			ContractAddress: strings.ToLower(erc20Address.String()),
 			Data:            payload,
@@ -379,15 +349,7 @@ func (suite *MultiCallTestSuite) TestMultiCall_VV() {
 	)
 	suite.Require().NoError(err)
 
-	TupleTransferBaseData, err := abi.NewType(
-		"tuple", "",
-		[]abi.ArgumentMarshaling{
-			{Name: "receiver", Type: "string"},
-			{Name: "amount", Type: "uint256"},
-		},
-	)
-	suite.Require().NoError(err)
-	transferBaseDataBytes, err := abi.Arguments{{Type: TupleTransferBaseData}}.Pack(
+	transferBaseDataBytes, err := abi.Arguments{{Type: types.TupleBaseTransferData}}.Pack(
 		types.BaseTransferData{
 			Receiver: suite.chainB.SenderAddress.String(),
 			Amount:   amount,
@@ -423,6 +385,10 @@ func (suite *MultiCallTestSuite) TestMultiCall_VV() {
 		strings.ToLower(common.BigToAddress(big.NewInt(0)).String()),
 		strings.ToLower(""),
 	)
+	bz, err := rccPacketData.GetBytes()
+	suite.NoError(err)
+	DataListERC20Bz, err := transferBasePacketData.GetBytes()
+	suite.NoError(err)
 	packet := packettypes.NewPacket(
 		1,
 		path.EndpointA.ChainName,
@@ -433,8 +399,8 @@ func (suite *MultiCallTestSuite) TestMultiCall_VV() {
 			transfertypes.PortID,
 		},
 		[][]byte{
-			rccPacketData.GetBytes(),
-			transferBasePacketData.GetBytes(),
+			bz,
+			DataListERC20Bz,
 		},
 	)
 
@@ -488,15 +454,7 @@ func (suite *MultiCallTestSuite) TestMultiCall_VX() {
 	payload, err := erc20contracts.ERC20MinterBurnerDecimalsContract.ABI.Pack("approve", suite.chainA.SenderAddress, amount)
 	suite.Require().NoError(err)
 
-	TupleRCCData, err := abi.NewType(
-		"tuple", "",
-		[]abi.ArgumentMarshaling{
-			{Name: "contract_address", Type: "string"},
-			{Name: "data", Type: "bytes"},
-		},
-	)
-	suite.Require().NoError(err)
-	rccDataBytes, err := abi.Arguments{{Type: TupleRCCData}}.Pack(
+	rccDataBytes, err := abi.Arguments{{Type: types.TupleRCCData}}.Pack(
 		types.RCCData{
 			ContractAddress: strings.ToLower(erc20Address.String()),
 			Data:            payload,
@@ -504,15 +462,7 @@ func (suite *MultiCallTestSuite) TestMultiCall_VX() {
 	)
 	suite.Require().NoError(err)
 
-	TupleTransferBaseData, err := abi.NewType(
-		"tuple", "",
-		[]abi.ArgumentMarshaling{
-			{Name: "receiver", Type: "string"},
-			{Name: "amount", Type: "uint256"},
-		},
-	)
-	suite.Require().NoError(err)
-	transferBaseDataBytes, err := abi.Arguments{{Type: TupleTransferBaseData}}.Pack(
+	transferBaseDataBytes, err := abi.Arguments{{Type: types.TupleBaseTransferData}}.Pack(
 		types.BaseTransferData{
 			Receiver: suite.chainB.SenderAddress.String(),
 			Amount:   amount,
@@ -548,6 +498,10 @@ func (suite *MultiCallTestSuite) TestMultiCall_VX() {
 		strings.ToLower(common.BigToAddress(big.NewInt(0)).String()),
 		strings.ToLower(""),
 	)
+	bz, err := rccPacketData.GetBytes()
+	suite.NoError(err)
+	DataListERC20Bz, err := transferBasePacketData.GetBytes()
+	suite.NoError(err)
 	packet := packettypes.NewPacket(
 		1,
 		path.EndpointA.ChainName,
@@ -558,8 +512,8 @@ func (suite *MultiCallTestSuite) TestMultiCall_VX() {
 			transfertypes.PortID,
 		},
 		[][]byte{
-			rccPacketData.GetBytes(),
-			transferBasePacketData.GetBytes(),
+			bz,
+			DataListERC20Bz,
 		},
 	)
 

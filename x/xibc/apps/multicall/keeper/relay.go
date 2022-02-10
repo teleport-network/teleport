@@ -83,17 +83,21 @@ func (k Keeper) SendMultiCall(ctx sdk.Context, sender common.Address, calldata t
 			if err != nil {
 				return err
 			}
+			transferBz, err := transfertypes.NewFungibleTokenPacketData(
+				sourceChain,
+				calldata.DestChain,
+				strings.ToLower(sender.String()),
+				strings.ToLower(erc20TransferData.Receiver),
+				erc20TransferData.Amount.Bytes(),
+				strings.ToLower(erc20TransferData.TokenAddress.String()),
+				oriToken,
+			).GetBytes()
+			if err != nil {
+				return err
+			}
 			dataList = append(
 				dataList,
-				transfertypes.NewFungibleTokenPacketData(
-					sourceChain,
-					calldata.DestChain,
-					strings.ToLower(sender.String()),
-					strings.ToLower(erc20TransferData.Receiver),
-					erc20TransferData.Amount.Bytes(),
-					strings.ToLower(erc20TransferData.TokenAddress.String()),
-					oriToken,
-				).GetBytes(),
+				transferBz,
 			)
 		case types.TransferBase:
 			data, err := abi.Arguments{{Type: TupleBaseTransferData}}.Unpack(calldata.Data[i])
@@ -109,17 +113,21 @@ func (k Keeper) SendMultiCall(ctx sdk.Context, sender common.Address, calldata t
 				return sdkerrors.Wrapf(types.ErrInvalidMultiCallEvent, "unpack failed, function ID %d", fid)
 			}
 			ports = append(ports, transfertypes.PortID)
+			transferBz, err := transfertypes.NewFungibleTokenPacketData(
+				sourceChain,
+				calldata.DestChain,
+				strings.ToLower(sender.String()),
+				strings.ToLower(baseTransferData.Receiver),
+				baseTransferData.Amount.Bytes(),
+				common.BigToAddress(big.NewInt(0)).String(),
+				"",
+			).GetBytes()
+			if err != nil {
+				return err
+			}
 			dataList = append(
 				dataList,
-				transfertypes.NewFungibleTokenPacketData(
-					sourceChain,
-					calldata.DestChain,
-					strings.ToLower(sender.String()),
-					strings.ToLower(baseTransferData.Receiver),
-					baseTransferData.Amount.Bytes(),
-					common.BigToAddress(big.NewInt(0)).String(),
-					"",
-				).GetBytes(),
+				transferBz,
 			)
 		case types.RemoteCall:
 			data, err := abi.Arguments{{Type: TupleRCCData}}.Unpack(calldata.Data[i])
@@ -135,15 +143,20 @@ func (k Keeper) SendMultiCall(ctx sdk.Context, sender common.Address, calldata t
 				return sdkerrors.Wrapf(types.ErrInvalidMultiCallEvent, "unpack failed, function ID %d", fid)
 			}
 			ports = append(ports, rcctypes.PortID)
+			rccPacketDataBz, err := rcctypes.NewRCCPacketData(
+				sourceChain,
+				calldata.DestChain,
+				strings.ToLower(sender.String()),
+				strings.ToLower(rccData.ContractAddress),
+				rccData.Data,
+			).GetBytes()
+
+			if err != nil {
+				return sdkerrors.Wrapf(types.ErrInvalidMultiCallEvent, "unpack failed, function ID %d", fid)
+			}
 			dataList = append(
 				dataList,
-				rcctypes.NewRCCPacketData(
-					sourceChain,
-					calldata.DestChain,
-					strings.ToLower(sender.String()),
-					strings.ToLower(rccData.ContractAddress),
-					rccData.Data,
-				).GetBytes(),
+				rccPacketDataBz,
 			)
 		default:
 			return sdkerrors.Wrapf(types.ErrInvalidMultiCallEvent, "invalid function ID %d", fid)
