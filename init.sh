@@ -30,7 +30,6 @@ teleport init $MONIKER --chain-id $CHAINID
 cat $HOME/.teleport/config/genesis.json | jq '.app_state["staking"]["params"]["bond_denom"]="atele"' > $HOME/.teleport/config/tmp_genesis.json && mv $HOME/.teleport/config/tmp_genesis.json $HOME/.teleport/config/genesis.json
 cat $HOME/.teleport/config/genesis.json | jq '.app_state["crisis"]["constant_fee"]["denom"]="atele"' > $HOME/.teleport/config/tmp_genesis.json && mv $HOME/.teleport/config/tmp_genesis.json $HOME/.teleport/config/genesis.json
 cat $HOME/.teleport/config/genesis.json | jq '.app_state["gov"]["deposit_params"]["min_deposit"][0]["denom"]="atele"' > $HOME/.teleport/config/tmp_genesis.json && mv $HOME/.teleport/config/tmp_genesis.json $HOME/.teleport/config/genesis.json
-cat $HOME/.teleport/config/genesis.json | jq '.app_state["mint"]["params"]["mint_denom"]="atele"' > $HOME/.teleport/config/tmp_genesis.json && mv $HOME/.teleport/config/tmp_genesis.json $HOME/.teleport/config/genesis.json
 cat $HOME/.teleport/config/genesis.json | jq '.app_state["evm"]["params"]["evm_denom"]="atele"' > $HOME/.teleport/config/tmp_genesis.json && mv $HOME/.teleport/config/tmp_genesis.json $HOME/.teleport/config/genesis.json
 
 

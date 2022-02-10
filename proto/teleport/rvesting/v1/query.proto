@@ -1,0 +1,38 @@
+syntax = "proto3";
+package teleport.rvesting.v1;
+
+import "gogoproto/gogo.proto";
+import "teleport/rvesting/v1/genesis.proto";
+import "google/api/annotations.proto";
+import "cosmos/base/v1beta1/coin.proto";
+
+option go_package = "github.com/teleport-network/teleport/x/rvesting/types";
+
+service Query {
+  // Params returns the total set of parameters.
+  rpc Params(QueryParamsRequest) returns (QueryParamsResponse) {
+    option (google.api.http).get = "/teleport/rvesting/v1/params";
+  }
+
+  rpc Remaining(QueryRemainingRequest) returns (QueryRemainingResponse) {
+    option (google.api.http).get = "/teleport/rvesting/v1/remaining";
+  }
+}
+
+// QueryParamsRequest is the request type for the Query/Params RPC method.
+message QueryParamsRequest {}
+
+// QueryParamsResponse is the response type for the Query/Params RPC method.
+message QueryParamsResponse {
+  // params defines the parameters of the module.
+  Params params = 1 [(gogoproto.nullable) = false];
+}
+
+message QueryRemainingRequest {}
+
+message QueryRemainingResponse {
+  string address = 1;
+  repeated cosmos.base.v1beta1.Coin remaining = 2
+  [(gogoproto.nullable) = false, (gogoproto.castrepeated) = "github.com/cosmos/cosmos-sdk/types.Coins"];
+}
+

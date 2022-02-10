@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	rvestingtypes "github.com/teleport-network/teleport/x/rvesting/types"
 
 	"github.com/spf13/cobra"
 
@@ -184,6 +185,21 @@ contain valid denominations. Accounts may optionally be supplied with vesting pa
 			}
 
 			appState[banktypes.ModuleName] = bankGenStateBz
+
+			rvGenState := rvestingtypes.GetGenesisStateFromAppState(clientCtx.Codec, appState)
+			rvGenState.From = addr.String()
+			rvGenState.InitReward = sdk.NewCoins(sdk.NewCoin(coins[0].Denom, coins[0].Amount.QuoRaw(10)))
+			rvGenState.Params = rvestingtypes.Params{
+				EnableVesting:  true,
+				PerBlockReward: rvGenState.Params.GetPerBlockReward(),
+			}
+
+			rvGenStateBz, err := clientCtx.Codec.MarshalJSON(rvGenState)
+			if err != nil {
+				return fmt.Errorf("failed to marshal rvesting genesis state: %w", err)
+			}
+
+			appState[rvestingtypes.ModuleName] = rvGenStateBz
 
 			appStateJSON, err := json.Marshal(appState)
 			if err != nil {
