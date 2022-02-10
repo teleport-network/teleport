@@ -61,10 +61,14 @@ func (k Keeper) RecvPacket(goCtx context.Context, msg *packettypes.MsgRecvPacket
 			}
 
 			if len(result.Result) == 0 {
+				errAckBz, err := packettypes.NewErrorAcknowledgement(result.Message).GetBytes()
+				if err != nil {
+					return nil, err
+				}
 				if err := k.PacketKeeper.WriteAcknowledgement(
 					ctx,
 					msg.Packet,
-					packettypes.NewErrorAcknowledgement(result.Message).GetBytes(),
+					errAckBz,
 				); err != nil {
 					return nil, err
 				}
@@ -74,8 +78,11 @@ func (k Keeper) RecvPacket(goCtx context.Context, msg *packettypes.MsgRecvPacket
 
 			results = append(results, result.Result)
 		}
-
-		if err := k.PacketKeeper.WriteAcknowledgement(ctx, msg.Packet, packettypes.NewResultAcknowledgement(results).GetBytes()); err != nil {
+		ackBz, err := packettypes.NewResultAcknowledgement(results).GetBytes()
+		if err != nil {
+			return nil, err
+		}
+		if err := k.PacketKeeper.WriteAcknowledgement(ctx, msg.Packet, ackBz); err != nil {
 			return nil, err
 		}
 	}
@@ -94,8 +101,12 @@ func (k Keeper) Acknowledgement(goCtx context.Context, msg *packettypes.MsgAckno
 	}
 
 	var ack packettypes.Acknowledgement
-	if err := ack.Unmarshal(msg.Acknowledgement); err != nil {
-		return nil, sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest, "cannot unmarshal acknowledgement: %v", err)
+	err := ack.DecodeBytes(msg.Acknowledgement)
+	if err != nil {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest, "decode acknowledgement bytes failed: %v", err)
+	}
+	if len(ack.String()) == 0 {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest, "decode acknowledgement bytes failed")
 	}
 
 	success := ack.Results != nil && len(ack.Results) > 0

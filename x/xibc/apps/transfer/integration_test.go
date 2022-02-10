@@ -133,8 +133,9 @@ func (suite *TransferTestSuite) TestTransferBase() {
 		[]string{types.PortID},
 		[][]byte{DataListBaseBz},
 	)
-	ack := packettypes.NewResultAcknowledgement([][]byte{{byte(1)}})
-	err = path.RelayPacket(packet, ack.GetBytes())
+	ack, err := packettypes.NewResultAcknowledgement([][]byte{{byte(1)}}).GetBytes()
+	suite.Require().NoError(err)
+	err = path.RelayPacket(packet, ack)
 	suite.Require().NoError(err)
 
 	// check balance
@@ -202,8 +203,9 @@ func (suite *TransferTestSuite) TestTransferBaseBack() {
 		[][]byte{DataListERC20Bz},
 	)
 
-	ack := packettypes.NewResultAcknowledgement([][]byte{{byte(1)}})
-	err = path.RelayPacket(packet, ack.GetBytes())
+	ack, err := packettypes.NewResultAcknowledgement([][]byte{{byte(1)}}).GetBytes()
+	suite.Require().NoError(err)
+	err = path.RelayPacket(packet, ack)
 	suite.Require().NoError(err)
 
 	// check balance
@@ -308,8 +310,8 @@ func (suite *TransferTestSuite) TestTransferERC20() {
 	// commit block
 	suite.coordinator.CommitBlock(suite.chainA, suite.chainB)
 
-	ack := packettypes.NewResultAcknowledgement([][]byte{{byte(1)}})
-	err = path.RelayPacket(packet, ack.GetBytes())
+	ack, err := packettypes.NewResultAcknowledgement([][]byte{{byte(1)}}).GetBytes()
+	err = path.RelayPacket(packet, ack)
 	suite.Require().NoError(err)
 
 	// check balance
@@ -386,8 +388,9 @@ func (suite *TransferTestSuite) TestTransferERC20Back() {
 		[][]byte{DataListERC20Bz},
 	)
 
-	ack := packettypes.NewResultAcknowledgement([][]byte{{byte(1)}})
-	err = path.RelayPacket(packet, ack.GetBytes())
+	ack, err := packettypes.NewResultAcknowledgement([][]byte{{byte(1)}}).GetBytes()
+	suite.Require().NoError(err)
+	err = path.RelayPacket(packet, ack)
 	suite.Require().NoError(err)
 
 	// check chainA token out
@@ -483,8 +486,9 @@ func (suite *TransferTestSuite) TestTransferWTele() {
 	// commit block
 	suite.coordinator.CommitBlock(suite.chainA, suite.chainB)
 
-	ack := packettypes.NewResultAcknowledgement([][]byte{{byte(1)}})
-	err = path.RelayPacket(packet, ack.GetBytes())
+	ack, err := packettypes.NewResultAcknowledgement([][]byte{{byte(1)}}).GetBytes()
+	suite.Require().NoError(err)
+	err = path.RelayPacket(packet, ack)
 	suite.Require().NoError(err)
 
 	// check balance
@@ -561,8 +565,9 @@ func (suite *TransferTestSuite) TestTransferWTeleBack() {
 		[][]byte{DataListERC20Bz},
 	)
 
-	ack := packettypes.NewResultAcknowledgement([][]byte{{byte(1)}})
-	err = path.RelayPacket(packet, ack.GetBytes())
+	ack, err := packettypes.NewResultAcknowledgement([][]byte{{byte(1)}}).GetBytes()
+	suite.Require().NoError(err)
+	err = path.RelayPacket(packet, ack)
 	suite.Require().NoError(err)
 
 	// check chainA token out
@@ -681,8 +686,9 @@ func (suite *TransferTestSuite) TestRemoteContractCallAgent() {
 	// commit block
 	suite.coordinator.CommitBlock(suite.chainA, suite.chainB)
 
-	AtoBTransferErc20ack := packettypes.NewResultAcknowledgement([][]byte{{byte(1)}})
-	err = pathAtoB.RelayPacket(AtoBTransferErc20packet, AtoBTransferErc20ack.GetBytes())
+	AtoBTransferErc20ack, err := packettypes.NewResultAcknowledgement([][]byte{{byte(1)}}).GetBytes()
+	suite.Require().NoError(err)
+	err = pathAtoB.RelayPacket(AtoBTransferErc20packet, AtoBTransferErc20ack)
 	suite.Require().NoError(err)
 
 	// check balance
@@ -741,9 +747,9 @@ func (suite *TransferTestSuite) TestRemoteContractCallAgent() {
 
 	result, err := hex.DecodeString("0000000000000000000000000000000000000000000000000000000000000001")
 	suite.Require().NoError(err)
-	agentAck := packettypes.NewResultAcknowledgement([][]byte{result})
-
-	err = pathAtoB.RelayPacket(agentPacket, agentAck.GetBytes())
+	agentAck, err := packettypes.NewResultAcknowledgement([][]byte{result}).GetBytes()
+	suite.Require().NoError(err)
+	err = pathAtoB.RelayPacket(agentPacket, agentAck)
 	suite.Require().NoError(err)
 
 	// check ack
@@ -784,8 +790,9 @@ func (suite *TransferTestSuite) TestRemoteContractCallAgent() {
 	// commit block
 	suite.coordinator.CommitBlock(suite.chainA, suite.chainB)
 
-	BtoCTransferErc20ack := packettypes.NewResultAcknowledgement([][]byte{{byte(1)}})
-	err = pathBtoC.RelayPacket(BtoCTransferErc20packet, BtoCTransferErc20ack.GetBytes())
+	BtoCTransferErc20ack, err := packettypes.NewResultAcknowledgement([][]byte{{byte(1)}}).GetBytes()
+	suite.Require().NoError(err)
+	err = pathBtoC.RelayPacket(BtoCTransferErc20packet, BtoCTransferErc20ack)
 	suite.Require().NoError(err)
 
 	// check balance
@@ -906,9 +913,9 @@ func (suite *TransferTestSuite) TestRemoteContractCallAgentBack() {
 	resultTransferErc20 := []byte{byte(1)}
 	resultRcc, err := hex.DecodeString("0000000000000000000000000000000000000000000000000000000000000001")
 	suite.Require().NoError(err)
-	ack := packettypes.NewResultAcknowledgement([][]byte{resultTransferErc20, resultRcc})
-
-	err = pathCtoB.RelayPacket(multiCallPacket, ack.GetBytes())
+	ack, err := packettypes.NewResultAcknowledgement([][]byte{resultTransferErc20, resultRcc}).GetBytes()
+	suite.Require().NoError(err)
+	err = pathCtoB.RelayPacket(multiCallPacket, ack)
 	suite.Require().NoError(err)
 
 	supplies := suite.AgentSupplies(suite.chainB, chainBERC20)
@@ -936,9 +943,9 @@ func (suite *TransferTestSuite) TestRemoteContractCallAgentBack() {
 	// commit block
 	suite.coordinator.CommitBlock(suite.chainA, suite.chainB)
 
-	BtoATransferErc20ack := packettypes.NewResultAcknowledgement([][]byte{{byte(1)}})
-
-	err = pathBtoA.RelayPacket(BToATransferErc20packet, BtoATransferErc20ack.GetBytes())
+	BtoATransferErc20ack, err := packettypes.NewResultAcknowledgement([][]byte{{byte(1)}}).GetBytes()
+	suite.Require().NoError(err)
+	err = pathBtoA.RelayPacket(BToATransferErc20packet, BtoATransferErc20ack)
 	suite.Require().NoError(err)
 	// check chainA token out
 	outAmount := suite.OutTokens(
@@ -1078,9 +1085,9 @@ func (suite *TransferTestSuite) TestAgentSendBase() {
 	resultTransferErc20 := []byte{byte(1)}
 	resultRcc, err := hex.DecodeString("0000000000000000000000000000000000000000000000000000000000000001")
 	suite.Require().NoError(err)
-	ack := packettypes.NewResultAcknowledgement([][]byte{resultTransferErc20, resultRcc})
-
-	err = pathBtoA.RelayPacket(multiCallPacket, ack.GetBytes())
+	ack, err := packettypes.NewResultAcknowledgement([][]byte{resultTransferErc20, resultRcc}).GetBytes()
+	suite.Require().NoError(err)
+	err = pathBtoA.RelayPacket(multiCallPacket, ack)
 	suite.Require().NoError(err)
 	suite.Equal(suite.OutTokens(suite.chainA, common.BigToAddress(big.NewInt(0)), suite.chainB.ChainID).String(), "0")
 	suite.Equal(suite.OutTokens(suite.chainA, common.BigToAddress(big.NewInt(0)), suite.chainC.ChainID).String(), agentOut.String())
@@ -1107,8 +1114,9 @@ func (suite *TransferTestSuite) TestAgentSendBase() {
 	)
 	// commit block
 	suite.coordinator.CommitBlock(suite.chainA, suite.chainB, suite.chainC)
-	AToCTransferBaseAck := packettypes.NewResultAcknowledgement([][]byte{{byte(1)}})
-	err = pathAtoC.RelayPacket(AToCTransferBasePacket, AToCTransferBaseAck.GetBytes())
+	AToCTransferBaseAck, err := packettypes.NewResultAcknowledgement([][]byte{{byte(1)}}).GetBytes()
+	suite.Require().NoError(err)
+	err = pathAtoC.RelayPacket(AToCTransferBasePacket, AToCTransferBaseAck)
 	suite.Require().NoError(err)
 	suite.Equal(suite.BalanceOf(suite.chainC, chainCERC20, suite.chainC.SenderAddress), big.NewInt(10))
 }
@@ -1238,9 +1246,9 @@ func (suite *TransferTestSuite) TestAgentRefund() {
 	resultTransferErc20 := []byte{byte(1)}
 	resultRcc, err := hex.DecodeString("0000000000000000000000000000000000000000000000000000000000000001")
 	suite.Require().NoError(err)
-	ack := packettypes.NewResultAcknowledgement([][]byte{resultTransferErc20, resultRcc})
-
-	err = pathAtoB.RelayPacket(multiCallPacket, ack.GetBytes())
+	ack, err := packettypes.NewResultAcknowledgement([][]byte{resultTransferErc20, resultRcc}).GetBytes()
+	suite.Require().NoError(err)
+	err = pathAtoB.RelayPacket(multiCallPacket, ack)
 	suite.Require().NoError(err)
 	suite.coordinator.CommitBlock(suite.chainA, suite.chainB, suite.chainC)
 	suite.Equal(suite.OutTokens(suite.chainB, chainBErc20, suite.chainC.ChainID).String(), out.String())
@@ -1267,8 +1275,9 @@ func (suite *TransferTestSuite) TestAgentRefund() {
 		[][]byte{DataListERC20Bz},
 	)
 	// commit block
-	errAck := packettypes.NewErrorAcknowledgement("onRecvPackt: binding is not exist")
-	err = pathBtoC.RelayPacket(BtoCTransferErc20packet, errAck.GetBytes())
+	errAck, err := packettypes.NewErrorAcknowledgement("onRecvPackt: binding is not exist").GetBytes()
+	suite.NoError(err)
+	err = pathBtoC.RelayPacket(BtoCTransferErc20packet, errAck)
 	suite.NoError(err)
 	suite.coordinator.CommitBlock(suite.chainA, suite.chainB, suite.chainC)
 

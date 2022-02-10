@@ -102,8 +102,9 @@ func (suite *RCCTestSuite) TestRemoteContractCall() {
 	result, err := hex.DecodeString("0000000000000000000000000000000000000000000000000000000000000001")
 	suite.Require().NoError(err)
 
-	ack := packettypes.NewResultAcknowledgement([][]byte{result})
-	err = path.RelayPacket(packet, ack.GetBytes())
+	ack, err := packettypes.NewResultAcknowledgement([][]byte{result}).GetBytes()
+	suite.Require().NoError(err)
+	err = path.RelayPacket(packet, ack)
 	suite.Require().NoError(err)
 
 	// check ack

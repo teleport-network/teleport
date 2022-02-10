@@ -134,8 +134,9 @@ func (suite *MultiCallTestSuite) TestTransferBaseCall() {
 		[][]byte{DataListBaseBz},
 	)
 
-	ack := packettypes.NewResultAcknowledgement([][]byte{{byte(1)}})
-	err = path.RelayPacket(packet, ack.GetBytes())
+	ack, err := packettypes.NewResultAcknowledgement([][]byte{{byte(1)}}).GetBytes()
+	suite.NoError(err)
+	err = path.RelayPacket(packet, ack)
 	suite.Require().NoError(err)
 
 	// check balance
@@ -213,8 +214,9 @@ func (suite *MultiCallTestSuite) TestTransferBaseBackCall() {
 		[][]byte{DataListERC20Bz},
 	)
 
-	ack := packettypes.NewResultAcknowledgement([][]byte{{byte(1)}})
-	err = path.RelayPacket(packet, ack.GetBytes())
+	ack, err := packettypes.NewResultAcknowledgement([][]byte{{byte(1)}}).GetBytes()
+	suite.NoError(err)
+	err = path.RelayPacket(packet, ack)
 	suite.Require().NoError(err)
 
 	// check chainA token out
@@ -290,8 +292,9 @@ func (suite *MultiCallTestSuite) TestRCCCall() {
 	resultRcc, err := hex.DecodeString("0000000000000000000000000000000000000000000000000000000000000001")
 	suite.Require().NoError(err)
 
-	ack := packettypes.NewResultAcknowledgement([][]byte{resultRcc})
-	err = path.RelayPacket(packet, ack.GetBytes())
+	ack, err := packettypes.NewResultAcknowledgement([][]byte{resultRcc}).GetBytes()
+	suite.Require().NoError(err)
+	err = path.RelayPacket(packet, ack)
 	suite.Require().NoError(err)
 
 	// check allowance
@@ -408,8 +411,9 @@ func (suite *MultiCallTestSuite) TestMultiCall_VV() {
 	suite.Require().NoError(err)
 	resultTransferBase := []byte{byte(1)}
 
-	ack := packettypes.NewResultAcknowledgement([][]byte{resultRcc, resultTransferBase})
-	err = path.RelayPacket(packet, ack.GetBytes())
+	ack, err := packettypes.NewResultAcknowledgement([][]byte{resultRcc, resultTransferBase}).GetBytes()
+	suite.Require().NoError(err)
+	err = path.RelayPacket(packet, ack)
 	suite.Require().NoError(err)
 
 	// check allowance
@@ -517,8 +521,10 @@ func (suite *MultiCallTestSuite) TestMultiCall_VX() {
 		},
 	)
 
-	ack := packettypes.NewErrorAcknowledgement("onRecvPackt: binding is not exist")
-	err = path.RelayPacket(packet, ack.GetBytes())
+	ack, err := packettypes.NewErrorAcknowledgement("onRecvPackt: binding is not exist").GetBytes()
+	suite.Require().NoError(err)
+
+	err = path.RelayPacket(packet, ack)
 	suite.Require().NoError(err)
 
 	// check allowance

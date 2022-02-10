@@ -2,6 +2,7 @@ package types
 
 import (
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
+	"github.com/ethereum/go-ethereum/accounts/abi"
 
 	"github.com/ethereum/go-ethereum/common"
 )
@@ -19,4 +20,26 @@ var (
 
 func init() {
 	ModuleAddress = common.BytesToAddress(authtypes.NewModuleAddress(SubModuleName).Bytes())
+	initTupleAckData()
+}
+
+var (
+	TupleAckData abi.Type
+)
+
+func initTupleAckData() {
+	tupleAckData, err := abi.NewType(
+		"tuple", "",
+		[]abi.ArgumentMarshaling{
+			{Name: "results", Type: "bytes[]"},
+			{Name: "message", Type: "string"},
+		},
+	)
+	if err != nil {
+		panic(err)
+	}
+	if tupleAckData.T != abi.TupleTy {
+		panic("New TupleERC20TransferData type err")
+	}
+	TupleAckData = tupleAckData
 }
