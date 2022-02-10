@@ -311,6 +311,7 @@ func (suite *TransferTestSuite) TestTransferERC20() {
 	suite.coordinator.CommitBlock(suite.chainA, suite.chainB)
 
 	ack, err := packettypes.NewResultAcknowledgement([][]byte{{byte(1)}}).GetBytes()
+	suite.Require().NoError(err)
 	err = path.RelayPacket(packet, ack)
 	suite.Require().NoError(err)
 
