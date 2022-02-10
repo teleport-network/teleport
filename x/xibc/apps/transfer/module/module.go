@@ -141,7 +141,10 @@ func (am AppModule) EndBlock(ctx sdk.Context, req abci.RequestEndBlock) []abci.V
 
 func (a AppModule) OnRecvPacket(ctx sdk.Context, packetData []byte) (*sdk.Result, packettypes.Result, error) {
 	var data types.FungibleTokenPacketData
-	data.DecodeBytes(packetData)
+	err := data.DecodeBytes(packetData)
+	if err != nil {
+		return nil, packettypes.Result{}, sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest, "unmarshal transfer packet failed")
+	}
 	if len(data.String()) == 0 {
 		return nil, packettypes.Result{}, sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest, "cannot unmarshal transfer packet data")
 	}
@@ -169,8 +172,10 @@ func (a AppModule) OnRecvPacket(ctx sdk.Context, packetData []byte) (*sdk.Result
 
 func (a AppModule) OnAcknowledgementPacket(ctx sdk.Context, packetData []byte, result []byte) (*sdk.Result, error) {
 	var data types.FungibleTokenPacketData
-	data.DecodeBytes(packetData)
-	data.DecodeBytes(packetData)
+	err := data.DecodeBytes(packetData)
+	if err != nil {
+		return nil, sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest, "unmarshal transfer packet failed")
+	}
 	if len(data.String()) == 0 {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest, "cannot unmarshal transfer packet data")
 	}
