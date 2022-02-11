@@ -110,8 +110,7 @@ func (k Keeper) Acknowledgement(goCtx context.Context, msg *packettypes.MsgAckno
 	}
 
 	var ack packettypes.Acknowledgement
-	err := ack.DecodeBytes(msg.Acknowledgement)
-	if err != nil {
+	if err := ack.DecodeBytes(msg.Acknowledgement); err != nil {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest, "decode acknowledgement bytes failed: %v", err)
 	}
 	if len(ack.String()) == 0 {
