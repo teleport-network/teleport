@@ -28,6 +28,14 @@ func (k Keeper) UpdateClient(goCtx context.Context, msg *clienttypes.MsgUpdateCl
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrUnauthorized, "relayer: %s", msg.Signer)
 	}
 
+	clientState, found := k.ClientKeeper.GetClientState(ctx, msg.ChainName)
+	if !found {
+		return nil, sdkerrors.Wrapf(clienttypes.ErrClientNotFound, "client state not found %s", msg.ChainName)
+	}
+	if err = clientState.CheckMsg(msg); err != nil {
+		return nil, err
+	}
+
 	if err = k.ClientKeeper.UpdateClient(ctx, msg.ChainName, header); err != nil {
 		return nil, err
 	}
