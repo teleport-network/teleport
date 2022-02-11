@@ -81,6 +81,7 @@ func (k Keeper) RecvPacket(goCtx context.Context, msg *packettypes.MsgRecvPacket
 	}
 
 	write()
+	ctx.EventManager().EmitEvents(cctx.EventManager().Events())
 
 	return &packettypes.MsgRecvPacketResponse{}, nil
 }
