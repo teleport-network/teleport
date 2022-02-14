@@ -22,7 +22,7 @@ var (
 var defaultGenesis = GenesisState{
 	Clients:          []IdentifiedClientState{},
 	ClientsConsensus: ClientsConsensusStates{},
-	NativeChainName:  "xibc-test",
+	NativeChainName:  "teleport",
 }
 
 // ClientsConsensusStates defines a slice of ClientConsensusStates that supports the sort interface
