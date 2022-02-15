@@ -109,15 +109,19 @@ func (suite *KeeperTestSuite) TestQueryClientStates() {
 		"success",
 		func() {
 			// setup testing conditions
-			path := xibctesting.NewPath(suite.chainA, suite.chainB)
-			suite.coordinator.SetupClients(path)
+			path1 := xibctesting.NewPath(suite.chainA, suite.chainB)
+			path2 := xibctesting.NewPath(suite.chainA, suite.chainC)
+			suite.coordinator.SetupClients(path1)
+			suite.coordinator.SetupClients(path2)
 
-			clientStateA1 := path.EndpointA.GetClientState()
+			clientStateA1 := path1.EndpointA.GetClientState()
+			clientStateA2 := path2.EndpointA.GetClientState()
 
-			idcs := types.NewIdentifiedClientState(path.EndpointB.ChainName, clientStateA1)
+			idcs1 := types.NewIdentifiedClientState(path1.EndpointB.ChainName, clientStateA1)
+			idcs2 := types.NewIdentifiedClientState(path2.EndpointB.ChainName, clientStateA2)
 
 			// order is sorted by client id, localhost is last
-			expClientStates = types.IdentifiedClientStates{idcs}.Sort()
+			expClientStates = types.IdentifiedClientStates{idcs1, idcs2}.Sort()
 			req = &types.QueryClientStatesRequest{
 				Pagination: &query.PageRequest{
 					Limit:      7,
