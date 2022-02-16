@@ -39,7 +39,7 @@ type BankKeeper interface {
 type EVMKeeper interface {
 	ChainID() *big.Int
 	GetNonce(ctx sdk.Context, addr common.Address) uint64
-	ApplyMessage(ctx sdk.Context, msg core.Message, tracer vm.Tracer, commit bool) (*types.MsgEthereumTxResponse, error)
+	ApplyMessage(ctx sdk.Context, msg core.Message, tracer vm.EVMLogger, commit bool) (*types.MsgEthereumTxResponse, error)
 	EthereumTx(goCtx context.Context, msg *types.MsgEthereumTx) (*types.MsgEthereumTxResponse, error)
 	GetAccountWithoutBalance(ctx sdk.Context, addr common.Address) *statedb.Account
 }
