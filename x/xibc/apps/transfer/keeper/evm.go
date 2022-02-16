@@ -109,9 +109,8 @@ func (k Keeper) CallEVMWithPayload(
 		return nil, sdkerrors.Wrap(evmtypes.ErrVMExecution, res.VmError)
 	}
 
-	logs := evmtypes.LogsToEthereum(res.Logs)
-	txLogAttrs := make([]sdk.Attribute, len(logs))
-	for i, log := range logs {
+	txLogAttrs := make([]sdk.Attribute, len(res.Logs))
+	for i, log := range res.Logs {
 		value, err := json.Marshal(log)
 		if err != nil {
 			return nil, sdkerrors.Wrap(err, "failed to encode log")
