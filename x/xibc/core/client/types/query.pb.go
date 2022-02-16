@@ -677,9 +677,9 @@ const _ = grpc.SupportPackageIsVersion4
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://godoc.org/google.golang.org/grpc#ClientConn.NewStream.
 type QueryClient interface {
-	// ClientState queries an XIBC light client.
+	// ClientState queries an XIBC client.
 	ClientState(ctx context.Context, in *QueryClientStateRequest, opts ...grpc.CallOption) (*QueryClientStateResponse, error)
-	// ClientStates queries all the XIBC light clients of a chain.
+	// ClientStates queries all the XIBC clients of a chain.
 	ClientStates(ctx context.Context, in *QueryClientStatesRequest, opts ...grpc.CallOption) (*QueryClientStatesResponse, error)
 	// ConsensusState queries a consensus state associated with a client state at
 	// a given height.
@@ -746,9 +746,9 @@ func (c *queryClient) Relayers(ctx context.Context, in *QueryRelayersRequest, op
 
 // QueryServer is the server API for Query service.
 type QueryServer interface {
-	// ClientState queries an XIBC light client.
+	// ClientState queries an XIBC client.
 	ClientState(context.Context, *QueryClientStateRequest) (*QueryClientStateResponse, error)
-	// ClientStates queries all the XIBC light clients of a chain.
+	// ClientStates queries all the XIBC clients of a chain.
 	ClientStates(context.Context, *QueryClientStatesRequest) (*QueryClientStatesResponse, error)
 	// ConsensusState queries a consensus state associated with a client state at
 	// a given height.

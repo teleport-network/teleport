@@ -253,8 +253,7 @@ func initGenFiles(cfg Config, genAccounts []authtypes.GenesisAccount, genBalance
 func WriteFile(name string, dir string, contents []byte) error {
 	file := filepath.Join(dir, name)
 
-	err := tmos.EnsureDir(dir, 0o755)
-	if err != nil {
+	if err := tmos.EnsureDir(dir, 0o755); err != nil {
 		return err
 	}
 

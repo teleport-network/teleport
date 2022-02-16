@@ -72,8 +72,7 @@ func (app *Teleport) prepForZeroHeightGenesis(ctx sdk.Context, jailAllowedAddrs 
 	allowedAddrsMap := make(map[string]bool)
 
 	for _, addr := range jailAllowedAddrs {
-		_, err := sdk.ValAddressFromBech32(addr)
-		if err != nil {
+		if _, err := sdk.ValAddressFromBech32(addr); err != nil {
 			return err
 		}
 		allowedAddrsMap[addr] = true

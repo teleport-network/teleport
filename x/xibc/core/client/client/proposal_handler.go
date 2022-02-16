@@ -18,5 +18,6 @@ func EmptyRESTHandler(clientCtx client.Context) govrest.ProposalRESTHandler {
 var (
 	CreateClientProposalHandler    = govclient.NewProposalHandler(cli.NewCreateClientProposalCmd, EmptyRESTHandler)
 	UpgradeClientProposalHandler   = govclient.NewProposalHandler(cli.NewUpgradeClientProposalCmd, EmptyRESTHandler)
+	ToggleClientProposalHandler    = govclient.NewProposalHandler(cli.NewToggleClientProposalCmd, EmptyRESTHandler)
 	RegisterRelayerProposalHandler = govclient.NewProposalHandler(cli.NewRegisterRelayerProposalCmd, EmptyRESTHandler)
 )

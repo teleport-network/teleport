@@ -229,6 +229,88 @@ func NewUpgradeClientProposalCmd() *cobra.Command {
 	return cmd
 }
 
+// NewToggleClientProposalCmd implements a command handler for submitting a client toggle proposal transaction.
+func NewToggleClientProposalCmd() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "client-toggle [chain-name] [path/to/client_state.json] [path/to/consensus_state.json] [flags]",
+		Args:  cobra.ExactArgs(3),
+		Short: "Submit a client toggle proposal",
+		Long:  "toggle the XIBC client with the specified client state and consensus state",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+			chainName := args[0]
+
+			cdc := codec.NewProtoCodec(clientCtx.InterfaceRegistry)
+			// attempt to unmarshal client state argument
+			var clientState exported.ClientState
+			clientStateBz, err := ioutil.ReadFile(args[1])
+			if err != nil {
+				return errors.Wrap(err, "neither JSON input nor path to .json file for client state were provided")
+			}
+
+			if err := cdc.UnmarshalInterfaceJSON(clientStateBz, &clientState); err != nil {
+				return errors.Wrap(err, "error unmarshalling client state file")
+			}
+
+			var consensusState exported.ConsensusState
+			consensusStateBz, err := ioutil.ReadFile(args[2])
+			if err != nil {
+				return errors.Wrap(err, "neither JSON input nor path to .json file for consensus state were provided")
+			}
+
+			if err := cdc.UnmarshalInterfaceJSON(consensusStateBz, &consensusState); err != nil {
+				return errors.Wrap(err, "error unmarshalling consensus state file")
+			}
+
+			title, err := cmd.Flags().GetString(cli.FlagTitle)
+			if err != nil {
+				return err
+			}
+
+			description, err := cmd.Flags().GetString(cli.FlagDescription)
+			if err != nil {
+				return err
+			}
+
+			content, err := types.NewToggleClientProposal(title, description, chainName, clientState, consensusState)
+			if err != nil {
+				return err
+			}
+
+			from := clientCtx.GetFromAddress()
+
+			depositStr, err := cmd.Flags().GetString(cli.FlagDeposit)
+			if err != nil {
+				return err
+			}
+
+			deposit, err := sdk.ParseCoinsNormalized(depositStr)
+			if err != nil {
+				return err
+			}
+
+			msg, err := govtypes.NewMsgSubmitProposal(content, deposit, from)
+			if err != nil {
+				return err
+			}
+
+			if err = msg.ValidateBasic(); err != nil {
+				return err
+			}
+
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+		},
+	}
+
+	cmd.Flags().String(cli.FlagTitle, "", "title of proposal")
+	cmd.Flags().String(cli.FlagDescription, "", "description of proposal")
+	cmd.Flags().String(cli.FlagDeposit, "", "deposit of proposal")
+	return cmd
+}
+
 // NewRegisterRelayerProposalCmd implements a command handler for submitting a relayer register proposal transaction.
 func NewRegisterRelayerProposalCmd() *cobra.Command {
 	cmd := &cobra.Command{
