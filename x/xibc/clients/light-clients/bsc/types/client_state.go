@@ -57,6 +57,10 @@ func (m ClientState) Validate() error {
 	return m.Header.ValidateBasic()
 }
 
+func (m ClientState) CheckMsg(msg sdk.Msg) error {
+	return nil
+}
+
 func (m ClientState) GetDelayTime() uint64 {
 	return uint64(2*len(m.Validators)/3+1) * m.BlockInteval
 }

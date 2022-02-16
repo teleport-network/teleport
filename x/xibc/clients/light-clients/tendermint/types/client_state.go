@@ -82,6 +82,11 @@ func (cs ClientState) IsExpired(latestTimestamp, now time.Time) bool {
 	return !expirationTime.After(now)
 }
 
+// CheckMsg will check the msg when ClientState change
+func (m ClientState) CheckMsg(msg sdk.Msg) error {
+	return nil
+}
+
 // Validate performs a basic validation of the client state fields.
 func (cs ClientState) Validate() error {
 	if strings.TrimSpace(cs.ChainId) == "" {

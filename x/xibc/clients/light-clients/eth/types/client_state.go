@@ -35,6 +35,10 @@ func (cs ClientState) Validate() error {
 	return cs.Header.ValidateBasic()
 }
 
+func (m ClientState) CheckMsg(msg sdk.Msg) error {
+	return nil
+}
+
 func (cs ClientState) GetDelayTime() uint64 {
 	return cs.TimeDelay
 }

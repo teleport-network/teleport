@@ -2,6 +2,9 @@ package types
 
 import (
 	"crypto/sha256"
+	"encoding/json"
+
+	"github.com/ethereum/go-ethereum/accounts/abi"
 
 	"github.com/cosmos/cosmos-sdk/codec"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
@@ -103,8 +106,27 @@ func NewErrorAcknowledgement(message string) Acknowledgement {
 }
 
 // GetBytes is a helper for serialising acknowledgements
-func (ack Acknowledgement) GetBytes() []byte {
-	return ModuleCdc.MustMarshal(&ack)
+func (ack Acknowledgement) GetBytes() ([]byte, error) {
+	pack, err := abi.Arguments{{Type: TupleAckData}}.Pack(ack)
+	if err != nil {
+		return nil, err
+	}
+	return pack, nil
+}
+
+func (ack *Acknowledgement) DecodeBytes(bz []byte) error {
+	dataBz, err := abi.Arguments{{Type: TupleAckData}}.Unpack(bz)
+	if err != nil {
+		return err
+	}
+	bzTmp, err := json.Marshal(dataBz[0])
+	if err != nil {
+		return err
+	}
+	if err := json.Unmarshal(bzTmp, &ack); err != nil {
+		return err
+	}
+	return nil
 }
 
 // Result is the execution result of packet data

@@ -59,6 +59,8 @@ type ClientState interface {
 	// ExportMetadata function
 	ExportMetadata(sdk.KVStore) []GenesisMetadata
 
+	CheckMsg(sdk.Msg) error
+
 	// Update and Misbehaviour functions
 	CheckHeaderAndUpdateState(sdk.Context, codec.BinaryCodec, sdk.KVStore, Header) (ClientState, ConsensusState, error)
 

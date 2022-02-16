@@ -18,6 +18,17 @@ func (cs ClientState) GetLatestHeight() exported.Height {
 	return nil
 }
 
+func (cs ClientState) CheckMsg(msg sdk.Msg) error {
+	signer := msg.GetSigners()[0].String()
+	if cs.TssAddress != signer {
+		return sdkerrors.Wrapf(
+			sdkerrors.ErrInvalidAddress,
+			"invalid TSS address, expected %s, got %s",
+			cs.TssAddress, signer)
+	}
+	return nil
+}
+
 func (cs ClientState) Validate() error {
 	if _, err := sdk.AccAddressFromBech32(cs.TssAddress); err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "string could not be parsed as address: %v", err)
