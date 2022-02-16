@@ -1,6 +1,7 @@
 package keeper
 
 import (
+	"encoding/json"
 	"fmt"
 	"math/big"
 	"strings"
@@ -154,6 +155,24 @@ func (k Keeper) CallEVMWithPayload(
 	if res.Failed() {
 		return nil, sdkerrors.Wrap(evmtypes.ErrVMExecution, res.VmError)
 	}
+
+	logs := evmtypes.LogsToEthereum(res.Logs)
+	txLogAttrs := make([]sdk.Attribute, len(logs))
+	for i, log := range logs {
+		value, err := json.Marshal(log)
+		if err != nil {
+			return nil, sdkerrors.Wrap(err, "failed to encode log")
+		}
+		txLogAttrs[i] = sdk.NewAttribute(evmtypes.AttributeKeyTxLog, string(value))
+	}
+
+	// emit events
+	ctx.EventManager().EmitEvents(sdk.Events{
+		sdk.NewEvent(
+			evmtypes.EventTypeTxLog,
+			txLogAttrs...,
+		),
+	})
 
 	return res, nil
 }
