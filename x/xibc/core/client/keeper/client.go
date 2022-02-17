@@ -105,7 +105,7 @@ func (k Keeper) ToggleClient(
 		return sdkerrors.Wrapf(types.ErrClientNotFound, "cannot toggle client %s", chainName)
 	}
 
-	if clientState.ClientType() != newClientState.ClientType() {
+	if clientState.ClientType() == newClientState.ClientType() {
 		return sdkerrors.Wrapf(types.ErrInvalidClientType, "cannot toggle client %s, client-type can't be the same", chainName)
 	}
 
