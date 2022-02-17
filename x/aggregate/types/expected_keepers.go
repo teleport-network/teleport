@@ -42,4 +42,5 @@ type EVMKeeper interface {
 	ApplyMessage(ctx sdk.Context, msg core.Message, tracer vm.EVMLogger, commit bool) (*types.MsgEthereumTxResponse, error)
 	EthereumTx(goCtx context.Context, msg *types.MsgEthereumTx) (*types.MsgEthereumTxResponse, error)
 	GetAccountWithoutBalance(ctx sdk.Context, addr common.Address) *statedb.Account
+	EstimateGas(c context.Context, req *types.EthCallRequest) (*types.EstimateGasResponse, error)
 }

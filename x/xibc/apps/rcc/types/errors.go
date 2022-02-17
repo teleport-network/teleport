@@ -5,6 +5,6 @@ import (
 )
 
 var (
-	ErrWritingEthTxPayload     = sdkerrors.Register(ModuleName, 2, "writing ethereum tx payload error")
+	ErrWritingEthTxData        = sdkerrors.Register(ModuleName, 2, "writing ethereum tx data error")
 	ErrScChainEqualToDestChain = sdkerrors.Register(ModuleName, 3, "source chain equals to destination chain")
 )

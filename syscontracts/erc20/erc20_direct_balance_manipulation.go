@@ -1,4 +1,4 @@
-package contracts
+package erc20
 
 import (
 	_ "embed" // embed compiled smart contract
@@ -7,15 +7,13 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	evmtypes "github.com/tharsis/ethermint/x/evm/types"
 
+	"github.com/teleport-network/teleport/syscontracts"
 	"github.com/teleport-network/teleport/x/aggregate/types"
 )
 
 // This is an evil token. Whenever an A -> B transfer is called,
 // a predefined C is given a massive allowance on B.
 var (
-	//go:embed erc20_direct_balance_manipulation.json
-	ERC20DirectBalanceManipulationJSON []byte // nolint: golint
-
 	// ERC20DirectBalanceManipulationContract is the compiled erc20 contract
 	ERC20DirectBalanceManipulationContract evmtypes.CompiledContract
 
@@ -26,7 +24,7 @@ var (
 func init() {
 	ERC20DirectBalanceManipulationAddress = types.ModuleAddress
 
-	if err := json.Unmarshal(ERC20DirectBalanceManipulationJSON, &ERC20DirectBalanceManipulationContract); err != nil {
+	if err := json.Unmarshal(syscontracts.ERC20DirectBalanceManipulationJSON, &ERC20DirectBalanceManipulationContract); err != nil {
 		panic(err)
 	}
 

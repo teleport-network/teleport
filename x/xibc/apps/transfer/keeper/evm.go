@@ -10,6 +10,7 @@ import (
 
 	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/common/hexutil"
 	ethtypes "github.com/ethereum/go-ethereum/core/types"
 
 	"github.com/tharsis/ethermint/server/config"
@@ -31,12 +32,12 @@ func (k Keeper) CallTransfer(
 	payload, err := transfer.TransferContract.ABI.Pack(method, args...)
 	if err != nil {
 		return nil, sdkerrors.Wrap(
-			types.ErrWritingEthTxPayload,
+			types.ErrWritingEthTxData,
 			sdkerrors.Wrap(err, "failed to create transaction payload").Error(),
 		)
 	}
 
-	res, err := k.CallEVMWithPayload(ctx, types.ModuleAddress, &transfer.TransferContractAddress, payload)
+	res, err := k.CallEVMWithData(ctx, types.ModuleAddress, &transfer.TransferContractAddress, payload)
 	if err != nil {
 		return nil, fmt.Errorf("contract call failed: method '%s' %s, %s", method, transfer.TransferContractAddress, err)
 	}
@@ -44,7 +45,7 @@ func (k Keeper) CallTransfer(
 	return res, nil
 }
 
-// CallEVM performs a smart contract method call using  given args
+// CallEVM performs a smart contract method call using given args
 func (k Keeper) CallEVM(
 	ctx sdk.Context,
 	abi abi.ABI,
@@ -53,30 +54,29 @@ func (k Keeper) CallEVM(
 	method string,
 	args ...interface{},
 ) (
-	*evmtypes.MsgEthereumTxResponse,
-	error,
+	*evmtypes.MsgEthereumTxResponse, error,
 ) {
-	payload, err := abi.Pack(method, args...)
+	data, err := abi.Pack(method, args...)
 	if err != nil {
 		return nil, sdkerrors.Wrap(
-			types.ErrWritingEthTxPayload,
-			sdkerrors.Wrap(err, "failed to create transaction payload").Error(),
+			types.ErrWritingEthTxData,
+			sdkerrors.Wrap(err, "failed to create transaction data").Error(),
 		)
 	}
 
-	resp, err := k.CallEVMWithPayload(ctx, from, &contract, payload)
+	resp, err := k.CallEVMWithData(ctx, from, &contract, data)
 	if err != nil {
 		return nil, fmt.Errorf("contract call failed: method '%s' %s, %s", method, contract, err)
 	}
 	return resp, nil
 }
 
-// CallEVMWithPayload performs a smart contract method call using contract data
-func (k Keeper) CallEVMWithPayload(
+// CallEVMWithData performs a smart contract method call using contract data
+func (k Keeper) CallEVMWithData(
 	ctx sdk.Context,
 	from common.Address,
 	contract *common.Address,
-	transferData []byte,
+	data []byte,
 ) (
 	*evmtypes.MsgEthereumTxResponse,
 	error,
@@ -86,16 +86,36 @@ func (k Keeper) CallEVMWithPayload(
 		return nil, err
 	}
 
+	args, err := json.Marshal(evmtypes.TransactionArgs{
+		From: &from,
+		To:   contract,
+		Data: (*hexutil.Bytes)(&data),
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	gasRes, err := k.evmKeeper.EstimateGas(
+		sdk.WrapSDKContext(ctx),
+		&evmtypes.EthCallRequest{
+			Args:   args,
+			GasCap: config.DefaultGasCap,
+		},
+	)
+	if err != nil {
+		return nil, err
+	}
+
 	msg := ethtypes.NewMessage(
 		from,
 		contract,
 		nonce,
 		big.NewInt(0),         // amount
-		config.DefaultGasCap,  // gasLimit
+		gasRes.Gas,            // gasLimit
 		big.NewInt(0),         // gasFeeCap
 		big.NewInt(0),         // gasTipCap
 		big.NewInt(0),         // gasPrice
-		transferData,          // data
+		data,                  // tx data
 		ethtypes.AccessList{}, // accessList
 		true,                  // checkNonce
 	)

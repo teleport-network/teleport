@@ -29,6 +29,7 @@ type EVMKeeper interface {
 	PostTxProcessing(ctx sdk.Context, from common.Address, to *common.Address, receipt *ethtypes.Receipt) error
 	ApplyMessage(ctx sdk.Context, msg core.Message, tracer vm.EVMLogger, commit bool) (*types.MsgEthereumTxResponse, error)
 	EthereumTx(goCtx context.Context, msg *types.MsgEthereumTx) (*types.MsgEthereumTxResponse, error)
+	EstimateGas(c context.Context, req *types.EthCallRequest) (*types.EstimateGasResponse, error)
 }
 
 // PacketKeeper defines the expected packet keeper

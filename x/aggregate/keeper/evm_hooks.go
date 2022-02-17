@@ -12,8 +12,8 @@ import (
 	ethtypes "github.com/ethereum/go-ethereum/core/types"
 	evmtypes "github.com/tharsis/ethermint/x/evm/types"
 
+	erc20contracts "github.com/teleport-network/teleport/syscontracts/erc20"
 	"github.com/teleport-network/teleport/x/aggregate/types"
-	"github.com/teleport-network/teleport/x/aggregate/types/contracts"
 )
 
 // Hooks wrapper struct for erc20 keeper
@@ -43,7 +43,7 @@ func (h Hooks) PostTxProcessing(
 		return sdkerrors.Wrap(types.ErrInternalTokenPair, "EVM Hook is currently disabled")
 	}
 
-	erc20 := contracts.ERC20BurnableContract.ABI
+	erc20 := erc20contracts.ERC20BurnableContract.ABI
 
 	for i, log := range receipt.Logs {
 		if len(log.Topics) < 3 {

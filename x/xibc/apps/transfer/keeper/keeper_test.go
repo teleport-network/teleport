@@ -41,8 +41,8 @@ import (
 	feemarkettypes "github.com/tharsis/ethermint/x/feemarket/types"
 
 	"github.com/teleport-network/teleport/app"
+	erc20contracts "github.com/teleport-network/teleport/syscontracts/erc20"
 	transfer "github.com/teleport-network/teleport/syscontracts/xibc_transfer"
-	"github.com/teleport-network/teleport/x/aggregate/types/contracts"
 	"github.com/teleport-network/teleport/x/xibc/apps/transfer/types"
 	packettypes "github.com/teleport-network/teleport/x/xibc/core/packet/types"
 )
@@ -238,17 +238,17 @@ func (suite *KeeperTestSuite) SendTx(contractAddr common.Address, transferData [
 // ================================================================================================================
 
 func (suite *KeeperTestSuite) DeployERC20MintableContract(sender common.Address, name string, symbol string, decimal uint8) common.Address {
-	ctorArgs, err := contracts.ERC20MinterBurnerDecimalsContract.ABI.Pack("", name, symbol, decimal)
+	ctorArgs, err := erc20contracts.ERC20MinterBurnerDecimalsContract.ABI.Pack("", name, symbol, decimal)
 	suite.Require().NoError(err)
 
-	data := make([]byte, len(contracts.ERC20MinterBurnerDecimalsContract.Bin)+len(ctorArgs))
-	copy(data[:len(contracts.ERC20MinterBurnerDecimalsContract.Bin)], contracts.ERC20MinterBurnerDecimalsContract.Bin)
-	copy(data[len(contracts.ERC20MinterBurnerDecimalsContract.Bin):], ctorArgs)
+	data := make([]byte, len(erc20contracts.ERC20MinterBurnerDecimalsContract.Bin)+len(ctorArgs))
+	copy(data[:len(erc20contracts.ERC20MinterBurnerDecimalsContract.Bin)], erc20contracts.ERC20MinterBurnerDecimalsContract.Bin)
+	copy(data[len(erc20contracts.ERC20MinterBurnerDecimalsContract.Bin):], ctorArgs)
 
 	nonce := suite.app.EvmKeeper.GetNonce(suite.ctx, sender)
 	contractAddr := crypto.CreateAddress(sender, nonce)
 
-	res, err := suite.app.XIBCTransferKeeper.CallEVMWithPayload(suite.ctx, sender, nil, data)
+	res, err := suite.app.XIBCTransferKeeper.CallEVMWithData(suite.ctx, sender, nil, data)
 	suite.Require().NoError(err)
 	suite.Require().False(res.Failed(), res.VmError)
 
@@ -256,7 +256,7 @@ func (suite *KeeperTestSuite) DeployERC20MintableContract(sender common.Address,
 }
 
 func (suite *KeeperTestSuite) TotalSupply(contract common.Address) *big.Int {
-	erc20 := contracts.ERC20MinterBurnerDecimalsContract.ABI
+	erc20 := erc20contracts.ERC20MinterBurnerDecimalsContract.ABI
 
 	res, err := suite.app.XIBCTransferKeeper.CallEVM(
 		suite.ctx,
@@ -275,7 +275,7 @@ func (suite *KeeperTestSuite) TotalSupply(contract common.Address) *big.Int {
 }
 
 func (suite *KeeperTestSuite) BalanceOf(contract common.Address, account common.Address) *big.Int {
-	erc20 := contracts.ERC20MinterBurnerDecimalsContract.ABI
+	erc20 := erc20contracts.ERC20MinterBurnerDecimalsContract.ABI
 
 	res, err := suite.app.XIBCTransferKeeper.CallEVM(
 		suite.ctx,
@@ -295,7 +295,7 @@ func (suite *KeeperTestSuite) BalanceOf(contract common.Address, account common.
 }
 
 func (suite *KeeperTestSuite) Mint(contract common.Address, sender common.Address, to common.Address, amount *big.Int) {
-	erc20 := contracts.ERC20MinterBurnerDecimalsContract.ABI
+	erc20 := erc20contracts.ERC20MinterBurnerDecimalsContract.ABI
 
 	res, err := suite.app.XIBCTransferKeeper.CallEVM(
 		suite.ctx,
@@ -311,7 +311,7 @@ func (suite *KeeperTestSuite) Mint(contract common.Address, sender common.Addres
 }
 
 func (suite *KeeperTestSuite) Approve(contract common.Address, sender common.Address, spender common.Address, amount *big.Int) {
-	erc20 := contracts.ERC20MinterBurnerDecimalsContract.ABI
+	erc20 := erc20contracts.ERC20MinterBurnerDecimalsContract.ABI
 
 	res, err := suite.app.XIBCTransferKeeper.CallEVM(
 		suite.ctx,
@@ -327,7 +327,7 @@ func (suite *KeeperTestSuite) Approve(contract common.Address, sender common.Add
 }
 
 func (suite *KeeperTestSuite) Allowance(contract common.Address, owner common.Address, spender common.Address) *big.Int {
-	erc20 := contracts.ERC20MinterBurnerDecimalsContract.ABI
+	erc20 := erc20contracts.ERC20MinterBurnerDecimalsContract.ABI
 
 	res, err := suite.app.XIBCTransferKeeper.CallEVM(
 		suite.ctx,
@@ -380,8 +380,8 @@ func (suite *KeeperTestSuite) SendTransferBase(sender common.Address, data types
 		big.NewInt(0),         // gasFeeCap
 		big.NewInt(0),         // gasTipCap
 		big.NewInt(0),         // gasPrice
-		transferData,          // data
-		ethtypes.AccessList{}, // AccessList
+		transferData,          // tx data
+		ethtypes.AccessList{}, // accessList
 		true,                  // checkNonce
 	)
 

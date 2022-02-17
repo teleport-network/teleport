@@ -42,8 +42,8 @@ import (
 	feemarkettypes "github.com/tharsis/ethermint/x/feemarket/types"
 
 	"github.com/teleport-network/teleport/app"
+	erc20contracts "github.com/teleport-network/teleport/syscontracts/erc20"
 	"github.com/teleport-network/teleport/x/aggregate/types"
-	"github.com/teleport-network/teleport/x/aggregate/types/contracts"
 )
 
 type KeeperTestSuite struct {
@@ -191,10 +191,10 @@ func (suite *KeeperTestSuite) DeployContract(name string, symbol string, decimal
 	ctx := sdk.WrapSDKContext(suite.ctx)
 	chainID := suite.app.EvmKeeper.ChainID()
 
-	ctorArgs, err := contracts.ERC20MinterBurnerDecimalsContract.ABI.Pack("", name, symbol, decimals)
+	ctorArgs, err := erc20contracts.ERC20MinterBurnerDecimalsContract.ABI.Pack("", name, symbol, decimals)
 	suite.Require().NoError(err)
 
-	data := append(contracts.ERC20MinterBurnerDecimalsContract.Bin, ctorArgs...)
+	data := append(erc20contracts.ERC20MinterBurnerDecimalsContract.Bin, ctorArgs...)
 	args, err := json.Marshal(&evm.TransactionArgs{
 		From: &suite.address,
 		Data: (*hexutil.Bytes)(&data),
@@ -234,10 +234,10 @@ func (suite *KeeperTestSuite) DeployContractMaliciousDelayed(name string, symbol
 	ctx := sdk.WrapSDKContext(suite.ctx)
 	chainID := suite.app.EvmKeeper.ChainID()
 
-	ctorArgs, err := contracts.ERC20MaliciousDelayedContract.ABI.Pack("", big.NewInt(1000000000000000000))
+	ctorArgs, err := erc20contracts.ERC20MaliciousDelayedContract.ABI.Pack("", big.NewInt(1000000000000000000))
 	suite.Require().NoError(err)
 
-	data := append(contracts.ERC20MaliciousDelayedContract.Bin, ctorArgs...)
+	data := append(erc20contracts.ERC20MaliciousDelayedContract.Bin, ctorArgs...)
 	args, err := json.Marshal(&evm.TransactionArgs{
 		From: &suite.address,
 		Data: (*hexutil.Bytes)(&data),
@@ -277,10 +277,10 @@ func (suite *KeeperTestSuite) DeployContractDirectBalanceManipulation(name strin
 	ctx := sdk.WrapSDKContext(suite.ctx)
 	chainID := suite.app.EvmKeeper.ChainID()
 
-	ctorArgs, err := contracts.ERC20DirectBalanceManipulationContract.ABI.Pack("", big.NewInt(1000000000000000000))
+	ctorArgs, err := erc20contracts.ERC20DirectBalanceManipulationContract.ABI.Pack("", big.NewInt(1000000000000000000))
 	suite.Require().NoError(err)
 
-	data := append(contracts.ERC20DirectBalanceManipulationContract.Bin, ctorArgs...)
+	data := append(erc20contracts.ERC20DirectBalanceManipulationContract.Bin, ctorArgs...)
 	args, err := json.Marshal(&evm.TransactionArgs{
 		From: &suite.address,
 		Data: (*hexutil.Bytes)(&data),
@@ -333,13 +333,13 @@ func (suite *KeeperTestSuite) Commit() {
 }
 
 func (suite *KeeperTestSuite) MintERC20Token(contractAddr, from, to common.Address, amount *big.Int) *evm.MsgEthereumTx {
-	transferData, err := contracts.ERC20MinterBurnerDecimalsContract.ABI.Pack("mint", to, amount)
+	transferData, err := erc20contracts.ERC20MinterBurnerDecimalsContract.ABI.Pack("mint", to, amount)
 	suite.Require().NoError(err)
 	return suite.sendTx(contractAddr, from, transferData)
 }
 
 func (suite *KeeperTestSuite) BurnERC20Token(contractAddr, from common.Address, amount *big.Int) *evm.MsgEthereumTx {
-	transferData, err := contracts.ERC20MinterBurnerDecimalsContract.ABI.Pack("transfer", types.ModuleAddress, amount)
+	transferData, err := erc20contracts.ERC20MinterBurnerDecimalsContract.ABI.Pack("transfer", types.ModuleAddress, amount)
 	suite.Require().NoError(err)
 	return suite.sendTx(contractAddr, from, transferData)
 }
@@ -351,7 +351,7 @@ func (suite *KeeperTestSuite) GrantERC20Token(contractAddr, from, to common.Addr
 	var v [32]byte
 	copy(v[:], role)
 
-	transferData, err := contracts.ERC20MinterBurnerDecimalsContract.ABI.Pack("grantRole", v, to)
+	transferData, err := erc20contracts.ERC20MinterBurnerDecimalsContract.ABI.Pack("grantRole", v, to)
 	suite.Require().NoError(err)
 	return suite.sendTx(contractAddr, from, transferData)
 }
@@ -396,7 +396,7 @@ func (suite *KeeperTestSuite) sendTx(contractAddr, from common.Address, transfer
 }
 
 func (suite *KeeperTestSuite) BalanceOf(contract, account common.Address) interface{} {
-	erc20 := contracts.ERC20MinterBurnerDecimalsContract.ABI
+	erc20 := erc20contracts.ERC20MinterBurnerDecimalsContract.ABI
 
 	res, err := suite.app.AggregateKeeper.CallEVM(suite.ctx, erc20, types.ModuleAddress, contract, "balanceOf", account)
 	if err != nil {
@@ -412,7 +412,7 @@ func (suite *KeeperTestSuite) BalanceOf(contract, account common.Address) interf
 }
 
 func (suite *KeeperTestSuite) NameOf(contract common.Address) string {
-	erc20 := contracts.ERC20MinterBurnerDecimalsContract.ABI
+	erc20 := erc20contracts.ERC20MinterBurnerDecimalsContract.ABI
 
 	res, err := suite.app.AggregateKeeper.CallEVM(suite.ctx, erc20, types.ModuleAddress, contract, "name")
 	suite.Require().NoError(err)
@@ -426,7 +426,7 @@ func (suite *KeeperTestSuite) NameOf(contract common.Address) string {
 }
 
 func (suite *KeeperTestSuite) TransferERC20Token(contractAddr, from, to common.Address, amount *big.Int) *evm.MsgEthereumTx {
-	transferData, err := contracts.ERC20MinterBurnerDecimalsContract.ABI.Pack("transfer", to, amount)
+	transferData, err := erc20contracts.ERC20MinterBurnerDecimalsContract.ABI.Pack("transfer", to, amount)
 	suite.Require().NoError(err)
 	return suite.sendTx(contractAddr, from, transferData)
 }

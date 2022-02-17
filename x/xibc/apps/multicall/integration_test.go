@@ -18,10 +18,10 @@ import (
 	"github.com/tharsis/ethermint/tests"
 	evm "github.com/tharsis/ethermint/x/evm/types"
 
+	erc20contracts "github.com/teleport-network/teleport/syscontracts/erc20"
 	multicallcontract "github.com/teleport-network/teleport/syscontracts/xibc_multicall"
 	rcccontract "github.com/teleport-network/teleport/syscontracts/xibc_rcc"
 	transfercontract "github.com/teleport-network/teleport/syscontracts/xibc_transfer"
-	erc20contracts "github.com/teleport-network/teleport/x/aggregate/types/contracts"
 	"github.com/teleport-network/teleport/x/xibc/apps/multicall/types"
 	rcctypes "github.com/teleport-network/teleport/x/xibc/apps/rcc/types"
 	transfertypes "github.com/teleport-network/teleport/x/xibc/apps/transfer/types"
@@ -558,7 +558,7 @@ func (suite *MultiCallTestSuite) DeployERC20ByTransfer(fromChain *xibctesting.Te
 	nonce := fromChain.App.EvmKeeper.GetNonce(fromChain.GetContext(), transfercontract.TransferContractAddress)
 	contractAddr := crypto.CreateAddress(transfercontract.TransferContractAddress, nonce)
 
-	res, err := fromChain.App.XIBCTransferKeeper.CallEVMWithPayload(fromChain.GetContext(), transfercontract.TransferContractAddress, nil, data)
+	res, err := fromChain.App.XIBCTransferKeeper.CallEVMWithData(fromChain.GetContext(), transfercontract.TransferContractAddress, nil, data)
 	suite.Require().NoError(err)
 	suite.Require().False(res.Failed(), res.VmError)
 

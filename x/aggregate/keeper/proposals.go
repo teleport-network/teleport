@@ -10,8 +10,8 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/crypto"
 
+	erc20contracts "github.com/teleport-network/teleport/syscontracts/erc20"
 	"github.com/teleport-network/teleport/x/aggregate/types"
-	"github.com/teleport-network/teleport/x/aggregate/types/contracts"
 )
 
 // RegisterCoin deploys an erc20 contract and creates the token pair for the existing cosmos coin
@@ -70,7 +70,7 @@ func (k Keeper) DeployERC20Contract(
 	coinMetadata banktypes.Metadata,
 ) (common.Address, error) {
 	decimals := uint8(coinMetadata.DenomUnits[0].Exponent)
-	ctorArgs, err := contracts.ERC20MinterBurnerDecimalsContract.ABI.Pack(
+	ctorArgs, err := erc20contracts.ERC20MinterBurnerDecimalsContract.ABI.Pack(
 		"",
 		coinMetadata.Name,
 		coinMetadata.Symbol,
@@ -80,9 +80,9 @@ func (k Keeper) DeployERC20Contract(
 		return common.Address{}, sdkerrors.Wrapf(err, "coin metadata is invalid  %s", coinMetadata.Name)
 	}
 
-	data := make([]byte, len(contracts.ERC20MinterBurnerDecimalsContract.Bin)+len(ctorArgs))
-	copy(data[:len(contracts.ERC20MinterBurnerDecimalsContract.Bin)], contracts.ERC20MinterBurnerDecimalsContract.Bin)
-	copy(data[len(contracts.ERC20MinterBurnerDecimalsContract.Bin):], ctorArgs)
+	data := make([]byte, len(erc20contracts.ERC20MinterBurnerDecimalsContract.Bin)+len(ctorArgs))
+	copy(data[:len(erc20contracts.ERC20MinterBurnerDecimalsContract.Bin)], erc20contracts.ERC20MinterBurnerDecimalsContract.Bin)
+	copy(data[len(erc20contracts.ERC20MinterBurnerDecimalsContract.Bin):], ctorArgs)
 
 	nonce, err := k.accountKeeper.GetSequence(ctx, types.ModuleAddress.Bytes())
 	if err != nil {
@@ -90,7 +90,7 @@ func (k Keeper) DeployERC20Contract(
 	}
 
 	contractAddr := crypto.CreateAddress(types.ModuleAddress, nonce)
-	_, err = k.CallEVMWithPayload(ctx, types.ModuleAddress, nil, data)
+	_, err = k.CallEVMWithData(ctx, types.ModuleAddress, nil, data)
 	if err != nil {
 		return common.Address{}, fmt.Errorf("failed to deploy contract for %s", coinMetadata.Name)
 	}

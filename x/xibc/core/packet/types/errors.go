@@ -14,6 +14,6 @@ var (
 	ErrInvalidAcknowledgement   = sdkerrors.Register(moduleName, 3, "invalid acknowledgement")
 	ErrPacketCommitmentNotFound = sdkerrors.Register(moduleName, 4, "packet commitment not found")
 	ErrAcknowledgementExists    = sdkerrors.Register(moduleName, 5, "packet acknowledgement already exists")
-	ErrWritingEthTxPayload      = sdkerrors.Register(moduleName, 6, "writing ethereum tx payload error")
+	ErrWritingEthTxData         = sdkerrors.Register(moduleName, 6, "writing ethereum tx data error")
 	ErrScChainEqualToDestChain  = sdkerrors.Register(moduleName, 7, "source chain equals to destination chain")
 )

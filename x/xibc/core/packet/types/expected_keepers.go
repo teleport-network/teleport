@@ -37,4 +37,5 @@ type EVMKeeper interface {
 	GetNonce(ctx sdk.Context, addr common.Address) uint64
 	ApplyMessage(ctx sdk.Context, msg core.Message, tracer vm.EVMLogger, commit bool) (*types.MsgEthereumTxResponse, error)
 	EthereumTx(goCtx context.Context, msg *types.MsgEthereumTx) (*types.MsgEthereumTxResponse, error)
+	EstimateGas(c context.Context, req *types.EthCallRequest) (*types.EstimateGasResponse, error)
 }

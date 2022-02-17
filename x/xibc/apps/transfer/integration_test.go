@@ -21,12 +21,12 @@ import (
 	evm "github.com/tharsis/ethermint/x/evm/types"
 
 	agentcontract "github.com/teleport-network/teleport/syscontracts/agent"
+	erc20contracts "github.com/teleport-network/teleport/syscontracts/erc20"
 	wtelecontract "github.com/teleport-network/teleport/syscontracts/wtele"
 	multicallcontract "github.com/teleport-network/teleport/syscontracts/xibc_multicall"
 	packetcontract "github.com/teleport-network/teleport/syscontracts/xibc_packet"
 	rcccontract "github.com/teleport-network/teleport/syscontracts/xibc_rcc"
 	transfercontract "github.com/teleport-network/teleport/syscontracts/xibc_transfer"
-	erc20contracts "github.com/teleport-network/teleport/x/aggregate/types/contracts"
 	multicalltypes "github.com/teleport-network/teleport/x/xibc/apps/multicall/types"
 	rcctypes "github.com/teleport-network/teleport/x/xibc/apps/rcc/types"
 	"github.com/teleport-network/teleport/x/xibc/apps/transfer/types"
@@ -1475,7 +1475,7 @@ func (suite *TransferTestSuite) DeployERC20ByTransfer(fromChain *xibctesting.Tes
 	nonce := fromChain.App.EvmKeeper.GetNonce(fromChain.GetContext(), transfercontract.TransferContractAddress)
 	contractAddr := crypto.CreateAddress(transfercontract.TransferContractAddress, nonce)
 
-	res, err := fromChain.App.XIBCTransferKeeper.CallEVMWithPayload(fromChain.GetContext(), transfercontract.TransferContractAddress, nil, data)
+	res, err := fromChain.App.XIBCTransferKeeper.CallEVMWithData(fromChain.GetContext(), transfercontract.TransferContractAddress, nil, data)
 	suite.Require().NoError(err)
 	suite.Require().False(res.Failed(), res.VmError)
 
@@ -1493,7 +1493,7 @@ func (suite *TransferTestSuite) DeployERC20ByAccount(fromChain *xibctesting.Test
 	nonce := fromChain.App.EvmKeeper.GetNonce(fromChain.GetContext(), fromChain.SenderAddress)
 	contractAddr := crypto.CreateAddress(fromChain.SenderAddress, nonce)
 
-	res, err := fromChain.App.XIBCTransferKeeper.CallEVMWithPayload(fromChain.GetContext(), fromChain.SenderAddress, nil, data)
+	res, err := fromChain.App.XIBCTransferKeeper.CallEVMWithData(fromChain.GetContext(), fromChain.SenderAddress, nil, data)
 	suite.Require().NoError(err)
 	suite.Require().False(res.Failed(), res.VmError)
 

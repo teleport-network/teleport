@@ -1,4 +1,4 @@
-package contracts
+package erc20
 
 import (
 	_ "embed" // embed compiled smart contract
@@ -8,13 +8,11 @@ import (
 
 	evmtypes "github.com/tharsis/ethermint/x/evm/types"
 
+	"github.com/teleport-network/teleport/syscontracts"
 	"github.com/teleport-network/teleport/x/aggregate/types"
 )
 
 var (
-	//go:embed erc20_minter_burner_decimals.json
-	ERC20MinterBurnerDecimalsJSON []byte // nolint: golint
-
 	// ERC20MinterBurnerDecimalsContract is the compiled erc20 contract
 	ERC20MinterBurnerDecimalsContract evmtypes.CompiledContract
 
@@ -25,7 +23,7 @@ var (
 func init() {
 	ERC20MinterBurnerDecimalsAddress = types.ModuleAddress
 
-	if err := json.Unmarshal(ERC20MinterBurnerDecimalsJSON, &ERC20MinterBurnerDecimalsContract); err != nil {
+	if err := json.Unmarshal(syscontracts.ERC20MinterBurnerDecimalsJSON, &ERC20MinterBurnerDecimalsContract); err != nil {
 		panic(err)
 	}
 

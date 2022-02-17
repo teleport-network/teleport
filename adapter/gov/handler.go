@@ -24,7 +24,7 @@ func (h *HookAdapter) HandleVoted(ctx sdk.Context, log *ethtypes.Log) error {
 		return err
 	}
 	msg := &types.MsgVote{
-		ProposalId: event.ProposalId,
+		ProposalId: event.ProposalID,
 		Voter:      voter,
 		Option:     types.VoteOption(event.VoteOption),
 	}
@@ -53,7 +53,7 @@ func (h *HookAdapter) HandleVotedWeighted(ctx sdk.Context, log *ethtypes.Log) er
 	}
 
 	msg := &types.MsgVoteWeighted{
-		ProposalId: event.ProposalId,
+		ProposalId: event.ProposalID,
 		Voter:      voter,
 		Options:    sdkWeightedVoteOption,
 	}
