@@ -5,8 +5,8 @@ go 1.17
 require (
 	github.com/armon/go-metrics v0.3.10
 	github.com/confio/ics23/go v0.6.6
-	github.com/cosmos/cosmos-sdk v0.45.0
-	github.com/cosmos/ibc-go/v3 v3.0.0-beta1
+	github.com/cosmos/cosmos-sdk v0.45.1
+	github.com/cosmos/ibc-go/v3 v3.0.0-rc0
 	github.com/edsrzf/mmap-go v1.1.0
 	github.com/ethereum/go-ethereum v1.10.11
 	github.com/gogo/protobuf v1.3.3
