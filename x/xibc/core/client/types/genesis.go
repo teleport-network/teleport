@@ -6,7 +6,7 @@ import (
 
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 
-	host "github.com/teleport-network/teleport/x/xibc/core/host"
+	"github.com/teleport-network/teleport/x/xibc/core/host"
 	"github.com/teleport-network/teleport/x/xibc/exported"
 )
 

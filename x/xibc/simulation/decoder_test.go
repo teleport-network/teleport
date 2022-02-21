@@ -10,7 +10,7 @@ import (
 
 	"github.com/teleport-network/teleport/app"
 	xibctmtypes "github.com/teleport-network/teleport/x/xibc/clients/light-clients/tendermint/types"
-	host "github.com/teleport-network/teleport/x/xibc/core/host"
+	"github.com/teleport-network/teleport/x/xibc/core/host"
 	"github.com/teleport-network/teleport/x/xibc/simulation"
 )
 

@@ -12,7 +12,7 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
 	clienttypes "github.com/teleport-network/teleport/x/xibc/core/client/types"
-	host "github.com/teleport-network/teleport/x/xibc/core/host"
+	"github.com/teleport-network/teleport/x/xibc/core/host"
 	"github.com/teleport-network/teleport/x/xibc/exported"
 )
 

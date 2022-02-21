@@ -10,7 +10,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/kv"
 
 	"github.com/teleport-network/teleport/app"
-	host "github.com/teleport-network/teleport/x/xibc/core/host"
+	"github.com/teleport-network/teleport/x/xibc/core/host"
 	"github.com/teleport-network/teleport/x/xibc/core/packet/simulation"
 )
 

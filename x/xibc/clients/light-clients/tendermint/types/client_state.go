@@ -14,7 +14,7 @@ import (
 
 	clienttypes "github.com/teleport-network/teleport/x/xibc/core/client/types"
 	commitmenttypes "github.com/teleport-network/teleport/x/xibc/core/commitment/types"
-	host "github.com/teleport-network/teleport/x/xibc/core/host"
+	"github.com/teleport-network/teleport/x/xibc/core/host"
 	"github.com/teleport-network/teleport/x/xibc/exported"
 )
 

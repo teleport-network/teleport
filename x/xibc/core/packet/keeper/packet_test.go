@@ -3,7 +3,7 @@ package keeper_test
 import (
 	"fmt"
 
-	host "github.com/teleport-network/teleport/x/xibc/core/host"
+	"github.com/teleport-network/teleport/x/xibc/core/host"
 	"github.com/teleport-network/teleport/x/xibc/core/packet/types"
 	"github.com/teleport-network/teleport/x/xibc/exported"
 	xibctesting "github.com/teleport-network/teleport/x/xibc/testing"

@@ -13,7 +13,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/query"
 
 	clienttypes "github.com/teleport-network/teleport/x/xibc/core/client/types"
-	host "github.com/teleport-network/teleport/x/xibc/core/host"
+	"github.com/teleport-network/teleport/x/xibc/core/host"
 	"github.com/teleport-network/teleport/x/xibc/core/packet/types"
 )
 

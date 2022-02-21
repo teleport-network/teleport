@@ -97,12 +97,7 @@ func (suite *KeeperTestSuite) TestQueryClientStates() {
 	}, {
 		"success, no results",
 		func() {
-			req = &types.QueryClientStatesRequest{
-				Pagination: &query.PageRequest{
-					Limit:      3,
-					CountTotal: true,
-				},
-			}
+			req = &types.QueryClientStatesRequest{}
 		},
 		true,
 	}, {
@@ -122,12 +117,7 @@ func (suite *KeeperTestSuite) TestQueryClientStates() {
 
 			// order is sorted by client id, localhost is last
 			expClientStates = types.IdentifiedClientStates{idcs1, idcs2}.Sort()
-			req = &types.QueryClientStatesRequest{
-				Pagination: &query.PageRequest{
-					Limit:      7,
-					CountTotal: true,
-				},
-			}
+			req = &types.QueryClientStatesRequest{}
 		},
 		true,
 	}}

@@ -6,7 +6,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/kv"
 
 	clientsim "github.com/teleport-network/teleport/x/xibc/core/client/simulation"
-	host "github.com/teleport-network/teleport/x/xibc/core/host"
+	"github.com/teleport-network/teleport/x/xibc/core/host"
 	packetsim "github.com/teleport-network/teleport/x/xibc/core/packet/simulation"
 	"github.com/teleport-network/teleport/x/xibc/keeper"
 )
