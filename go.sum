@@ -1064,10 +1064,10 @@ github.com/syndtr/goleveldb v1.0.1-0.20210819022825-2ae1ddf74ef7 h1:epCh84lMvA70
 github.com/syndtr/goleveldb v1.0.1-0.20210819022825-2ae1ddf74ef7/go.mod h1:q4W45IWZaF22tdD+VEXcAWRA037jwmWEB5VWYORlTpc=
 github.com/tecbot/gorocksdb v0.0.0-20191217155057-f0fad39f321c h1:g+WoO5jjkqGAzHWCjJB1zZfXPIAaDpzXIEJ0eS6B5Ok=
 github.com/tecbot/gorocksdb v0.0.0-20191217155057-f0fad39f321c/go.mod h1:ahpPrc7HpcfEWDQRZEmnXMzHY03mLDYMCxeDzy46i+8=
-github.com/teleport-network/cosmos-sdk v0.45.0-rollback h1:n2ur3FYVU5JtiyChjCYCX2MGiiJ5BzxffPiqwxmoK54=
-github.com/teleport-network/cosmos-sdk v0.45.0-rollback/go.mod h1:L3y6sWnzJoZg0363TGn+7FmTZCRWTNOYq1jE7t9NB04=
-github.com/teleport-network/tendermint v0.34.16-rollback h1:ur6MNmsDr9JbV2ZvEeznb51weNEu3X9+Wt9Uy5deVFk=
-github.com/teleport-network/tendermint v0.34.16-rollback/go.mod h1:/7EDAw02rD7GT8syC317cX9ZhZTCdaFVvYjU8W+yJSs=
+github.com/teleport-network/cosmos-sdk v0.45.0-rollback-height h1:ZR9qaC27GWNwVKAHju7khfR2spfj82TWqK3ncTUuqNg=
+github.com/teleport-network/cosmos-sdk v0.45.0-rollback-height/go.mod h1:oGer16GX4ph3dWibBc+h6yaGNsh9qblrodgg7KNovi8=
+github.com/teleport-network/tendermint v0.34.15-rollback-height h1:tUeyXFiPe/fLW8i2YKaerxfRMB1DobdwcHrfNe3+WGg=
+github.com/teleport-network/tendermint v0.34.15-rollback-height/go.mod h1:/7EDAw02rD7GT8syC317cX9ZhZTCdaFVvYjU8W+yJSs=
 github.com/tendermint/btcd v0.1.1 h1:0VcxPfflS2zZ3RiOAHkBiFUcPvbtRj5O7zHmcJWHV7s=
 github.com/tendermint/btcd v0.1.1/go.mod h1:DC6/m53jtQzr/NFmMNEu0rxf18/ktVoVtMrnDD5pN+U=
 github.com/tendermint/crypto v0.0.0-20191022145703-50d29ede1e15 h1:hqAk8riJvK4RMWx1aInLzndwxKalgi5rTqgfXxOxbEI=
