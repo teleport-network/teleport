@@ -54,47 +54,6 @@ func (suite *TransferTestSuite) SetupTest() {
 
 }
 
-func (suite *TransferTestSuite) TestReBindToken() {
-	// deploy ERC20 on chainB
-	erc20Address := suite.DeployERC20ByTransfer(suite.chainA)
-
-	// add erc20 trace on chainB
-	err := suite.chainA.App.AggregateKeeper.RegisterERC20Trace(
-		suite.chainA.GetContext(),
-		erc20Address,
-		common.BigToAddress(big.NewInt(0)).String(),
-		suite.chainB.ChainID,
-	)
-	suite.Require().NoError(err)
-	// check ERC20 trace
-	token, _, exist, err := suite.chainA.App.AggregateKeeper.QueryERC20Trace(
-		suite.chainA.GetContext(),
-		erc20Address,
-		suite.chainB.ChainID,
-	)
-	suite.Require().NoError(err)
-	suite.Require().True(exist)
-	suite.Equal(token, common.BigToAddress(big.NewInt(0)).String())
-
-	// add erc20 trace on chainB
-	err = suite.chainA.App.AggregateKeeper.RegisterERC20Trace(
-		suite.chainA.GetContext(),
-		erc20Address,
-		common.BigToAddress(big.NewInt(1)).String(),
-		suite.chainB.ChainID,
-	)
-	suite.Require().NoError(err)
-	// check ERC20 trace
-	token, _, exist, err = suite.chainA.App.AggregateKeeper.QueryERC20Trace(
-		suite.chainA.GetContext(),
-		erc20Address,
-		suite.chainB.ChainID,
-	)
-	suite.Require().NoError(err)
-	suite.Require().True(exist)
-	suite.Equal(token, common.BigToAddress(big.NewInt(1)).String())
-}
-
 func (suite *TransferTestSuite) TestTransferBase() {
 	path := xibctesting.NewPath(suite.chainA, suite.chainB)
 	suite.coordinator.SetupClients(path)

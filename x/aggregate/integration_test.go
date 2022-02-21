@@ -1,0 +1,91 @@
+package aggregate_test
+
+import (
+	"math/big"
+	"testing"
+
+	"github.com/stretchr/testify/suite"
+
+	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/crypto"
+
+	transfercontract "github.com/teleport-network/teleport/syscontracts/xibc_transfer"
+	erc20contracts "github.com/teleport-network/teleport/x/aggregate/types/contracts"
+	xibctesting "github.com/teleport-network/teleport/x/xibc/testing"
+)
+
+type AggregateTestSuite struct {
+	suite.Suite
+	coordinator *xibctesting.Coordinator
+	chainA      *xibctesting.TestChain
+	chainB      *xibctesting.TestChain
+}
+
+func TestRCCTestSuite(t *testing.T) {
+	suite.Run(t, new(AggregateTestSuite))
+}
+
+func (suite *AggregateTestSuite) SetupTest() {
+	suite.coordinator = xibctesting.NewCoordinator(suite.T(), 3)
+	suite.chainA = suite.coordinator.GetChain(xibctesting.GetChainID(0))
+	suite.chainB = suite.coordinator.GetChain(xibctesting.GetChainID(1))
+}
+
+func (suite *AggregateTestSuite) TestReBindToken() {
+	// deploy ERC20 on chainB
+	erc20Address := suite.DeployERC20ByTransfer(suite.chainA)
+
+	// add erc20 trace on chainB
+	err := suite.chainA.App.AggregateKeeper.RegisterERC20Trace(
+		suite.chainA.GetContext(),
+		erc20Address,
+		common.BigToAddress(big.NewInt(0)).String(),
+		suite.chainB.ChainID,
+	)
+	suite.Require().NoError(err)
+	// check ERC20 trace
+	token, _, exist, err := suite.chainA.App.AggregateKeeper.QueryERC20Trace(
+		suite.chainA.GetContext(),
+		erc20Address,
+		suite.chainB.ChainID,
+	)
+	suite.Require().NoError(err)
+	suite.Require().True(exist)
+	suite.Equal(token, common.BigToAddress(big.NewInt(0)).String())
+
+	// add erc20 trace on chainB
+	err = suite.chainA.App.AggregateKeeper.RegisterERC20Trace(
+		suite.chainA.GetContext(),
+		erc20Address,
+		common.BigToAddress(big.NewInt(1)).String(),
+		suite.chainB.ChainID,
+	)
+	suite.Require().NoError(err)
+	// check ERC20 trace
+	token, _, exist, err = suite.chainA.App.AggregateKeeper.QueryERC20Trace(
+		suite.chainA.GetContext(),
+		erc20Address,
+		suite.chainB.ChainID,
+	)
+	suite.Require().NoError(err)
+	suite.Require().True(exist)
+	suite.Equal(token, common.BigToAddress(big.NewInt(1)).String())
+}
+
+func (suite *AggregateTestSuite) DeployERC20ByTransfer(fromChain *xibctesting.TestChain) common.Address {
+	ctorArgs, err := erc20contracts.ERC20MinterBurnerDecimalsContract.ABI.Pack("", "name", "symbol", uint8(18))
+	suite.Require().NoError(err)
+
+	data := make([]byte, len(erc20contracts.ERC20MinterBurnerDecimalsContract.Bin)+len(ctorArgs))
+	copy(data[:len(erc20contracts.ERC20MinterBurnerDecimalsContract.Bin)], erc20contracts.ERC20MinterBurnerDecimalsContract.Bin)
+	copy(data[len(erc20contracts.ERC20MinterBurnerDecimalsContract.Bin):], ctorArgs)
+
+	nonce := fromChain.App.EvmKeeper.GetNonce(fromChain.GetContext(), transfercontract.TransferContractAddress)
+	contractAddr := crypto.CreateAddress(transfercontract.TransferContractAddress, nonce)
+
+	res, err := fromChain.App.XIBCTransferKeeper.CallEVMWithPayload(fromChain.GetContext(), transfercontract.TransferContractAddress, nil, data)
+	suite.Require().NoError(err)
+	suite.Require().False(res.Failed(), res.VmError)
+
+	return contractAddr
+}
