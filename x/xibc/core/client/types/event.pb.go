@@ -145,7 +145,7 @@ func (m *EventUpgradeClientProposal) GetConsensusHeight() string {
 	return ""
 }
 
-// EventToggleClientProposal is emitted on create client proposal
+// EventToggleClientProposal is emitted on toggle client proposal
 type EventToggleClientProposal struct {
 	ChainName       string `protobuf:"bytes,1,opt,name=chain_name,json=chainName,proto3" json:"chain_name,omitempty"`
 	ClientType      string `protobuf:"bytes,2,opt,name=client_type,json=clientType,proto3" json:"client_type,omitempty"`

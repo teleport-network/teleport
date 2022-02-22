@@ -346,7 +346,7 @@ var xxx_messageInfo_UpgradeClientProposal proto.InternalMessageInfo
 
 // ToggleClientProposal defines a overnance proposal to toggle XIBC client type
 type ToggleClientProposal struct {
-	// the title of the update proposal
+	// the title of the toggle client proposal
 	Title string `protobuf:"bytes,1,opt,name=title,proto3" json:"title,omitempty"`
 	// the description of the proposal
 	Description string `protobuf:"bytes,2,opt,name=description,proto3" json:"description,omitempty"`
