@@ -68,10 +68,7 @@ message QueryClientStateResponse {
 
 // QueryClientStatesRequest is the request type for the Query/ClientStates RPC
 // method
-message QueryClientStatesRequest {
-  // pagination request
-  cosmos.base.query.v1beta1.PageRequest pagination = 1;
-}
+message QueryClientStatesRequest {}
 
 // QueryClientStatesResponse is the response type for the Query/ClientStates RPC
 // method.
@@ -81,8 +78,6 @@ message QueryClientStatesResponse {
     (gogoproto.nullable) = false,
     (gogoproto.castrepeated) = "IdentifiedClientStates"
   ];
-  // pagination response
-  cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 
 // QueryConsensusStateRequest is the request type for the Query/ConsensusState

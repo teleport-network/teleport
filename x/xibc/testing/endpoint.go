@@ -12,7 +12,7 @@ import (
 	xibctmtypes "github.com/teleport-network/teleport/x/xibc/clients/light-clients/tendermint/types"
 	clienttypes "github.com/teleport-network/teleport/x/xibc/core/client/types"
 	commitmenttypes "github.com/teleport-network/teleport/x/xibc/core/commitment/types"
-	host "github.com/teleport-network/teleport/x/xibc/core/host"
+	"github.com/teleport-network/teleport/x/xibc/core/host"
 	packettypes "github.com/teleport-network/teleport/x/xibc/core/packet/types"
 	"github.com/teleport-network/teleport/x/xibc/exported"
 )

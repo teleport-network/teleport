@@ -22,7 +22,7 @@ import (
 	"github.com/teleport-network/teleport/x/xibc"
 	"github.com/teleport-network/teleport/x/xibc/client/cli"
 	clienttypes "github.com/teleport-network/teleport/x/xibc/core/client/types"
-	host "github.com/teleport-network/teleport/x/xibc/core/host"
+	"github.com/teleport-network/teleport/x/xibc/core/host"
 	packettypes "github.com/teleport-network/teleport/x/xibc/core/packet/types"
 	"github.com/teleport-network/teleport/x/xibc/keeper"
 	"github.com/teleport-network/teleport/x/xibc/simulation"

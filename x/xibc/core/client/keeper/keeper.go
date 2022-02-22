@@ -14,7 +14,7 @@ import (
 	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
 
 	"github.com/teleport-network/teleport/x/xibc/core/client/types"
-	host "github.com/teleport-network/teleport/x/xibc/core/host"
+	"github.com/teleport-network/teleport/x/xibc/core/host"
 	"github.com/teleport-network/teleport/x/xibc/exported"
 )
 
@@ -98,7 +98,10 @@ func (k Keeper) GetChainName(ctx sdk.Context) string {
 // IterateConsensusStates provides an iterator over all stored consensus states.
 // objects. For each State object, cb will be called. If the cb returns true,
 // the iterator will close and stop.
-func (k Keeper) IterateConsensusStates(ctx sdk.Context, cb func(chainName string, cs types.ConsensusStateWithHeight) bool) {
+func (k Keeper) IterateConsensusStates(
+	ctx sdk.Context,
+	cb func(chainName string, cs types.ConsensusStateWithHeight) bool,
+) {
 	store := ctx.KVStore(k.storeKey)
 	iterator := sdk.KVStorePrefixIterator(store, host.KeyClientStorePrefix)
 
@@ -131,10 +134,13 @@ func (k Keeper) IterateConsensusStates(ctx sdk.Context, cb func(chainName string
 // GetAllGenesisClients returns all the clients in state with their client ids returned as IdentifiedClientState
 func (k Keeper) GetAllGenesisClients(ctx sdk.Context) types.IdentifiedClientStates {
 	var genClients types.IdentifiedClientStates
-	k.IterateClients(ctx, func(chainName string, cs exported.ClientState) bool {
-		genClients = append(genClients, types.NewIdentifiedClientState(chainName, cs))
-		return false
-	})
+	k.IterateClients(
+		ctx,
+		func(chainName string, cs exported.ClientState) bool {
+			genClients = append(genClients, types.NewIdentifiedClientState(chainName, cs))
+			return false
+		},
+	)
 
 	return genClients.Sort()
 }
@@ -187,22 +193,25 @@ func (k Keeper) GetAllConsensusStates(ctx sdk.Context) types.ClientsConsensusSta
 	clientConsStates := make(types.ClientsConsensusStates, 0)
 	mapChainNameToConsStateIdx := make(map[string]int)
 
-	k.IterateConsensusStates(ctx, func(clientName string, cs types.ConsensusStateWithHeight) bool {
-		idx, ok := mapChainNameToConsStateIdx[clientName]
-		if ok {
-			clientConsStates[idx].ConsensusStates = append(clientConsStates[idx].ConsensusStates, cs)
+	k.IterateConsensusStates(
+		ctx,
+		func(clientName string, cs types.ConsensusStateWithHeight) bool {
+			idx, ok := mapChainNameToConsStateIdx[clientName]
+			if ok {
+				clientConsStates[idx].ConsensusStates = append(clientConsStates[idx].ConsensusStates, cs)
+				return false
+			}
+
+			clientConsState := types.ClientConsensusStates{
+				ChainName:       clientName,
+				ConsensusStates: []types.ConsensusStateWithHeight{cs},
+			}
+
+			clientConsStates = append(clientConsStates, clientConsState)
+			mapChainNameToConsStateIdx[clientName] = len(clientConsStates) - 1
 			return false
-		}
-
-		clientConsState := types.ClientConsensusStates{
-			ChainName:       clientName,
-			ConsensusStates: []types.ConsensusStateWithHeight{cs},
-		}
-
-		clientConsStates = append(clientConsStates, clientConsState)
-		mapChainNameToConsStateIdx[clientName] = len(clientConsStates) - 1
-		return false
-	})
+		},
+	)
 
 	return clientConsStates.Sort()
 }
@@ -226,7 +235,10 @@ func (k Keeper) GetLatestClientConsensusState(ctx sdk.Context, chainName string)
 // IterateClients provides an iterator over all stored light client State
 // objects. For each State object, cb will be called. If the cb returns true,
 // the iterator will close and stop.
-func (k Keeper) IterateClients(ctx sdk.Context, cb func(chainName string, cs exported.ClientState) bool) {
+func (k Keeper) IterateClients(
+	ctx sdk.Context,
+	cb func(chainName string, cs exported.ClientState) bool,
+) {
 	store := ctx.KVStore(k.storeKey)
 	iterator := sdk.KVStorePrefixIterator(store, host.KeyClientStorePrefix)
 
@@ -248,10 +260,13 @@ func (k Keeper) IterateClients(ctx sdk.Context, cb func(chainName string, cs exp
 
 // GetAllClients returns all stored light client State objects.
 func (k Keeper) GetAllClients(ctx sdk.Context) (states []exported.ClientState) {
-	k.IterateClients(ctx, func(_ string, state exported.ClientState) bool {
-		states = append(states, state)
-		return false
-	})
+	k.IterateClients(
+		ctx,
+		func(_ string, state exported.ClientState) bool {
+			states = append(states, state)
+			return false
+		},
+	)
 	return states
 }
 
