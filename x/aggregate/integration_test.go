@@ -32,10 +32,10 @@ func (suite *AggregateTestSuite) SetupTest() {
 }
 
 func (suite *AggregateTestSuite) TestReBindToken() {
-	// deploy ERC20 on chainB
+	// deploy ERC20
 	erc20Address := suite.DeployERC20ByTransfer(suite.chainA)
 
-	// add erc20 trace on chainB
+	// add erc20 trace
 	err := suite.chainA.App.AggregateKeeper.RegisterERC20Trace(
 		suite.chainA.GetContext(),
 		erc20Address,
@@ -53,7 +53,7 @@ func (suite *AggregateTestSuite) TestReBindToken() {
 	suite.Require().True(exist)
 	suite.Equal(token, common.BigToAddress(big.NewInt(0)).String())
 
-	// add erc20 trace on chainB
+	// add erc20 trace
 	err = suite.chainA.App.AggregateKeeper.RegisterERC20Trace(
 		suite.chainA.GetContext(),
 		erc20Address,
@@ -72,6 +72,9 @@ func (suite *AggregateTestSuite) TestReBindToken() {
 	suite.Equal(token, common.BigToAddress(big.NewInt(1)).String())
 }
 
+// ================================================================================================================
+// Functions for step
+// ================================================================================================================
 func (suite *AggregateTestSuite) DeployERC20ByTransfer(fromChain *xibctesting.TestChain) common.Address {
 	ctorArgs, err := erc20contracts.ERC20MinterBurnerDecimalsContract.ABI.Pack("", "name", "symbol", uint8(18))
 	suite.Require().NoError(err)
