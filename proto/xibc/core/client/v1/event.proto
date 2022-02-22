@@ -20,7 +20,7 @@ message EventUpgradeClientProposal {
   string consensus_height = 3;
 }
 
-// EventToggleClientProposal is emitted on create client proposal
+// EventToggleClientProposal is emitted on toggle client proposal
 message EventToggleClientProposal {
   string chain_name = 1;
   string client_type = 2;

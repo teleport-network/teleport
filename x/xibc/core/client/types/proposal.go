@@ -198,16 +198,16 @@ func NewToggleClientProposal(
 	}, nil
 }
 
-// GetTitle returns the title of a client update proposal.
+// GetTitle returns the title of a client toggle proposal.
 func (cup *ToggleClientProposal) GetTitle() string { return cup.Title }
 
-// GetDescription returns the description of a client update proposal.
+// GetDescription returns the description of a client toggle proposal.
 func (cup *ToggleClientProposal) GetDescription() string { return cup.Description }
 
-// ProposalRoute returns the routing key of a client update proposal.
+// ProposalRoute returns the routing key of a client toggle proposal.
 func (cup *ToggleClientProposal) ProposalRoute() string { return GovRouterKey }
 
-// ProposalType returns the type of a client update proposal.
+// ProposalType returns the type of a client toggle proposal.
 func (cup *ToggleClientProposal) ProposalType() string { return ProposalTypeClientToggle }
 
 // ValidateBasic runs basic stateless validity checks

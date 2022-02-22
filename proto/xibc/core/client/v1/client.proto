@@ -79,7 +79,7 @@ message UpgradeClientProposal {
 // ToggleClientProposal defines a overnance proposal to toggle XIBC client type
 message ToggleClientProposal {
   option (gogoproto.goproto_getters) = false;
-  // the title of the update proposal
+  // the title of the toggle client proposal
   string title = 1;
   // the description of the proposal
   string description = 2;
