@@ -4,7 +4,7 @@ import (
 	"errors"
 	"fmt"
 
-	host "github.com/teleport-network/teleport/x/xibc/core/host"
+	"github.com/teleport-network/teleport/x/xibc/core/host"
 )
 
 // NewPacketState creates a new PacketState instance.

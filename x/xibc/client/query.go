@@ -10,7 +10,7 @@ import (
 
 	clienttypes "github.com/teleport-network/teleport/x/xibc/core/client/types"
 	commitmenttypes "github.com/teleport-network/teleport/x/xibc/core/commitment/types"
-	host "github.com/teleport-network/teleport/x/xibc/core/host"
+	"github.com/teleport-network/teleport/x/xibc/core/host"
 )
 
 // QueryTendermintProof performs an ABCI query with the given key and returns

@@ -5,7 +5,7 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	host "github.com/teleport-network/teleport/x/xibc/core/host"
+	"github.com/teleport-network/teleport/x/xibc/core/host"
 )
 
 func TestParseIdentifier(t *testing.T) {
