@@ -293,18 +293,6 @@ func (k Keeper) RegisterERC20Trace(
 	originToken string,
 	originChain string,
 ) error {
-	_, _, exist, err := k.QueryERC20Trace(ctx, contract, originChain)
-	if err != nil {
-		return err
-	}
-	if exist {
-		return sdkerrors.Wrapf(
-			types.ErrERC20TraceExist,
-			"ERC20 trace already exist. ERC20 address: %s, OriginToken: %s, Origin Chain: %s",
-			contract.String(), originToken, originChain,
-		)
-	}
-
 	if _, err := k.AddERC20TraceToTransferContract(ctx, contract, originToken, originChain); err != nil {
 		return fmt.Errorf("call bindToken failed: %s", err)
 	}

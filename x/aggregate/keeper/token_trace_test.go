@@ -82,7 +82,7 @@ func (suite *KeeperTestSuite) TestERC20Trace() {
 				suite.Require().NoError(err)
 
 				_, err = suite.app.AggregateKeeper.AddERC20TraceToTransferContract(suite.ctx, tokenAddress, originToken, originChain)
-				suite.Require().Error(err, err.Error())
+				suite.Require().NoError(err)
 			},
 		},
 		{
@@ -101,7 +101,7 @@ func (suite *KeeperTestSuite) TestERC20Trace() {
 				suite.Require().NoError(err)
 
 				_, err = suite.app.AggregateKeeper.AddERC20TraceToTransferContract(suite.ctx, tokenAddress, originToken1, originChain)
-				suite.Require().Error(err, err.Error())
+				suite.Require().NoError(err)
 			},
 		},
 	}
