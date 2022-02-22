@@ -25,8 +25,7 @@ var (
 func init() {
 	ERC20MinterBurnerDecimalsAddress = types.ModuleAddress
 
-	err := json.Unmarshal(ERC20MinterBurnerDecimalsJSON, &ERC20MinterBurnerDecimalsContract)
-	if err != nil {
+	if err := json.Unmarshal(ERC20MinterBurnerDecimalsJSON, &ERC20MinterBurnerDecimalsContract); err != nil {
 		panic(err)
 	}
 

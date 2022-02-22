@@ -15,7 +15,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/query"
 
 	"github.com/teleport-network/teleport/x/xibc/core/client/types"
-	host "github.com/teleport-network/teleport/x/xibc/core/host"
+	"github.com/teleport-network/teleport/x/xibc/core/host"
 	"github.com/teleport-network/teleport/x/xibc/exported"
 )
 
@@ -53,46 +53,27 @@ func (q Keeper) ClientState(c context.Context, req *types.QueryClientStateReques
 }
 
 // ClientStates implements the Query/ClientStates gRPC method
+// TODO: should use pagination when fixed by ibc-go
 func (q Keeper) ClientStates(c context.Context, req *types.QueryClientStatesRequest) (*types.QueryClientStatesResponse, error) {
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument, "empty request")
 	}
 
-	ctx := sdk.UnwrapSDKContext(c)
-
 	clientStates := types.IdentifiedClientStates{}
-	store := prefix.NewStore(ctx.KVStore(q.storeKey), host.KeyClientStorePrefix)
 
-	pageRes, err := query.Paginate(store, req.Pagination, func(key, value []byte) error {
-		keySplit := strings.Split(string(key), "/")
-		if keySplit[len(keySplit)-1] != "clientState" {
-			return nil
-		}
-
-		clientState, err := q.UnmarshalClientState(value)
-		if err != nil {
-			return err
-		}
-
-		chainName := keySplit[1]
-		if err := host.ClientIdentifierValidator(chainName); err != nil {
-			return err
-		}
-
-		identifiedClient := types.NewIdentifiedClientState(chainName, clientState)
-		clientStates = append(clientStates, identifiedClient)
-		return nil
-	})
-
-	if err != nil {
-		return nil, err
-	}
+	q.IterateClients(
+		sdk.UnwrapSDKContext(c),
+		func(chainName string, state exported.ClientState) bool {
+			identifiedClient := types.NewIdentifiedClientState(chainName, state)
+			clientStates = append(clientStates, identifiedClient)
+			return false
+		},
+	)
 
 	sort.Sort(clientStates)
 
 	return &types.QueryClientStatesResponse{
 		ClientStates: clientStates,
-		Pagination:   pageRes,
 	}, nil
 }
 
@@ -120,7 +101,6 @@ func (q Keeper) ConsensusState(c context.Context, req *types.QueryConsensusState
 		if req.RevisionHeight == 0 {
 			return nil, status.Error(codes.InvalidArgument, "consensus state height cannot be 0")
 		}
-
 		consensusState, found = q.GetClientConsensusState(ctx, req.ChainName, height)
 	}
 
@@ -156,31 +136,37 @@ func (q Keeper) ConsensusStates(c context.Context, req *types.QueryConsensusStat
 	ctx := sdk.UnwrapSDKContext(c)
 
 	var consensusStates []types.ConsensusStateWithHeight
-	store := prefix.NewStore(ctx.KVStore(q.storeKey), host.FullClientKey(req.ChainName, []byte(fmt.Sprintf("%s/", host.KeyConsensusStatePrefix))))
+	store := prefix.NewStore(
+		ctx.KVStore(q.storeKey),
+		host.FullClientKey(req.ChainName, []byte(fmt.Sprintf("%s/", host.KeyConsensusStatePrefix))),
+	)
 
-	pageRes, err := query.FilteredPaginate(store, req.Pagination, func(key, value []byte, accumulate bool) (bool, error) {
-		// filter any metadata stored under consensus state key
-		if strings.Contains(string(key), "/") {
-			return false, nil
-		}
-		revNum := sdk.BigEndianToUint64(key[:8])
-		revHei := sdk.BigEndianToUint64(key[8:])
-		height, err := types.ParseHeight(fmt.Sprintf("%d-%d", revNum, revHei))
-		if err != nil {
-			return false, err
-		}
+	pageRes, err := query.FilteredPaginate(
+		store,
+		req.Pagination,
+		func(key, value []byte, accumulate bool) (bool, error) {
+			// filter any metadata stored under consensus state key
+			if strings.Contains(string(key), "/") {
+				return false, nil
+			}
+			revNum := sdk.BigEndianToUint64(key[:8])
+			revHei := sdk.BigEndianToUint64(key[8:])
+			height, err := types.ParseHeight(fmt.Sprintf("%d-%d", revNum, revHei))
+			if err != nil {
+				return false, err
+			}
 
-		consensusState, err := q.UnmarshalConsensusState(value)
-		if err != nil {
-			return false, err
-		}
+			consensusState, err := q.UnmarshalConsensusState(value)
+			if err != nil {
+				return false, err
+			}
 
-		if accumulate {
-			consensusStates = append(consensusStates, types.NewConsensusStateWithHeight(height, consensusState))
-		}
-		return true, nil
-	})
-
+			if accumulate {
+				consensusStates = append(consensusStates, types.NewConsensusStateWithHeight(height, consensusState))
+			}
+			return true, nil
+		},
+	)
 	if err != nil {
 		return nil, err
 	}

@@ -51,6 +51,7 @@ type KeeperTestSuite struct {
 
 	chainA *xibctesting.TestChain
 	chainB *xibctesting.TestChain
+	chainC *xibctesting.TestChain
 
 	cdc            codec.Codec
 	ctx            sdk.Context
@@ -67,19 +68,27 @@ type KeeperTestSuite struct {
 }
 
 func (suite *KeeperTestSuite) SetupTest() {
-	suite.coordinator = xibctesting.NewCoordinator(suite.T(), 2)
+	suite.coordinator = xibctesting.NewCoordinator(suite.T(), 3)
 
 	suite.chainA = suite.coordinator.GetChain(xibctesting.GetChainID(0))
 	suite.chainB = suite.coordinator.GetChain(xibctesting.GetChainID(1))
+	suite.chainC = suite.coordinator.GetChain(xibctesting.GetChainID(2))
 
 	isCheckTx := false
 	suite.now = time.Date(2020, 1, 2, 0, 0, 0, 0, time.UTC)
 	suite.past = time.Date(2020, 1, 1, 0, 0, 0, 0, time.UTC)
-	now2 := suite.now.Add(time.Hour)
+	now := suite.now.Add(time.Hour)
 	app := app.Setup(isCheckTx, nil)
 
 	suite.cdc = app.AppCodec()
-	suite.ctx = app.BaseApp.NewContext(isCheckTx, tmproto.Header{Height: height, ChainID: testChainName, Time: now2})
+	suite.ctx = app.BaseApp.NewContext(
+		isCheckTx,
+		tmproto.Header{
+			Height:  height,
+			ChainID: testChainName,
+			Time:    now,
+		},
+	)
 	suite.keeper = &app.XIBCKeeper.ClientKeeper
 	suite.privVal = xibctestingmock.NewPV()
 
@@ -93,7 +102,7 @@ func (suite *KeeperTestSuite) SetupTest() {
 	suite.valSetHash = suite.valSet.Hash()
 	suite.header = suite.chainA.CreateTMClientHeader(
 		testChainID, int64(testClientHeight.RevisionHeight),
-		testClientHeightMinus1, now2, suite.valSet, suite.valSet,
+		testClientHeightMinus1, now, suite.valSet, suite.valSet,
 		[]tmtypes.PrivValidator{suite.privVal},
 	)
 	suite.consensusState = xibctmtypes.NewConsensusState(suite.now, []byte("hash"), suite.valSetHash)

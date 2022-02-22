@@ -26,8 +26,7 @@ var (
 func init() {
 	ERC20DirectBalanceManipulationAddress = types.ModuleAddress
 
-	err := json.Unmarshal(ERC20DirectBalanceManipulationJSON, &ERC20DirectBalanceManipulationContract)
-	if err != nil {
+	if err := json.Unmarshal(ERC20DirectBalanceManipulationJSON, &ERC20DirectBalanceManipulationContract); err != nil {
 		panic(err)
 	}
 

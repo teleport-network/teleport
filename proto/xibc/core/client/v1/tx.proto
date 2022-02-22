@@ -20,7 +20,7 @@ message MsgUpdateClient {
 
   // client unique identifier
   string chain_name = 1;
-  // header to update the light client
+  // header to update the client
   google.protobuf.Any header = 2;
   // signer address
   string signer = 3;

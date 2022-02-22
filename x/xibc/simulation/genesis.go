@@ -11,7 +11,7 @@ import (
 
 	clientsims "github.com/teleport-network/teleport/x/xibc/core/client/simulation"
 	clienttypes "github.com/teleport-network/teleport/x/xibc/core/client/types"
-	host "github.com/teleport-network/teleport/x/xibc/core/host"
+	"github.com/teleport-network/teleport/x/xibc/core/host"
 	packetsims "github.com/teleport-network/teleport/x/xibc/core/packet/simulation"
 	packettypes "github.com/teleport-network/teleport/x/xibc/core/packet/types"
 	"github.com/teleport-network/teleport/x/xibc/types"

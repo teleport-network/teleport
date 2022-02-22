@@ -139,8 +139,7 @@ func (m ClientState) UpgradeState(
 		deleteConsensusState(store, pruneHeight)
 	}
 	// Delete all signer
-	err := DeleteAllSigner(store)
-	if err != nil {
+	if err := DeleteAllSigner(store); err != nil {
 		return err
 	}
 

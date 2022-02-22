@@ -12,7 +12,7 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
 	clienttypes "github.com/teleport-network/teleport/x/xibc/core/client/types"
-	host "github.com/teleport-network/teleport/x/xibc/core/host"
+	"github.com/teleport-network/teleport/x/xibc/core/host"
 	"github.com/teleport-network/teleport/x/xibc/exported"
 )
 
@@ -101,8 +101,7 @@ func checkValidity(
 	if err := header.ValidateBasic(); err != nil {
 		return err
 	}
-	err := verifyHeader(ctx, cdc, store, clientState, header)
-	if err != nil {
+	if err := verifyHeader(ctx, cdc, store, clientState, header); err != nil {
 		return err
 	}
 
@@ -111,8 +110,7 @@ func checkValidity(
 		if uint64(len(header.Extra)) > params.MaximumExtraDataSize {
 			return fmt.Errorf("extra-data too long: %d > %d", len(header.Extra), params.MaximumExtraDataSize)
 		}
-		err := VerifyCascadingFields(header)
-		if err != nil {
+		if err := VerifyCascadingFields(header); err != nil {
 			return err
 		}
 	}

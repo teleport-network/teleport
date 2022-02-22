@@ -342,13 +342,11 @@ func New(l Logger, baseDir string, cfg Config) (*Network, error) {
 		clientDir := filepath.Join(network.BaseDir, nodeDirName, "teleportcli")
 		gentxsDir := filepath.Join(network.BaseDir, "gentxs")
 
-		err := os.MkdirAll(filepath.Join(nodeDir, "config"), 0o755)
-		if err != nil {
+		if err := os.MkdirAll(filepath.Join(nodeDir, "config"), 0o755); err != nil {
 			return nil, err
 		}
 
-		err = os.MkdirAll(clientDir, 0o755)
-		if err != nil {
+		if err := os.MkdirAll(clientDir, 0o755); err != nil {
 			return nil, err
 		}
 
@@ -513,19 +511,16 @@ func New(l Logger, baseDir string, cfg Config) (*Network, error) {
 		}
 	}
 
-	err := initGenFiles(cfg, genAccounts, genBalances, genFiles)
-	if err != nil {
+	if err := initGenFiles(cfg, genAccounts, genBalances, genFiles); err != nil {
 		return nil, err
 	}
-	err = collectGenFiles(cfg, network.Validators, network.BaseDir)
-	if err != nil {
+	if err := collectGenFiles(cfg, network.Validators, network.BaseDir); err != nil {
 		return nil, err
 	}
 
 	l.Log("starting test network...")
 	for _, v := range network.Validators {
-		err := startInProcess(cfg, v)
-		if err != nil {
+		if err := startInProcess(cfg, v); err != nil {
 			return nil, err
 		}
 	}

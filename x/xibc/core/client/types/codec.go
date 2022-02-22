@@ -39,6 +39,7 @@ func RegisterInterfaces(registry codectypes.InterfaceRegistry) {
 		(*govtypes.Content)(nil),
 		&CreateClientProposal{},
 		&UpgradeClientProposal{},
+		&ToggleClientProposal{},
 		&RegisterRelayerProposal{},
 	)
 

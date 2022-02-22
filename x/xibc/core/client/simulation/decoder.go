@@ -7,7 +7,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/types/kv"
 
 	"github.com/teleport-network/teleport/x/xibc/core/client/keeper"
-	host "github.com/teleport-network/teleport/x/xibc/core/host"
+	"github.com/teleport-network/teleport/x/xibc/core/host"
 	"github.com/teleport-network/teleport/x/xibc/exported"
 )
 

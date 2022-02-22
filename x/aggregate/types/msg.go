@@ -38,8 +38,7 @@ func (msg MsgConvertCoin) ValidateBasic() error {
 	if !msg.Coin.Amount.IsPositive() {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidCoins, "cannot mint a non-positive amount")
 	}
-	_, err := sdk.AccAddressFromBech32(msg.Sender)
-	if err != nil {
+	if _, err := sdk.AccAddressFromBech32(msg.Sender); err != nil {
 		return sdkerrors.Wrap(err, "invalid sender address")
 	}
 	if !common.IsHexAddress(msg.Receiver) {
@@ -76,8 +75,7 @@ func (msg MsgConvertERC20) ValidateBasic() error {
 	if !msg.Amount.IsPositive() {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidCoins, "cannot mint a non-positive amount")
 	}
-	_, err := sdk.AccAddressFromBech32(msg.Receiver)
-	if err != nil {
+	if _, err := sdk.AccAddressFromBech32(msg.Receiver); err != nil {
 		return sdkerrors.Wrap(err, "invalid reciver address")
 	}
 	if !common.IsHexAddress(msg.Sender) {

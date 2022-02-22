@@ -13,20 +13,19 @@ import (
 
 	"github.com/teleport-network/teleport/x/xibc/core/client/client/utils"
 	"github.com/teleport-network/teleport/x/xibc/core/client/types"
-	host "github.com/teleport-network/teleport/x/xibc/core/host"
+	"github.com/teleport-network/teleport/x/xibc/core/host"
 )
 
 const (
 	flagLatestHeight = "latest-height"
 )
 
-// GetCmdQueryClientStates defines the command to query all the light clients
-// that this chain mantains.
+// GetCmdQueryClientStates defines the command to query all the clients that this chain mantains.
 func GetCmdQueryClientStates() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     "states",
-		Short:   "Query all available light clients",
-		Long:    "Query all available light clients",
+		Short:   "Query all available clients",
+		Long:    "Query all available clients",
 		Example: fmt.Sprintf("%s query %s %s states", version.AppName, host.ModuleName, types.SubModuleName),
 		Args:    cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, _ []string) error {
@@ -36,14 +35,7 @@ func GetCmdQueryClientStates() *cobra.Command {
 			}
 			queryClient := types.NewQueryClient(clientCtx)
 
-			pageReq, err := client.ReadPageRequest(cmd.Flags())
-			if err != nil {
-				return err
-			}
-
-			req := &types.QueryClientStatesRequest{
-				Pagination: pageReq,
-			}
+			req := &types.QueryClientStatesRequest{}
 
 			res, err := queryClient.ClientStates(context.Background(), req)
 			if err != nil {
@@ -54,7 +46,6 @@ func GetCmdQueryClientStates() *cobra.Command {
 		},
 	}
 	flags.AddQueryFlagsToCmd(cmd)
-	flags.AddPaginationFlagsToCmd(cmd, "client states")
 
 	return cmd
 }

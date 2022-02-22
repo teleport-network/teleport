@@ -11,13 +11,13 @@ option go_package = "github.com/teleport-network/teleport/x/xibc/core/client/typ
 
 // Query provides defines the gRPC querier service
 service Query {
-  // ClientState queries an XIBC light client.
+  // ClientState queries an XIBC client.
   rpc ClientState(QueryClientStateRequest) returns (QueryClientStateResponse) {
     option (google.api.http).get =
         "/ibc/core/client/v1beta1/client_states/{chain_name}";
   }
 
-  // ClientStates queries all the XIBC light clients of a chain.
+  // ClientStates queries all the XIBC clients of a chain.
   rpc ClientStates(QueryClientStatesRequest)
       returns (QueryClientStatesResponse) {
     option (google.api.http).get = "/ibc/core/client/v1beta1/client_states";
@@ -68,10 +68,7 @@ message QueryClientStateResponse {
 
 // QueryClientStatesRequest is the request type for the Query/ClientStates RPC
 // method
-message QueryClientStatesRequest {
-  // pagination request
-  cosmos.base.query.v1beta1.PageRequest pagination = 1;
-}
+message QueryClientStatesRequest {}
 
 // QueryClientStatesResponse is the response type for the Query/ClientStates RPC
 // method.
@@ -81,8 +78,6 @@ message QueryClientStatesResponse {
     (gogoproto.nullable) = false,
     (gogoproto.castrepeated) = "IdentifiedClientStates"
   ];
-  // pagination response
-  cosmos.base.query.v1beta1.PageResponse pagination = 2;
 }
 
 // QueryConsensusStateRequest is the request type for the Query/ConsensusState
