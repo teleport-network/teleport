@@ -418,11 +418,10 @@ func initTestnetFiles(
 		return err
 	}
 
-	err := collectGenFiles(
+	if err := collectGenFiles(
 		clientCtx, nodeConfig, args.chainID, nodeIDs, valPubKeys, numValidators,
 		args.outputDir, args.nodeDirPrefix, args.nodeDaemonHome, genBalIterator,
-	)
-	if err != nil {
+	); err != nil {
 		return err
 	}
 

@@ -13,17 +13,29 @@ message EventCreateClientProposal {
   string consensus_height = 3;
 }
 
+// EventUpgradeClientProposal is emitted on upgrade client proposal
+message EventUpgradeClientProposal {
+  string chain_name = 1;
+  string client_type = 2;
+  string consensus_height = 3;
+}
+
+// EventToggleClientProposal is emitted on toggle client proposal
+message EventToggleClientProposal {
+  string chain_name = 1;
+  string client_type = 2;
+  string consensus_height = 3;
+}
+
+message EventRegisterRelayerProposal {
+  string chain_name = 1;
+  repeated string relayers = 2;
+}
+
 // EventUpdateClient is emitted on update client
 message EventUpdateClient {
   string chain_name = 1;
   string client_type = 2;
   string consensus_height = 3;
   string header = 4;
-}
-
-// EventUpgradeClientProposal is emitted on upgrade client proposal
-message EventUpgradeClientProposal {
-  string chain_name = 1;
-  string client_type = 2;
-  string consensus_height = 3;
 }

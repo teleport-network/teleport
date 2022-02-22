@@ -190,6 +190,7 @@ var (
 			// xibc
 			xibcclientcli.CreateClientProposalHandler,
 			xibcclientcli.UpgradeClientProposalHandler,
+			xibcclientcli.ToggleClientProposalHandler,
 			xibcclientcli.RegisterRelayerProposalHandler,
 			// aggregate
 			aggregateclient.RegisterCoinProposalHandler,

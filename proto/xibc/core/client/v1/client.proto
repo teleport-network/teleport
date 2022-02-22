@@ -53,7 +53,7 @@ message CreateClientProposal {
   string description = 2;
   // the client identifier for the client to be updated if the proposal passes
   string chain_name = 3;
-  // light client state
+  // client state
   google.protobuf.Any client_state = 4;
   // consensus state associated with the client that corresponds to a given
   // height.
@@ -73,6 +73,22 @@ message UpgradeClientProposal {
   // client state
   google.protobuf.Any client_state = 4;
   // consensus state
+  google.protobuf.Any consensus_state = 5;
+}
+
+// ToggleClientProposal defines a overnance proposal to toggle XIBC client type
+message ToggleClientProposal {
+  option (gogoproto.goproto_getters) = false;
+  // the title of the toggle client proposal
+  string title = 1;
+  // the description of the proposal
+  string description = 2;
+  // the client identifier for the client to be updated if the proposal passes
+  string chain_name = 3;
+  // client state
+  google.protobuf.Any client_state = 4;
+  // consensus state associated with the client that corresponds to a given
+  // height.
   google.protobuf.Any consensus_state = 5;
 }
 

@@ -26,8 +26,7 @@ var (
 func init() {
 	ERC20MaliciousDelayedAddress = types.ModuleAddress
 
-	err := json.Unmarshal(ERC20MaliciousDelayedJSON, &ERC20MaliciousDelayedContract)
-	if err != nil {
+	if err := json.Unmarshal(ERC20MaliciousDelayedJSON, &ERC20MaliciousDelayedContract); err != nil {
 		panic(err)
 	}
 

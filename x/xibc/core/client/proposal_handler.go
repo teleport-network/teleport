@@ -17,6 +17,8 @@ func NewClientProposalHandler(k keeper.Keeper) govtypes.Handler {
 			return handleCreateClientProposal(ctx, k, c)
 		case *types.UpgradeClientProposal:
 			return handleUpgradeClientProposal(ctx, k, c)
+		case *types.ToggleClientProposal:
+			return handleToggleClientProposal(ctx, k, c)
 		case *types.RegisterRelayerProposal:
 			return handleRegisterRelayerProposal(ctx, k, c)
 		default:
@@ -25,7 +27,7 @@ func NewClientProposalHandler(k keeper.Keeper) govtypes.Handler {
 	}
 }
 
-// handleCreateClientProposal will try to create the client with the new ClientState and ConsensusState if and only if the proposal passes.
+// handleCreateClientProposal will try to create the client with the ClientState and ConsensusState
 func handleCreateClientProposal(ctx sdk.Context, k keeper.Keeper, p *types.CreateClientProposal) error {
 	clientState, err := k.HandleCreateClient(ctx, p)
 	if err != nil {
@@ -41,14 +43,34 @@ func handleCreateClientProposal(ctx sdk.Context, k keeper.Keeper, p *types.Creat
 	return nil
 }
 
-// handleUpgradeClientProposal will try to update the client with the new ClientState and ConsensusState if and only if the proposal passes.
+// handleUpgradeClientProposal will try to update the client with the new ClientState and ConsensusState if and only if the proposal passes
 func handleUpgradeClientProposal(ctx sdk.Context, k keeper.Keeper, p *types.UpgradeClientProposal) error {
-	clientState, err := k.HandleUpgradeClient(ctx, p)
+	upgradedClientState, err := k.HandleUpgradeClient(ctx, p)
 	if err != nil {
 		return err
 	}
 
-	k.Logger(ctx).Info("client updated after governance proposal passed", "client-name", p.ChainName, "height", clientState.GetLatestHeight().String())
+	_ = ctx.EventManager().EmitTypedEvent(&types.EventUpgradeClientProposal{
+		ChainName:       p.ChainName,
+		ClientType:      upgradedClientState.ClientType(),
+		ConsensusHeight: upgradedClientState.GetLatestHeight().String(),
+	})
+
+	return nil
+}
+
+// handleToggleClientProposal will try to toggle the client type between Light and TSS
+func handleToggleClientProposal(ctx sdk.Context, k keeper.Keeper, p *types.ToggleClientProposal) error {
+	clientState, err := k.HandleToggleClient(ctx, p)
+	if err != nil {
+		return err
+	}
+
+	_ = ctx.EventManager().EmitTypedEvent(&types.EventToggleClientProposal{
+		ChainName:       p.ChainName,
+		ClientType:      clientState.ClientType(),
+		ConsensusHeight: clientState.GetLatestHeight().String(),
+	})
 
 	return nil
 }
@@ -59,7 +81,10 @@ func handleRegisterRelayerProposal(ctx sdk.Context, k keeper.Keeper, p *types.Re
 		return err
 	}
 
-	// add logs or events
+	_ = ctx.EventManager().EmitTypedEvent(&types.EventRegisterRelayerProposal{
+		ChainName: p.ChainName,
+		Relayers:  p.Relayers,
+	})
 
 	return nil
 }

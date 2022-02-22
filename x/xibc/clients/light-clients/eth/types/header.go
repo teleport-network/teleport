@@ -158,8 +158,7 @@ func verifyHeader(
 	if header.Time <= parentHeader.Time {
 		return ErrHeader
 	}
-	err := VerifyEip1559Header(parentHeader, &header)
-	if err != nil {
+	if err := VerifyEip1559Header(parentHeader, &header); err != nil {
 		return sdkerrors.Wrap(ErrHeader, fmt.Errorf("SyncBlockHeader, err:%v", err).Error())
 	}
 	//verify difficulty

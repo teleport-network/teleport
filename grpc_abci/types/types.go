@@ -27,8 +27,7 @@ func NewABCIQueryClient(cc *grpc.ClientConn) ABCIQueryClient {
 
 func (c *abciQueryClient) Info(ctx context.Context, in *abci.RequestInfo, opts ...grpc.CallOption) (*abci.ResponseInfo, error) {
 	out := new(abci.ResponseInfo)
-	err := c.cc.Invoke(ctx, "/tendermint.abci.ABCIApplication/Info", in, out, opts...)
-	if err != nil {
+	if err := c.cc.Invoke(ctx, "/tendermint.abci.ABCIApplication/Info", in, out, opts...); err != nil {
 		return nil, err
 	}
 	return out, nil
@@ -36,8 +35,7 @@ func (c *abciQueryClient) Info(ctx context.Context, in *abci.RequestInfo, opts .
 
 func (c *abciQueryClient) Query(ctx context.Context, in *abci.RequestQuery, opts ...grpc.CallOption) (*abci.ResponseQuery, error) {
 	out := new(abci.ResponseQuery)
-	err := c.cc.Invoke(ctx, "/tendermint.abci.ABCIApplication/Query", in, out, opts...)
-	if err != nil {
+	if err := c.cc.Invoke(ctx, "/tendermint.abci.ABCIApplication/Query", in, out, opts...); err != nil {
 		return nil, err
 	}
 	return out, nil
