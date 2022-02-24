@@ -10,7 +10,6 @@ import (
 
 	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/common/hexutil"
 	ethtypes "github.com/ethereum/go-ethereum/core/types"
 
 	"github.com/tharsis/ethermint/server/config"
@@ -86,32 +85,12 @@ func (k Keeper) CallEVMWithData(
 		return nil, err
 	}
 
-	args, err := json.Marshal(evmtypes.TransactionArgs{
-		From: &from,
-		To:   contract,
-		Data: (*hexutil.Bytes)(&data),
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	gasRes, err := k.evmKeeper.EstimateGas(
-		sdk.WrapSDKContext(ctx),
-		&evmtypes.EthCallRequest{
-			Args:   args,
-			GasCap: config.DefaultGasCap,
-		},
-	)
-	if err != nil {
-		return nil, err
-	}
-
 	msg := ethtypes.NewMessage(
 		from,
 		contract,
 		nonce,
 		big.NewInt(0),         // amount
-		gasRes.Gas,            // gasLimit
+		config.DefaultGasCap,  // gasLimit
 		big.NewInt(0),         // gasFeeCap
 		big.NewInt(0),         // gasTipCap
 		big.NewInt(0),         // gasPrice

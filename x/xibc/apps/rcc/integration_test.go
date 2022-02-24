@@ -15,6 +15,7 @@ import (
 	ethtypes "github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/crypto"
 
+	"github.com/tharsis/ethermint/server/config"
 	"github.com/tharsis/ethermint/tests"
 	evm "github.com/tharsis/ethermint/x/evm/types"
 
@@ -206,7 +207,7 @@ func (suite *RCCTestSuite) SendTx(fromChain *xibctesting.TestChain, contractAddr
 		nonce,
 		&contractAddr,
 		amount,
-		25000000,
+		config.DefaultGasCap,
 		big.NewInt(0),
 		big.NewInt(0),
 		big.NewInt(0),

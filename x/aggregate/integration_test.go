@@ -86,7 +86,7 @@ func (suite *AggregateTestSuite) DeployERC20ByTransfer(fromChain *xibctesting.Te
 	nonce := fromChain.App.EvmKeeper.GetNonce(fromChain.GetContext(), transfercontract.TransferContractAddress)
 	contractAddr := crypto.CreateAddress(transfercontract.TransferContractAddress, nonce)
 
-	res, err := fromChain.App.XIBCTransferKeeper.CallEVMWithPayload(fromChain.GetContext(), transfercontract.TransferContractAddress, nil, data)
+	res, err := fromChain.App.XIBCTransferKeeper.CallEVMWithData(fromChain.GetContext(), transfercontract.TransferContractAddress, nil, data)
 	suite.Require().NoError(err)
 	suite.Require().False(res.Failed(), res.VmError)
 

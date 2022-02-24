@@ -1,4 +1,4 @@
-//SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: Apache-2.0
 pragma solidity ^0.8.0;
 
 // generate go: abigen --sol Staking.sol --pkg staking --out generated.go

@@ -177,6 +177,13 @@ func (suite *KeeperTestSuite) DoSetupTest(t require.TestingT) {
 	suite.ethSigner = ethtypes.LatestSignerForChainID(suite.app.EvmKeeper.ChainID())
 }
 
+func (suite *KeeperTestSuite) MintFeeCollector(coins sdk.Coins) {
+	err := suite.app.BankKeeper.MintCoins(suite.ctx, types.ModuleName, coins)
+	suite.Require().NoError(err)
+	err = suite.app.BankKeeper.SendCoinsFromModuleToModule(suite.ctx, types.ModuleName, authtypes.FeeCollectorName, coins)
+	suite.Require().NoError(err)
+}
+
 func (suite *KeeperTestSuite) Commit() {
 	_ = suite.app.Commit()
 	header := suite.ctx.BlockHeader()
@@ -210,6 +217,9 @@ func (suite *KeeperTestSuite) SendTx(contractAddr common.Address, transferData [
 	suite.Require().NoError(err)
 
 	nonce := suite.app.EvmKeeper.GetNonce(suite.ctx, suite.address)
+
+	// Mint the max gas to the FeeCollector to ensure balance in case of refund
+	suite.MintFeeCollector(sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(suite.app.FeeMarketKeeper.GetBaseFee(suite.ctx).Int64()*int64(res.Gas)))))
 
 	ercTransferTx := evm.NewTx(
 		chainID,

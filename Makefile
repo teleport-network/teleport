@@ -634,7 +634,7 @@ create-contracts-json:
 		mkdir -p $(COMPILED_DIR) ;\
 		mkdir -p $(TMP) ;\
 		echo "\nCompiling solidity contract $${c}..." ;\
-		solc --combined-json abi,bin $(CONTRACTS_DIR)/$${c}.sol > $(TMP_COMPILED) ;\
+		solc --combined-json abi,bin,bin-runtime $(CONTRACTS_DIR)/$${c}.sol > $(TMP_COMPILED) --optimize ;\
 		echo "Formatting JSON..." ;\
 		get_contract=$$(jq '.contracts["$(CONTRACTS_DIR)/'$$c'.sol:'$$c'"]' $(TMP_COMPILED)) ;\
 		add_contract_name=$$(echo $$get_contract | jq '. + { "contractName": "'$$c'" }') ;\

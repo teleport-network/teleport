@@ -22,9 +22,13 @@ var (
 func init() {
 	StakingAddress = common.HexToAddress(syscontracts.StakingContractAddress)
 
-	if err := json.Unmarshal(syscontracts.StakingJSON, &StakingContract); err != nil {
+	var contractBinRuntime syscontracts.CompiledContract
+	if err := json.Unmarshal(syscontracts.StakingJSON, &contractBinRuntime); err != nil {
 		panic(err)
 	}
+
+	StakingContract.ABI = contractBinRuntime.ABI
+	StakingContract.Bin = contractBinRuntime.Bin
 
 	if len(StakingContract.Bin) == 0 {
 		panic("load contract failed")
