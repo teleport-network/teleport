@@ -15,6 +15,7 @@ import (
 	tmtypes "github.com/tendermint/tendermint/types"
 	"github.com/tendermint/tendermint/version"
 
+	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
@@ -29,6 +30,7 @@ import (
 
 	"github.com/tharsis/ethermint/crypto/ethsecp256k1"
 	"github.com/tharsis/ethermint/encoding"
+	evm "github.com/tharsis/ethermint/x/evm/types"
 
 	"github.com/teleport-network/teleport/app"
 	xibctmtypes "github.com/teleport-network/teleport/x/xibc/clients/light-clients/tendermint/types"
@@ -72,14 +74,15 @@ var (
 type TestChain struct {
 	t *testing.T
 
-	Coordinator   *Coordinator
-	App           *app.Teleport
-	ChainID       string
-	LastHeader    *xibctmtypes.Header // header for last block height committed
-	CurrentHeader tmproto.Header      // header for current block height
-	QueryServer   types.QueryServer
-	TxConfig      client.TxConfig
-	Codec         codec.BinaryCodec
+	Coordinator    *Coordinator
+	App            *app.Teleport
+	ChainID        string
+	LastHeader     *xibctmtypes.Header // header for last block height committed
+	CurrentHeader  tmproto.Header      // header for current block height
+	QueryServer    types.QueryServer
+	QueryClientEvm evm.QueryClient
+	TxConfig       client.TxConfig
+	Codec          codec.BinaryCodec
 
 	Vals    *tmtypes.ValidatorSet
 	Signers []tmtypes.PrivValidator
@@ -129,21 +132,28 @@ func NewTestChain(t *testing.T, coord *Coordinator, chainID string) *TestChain {
 
 	txConfig := encoding.MakeConfig(app.ModuleBasics).TxConfig
 
+	queryHelperEvm := baseapp.NewQueryServerTestHelper(
+		teleport.BaseApp.NewContext(false, header),
+		teleport.InterfaceRegistry(),
+	)
+	evm.RegisterQueryServer(queryHelperEvm, teleport.EvmKeeper)
+
 	// create an account to send transactions from
 	chain := &TestChain{
-		t:             t,
-		Coordinator:   coord,
-		ChainID:       chainID,
-		App:           teleport,
-		CurrentHeader: header,
-		QueryServer:   teleport.XIBCKeeper,
-		TxConfig:      txConfig,
-		Codec:         teleport.AppCodec(),
-		Vals:          valSet,
-		Signers:       signers,
-		SenderPrivKey: senderPrivKey,
-		SenderAcc:     acc.GetAddress(),
-		SenderAddress: senderAddress,
+		t:              t,
+		Coordinator:    coord,
+		ChainID:        chainID,
+		App:            teleport,
+		CurrentHeader:  header,
+		QueryServer:    teleport.XIBCKeeper,
+		QueryClientEvm: evm.NewQueryClient(queryHelperEvm),
+		TxConfig:       txConfig,
+		Codec:          teleport.AppCodec(),
+		Vals:           valSet,
+		Signers:        signers,
+		SenderPrivKey:  senderPrivKey,
+		SenderAcc:      acc.GetAddress(),
+		SenderAddress:  senderAddress,
 	}
 
 	coord.CommitBlock(chain)
@@ -283,7 +293,9 @@ func (chain *TestChain) SendMsgs(msgs ...sdk.Msg) (*sdk.Result, error) {
 		chain.ChainID,
 		[]uint64{account.GetAccountNumber()},
 		[]uint64{account.GetSequence()},
-		true, true, chain.SenderPrivKey,
+		true,
+		true,
+		chain.SenderPrivKey,
 	)
 	if err != nil {
 		return nil, err
@@ -410,7 +422,13 @@ func (chain *TestChain) ConstructUpdateTMClientHeader(counterparty *TestChain, c
 
 // ConstructUpdateTMClientHeaderWithTrustedHeight will construct a valid tendermint Header to update the
 // light client on the source chain.
-func (chain *TestChain) ConstructUpdateTMClientHeaderWithTrustedHeight(counterparty *TestChain, chainName string, trustedHeight clienttypes.Height) (*xibctmtypes.Header, error) {
+func (chain *TestChain) ConstructUpdateTMClientHeaderWithTrustedHeight(
+	counterparty *TestChain,
+	chainName string,
+	trustedHeight clienttypes.Height,
+) (
+	*xibctmtypes.Header, error,
+) {
 	header := counterparty.LastHeader
 	// Relayer must query for LatestHeight on client to get TrustedHeight if the trusted height is not set
 	if trustedHeight.IsZero() {
@@ -432,7 +450,11 @@ func (chain *TestChain) ConstructUpdateTMClientHeaderWithTrustedHeight(counterpa
 		// NextValidatorsHash
 		tmTrustedVals, ok = counterparty.GetValsAtHeight(int64(trustedHeight.RevisionHeight + 1))
 		if !ok {
-			return nil, sdkerrors.Wrapf(xibctmtypes.ErrInvalidHeaderHeight, "could not retrieve trusted validators at trustedHeight: %d", trustedHeight)
+			return nil, sdkerrors.Wrapf(
+				xibctmtypes.ErrInvalidHeaderHeight,
+				"could not retrieve trusted validators at trustedHeight: %d",
+				trustedHeight,
+			)
 		}
 	}
 	// inject trusted fields into last header
@@ -458,7 +480,10 @@ func (chain *TestChain) ExpireClient(amount time.Duration) {
 // CurrentTMClientHeader creates a TM header using the current header parameters
 // on the chain. The trusted fields in the header are set to nil.
 func (chain *TestChain) CurrentTMClientHeader() *xibctmtypes.Header {
-	return chain.CreateTMClientHeader(chain.ChainID, chain.CurrentHeader.Height, clienttypes.Height{}, chain.CurrentHeader.Time, chain.Vals, nil, chain.Signers)
+	return chain.CreateTMClientHeader(
+		chain.ChainID, chain.CurrentHeader.Height, clienttypes.Height{},
+		chain.CurrentHeader.Time, chain.Vals, nil, chain.Signers,
+	)
 }
 
 // CreateTMClientHeader creates a TM header to update the TM client. Args are passed in to allow

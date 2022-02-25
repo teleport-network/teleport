@@ -17,16 +17,17 @@ import (
 	ethtypes "github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/crypto"
 
+	"github.com/tharsis/ethermint/server/config"
 	"github.com/tharsis/ethermint/tests"
 	evm "github.com/tharsis/ethermint/x/evm/types"
 
 	agentcontract "github.com/teleport-network/teleport/syscontracts/agent"
+	erc20contracts "github.com/teleport-network/teleport/syscontracts/erc20"
 	wtelecontract "github.com/teleport-network/teleport/syscontracts/wtele"
 	multicallcontract "github.com/teleport-network/teleport/syscontracts/xibc_multicall"
 	packetcontract "github.com/teleport-network/teleport/syscontracts/xibc_packet"
 	rcccontract "github.com/teleport-network/teleport/syscontracts/xibc_rcc"
 	transfercontract "github.com/teleport-network/teleport/syscontracts/xibc_transfer"
-	erc20contracts "github.com/teleport-network/teleport/x/aggregate/types/contracts"
 	multicalltypes "github.com/teleport-network/teleport/x/xibc/apps/multicall/types"
 	rcctypes "github.com/teleport-network/teleport/x/xibc/apps/rcc/types"
 	"github.com/teleport-network/teleport/x/xibc/apps/transfer/types"
@@ -1475,7 +1476,7 @@ func (suite *TransferTestSuite) DeployERC20ByTransfer(fromChain *xibctesting.Tes
 	nonce := fromChain.App.EvmKeeper.GetNonce(fromChain.GetContext(), transfercontract.TransferContractAddress)
 	contractAddr := crypto.CreateAddress(transfercontract.TransferContractAddress, nonce)
 
-	res, err := fromChain.App.XIBCTransferKeeper.CallEVMWithPayload(fromChain.GetContext(), transfercontract.TransferContractAddress, nil, data)
+	res, err := fromChain.App.XIBCTransferKeeper.CallEVMWithData(fromChain.GetContext(), transfercontract.TransferContractAddress, nil, data)
 	suite.Require().NoError(err)
 	suite.Require().False(res.Failed(), res.VmError)
 
@@ -1493,7 +1494,7 @@ func (suite *TransferTestSuite) DeployERC20ByAccount(fromChain *xibctesting.Test
 	nonce := fromChain.App.EvmKeeper.GetNonce(fromChain.GetContext(), fromChain.SenderAddress)
 	contractAddr := crypto.CreateAddress(fromChain.SenderAddress, nonce)
 
-	res, err := fromChain.App.XIBCTransferKeeper.CallEVMWithPayload(fromChain.GetContext(), fromChain.SenderAddress, nil, data)
+	res, err := fromChain.App.XIBCTransferKeeper.CallEVMWithData(fromChain.GetContext(), fromChain.SenderAddress, nil, data)
 	suite.Require().NoError(err)
 	suite.Require().False(res.Failed(), res.VmError)
 
@@ -1570,10 +1571,10 @@ func (suite *TransferTestSuite) OutTokens(fromChain *xibctesting.TestChain, toke
 }
 
 func (suite *TransferTestSuite) DepositWTeleToken(fromChain *xibctesting.TestChain, amount *big.Int) {
-	ctorArgs, err := wtelecontract.WTELEContract.ABI.Pack("deposit")
+	transferData, err := wtelecontract.WTELEContract.ABI.Pack("deposit")
 	suite.Require().NoError(err)
 
-	_ = suite.SendTx(fromChain, wtelecontract.WTELEContractAddress, amount, ctorArgs)
+	_ = suite.SendTx(fromChain, wtelecontract.WTELEContractAddress, amount, transferData)
 	suite.coordinator.CommitBlock(suite.chainA, suite.chainB)
 }
 
@@ -1592,7 +1593,7 @@ func (suite *TransferTestSuite) SendTx(fromChain *xibctesting.TestChain, contrac
 		nonce,
 		&contractAddr,
 		amount,
-		25000000,
+		config.DefaultGasCap,
 		big.NewInt(0),
 		big.NewInt(0),
 		big.NewInt(0),
@@ -1605,6 +1606,6 @@ func (suite *TransferTestSuite) SendTx(fromChain *xibctesting.TestChain, contrac
 	suite.Require().NoError(err)
 	rsp, err := fromChain.App.EvmKeeper.EthereumTx(ctx, ercTransferTx)
 	suite.Require().NoError(err)
-	suite.Require().Empty(rsp.VmError)
+	suite.Require().Empty(rsp.VmError, rsp.VmError)
 	return ercTransferTx
 }

@@ -1,4 +1,4 @@
-package contracts
+package erc20
 
 import (
 	_ "embed" // embed compiled smart contract
@@ -7,15 +7,13 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	evmtypes "github.com/tharsis/ethermint/x/evm/types"
 
+	"github.com/teleport-network/teleport/syscontracts"
 	"github.com/teleport-network/teleport/x/aggregate/types"
 )
 
 // This is an evil token. Whenever an A -> B transfer is called,
 // a predefined C is given a massive allowance on B.
 var (
-	//go:embed erc20_malicious_delayed.json
-	ERC20MaliciousDelayedJSON []byte // nolint: golint
-
 	// ERC20MaliciousDelayedContract is the compiled erc20 contract
 	ERC20MaliciousDelayedContract evmtypes.CompiledContract
 
@@ -26,7 +24,7 @@ var (
 func init() {
 	ERC20MaliciousDelayedAddress = types.ModuleAddress
 
-	if err := json.Unmarshal(ERC20MaliciousDelayedJSON, &ERC20MaliciousDelayedContract); err != nil {
+	if err := json.Unmarshal(syscontracts.ERC20MaliciousDelayedJSON, &ERC20MaliciousDelayedContract); err != nil {
 		panic(err)
 	}
 

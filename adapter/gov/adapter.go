@@ -17,7 +17,7 @@ import (
 
 	adcommon "github.com/teleport-network/teleport/adapter/common"
 	"github.com/teleport-network/teleport/syscontracts"
-	"github.com/teleport-network/teleport/syscontracts/gov"
+	govcontract "github.com/teleport-network/teleport/syscontracts/gov"
 )
 
 type HookAdapter struct {
@@ -30,8 +30,8 @@ type HookAdapter struct {
 }
 
 func (h HookAdapter) InitGenesis(ctx sdk.Context) error {
-	codeHash := crypto.Keccak256Hash(common.FromHex(syscontracts.GovContractCode))
-	h.evmKeeper.SetCode(ctx, codeHash.Bytes(), common.FromHex(syscontracts.GovContractCode))
+	codeHash := crypto.Keccak256Hash(govcontract.GovContract.Bin)
+	h.evmKeeper.SetCode(ctx, codeHash.Bytes(), govcontract.GovContract.Bin)
 
 	account := h.accountKeeper.NewAccountWithAddress(ctx, common.HexToAddress(syscontracts.GovContractAddress).Bytes())
 	ethAccount := account.(*ethermint.EthAccount)
@@ -51,7 +51,7 @@ func NewHookAdapter(
 	evmKeeper *evmkeeper.Keeper,
 	router *baseapp.MsgServiceRouter,
 ) *HookAdapter {
-	parsed, err := ethabi.JSON(strings.NewReader(gov.GovMetaData.ABI))
+	parsed, err := ethabi.JSON(strings.NewReader(govcontract.GovMetaData.ABI))
 	if err != nil {
 		panic(err)
 	}

@@ -11,9 +11,6 @@ import (
 )
 
 var (
-	//go:embed wtele.json
-	WTELEJSON []byte // nolint: golint
-
 	// WTELEContract is the compiled wtele contract
 	WTELEContract evmtypes.CompiledContract
 
@@ -24,9 +21,13 @@ var (
 func init() {
 	WTELEContractAddress = common.HexToAddress(syscontracts.WTELEContractAddress)
 
-	if err := json.Unmarshal(WTELEJSON, &WTELEContract); err != nil {
+	var contractBinRuntime syscontracts.CompiledContract
+	if err := json.Unmarshal(syscontracts.WTELEJSON, &contractBinRuntime); err != nil {
 		panic(err)
 	}
+
+	WTELEContract.ABI = contractBinRuntime.ABI
+	WTELEContract.Bin = contractBinRuntime.Bin
 
 	if len(WTELEContract.Bin) == 0 {
 		panic("load contract failed")

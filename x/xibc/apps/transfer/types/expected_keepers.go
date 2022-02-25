@@ -25,8 +25,9 @@ type AccountKeeper interface {
 type EVMKeeper interface {
 	ChainID() *big.Int
 	GetNonce(ctx sdk.Context, addr common.Address) uint64
-	ApplyMessage(ctx sdk.Context, msg core.Message, tracer vm.Tracer, commit bool) (*types.MsgEthereumTxResponse, error)
+	ApplyMessage(ctx sdk.Context, msg core.Message, tracer vm.EVMLogger, commit bool) (*types.MsgEthereumTxResponse, error)
 	EthereumTx(goCtx context.Context, msg *types.MsgEthereumTx) (*types.MsgEthereumTxResponse, error)
+	EstimateGas(c context.Context, req *types.EthCallRequest) (*types.EstimateGasResponse, error)
 }
 
 // PacketKeeper defines the expected packet keeper

@@ -23,10 +23,10 @@ func (k Keeper) AddERC20TraceToTransferContract(
 	payload, err := transfer.TransferContract.ABI.Pack("bindToken", contract, originToken, originChain)
 	if err != nil {
 		return nil, sdkerrors.Wrap(
-			types.ErrWritingEthTxPayload,
+			types.ErrWritingEthTxData,
 			sdkerrors.Wrap(err, "failed to create transaction payload").Error(),
 		)
 	}
 
-	return k.CallEVMWithPayload(ctx, types.ModuleAddress, &transfer.TransferContractAddress, payload)
+	return k.CallEVMWithData(ctx, types.ModuleAddress, &transfer.TransferContractAddress, payload)
 }

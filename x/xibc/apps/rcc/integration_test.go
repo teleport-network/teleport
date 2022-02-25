@@ -15,11 +15,12 @@ import (
 	ethtypes "github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/crypto"
 
+	"github.com/tharsis/ethermint/server/config"
 	"github.com/tharsis/ethermint/tests"
 	evm "github.com/tharsis/ethermint/x/evm/types"
 
+	erc20contracts "github.com/teleport-network/teleport/syscontracts/erc20"
 	rcccontract "github.com/teleport-network/teleport/syscontracts/xibc_rcc"
-	erc20contracts "github.com/teleport-network/teleport/x/aggregate/types/contracts"
 	"github.com/teleport-network/teleport/x/xibc/apps/rcc/types"
 	packettypes "github.com/teleport-network/teleport/x/xibc/core/packet/types"
 	xibctesting "github.com/teleport-network/teleport/x/xibc/testing"
@@ -138,7 +139,7 @@ func (suite *RCCTestSuite) DeployERC20(fromChain *xibctesting.TestChain) common.
 	nonce := fromChain.App.EvmKeeper.GetNonce(fromChain.GetContext(), rcccontract.RCCContractAddress)
 	contractAddr := crypto.CreateAddress(rcccontract.RCCContractAddress, nonce)
 
-	res, err := fromChain.App.XIBCTransferKeeper.CallEVMWithPayload(fromChain.GetContext(), rcccontract.RCCContractAddress, nil, data)
+	res, err := fromChain.App.XIBCTransferKeeper.CallEVMWithData(fromChain.GetContext(), rcccontract.RCCContractAddress, nil, data)
 	suite.Require().NoError(err)
 	suite.Require().False(res.Failed(), res.VmError)
 
@@ -206,7 +207,7 @@ func (suite *RCCTestSuite) SendTx(fromChain *xibctesting.TestChain, contractAddr
 		nonce,
 		&contractAddr,
 		amount,
-		25000000,
+		config.DefaultGasCap,
 		big.NewInt(0),
 		big.NewInt(0),
 		big.NewInt(0),

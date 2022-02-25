@@ -1,0 +1,22 @@
+{
+    "name": "teleport",
+    "version": "1.0.0",
+    "description": "<!-- parent:   order: false -->",
+    "main": "index.js",
+    "directories": {
+        "doc": "docs"
+    },
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "dependencies": {
+        "@openzeppelin/contracts": "^4.4.2"
+    },
+    "devDependencies": {},
+    "repository": {
+        "type": "git",
+        "url": "git+github.com/teleport-network/teleport.git"
+    },
+    "author": "",
+    "license": "Apache-2.0"
+}

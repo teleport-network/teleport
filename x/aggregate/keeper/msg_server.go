@@ -13,8 +13,8 @@ import (
 
 	evmtypes "github.com/tharsis/ethermint/x/evm/types"
 
+	erc20contracts "github.com/teleport-network/teleport/syscontracts/erc20"
 	"github.com/teleport-network/teleport/x/aggregate/types"
-	"github.com/teleport-network/teleport/x/aggregate/types/contracts"
 )
 
 var _ types.MsgServer = &Keeper{}
@@ -117,7 +117,7 @@ func (k Keeper) convertCoinNativeCoin(
 ) (*types.MsgConvertCoinResponse, error) {
 	// NOTE: ignore validation from NewCoin constructor
 	coins := sdk.Coins{msg.Coin}
-	erc20 := contracts.ERC20MinterBurnerDecimalsContract.ABI
+	erc20 := erc20contracts.ERC20MinterBurnerDecimalsContract.ABI
 	contract := pair.GetERC20Contract()
 	balanceToken := k.balanceOf(ctx, erc20, contract, receiver)
 
@@ -173,7 +173,7 @@ func (k Keeper) convertERC20NativeCoin(
 	// NOTE: coin fields already validated
 	coins := sdk.Coins{sdk.Coin{Denom: pair.Denom, Amount: msg.Amount}}
 
-	erc20 := contracts.ERC20MinterBurnerDecimalsContract.ABI
+	erc20 := erc20contracts.ERC20MinterBurnerDecimalsContract.ABI
 	contract := pair.GetERC20Contract()
 	balanceCoin := k.bankKeeper.GetBalance(ctx, receiver, pair.Denom)
 	balanceToken := k.balanceOf(ctx, erc20, contract, sender)
@@ -242,7 +242,7 @@ func (k Keeper) convertERC20NativeToken(
 ) (*types.MsgConvertERC20Response, error) {
 	// NOTE: coin fields already validated
 	coins := sdk.Coins{sdk.Coin{Denom: pair.Denom, Amount: msg.Amount}}
-	erc20 := contracts.ERC20MinterBurnerDecimalsContract.ABI
+	erc20 := erc20contracts.ERC20MinterBurnerDecimalsContract.ABI
 	contract := pair.GetERC20Contract()
 	balanceCoin := k.bankKeeper.GetBalance(ctx, receiver, pair.Denom)
 	balanceToken := k.balanceOf(ctx, erc20, contract, types.ModuleAddress)
@@ -252,7 +252,7 @@ func (k Keeper) convertERC20NativeToken(
 	if err != nil {
 		return nil, err
 	}
-	res, err := k.CallEVMWithPayload(ctx, sender, &contract, transferData)
+	res, err := k.CallEVMWithData(ctx, sender, &contract, transferData)
 	if err != nil {
 		return nil, err
 	}
@@ -337,7 +337,7 @@ func (k Keeper) convertCoinNativeERC20(
 	// NOTE: ignore validation from NewCoin constructor
 	coins := sdk.Coins{msg.Coin}
 
-	erc20 := contracts.ERC20MinterBurnerDecimalsContract.ABI
+	erc20 := erc20contracts.ERC20MinterBurnerDecimalsContract.ABI
 	contract := pair.GetERC20Contract()
 	balanceToken := k.balanceOf(ctx, erc20, contract, receiver)
 

@@ -9,8 +9,8 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/crypto"
 
+	erc20contracts "github.com/teleport-network/teleport/syscontracts/erc20"
 	transfercontract "github.com/teleport-network/teleport/syscontracts/xibc_transfer"
-	erc20contracts "github.com/teleport-network/teleport/x/aggregate/types/contracts"
 	xibctesting "github.com/teleport-network/teleport/x/xibc/testing"
 )
 
@@ -86,7 +86,7 @@ func (suite *AggregateTestSuite) DeployERC20ByTransfer(fromChain *xibctesting.Te
 	nonce := fromChain.App.EvmKeeper.GetNonce(fromChain.GetContext(), transfercontract.TransferContractAddress)
 	contractAddr := crypto.CreateAddress(transfercontract.TransferContractAddress, nonce)
 
-	res, err := fromChain.App.XIBCTransferKeeper.CallEVMWithPayload(fromChain.GetContext(), transfercontract.TransferContractAddress, nil, data)
+	res, err := fromChain.App.XIBCTransferKeeper.CallEVMWithData(fromChain.GetContext(), transfercontract.TransferContractAddress, nil, data)
 	suite.Require().NoError(err)
 	suite.Require().False(res.Failed(), res.VmError)
 
