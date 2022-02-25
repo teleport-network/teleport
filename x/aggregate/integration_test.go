@@ -21,12 +21,12 @@ type AggregateTestSuite struct {
 	chainB      *xibctesting.TestChain
 }
 
-func TestRCCTestSuite(t *testing.T) {
+func TestAggregateTestSuite(t *testing.T) {
 	suite.Run(t, new(AggregateTestSuite))
 }
 
 func (suite *AggregateTestSuite) SetupTest() {
-	suite.coordinator = xibctesting.NewCoordinator(suite.T(), 3)
+	suite.coordinator = xibctesting.NewCoordinator(suite.T(), 2)
 	suite.chainA = suite.coordinator.GetChain(xibctesting.GetChainID(0))
 	suite.chainB = suite.coordinator.GetChain(xibctesting.GetChainID(1))
 }

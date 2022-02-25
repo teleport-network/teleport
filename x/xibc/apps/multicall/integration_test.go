@@ -47,7 +47,7 @@ func (suite *MultiCallTestSuite) SetupTest() {
 	suite.chainB = suite.coordinator.GetChain(xibctesting.GetChainID(1))
 }
 
-func (suite *MultiCallTestSuite) TestTransferBaseCall() {
+func (suite *MultiCallTestSuite) TestTransferBaseCall() common.Address {
 	path := xibctesting.NewPath(suite.chainA, suite.chainB)
 	suite.coordinator.SetupClients(path)
 
@@ -143,14 +143,15 @@ func (suite *MultiCallTestSuite) TestTransferBaseCall() {
 	// check balance
 	recvBalance := suite.BalanceOf(suite.chainB, erc20Address, suite.chainB.SenderAddress)
 	suite.Require().Equal(amount.String(), recvBalance.String())
+
+	return erc20Address
 }
 
 func (suite *MultiCallTestSuite) TestTransferBaseBackCall() {
 	path := xibctesting.NewPath(suite.chainA, suite.chainB)
 	suite.coordinator.SetupClients(path)
-	suite.TestTransferBaseCall()
 
-	erc20Address := common.HexToAddress("0x13efE3b42ca903c6E96Dc300DCf3bdC32C5A1aD1")
+	erc20Address := suite.TestTransferBaseCall()
 	amount := big.NewInt(100)
 
 	// check ERC20 trace
