@@ -55,7 +55,7 @@ func (suite *TransferTestSuite) SetupTest() {
 
 }
 
-func (suite *TransferTestSuite) TestTransferBase() {
+func (suite *TransferTestSuite) TestTransferBase() common.Address {
 	path := xibctesting.NewPath(suite.chainA, suite.chainB)
 	suite.coordinator.SetupClients(path)
 
@@ -142,14 +142,15 @@ func (suite *TransferTestSuite) TestTransferBase() {
 	// check balance
 	recvBalance := suite.BalanceOf(suite.chainB, erc20Address, suite.chainB.SenderAddress)
 	suite.Require().Equal(amount.String(), recvBalance.String())
+
+	return erc20Address
 }
 
 func (suite *TransferTestSuite) TestTransferBaseBack() {
 	path := xibctesting.NewPath(suite.chainA, suite.chainB)
 	suite.coordinator.SetupClients(path)
-	suite.TestTransferBase()
 
-	erc20Address := common.HexToAddress("0x13efE3b42ca903c6E96Dc300DCf3bdC32C5A1aD1")
+	erc20Address := suite.TestTransferBase()
 	amount := big.NewInt(100)
 
 	// check ERC20 trace
