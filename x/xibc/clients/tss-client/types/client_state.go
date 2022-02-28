@@ -4,7 +4,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-
 	"github.com/teleport-network/teleport/x/xibc/exported"
 )
 
@@ -115,5 +114,23 @@ func (m ClientState) VerifyPacketAcknowledgement(
 			m.TssAddress, string(proof),
 		)
 	}
+	return nil
+}
+
+// ClientType returns tss
+func (ConsensusState) ClientType() string {
+	return exported.TSS
+}
+
+// GetRoot returns the commitment Root for the specific
+func (cs ConsensusState) GetRoot() []byte {
+	return nil
+}
+
+func (cs ConsensusState) GetTimestamp() uint64 {
+	return 0
+}
+
+func (cs ConsensusState) ValidateBasic() error {
 	return nil
 }
