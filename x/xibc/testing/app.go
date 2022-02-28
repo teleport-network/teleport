@@ -132,7 +132,6 @@ func SetupWithGenesisValSet(
 	}
 	feemarketGenesis.Params.EnableHeight = 1
 	feemarketGenesis.Params.NoBaseFee = false
-	feemarketGenesis.BaseFee = sdk.NewInt(feemarketGenesis.Params.InitialBaseFee)
 
 	if err := feemarketGenesis.Validate(); err != nil {
 		panic(err)

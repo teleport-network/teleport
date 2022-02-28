@@ -102,7 +102,7 @@ func handleUpdateTokenPairERC20Proposal(ctx sdk.Context, k *keeper.Keeper, p *ty
 }
 
 func handleRegisterERC20TraceProposal(ctx sdk.Context, k *keeper.Keeper, p *types.RegisterERC20TraceProposal) error {
-	if err := k.RegisterERC20Trace(ctx, common.HexToAddress(p.ERC20Address), p.OriginToken, p.OriginChain); err != nil {
+	if err := k.RegisterERC20Trace(ctx, common.HexToAddress(p.ERC20Address), p.OriginToken, p.OriginChain, uint8(p.Scale)); err != nil {
 		return err
 	}
 

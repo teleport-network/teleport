@@ -292,8 +292,9 @@ func (k Keeper) RegisterERC20Trace(
 	contract common.Address,
 	originToken string,
 	originChain string,
+	scale uint8,
 ) error {
-	if _, err := k.AddERC20TraceToTransferContract(ctx, contract, originToken, originChain); err != nil {
+	if _, err := k.AddERC20TraceToTransferContract(ctx, contract, originToken, originChain, scale); err != nil {
 		return fmt.Errorf("call bindToken failed: %s", err)
 	}
 

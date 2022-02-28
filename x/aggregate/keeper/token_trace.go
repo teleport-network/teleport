@@ -16,11 +16,12 @@ func (k Keeper) AddERC20TraceToTransferContract(
 	contract common.Address,
 	originToken string,
 	originChain string,
+	scale uint8,
 ) (
 	*evmtypes.MsgEthereumTxResponse,
 	error,
 ) {
-	payload, err := transfer.TransferContract.ABI.Pack("bindToken", contract, originToken, originChain)
+	payload, err := transfer.TransferContract.ABI.Pack("bindToken", contract, originToken, originChain, scale)
 	if err != nil {
 		return nil, sdkerrors.Wrap(
 			types.ErrWritingEthTxData,

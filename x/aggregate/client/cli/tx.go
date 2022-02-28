@@ -2,6 +2,7 @@ package cli
 
 import (
 	"fmt"
+	"strconv"
 
 	"github.com/spf13/cobra"
 
@@ -432,8 +433,8 @@ func NewUpdateTokenPairERC20ProposalCmd() *cobra.Command {
 // NewRegisterERC20TraceProposalCmd implements a command handler for submitting a ERC20 trace register proposal transaction.
 func NewRegisterERC20TraceProposalCmd() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "register-trace [ERC20-contract-address] [origin-token] [origin-chain] [flags]",
-		Args:  cobra.ExactArgs(3),
+		Use:   "register-trace [ERC20-contract-address] [origin-token] [origin-chain] [scale] [flags]",
+		Args:  cobra.ExactArgs(4),
 		Short: "Submit a ERC20 trace register proposal",
 		Long:  "Submit a ERC20 trace register along with an initial deposit.",
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -457,7 +458,12 @@ func NewRegisterERC20TraceProposalCmd() *cobra.Command {
 				return fmt.Errorf("invalid ERC20 contract address %w", err)
 			}
 
-			content := types.NewRegisterERC20TraceProposal(title, description, contract, args[1], args[2])
+			scale, err := strconv.ParseUint(args[3], 10, 64)
+			if err != nil {
+				return err
+			}
+
+			content := types.NewRegisterERC20TraceProposal(title, description, contract, args[1], args[2], scale)
 
 			from := clientCtx.GetFromAddress()
 

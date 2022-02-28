@@ -76,6 +76,7 @@ func (suite *TransferTestSuite) TestTransferBase() common.Address {
 		erc20Address,
 		common.BigToAddress(big.NewInt(0)).String(),
 		suite.chainA.ChainID,
+		uint8(0),
 	)
 	suite.Require().NoError(err)
 
@@ -253,6 +254,7 @@ func (suite *TransferTestSuite) TestTransferERC20() {
 		chainBERC20Address,
 		strings.ToLower(chainAERC20Address.String()),
 		suite.chainA.ChainID,
+		uint8(0),
 	)
 	suite.Require().NoError(err)
 
@@ -430,6 +432,7 @@ func (suite *TransferTestSuite) TestTransferWTele() {
 		chainBERC20Address,
 		strings.ToLower(wtelecontract.WTELEContractAddress.String()),
 		suite.chainA.ChainID,
+		uint8(0),
 	)
 	suite.Require().NoError(err)
 
@@ -615,6 +618,7 @@ func (suite *TransferTestSuite) TestRemoteContractCallAgent() {
 		chainBErc20,
 		strings.ToLower(wtelecontract.WTELEContractAddress.String()),
 		suite.chainA.ChainID,
+		uint8(0),
 	)
 	suite.Require().NoError(err)
 	// check ERC20 trace
@@ -632,6 +636,7 @@ func (suite *TransferTestSuite) TestRemoteContractCallAgent() {
 		chainCErc20,
 		strings.ToLower(chainBErc20.String()),
 		suite.chainB.ChainID,
+		uint8(0),
 	)
 	suite.Require().NoError(err)
 	// check ERC20 trace
@@ -991,6 +996,7 @@ func (suite *TransferTestSuite) TestAgentSendBase() {
 		chainCERC20,
 		common.BigToAddress(big.NewInt(0)).String(),
 		suite.chainA.ChainID,
+		uint8(0),
 	)
 	suite.Require().NoError(err)
 	// check ERC20 trace
@@ -1151,6 +1157,7 @@ func (suite *TransferTestSuite) TestAgentRefund() {
 		chainBErc20,
 		strings.ToLower(wtelecontract.WTELEContractAddress.String()),
 		suite.chainA.ChainID,
+		uint8(0),
 	)
 	suite.Require().NoError(err)
 	// check ERC20 trace

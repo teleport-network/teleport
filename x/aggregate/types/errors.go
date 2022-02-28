@@ -19,4 +19,5 @@ var (
 	ErrInvalidOriginToken       = sdkerrors.Register(ModuleName, 12, "invalid origin token")
 	ErrInvalidOriginChain       = sdkerrors.Register(ModuleName, 13, "invalid origin chain")
 	ErrERC20TraceExist          = sdkerrors.Register(ModuleName, 14, "erc20 trace already exist")
+	ErrERC20TraceScale          = sdkerrors.Register(ModuleName, 15, "invalid erc20 trace scale")
 )

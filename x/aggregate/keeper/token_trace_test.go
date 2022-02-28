@@ -18,12 +18,13 @@ func (suite *KeeperTestSuite) TestERC20Trace() {
 				tokenAddress := common.BigToAddress(big.NewInt(200))
 				originToken := "token0"
 				originChain := "chain0"
+				scale := uint8(0)
 
 				_, _, exist, err := suite.app.AggregateKeeper.QueryERC20Trace(suite.ctx, tokenAddress, originChain)
 				suite.Require().NoError(err)
 				suite.Require().False(exist)
 
-				_, err = suite.app.AggregateKeeper.AddERC20TraceToTransferContract(suite.ctx, tokenAddress, originToken, originChain)
+				_, err = suite.app.AggregateKeeper.AddERC20TraceToTransferContract(suite.ctx, tokenAddress, originToken, originChain, scale)
 				suite.Require().NoError(err)
 
 				_, _, exist, err = suite.app.AggregateKeeper.QueryERC20Trace(suite.ctx, tokenAddress, originChain)
@@ -39,6 +40,7 @@ func (suite *KeeperTestSuite) TestERC20Trace() {
 				originChain0 := "chain0"
 				originToken1 := "token1"
 				originChain1 := "chain1"
+				scale := uint8(0)
 
 				// ====================================
 
@@ -46,7 +48,7 @@ func (suite *KeeperTestSuite) TestERC20Trace() {
 				suite.Require().NoError(err)
 				suite.Require().False(exist)
 
-				_, err = suite.app.AggregateKeeper.AddERC20TraceToTransferContract(suite.ctx, tokenAddress, originToken0, originChain0)
+				_, err = suite.app.AggregateKeeper.AddERC20TraceToTransferContract(suite.ctx, tokenAddress, originToken0, originChain0, scale)
 				suite.Require().NoError(err)
 
 				_, _, exist, err = suite.app.AggregateKeeper.QueryERC20Trace(suite.ctx, tokenAddress, originChain0)
@@ -59,7 +61,7 @@ func (suite *KeeperTestSuite) TestERC20Trace() {
 				suite.Require().NoError(err)
 				suite.Require().False(exist)
 
-				_, err = suite.app.AggregateKeeper.AddERC20TraceToTransferContract(suite.ctx, tokenAddress, originToken1, originChain1)
+				_, err = suite.app.AggregateKeeper.AddERC20TraceToTransferContract(suite.ctx, tokenAddress, originToken1, originChain1, scale)
 				suite.Require().NoError(err)
 
 				_, _, exist, err = suite.app.AggregateKeeper.QueryERC20Trace(suite.ctx, tokenAddress, originChain1)
@@ -73,15 +75,16 @@ func (suite *KeeperTestSuite) TestERC20Trace() {
 				tokenAddress := common.BigToAddress(big.NewInt(200))
 				originToken := "token0"
 				originChain := "chain0"
+				scale := uint8(0)
 
 				_, _, exist, err := suite.app.AggregateKeeper.QueryERC20Trace(suite.ctx, tokenAddress, originChain)
 				suite.Require().NoError(err)
 				suite.Require().False(exist)
 
-				_, err = suite.app.AggregateKeeper.AddERC20TraceToTransferContract(suite.ctx, tokenAddress, originToken, originChain)
+				_, err = suite.app.AggregateKeeper.AddERC20TraceToTransferContract(suite.ctx, tokenAddress, originToken, originChain, scale)
 				suite.Require().NoError(err)
 
-				_, err = suite.app.AggregateKeeper.AddERC20TraceToTransferContract(suite.ctx, tokenAddress, originToken, originChain)
+				_, err = suite.app.AggregateKeeper.AddERC20TraceToTransferContract(suite.ctx, tokenAddress, originToken, originChain, scale)
 				suite.Require().NoError(err)
 			},
 		},
@@ -92,15 +95,16 @@ func (suite *KeeperTestSuite) TestERC20Trace() {
 				originToken0 := "token0"
 				originToken1 := "token1"
 				originChain := "chain0"
+				scale := uint8(0)
 
 				_, _, exist, err := suite.app.AggregateKeeper.QueryERC20Trace(suite.ctx, tokenAddress, originChain)
 				suite.Require().NoError(err)
 				suite.Require().False(exist)
 
-				_, err = suite.app.AggregateKeeper.AddERC20TraceToTransferContract(suite.ctx, tokenAddress, originToken0, originChain)
+				_, err = suite.app.AggregateKeeper.AddERC20TraceToTransferContract(suite.ctx, tokenAddress, originToken0, originChain, scale)
 				suite.Require().NoError(err)
 
-				_, err = suite.app.AggregateKeeper.AddERC20TraceToTransferContract(suite.ctx, tokenAddress, originToken1, originChain)
+				_, err = suite.app.AggregateKeeper.AddERC20TraceToTransferContract(suite.ctx, tokenAddress, originToken1, originChain, scale)
 				suite.Require().NoError(err)
 			},
 		},

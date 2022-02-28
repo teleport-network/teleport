@@ -68,6 +68,7 @@ func (suite *MultiCallTestSuite) TestTransferBaseCall() common.Address {
 		erc20Address,
 		common.BigToAddress(big.NewInt(0)).String(),
 		suite.chainA.ChainID,
+		uint8(0),
 	)
 	suite.Require().NoError(err)
 
@@ -327,6 +328,7 @@ func (suite *MultiCallTestSuite) TestMultiCall_VV() {
 		erc20Address,
 		common.BigToAddress(big.NewInt(0)).String(),
 		suite.chainA.ChainID,
+		uint8(0),
 	)
 	suite.Require().NoError(err)
 
