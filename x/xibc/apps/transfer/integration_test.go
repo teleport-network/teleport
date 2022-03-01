@@ -68,7 +68,7 @@ func (suite *TransferTestSuite) TestTransferBase() common.Address {
 	suite.Require().Equal(total.String(), balance.String())
 
 	// deploy ERC20 on chainB
-	erc20Address := suite.DeployERC20ByTransfer(suite.chainB)
+	erc20Address := suite.DeployERC20(suite.chainB, transfercontract.TransferContractAddress, uint8(18))
 
 	// add erc20 trace on chainB
 	err := suite.chainB.App.AggregateKeeper.RegisterERC20Trace(
@@ -232,7 +232,7 @@ func (suite *TransferTestSuite) TestTransferERC20() {
 	amount := big.NewInt(10000000000)
 	out := big.NewInt(1000)
 
-	chainAERC20Address := suite.DeployERC20ByAccount(suite.chainA)
+	chainAERC20Address := suite.DeployERC20(suite.chainA, suite.chainA.SenderAddress, uint8(18))
 	suite.MintERC20Token(suite.chainA, suite.chainA.SenderAddress, chainAERC20Address, amount)
 
 	// commit block
@@ -246,7 +246,7 @@ func (suite *TransferTestSuite) TestTransferERC20() {
 	suite.Approve(suite.chainA, chainAERC20Address, out)
 
 	// deploy ERC20 on chainB
-	chainBERC20Address := suite.DeployERC20ByTransfer(suite.chainB)
+	chainBERC20Address := suite.DeployERC20(suite.chainB, transfercontract.TransferContractAddress, uint8(18))
 
 	// add erc20 trace on chainB
 	err := suite.chainB.App.AggregateKeeper.RegisterERC20Trace(
@@ -407,6 +407,190 @@ func (suite *TransferTestSuite) TestTransferERC20Back() {
 	suite.Require().Equal("0", outAmount.String())
 }
 
+func (suite *TransferTestSuite) TestTransferScaledERC20() {
+	path := xibctesting.NewPath(suite.chainA, suite.chainB)
+	suite.coordinator.SetupClients(path)
+
+	amount := big.NewInt(10000000000)
+	out := big.NewInt(1000)
+	scale, _ := sdk.NewIntFromString("1000000000000")
+
+	chainAERC20Address := suite.DeployERC20(suite.chainA, suite.chainA.SenderAddress, uint8(6))
+	suite.MintERC20Token(suite.chainA, suite.chainA.SenderAddress, chainAERC20Address, amount)
+
+	// commit block
+	suite.coordinator.CommitBlock(suite.chainA, suite.chainB)
+
+	// check balance
+	recvBalance := suite.BalanceOf(suite.chainA, chainAERC20Address, suite.chainA.SenderAddress)
+	suite.Require().Equal(amount.String(), recvBalance.String())
+
+	// Approve erc20 to transfer
+	suite.Approve(suite.chainA, chainAERC20Address, out)
+
+	// deploy ERC20 on chainB
+	chainBERC20Address := suite.DeployERC20(suite.chainB, transfercontract.TransferContractAddress, uint8(18))
+
+	// add erc20 trace on chainB
+	err := suite.chainB.App.AggregateKeeper.RegisterERC20Trace(
+		suite.chainB.GetContext(),
+		chainBERC20Address,
+		strings.ToLower(chainAERC20Address.String()),
+		suite.chainA.ChainID,
+		uint8(12),
+	)
+	suite.Require().NoError(err)
+
+	// check ERC20 trace
+	_, _, exist, err := suite.chainB.App.AggregateKeeper.QueryERC20Trace(
+		suite.chainB.GetContext(),
+		chainBERC20Address,
+		suite.chainA.ChainID,
+	)
+	suite.Require().NoError(err)
+	suite.Require().True(exist)
+
+	// send transferBase on chainA
+	suite.SendTransferERC20(
+		suite.chainA,
+		types.ERC20TransferData{
+			TokenAddress: chainAERC20Address,
+			Receiver:     suite.chainB.SenderAddress.String(),
+			Amount:       out,
+			DestChain:    suite.chainB.ChainID,
+			RelayChain:   "",
+		},
+		big.NewInt(0),
+	)
+	recvBalance = suite.BalanceOf(suite.chainA, chainAERC20Address, suite.chainA.SenderAddress)
+	suite.Require().Equal(strconv.FormatUint(amount.Uint64()-out.Uint64(), 10), recvBalance.String())
+
+	// check chainA token out
+	outAmount := suite.OutTokens(
+		suite.chainA,
+		chainAERC20Address,
+		suite.chainB.ChainID,
+	)
+	suite.Require().Equal(out.String(), outAmount.String())
+
+	// relay packet
+	packetData := types.NewFungibleTokenPacketData(
+		path.EndpointA.ChainName,
+		path.EndpointB.ChainName,
+		strings.ToLower(suite.chainA.SenderAddress.String()),
+		strings.ToLower(suite.chainB.SenderAddress.String()),
+		out.Bytes(),
+		strings.ToLower(chainAERC20Address.String()),
+		strings.ToLower(""),
+	)
+	DataListERC20Bz, err := packetData.GetBytes()
+	suite.NoError(err)
+	packet := packettypes.NewPacket(
+		1,
+		path.EndpointA.ChainName,
+		path.EndpointB.ChainName,
+		"",
+		[]string{types.PortID},
+		[][]byte{DataListERC20Bz},
+	)
+
+	// commit block
+	suite.coordinator.CommitBlock(suite.chainA, suite.chainB)
+
+	ack, err := packettypes.NewResultAcknowledgement([][]byte{{byte(1)}}).GetBytes()
+	suite.Require().NoError(err)
+	err = path.RelayPacket(packet, ack)
+	suite.Require().NoError(err)
+
+	// check balance
+	recvBalance = suite.BalanceOf(suite.chainB, chainBERC20Address, suite.chainB.SenderAddress)
+	suite.Require().Equal(new(big.Int).Mul(out, scale.BigInt()).String(), recvBalance.String())
+}
+
+func (suite *TransferTestSuite) TestTransferScaledERC20Back() {
+	path := xibctesting.NewPath(suite.chainA, suite.chainB)
+	amount := big.NewInt(1000)
+	scale, _ := sdk.NewIntFromString("1000000000000")
+
+	suite.TestTransferScaledERC20()
+
+	chainAERC20Address := crypto.CreateAddress(suite.chainA.SenderAddress, 0)
+	chainBERC20Address := crypto.CreateAddress(transfercontract.TransferContractAddress, 0)
+
+	// check chainA token out
+	outAmount := suite.OutTokens(
+		suite.chainA,
+		chainAERC20Address,
+		suite.chainB.ChainID,
+	)
+	suite.Require().Equal(amount.String(), outAmount.String())
+
+	// check ERC20 trace
+	_, _, exist, err := suite.chainB.App.AggregateKeeper.QueryERC20Trace(
+		suite.chainB.GetContext(),
+		chainBERC20Address,
+		suite.chainA.ChainID,
+	)
+	suite.Require().NoError(err)
+	suite.Require().True(exist)
+
+	// check balance
+	recvBalance := suite.BalanceOf(suite.chainB, chainBERC20Address, suite.chainB.SenderAddress)
+	suite.Require().Equal(new(big.Int).Mul(amount, scale.BigInt()).String(), recvBalance.String())
+
+	// Approve erc20 to transfer
+	suite.Approve(suite.chainB, chainBERC20Address, new(big.Int).Mul(amount, scale.BigInt()))
+
+	suite.SendTransferERC20(
+		suite.chainB,
+		types.ERC20TransferData{
+			TokenAddress: chainBERC20Address,
+			Receiver:     suite.chainA.SenderAddress.String(),
+			Amount:       amount,
+			DestChain:    suite.chainA.ChainID,
+			RelayChain:   "",
+		},
+		big.NewInt(0),
+	)
+
+	recvBalance = suite.BalanceOf(suite.chainB, chainBERC20Address, suite.chainB.SenderAddress)
+	suite.Require().Equal("0", recvBalance.String())
+
+	// relay packet
+	packetData := types.NewFungibleTokenPacketData(
+		path.EndpointB.ChainName,
+		path.EndpointA.ChainName,
+		strings.ToLower(suite.chainB.SenderAddress.String()),
+		strings.ToLower(suite.chainA.SenderAddress.String()),
+		amount.Bytes(),
+		strings.ToLower(chainBERC20Address.String()),
+		strings.ToLower(chainAERC20Address.String()),
+	)
+	DataListERC20Bz, err := packetData.GetBytes()
+	suite.NoError(err)
+	packet := packettypes.NewPacket(
+		1,
+		path.EndpointB.ChainName,
+		path.EndpointA.ChainName,
+		"",
+		[]string{types.PortID},
+		[][]byte{DataListERC20Bz},
+	)
+
+	ack, err := packettypes.NewResultAcknowledgement([][]byte{{byte(1)}}).GetBytes()
+	suite.Require().NoError(err)
+	err = path.RelayPacket(packet, ack)
+	suite.Require().NoError(err)
+
+	// check chainA token out
+	outAmount = suite.OutTokens(
+		suite.chainA,
+		chainAERC20Address,
+		suite.chainB.ChainID,
+	)
+	suite.Require().Equal("0", outAmount.String())
+}
+
 func (suite *TransferTestSuite) TestTransferWTele() {
 	path := xibctesting.NewPath(suite.chainA, suite.chainB)
 	suite.coordinator.SetupClients(path)
@@ -424,7 +608,7 @@ func (suite *TransferTestSuite) TestTransferWTele() {
 	suite.Approve(suite.chainA, wtelecontract.WTELEContractAddress, out)
 
 	// deploy ERC20 on chainB
-	chainBERC20Address := suite.DeployERC20ByTransfer(suite.chainB)
+	chainBERC20Address := suite.DeployERC20(suite.chainB, transfercontract.TransferContractAddress, uint8(18))
 
 	// add erc20 trace on chainB
 	err := suite.chainB.App.AggregateKeeper.RegisterERC20Trace(
@@ -596,8 +780,8 @@ func (suite *TransferTestSuite) TestRemoteContractCallAgent() {
 	suite.coordinator.SetupClients(pathAtoB)
 	suite.coordinator.SetupClients(pathBtoC)
 
-	chainBErc20 := suite.DeployERC20ByTransfer(suite.chainB)
-	chainCErc20 := suite.DeployERC20ByTransfer(suite.chainC)
+	chainBErc20 := suite.DeployERC20(suite.chainB, transfercontract.TransferContractAddress, uint8(18))
+	chainCErc20 := suite.DeployERC20(suite.chainC, transfercontract.TransferContractAddress, uint8(18))
 
 	amount := big.NewInt(10000000000)
 	out := big.NewInt(10000)
@@ -989,7 +1173,7 @@ func (suite *TransferTestSuite) TestAgentSendBase() {
 	suite.Require().NoError(err)
 	suite.Require().True(exist)
 	// deploy ERC20 on chainC
-	chainCERC20 := suite.DeployERC20ByTransfer(suite.chainC)
+	chainCERC20 := suite.DeployERC20(suite.chainC, transfercontract.TransferContractAddress, uint8(18))
 	// add erc20 trace on chainC
 	err = suite.chainC.App.AggregateKeeper.RegisterERC20Trace(
 		suite.chainC.GetContext(),
@@ -1137,7 +1321,7 @@ func (suite *TransferTestSuite) TestAgentRefund() {
 	suite.coordinator.SetupClients(pathAtoB)
 	suite.coordinator.SetupClients(pathBtoC)
 
-	chainBErc20 := suite.DeployERC20ByTransfer(suite.chainB)
+	chainBErc20 := suite.DeployERC20(suite.chainB, transfercontract.TransferContractAddress, uint8(18))
 
 	amount := big.NewInt(10000000000)
 	out := big.NewInt(10000)
@@ -1473,36 +1657,18 @@ func (suite *TransferTestSuite) AgentSupplies(fromChain *xibctesting.TestChain, 
 	return balance.Value
 }
 
-func (suite *TransferTestSuite) DeployERC20ByTransfer(fromChain *xibctesting.TestChain) common.Address {
-	ctorArgs, err := erc20contracts.ERC20MinterBurnerDecimalsContract.ABI.Pack("", "name", "symbol", uint8(18))
+func (suite *TransferTestSuite) DeployERC20(fromChain *xibctesting.TestChain, deployer common.Address, scale uint8) common.Address {
+	ctorArgs, err := erc20contracts.ERC20MinterBurnerDecimalsContract.ABI.Pack("", "name", "symbol", scale)
 	suite.Require().NoError(err)
 
 	data := make([]byte, len(erc20contracts.ERC20MinterBurnerDecimalsContract.Bin)+len(ctorArgs))
 	copy(data[:len(erc20contracts.ERC20MinterBurnerDecimalsContract.Bin)], erc20contracts.ERC20MinterBurnerDecimalsContract.Bin)
 	copy(data[len(erc20contracts.ERC20MinterBurnerDecimalsContract.Bin):], ctorArgs)
 
-	nonce := fromChain.App.EvmKeeper.GetNonce(fromChain.GetContext(), transfercontract.TransferContractAddress)
-	contractAddr := crypto.CreateAddress(transfercontract.TransferContractAddress, nonce)
+	nonce := fromChain.App.EvmKeeper.GetNonce(fromChain.GetContext(), deployer)
+	contractAddr := crypto.CreateAddress(deployer, nonce)
 
-	res, err := fromChain.App.XIBCTransferKeeper.CallEVMWithData(fromChain.GetContext(), transfercontract.TransferContractAddress, nil, data)
-	suite.Require().NoError(err)
-	suite.Require().False(res.Failed(), res.VmError)
-
-	return contractAddr
-}
-
-func (suite *TransferTestSuite) DeployERC20ByAccount(fromChain *xibctesting.TestChain) common.Address {
-	ctorArgs, err := erc20contracts.ERC20MinterBurnerDecimalsContract.ABI.Pack("", "name", "symbol", uint8(18))
-	suite.Require().NoError(err)
-
-	data := make([]byte, len(erc20contracts.ERC20MinterBurnerDecimalsContract.Bin)+len(ctorArgs))
-	copy(data[:len(erc20contracts.ERC20MinterBurnerDecimalsContract.Bin)], erc20contracts.ERC20MinterBurnerDecimalsContract.Bin)
-	copy(data[len(erc20contracts.ERC20MinterBurnerDecimalsContract.Bin):], ctorArgs)
-
-	nonce := fromChain.App.EvmKeeper.GetNonce(fromChain.GetContext(), fromChain.SenderAddress)
-	contractAddr := crypto.CreateAddress(fromChain.SenderAddress, nonce)
-
-	res, err := fromChain.App.XIBCTransferKeeper.CallEVMWithData(fromChain.GetContext(), fromChain.SenderAddress, nil, data)
+	res, err := fromChain.App.XIBCTransferKeeper.CallEVMWithData(fromChain.GetContext(), deployer, nil, data)
 	suite.Require().NoError(err)
 	suite.Require().False(res.Failed(), res.VmError)
 
