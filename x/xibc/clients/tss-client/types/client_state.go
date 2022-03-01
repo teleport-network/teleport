@@ -4,6 +4,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
+	"github.com/teleport-network/teleport/x/xibc/core/client/types"
 	"github.com/teleport-network/teleport/x/xibc/exported"
 )
 
@@ -14,7 +15,7 @@ func (cs ClientState) ClientType() string {
 }
 
 func (cs ClientState) GetLatestHeight() exported.Height {
-	return nil
+	return types.Height{}
 }
 
 func (cs ClientState) CheckMsg(msg sdk.Msg) error {
