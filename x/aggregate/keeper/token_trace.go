@@ -2,7 +2,6 @@ package keeper
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
 	"github.com/ethereum/go-ethereum/common"
 	evmtypes "github.com/tharsis/ethermint/x/evm/types"
@@ -23,10 +22,7 @@ func (k Keeper) AddERC20TraceToTransferContract(
 ) {
 	payload, err := transfer.TransferContract.ABI.Pack("bindToken", contract, originToken, originChain, scale)
 	if err != nil {
-		return nil, sdkerrors.Wrap(
-			types.ErrWritingEthTxData,
-			sdkerrors.Wrap(err, "failed to create transaction payload").Error(),
-		)
+		return nil, err
 	}
 
 	return k.CallEVMWithData(ctx, types.ModuleAddress, &transfer.TransferContractAddress, payload)

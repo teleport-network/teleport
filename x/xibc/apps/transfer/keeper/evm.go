@@ -31,8 +31,8 @@ func (k Keeper) CallTransfer(
 	payload, err := transfer.TransferContract.ABI.Pack(method, args...)
 	if err != nil {
 		return nil, sdkerrors.Wrap(
-			types.ErrWritingEthTxData,
-			sdkerrors.Wrap(err, "failed to create transaction payload").Error(),
+			types.ErrABIPack,
+			sdkerrors.Wrap(err, "failed to create transaction data").Error(),
 		)
 	}
 
@@ -58,7 +58,7 @@ func (k Keeper) CallEVM(
 	data, err := abi.Pack(method, args...)
 	if err != nil {
 		return nil, sdkerrors.Wrap(
-			types.ErrWritingEthTxData,
+			types.ErrABIPack,
 			sdkerrors.Wrap(err, "failed to create transaction data").Error(),
 		)
 	}

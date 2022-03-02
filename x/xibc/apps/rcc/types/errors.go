@@ -5,6 +5,6 @@ import (
 )
 
 var (
-	ErrWritingEthTxData        = sdkerrors.Register(ModuleName, 2, "writing ethereum tx data error")
+	ErrABIPack                 = sdkerrors.Register(ModuleName, 2, "contract ABI pack failed")
 	ErrScChainEqualToDestChain = sdkerrors.Register(ModuleName, 3, "source chain equals to destination chain")
 )
