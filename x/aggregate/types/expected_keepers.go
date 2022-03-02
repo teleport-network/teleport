@@ -2,7 +2,6 @@ package types
 
 import (
 	"context"
-	"math/big"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
@@ -12,7 +11,7 @@ import (
 	"github.com/ethereum/go-ethereum/core/vm"
 
 	"github.com/tharsis/ethermint/x/evm/statedb"
-	"github.com/tharsis/ethermint/x/evm/types"
+	evmtypes "github.com/tharsis/ethermint/x/evm/types"
 )
 
 // AccountKeeper defines the expected interface needed to retrieve account info.
@@ -37,10 +36,8 @@ type BankKeeper interface {
 
 // EVMKeeper defines the expected EVM keeper interface used on aggregate
 type EVMKeeper interface {
-	ChainID() *big.Int
-	GetNonce(ctx sdk.Context, addr common.Address) uint64
-	ApplyMessage(ctx sdk.Context, msg core.Message, tracer vm.EVMLogger, commit bool) (*types.MsgEthereumTxResponse, error)
-	EthereumTx(goCtx context.Context, msg *types.MsgEthereumTx) (*types.MsgEthereumTxResponse, error)
+	GetParams(ctx sdk.Context) evmtypes.Params
 	GetAccountWithoutBalance(ctx sdk.Context, addr common.Address) *statedb.Account
-	EstimateGas(c context.Context, req *types.EthCallRequest) (*types.EstimateGasResponse, error)
+	EstimateGas(c context.Context, req *evmtypes.EthCallRequest) (*evmtypes.EstimateGasResponse, error)
+	ApplyMessage(ctx sdk.Context, msg core.Message, tracer vm.EVMLogger, commit bool) (*evmtypes.MsgEthereumTxResponse, error)
 }

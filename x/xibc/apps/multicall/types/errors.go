@@ -5,7 +5,6 @@ import (
 )
 
 var (
-	ErrWritingEthTxPayload     = sdkerrors.Register(ModuleName, 2, "writing ethereum tx payload error")
-	ErrScChainEqualToDestChain = sdkerrors.Register(ModuleName, 3, "source chain equals to destination chain")
-	ErrInvalidMultiCallEvent   = sdkerrors.Register(ModuleName, 4, "invalid multicall event")
+	ErrScChainEqualToDestChain = sdkerrors.Register(ModuleName, 2, "source chain equals to destination chain")
+	ErrInvalidMultiCallEvent   = sdkerrors.Register(ModuleName, 3, "invalid multicall event")
 )
