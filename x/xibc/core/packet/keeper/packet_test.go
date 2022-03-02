@@ -84,7 +84,7 @@ func (suite *KeeperTestSuite) TestSendPacket() {
 // occur last (resource instensive), only tests expected to succeed and packet commitment
 // verification tests need to simulate sending a packet from chainA to chainB.
 func (suite *KeeperTestSuite) TestRecvPacket() {
-	var packet exported.PacketI
+	var packet types.Packet
 
 	testCases := []testCase{{
 		"success",
@@ -154,7 +154,12 @@ func (suite *KeeperTestSuite) TestRecvPacket() {
 			packetKey := host.PacketCommitmentKey(packet.GetSourceChain(), packet.GetDestChain(), packet.GetSequence())
 			proof, proofHeight := suite.chainA.QueryProof(packetKey)
 
-			err := suite.chainB.App.XIBCKeeper.PacketKeeper.RecvPacket(suite.chainB.GetContext(), packet, proof, proofHeight)
+			msg := &types.MsgRecvPacket{
+				Packet:          packet,
+				ProofCommitment: proof,
+				ProofHeight:     proofHeight,
+			}
+			err := suite.chainB.App.XIBCKeeper.PacketKeeper.RecvPacket(suite.chainB.GetContext(), msg)
 
 			if tc.expPass {
 				suite.Require().NoError(err)
@@ -276,7 +281,13 @@ func (suite *KeeperTestSuite) TestAcknowledgePacket() {
 			packetKey := host.PacketAcknowledgementKey(packet.GetSourceChain(), packet.GetDestChain(), packet.GetSequence())
 			proof, proofHeight := suite.chainB.QueryProof(packetKey)
 
-			err := suite.chainA.App.XIBCKeeper.PacketKeeper.AcknowledgePacket(suite.chainA.GetContext(), packet, ack, proof, proofHeight)
+			msg := &types.MsgAcknowledgement{
+				Packet:          packet,
+				Acknowledgement: ack,
+				ProofAcked:      proof,
+				ProofHeight:     proofHeight,
+			}
+			err := suite.chainA.App.XIBCKeeper.PacketKeeper.AcknowledgePacket(suite.chainA.GetContext(), msg)
 			pc := suite.chainA.App.XIBCKeeper.PacketKeeper.GetPacketCommitment(suite.chainA.GetContext(), packet.GetSourceChain(), packet.GetDestChain(), packet.GetSequence())
 
 			if tc.expPass {
