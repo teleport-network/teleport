@@ -20,3 +20,6 @@ message Header {
   bytes pubkey = 2;
   repeated bytes part_pubkeys = 3;
 }
+
+// ConsensusState defines the consensus state
+message ConsensusState {}

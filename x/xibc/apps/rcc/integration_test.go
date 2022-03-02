@@ -58,7 +58,7 @@ func (suite *RCCTestSuite) TestRemoteContractCall() {
 	suite.Require().Equal(total.String(), balanceB.String())
 
 	// deploy ERC20 on chainB
-	erc20Adress := suite.DeployERC20(suite.chainB)
+	erc20Adress := suite.DeployERC20(suite.chainB, rcccontract.RCCContractAddress, uint8(18))
 
 	// commit block
 	suite.coordinator.CommitBlock(suite.chainA, suite.chainB)
@@ -128,18 +128,18 @@ func (suite *RCCTestSuite) SendRemoteContractCall(fromChain *xibctesting.TestCha
 	_ = suite.SendTx(fromChain, rcccontract.RCCContractAddress, big.NewInt(0), rccData)
 }
 
-func (suite *RCCTestSuite) DeployERC20(fromChain *xibctesting.TestChain) common.Address {
-	ctorArgs, err := erc20contracts.ERC20MinterBurnerDecimalsContract.ABI.Pack("", "name", "symbol", uint8(18))
+func (suite *RCCTestSuite) DeployERC20(fromChain *xibctesting.TestChain, deployer common.Address, scale uint8) common.Address {
+	ctorArgs, err := erc20contracts.ERC20MinterBurnerDecimalsContract.ABI.Pack("", "name", "symbol", scale)
 	suite.Require().NoError(err)
 
 	data := make([]byte, len(erc20contracts.ERC20MinterBurnerDecimalsContract.Bin)+len(ctorArgs))
 	copy(data[:len(erc20contracts.ERC20MinterBurnerDecimalsContract.Bin)], erc20contracts.ERC20MinterBurnerDecimalsContract.Bin)
 	copy(data[len(erc20contracts.ERC20MinterBurnerDecimalsContract.Bin):], ctorArgs)
 
-	nonce := fromChain.App.EvmKeeper.GetNonce(fromChain.GetContext(), rcccontract.RCCContractAddress)
-	contractAddr := crypto.CreateAddress(rcccontract.RCCContractAddress, nonce)
+	nonce := fromChain.App.EvmKeeper.GetNonce(fromChain.GetContext(), deployer)
+	contractAddr := crypto.CreateAddress(deployer, nonce)
 
-	res, err := fromChain.App.XIBCTransferKeeper.CallEVMWithData(fromChain.GetContext(), rcccontract.RCCContractAddress, nil, data)
+	res, err := fromChain.App.XIBCTransferKeeper.CallEVMWithData(fromChain.GetContext(), deployer, nil, data)
 	suite.Require().NoError(err)
 	suite.Require().False(res.Failed(), res.VmError)
 

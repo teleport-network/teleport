@@ -229,6 +229,7 @@ func NewRegisterERC20TraceProposal(
 	erc20Addr string,
 	originToken string,
 	originChain string,
+	scale uint64,
 ) govtypes.Content {
 	return &RegisterERC20TraceProposal{
 		Title:        title,
@@ -236,6 +237,7 @@ func NewRegisterERC20TraceProposal(
 		ERC20Address: erc20Addr,
 		OriginToken:  originToken,
 		OriginChain:  originChain,
+		Scale:        scale,
 	}
 }
 
@@ -261,6 +263,10 @@ func (rtbp *RegisterERC20TraceProposal) ValidateBasic() error {
 	// TODO: validate originChain
 	if len(strings.TrimSpace(rtbp.OriginChain)) == 0 {
 		return sdkerrors.Wrap(ErrInvalidOriginChain, "originChain cannot be blank")
+	}
+
+	if rtbp.Scale > 18 {
+		return sdkerrors.Wrap(ErrERC20TraceScale, "ERC20 trace scale should be smaller than 18")
 	}
 
 	return govtypes.ValidateAbstract(rtbp)

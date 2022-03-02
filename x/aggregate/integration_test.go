@@ -41,6 +41,7 @@ func (suite *AggregateTestSuite) TestReBindToken() {
 		erc20Address,
 		common.BigToAddress(big.NewInt(0)).String(),
 		suite.chainB.ChainID,
+		uint8(0),
 	)
 	suite.Require().NoError(err)
 	// check ERC20 trace
@@ -59,6 +60,7 @@ func (suite *AggregateTestSuite) TestReBindToken() {
 		erc20Address,
 		common.BigToAddress(big.NewInt(1)).String(),
 		suite.chainB.ChainID,
+		uint8(0),
 	)
 	suite.Require().NoError(err)
 	// check ERC20 trace

@@ -93,4 +93,6 @@ message RegisterERC20TraceProposal {
   string origin_token = 4;
   // origin chain
   string origin_chain = 5;
+  // scale: real_amount = packet_amount * (10 ** scale)
+  uint64 scale = 6;
 }

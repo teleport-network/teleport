@@ -23,12 +23,13 @@ func (suite *KeeperTestSuite) TestRecvPacket() {
 				nativeChain := "teleport"
 				sender := "sender"
 				amount := big.NewInt(123450)
+				scale := uint8(0)
 
 				// deploy ERC20
 				tokenAddress := suite.DeployERC20MintableContract(transfer.TransferContractAddress, "kitty", "kit", uint8(18))
 
 				// bind ERC20 trace
-				err := suite.app.AggregateKeeper.RegisterERC20Trace(suite.ctx, tokenAddress, srcToken, srcChain)
+				err := suite.app.AggregateKeeper.RegisterERC20Trace(suite.ctx, tokenAddress, srcToken, srcChain, scale)
 				suite.Require().NoError(err)
 
 				// check ERC20 trace
@@ -205,12 +206,13 @@ func (suite *KeeperTestSuite) TestAcknowledgementPacket() {
 				nativeChain := "teleport"
 				sender := "sender"
 				amount := big.NewInt(123450)
+				scale := uint8(0)
 
 				// deploy ERC20
 				tokenAddress := suite.DeployERC20MintableContract(transfer.TransferContractAddress, "kitty", "kit", uint8(18))
 
 				// bind ERC20 trace
-				err := suite.app.AggregateKeeper.RegisterERC20Trace(suite.ctx, tokenAddress, srcToken, srcChain)
+				err := suite.app.AggregateKeeper.RegisterERC20Trace(suite.ctx, tokenAddress, srcToken, srcChain, scale)
 				suite.Require().NoError(err)
 
 				// receive packet and check Ack

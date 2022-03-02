@@ -41,4 +41,5 @@ type BindingsResponse struct {
 	OriToken string
 	Amount   *big.Int
 	Bound    bool
+	Scale    uint8
 }
