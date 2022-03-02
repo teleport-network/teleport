@@ -37,8 +37,6 @@ var (
 	packet        = types.NewPacket(1, sourceChain, destChain, relayChain, []string{port}, [][]byte{validPacketData})
 	invalidPacket = types.NewPacket(0, sourceChain, destChain, relayChain, []string{port}, [][]byte{unknownPacketData})
 
-	emptyProof = []byte{}
-
 	addr      = sdk.AccAddress("testaddr111111111111")
 	emptyAddr sdk.AccAddress
 )
@@ -88,7 +86,6 @@ func (suite *TypesTestSuite) TestMsgRecvPacketValidateBasic() {
 	}{
 		{"success", types.NewMsgRecvPacket(packet, suite.proof, height, addr), true},
 		{"proof height is zero", types.NewMsgRecvPacket(packet, suite.proof, clienttypes.ZeroHeight(), addr), false},
-		{"proof contain empty proof", types.NewMsgRecvPacket(packet, emptyProof, height, addr), false},
 		{"missing signer address", types.NewMsgRecvPacket(packet, suite.proof, height, emptyAddr), false},
 		{"invalid packet", types.NewMsgRecvPacket(invalidPacket, suite.proof, height, addr), false},
 	}
@@ -122,7 +119,6 @@ func (suite *TypesTestSuite) TestMsgAcknowledgementValidateBasic() {
 		{"proof height must be > 0", types.NewMsgAcknowledgement(packet, packet.GetDataList()[0], suite.proof, clienttypes.ZeroHeight(), addr), false},
 		{"empty ack", types.NewMsgAcknowledgement(packet, nil, suite.proof, height, addr), false},
 		{"missing signer address", types.NewMsgAcknowledgement(packet, packet.GetDataList()[0], suite.proof, height, emptyAddr), false},
-		{"cannot submit an empty proof", types.NewMsgAcknowledgement(packet, packet.GetDataList()[0], emptyProof, height, addr), false},
 		{"invalid packet", types.NewMsgAcknowledgement(invalidPacket, packet.GetDataList()[0], suite.proof, height, addr), false},
 	}
 
