@@ -47,7 +47,7 @@ func (k Keeper) UpdateClient(goCtx context.Context, msg *clienttypes.MsgUpdateCl
 func (k Keeper) RecvPacket(goCtx context.Context, msg *packettypes.MsgRecvPacket) (*packettypes.MsgRecvPacketResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	if err := k.PacketKeeper.RecvPacket(ctx, msg.Packet, msg.ProofCommitment, msg.ProofHeight); err != nil {
+	if err := k.PacketKeeper.RecvPacket(ctx, msg); err != nil {
 		return nil, sdkerrors.Wrap(err, "receive packet verification failed")
 	}
 
@@ -105,7 +105,7 @@ func (k Keeper) RecvPacket(goCtx context.Context, msg *packettypes.MsgRecvPacket
 func (k Keeper) Acknowledgement(goCtx context.Context, msg *packettypes.MsgAcknowledgement) (*packettypes.MsgAcknowledgementResponse, error) {
 	ctx := sdk.UnwrapSDKContext(goCtx)
 
-	if err := k.PacketKeeper.AcknowledgePacket(ctx, msg.Packet, msg.Acknowledgement, msg.ProofAcked, msg.ProofHeight); err != nil {
+	if err := k.PacketKeeper.AcknowledgePacket(ctx, msg); err != nil {
 		return nil, sdkerrors.Wrap(err, "acknowledge packet verification failed")
 	}
 

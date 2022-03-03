@@ -69,10 +69,9 @@ func (k Keeper) SendPacket(ctx sdk.Context, packet exported.PacketI) error {
 // sent on the corresponding port on the counterparty chain.
 func (k Keeper) RecvPacket(
 	ctx sdk.Context,
-	packet exported.PacketI,
-	proof []byte,
-	proofHeight exported.Height,
+	msg *types.MsgRecvPacket,
 ) error {
+	packet := msg.Packet
 	if err := k.ValidatePacket(ctx, packet); err != nil {
 		return sdkerrors.Wrap(err, "packet failed basic validation")
 	}
@@ -95,12 +94,18 @@ func (k Keeper) RecvPacket(
 	}
 
 	commitment := types.CommitPacket(packet)
+
+	// use signer as tss client proof
+	proof := msg.ProofCommitment
+	if targetClient.ClientType() == exported.TSS {
+		proof = []byte(msg.Signer)
+	}
 	// verify that the counterparty did commit to sending this packet
 	if err := targetClient.VerifyPacketCommitment(
 		ctx,
 		k.clientKeeper.ClientStore(ctx, fromChain),
 		k.cdc,
-		proofHeight,
+		msg.ProofHeight,
 		proof,
 		packet.GetSourceChain(),
 		packet.GetDestChain(),
@@ -211,11 +216,9 @@ func (k Keeper) WriteAcknowledgement(
 // which is no longer necessary since the packet has been received and acted upon.
 func (k Keeper) AcknowledgePacket(
 	ctx sdk.Context,
-	packet exported.PacketI,
-	acknowledgement []byte,
-	proof []byte,
-	proofHeight exported.Height,
+	msg *types.MsgAcknowledgement,
 ) error {
+	packet := msg.Packet
 	if err := k.ValidatePacket(ctx, packet); err != nil {
 		return sdkerrors.Wrap(err, "AcknowledgePacket failed basic validation")
 	}
@@ -239,12 +242,19 @@ func (k Keeper) AcknowledgePacket(
 		return sdkerrors.Wrap(clienttypes.ErrClientNotFound, fromChain)
 	}
 
-	ackCommitment := types.CommitAcknowledgement(acknowledgement)
+	ackCommitment := types.CommitAcknowledgement(msg.Acknowledgement)
+
+	// use signer as tss client proof
+	proof := msg.ProofAcked
+	if clientState.ClientType() == exported.TSS {
+		proof = []byte(msg.Signer)
+	}
+
 	if err := clientState.VerifyPacketAcknowledgement(
 		ctx,
 		k.clientKeeper.ClientStore(ctx, fromChain),
 		k.cdc,
-		proofHeight,
+		msg.ProofHeight,
 		proof,
 		packet.GetSourceChain(),
 		packet.GetDestChain(),
@@ -268,7 +278,7 @@ func (k Keeper) AcknowledgePacket(
 		RelayChain: packet.GetRelayChain(),
 		Ports:      packet.GetPorts(),
 		DataList:   packet.GetDataList(),
-		Ack:        acknowledgement,
+		Ack:        msg.Acknowledgement,
 	})
 
 	if packet.GetRelayChain() == chainName {
@@ -288,7 +298,7 @@ func (k Keeper) AcknowledgePacket(
 			RelayChain: packet.GetRelayChain(),
 			Ports:      packet.GetPorts(),
 			DataList:   packet.GetDataList(),
-			Ack:        acknowledgement,
+			Ack:        msg.Acknowledgement,
 		})
 	}
 
