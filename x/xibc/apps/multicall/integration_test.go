@@ -274,12 +274,12 @@ func (suite *MultiCallTestSuite) TestRCCCall() {
 
 	// commit block
 	suite.coordinator.CommitBlock(suite.chainA, suite.chainB)
-	sequencd := uint64(1)
+	sequence := uint64(1)
 	// relay packet
 	rccPacketData := rcctypes.NewRCCPacketData(
 		path.EndpointA.ChainName,
 		path.EndpointB.ChainName,
-		sequencd,
+		sequence,
 		strings.ToLower(suite.chainA.SenderAddress.String()),
 		strings.ToLower(erc20Address.String()),
 		payload,
@@ -287,7 +287,7 @@ func (suite *MultiCallTestSuite) TestRCCCall() {
 	bz, err := rccPacketData.GetBytes()
 	suite.NoError(err)
 	packet := packettypes.NewPacket(
-		sequencd,
+		sequence,
 		path.EndpointA.ChainName,
 		path.EndpointB.ChainName,
 		"",

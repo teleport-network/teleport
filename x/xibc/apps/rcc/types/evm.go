@@ -7,6 +7,11 @@ import (
 	"github.com/ethereum/go-ethereum/accounts/abi"
 )
 
+const (
+	AckEventName        = "Ack"
+	SendPacketEventName = "SendPacket"
+)
+
 type Amount struct {
 	Value *big.Int
 }

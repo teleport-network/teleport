@@ -1,8 +1,6 @@
 package keeper
 
 import (
-	"github.com/teleport-network/teleport/x/xibc/apps/rcc/types"
-
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/ethereum/go-ethereum/common"
@@ -10,6 +8,7 @@ import (
 	evmtypes "github.com/tharsis/ethermint/x/evm/types"
 
 	rcc "github.com/teleport-network/teleport/syscontracts/xibc_rcc"
+	"github.com/teleport-network/teleport/x/xibc/apps/rcc/types"
 )
 
 // Hooks wrapper struct for erc20 keeper
@@ -47,7 +46,7 @@ func (h Hooks) PostTxProcessing(
 			return err
 		}
 
-		if event.Name == "Ack" {
+		if event.Name == types.AckEventName {
 			return nil
 		}
 		packet, err := rccContract.Unpack(event.Name, log.Data)
