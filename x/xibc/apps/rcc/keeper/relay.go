@@ -15,6 +15,7 @@ func (k Keeper) SendRemoteContractCall(
 	ctx sdk.Context,
 	destChain string,
 	relayChain string,
+	sequence uint64,
 	sender string,
 	contractAddress string,
 	data []byte,
@@ -25,12 +26,15 @@ func (k Keeper) SendRemoteContractCall(
 	}
 
 	// get the next sequence
-	sequence := k.packetKeeper.GetNextSequenceSend(ctx, sourceChain, destChain)
-
+	sequenceTmp := k.packetKeeper.GetNextSequenceSend(ctx, sourceChain, destChain)
+	if sequence != sequenceTmp {
+		return sdkerrors.Wrapf(types.ErrScChainEqualToDestChain, "invalid sequence %d equals to %d", sequence, sequenceTmp)
+	}
 	// TODO: validate packetData
 	packetData := types.NewRCCPacketData(
 		sourceChain,
 		destChain,
+		sequence,
 		sender,
 		contractAddress,
 		data,

@@ -628,6 +628,7 @@ RCCPacketData defines a struct for the packet payload
 | ----- | ---- | ----- | ----------- |
 | `src_chain` | [string](#string) |  |  |
 | `dest_chain` | [string](#string) |  |  |
+| `sequence` | [uint64](#uint64) |  |  |
 | `sender` | [string](#string) |  |  |
 | `contract_address` | [string](#string) |  |  |
 | `data` | [bytes](#bytes) |  |  |
@@ -722,6 +723,7 @@ FungibleTokenPacketData defines a struct for the packet payload
 | ----- | ---- | ----- | ----------- |
 | `src_chain` | [string](#string) |  |  |
 | `dest_chain` | [string](#string) |  |  |
+| `sequence` | [uint64](#uint64) |  |  |
 | `sender` | [string](#string) |  |  |
 | `receiver` | [string](#string) |  |  |
 | `amount` | [bytes](#bytes) |  |  |

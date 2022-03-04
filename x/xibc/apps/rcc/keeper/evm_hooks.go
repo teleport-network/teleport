@@ -1,6 +1,8 @@
 package keeper
 
 import (
+	"github.com/teleport-network/teleport/x/xibc/apps/rcc/types"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/ethereum/go-ethereum/common"
@@ -45,29 +47,31 @@ func (h Hooks) PostTxProcessing(
 			return err
 		}
 
-		sendPacketEvent, err := rccContract.Unpack(event.Name, log.Data)
+		if event.Name == "Ack" {
+			return nil
+		}
+		packet, err := rccContract.Unpack(event.Name, log.Data)
 		if err != nil {
 			h.k.Logger(ctx).Error("failed to unpack send packet event", "error", err.Error())
 			return err
 		}
-		if event.Name == "Ack" {
-			return nil
+
+		var sendPacketEvent types.RCCEventSendPacketData
+		err = sendPacketEvent.DecodeInterface(packet[0])
+		if err != nil {
+			h.k.Logger(ctx).Error("failed to decode send packet event", "error", err.Error())
+			return err
 		}
-		// srcChain := sendPacketEvent[0].(string)
-		destChain := sendPacketEvent[1].(string)
-		relayChain := sendPacketEvent[2].(string)
-		sender := sendPacketEvent[3].(string)
-		contractAddress := sendPacketEvent[4].(string)
-		data := sendPacketEvent[5].([]byte)
 
 		// send cross chain contract call
 		if err := h.k.SendRemoteContractCall(
 			ctx,
-			destChain,
-			relayChain,
-			sender,
-			contractAddress,
-			data,
+			sendPacketEvent.DestChain,
+			sendPacketEvent.RelayChain,
+			sendPacketEvent.Sequence,
+			sendPacketEvent.Sender,
+			sendPacketEvent.ContractAddress,
+			sendPacketEvent.Data,
 		); err != nil {
 			h.k.Logger(ctx).Debug(
 				"failed to process EVM hook for XIBC RCC",

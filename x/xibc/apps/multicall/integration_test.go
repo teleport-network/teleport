@@ -119,6 +119,7 @@ func (suite *MultiCallTestSuite) TestTransferBaseCall() common.Address {
 	transferBasePacketData := transfertypes.NewFungibleTokenPacketData(
 		path.EndpointA.ChainName,
 		path.EndpointB.ChainName,
+		1,
 		strings.ToLower(suite.chainA.SenderAddress.String()),
 		strings.ToLower(suite.chainB.SenderAddress.String()),
 		amount.Bytes(),
@@ -200,6 +201,7 @@ func (suite *MultiCallTestSuite) TestTransferBaseBackCall() {
 	packetData := transfertypes.NewFungibleTokenPacketData(
 		path.EndpointB.ChainName,
 		path.EndpointA.ChainName,
+		1,
 		strings.ToLower(suite.chainB.SenderAddress.String()),
 		strings.ToLower(suite.chainA.SenderAddress.String()),
 		amount.Bytes(),
@@ -272,11 +274,12 @@ func (suite *MultiCallTestSuite) TestRCCCall() {
 
 	// commit block
 	suite.coordinator.CommitBlock(suite.chainA, suite.chainB)
-
+	sequencd := uint64(1)
 	// relay packet
 	rccPacketData := rcctypes.NewRCCPacketData(
 		path.EndpointA.ChainName,
 		path.EndpointB.ChainName,
+		sequencd,
 		strings.ToLower(suite.chainA.SenderAddress.String()),
 		strings.ToLower(erc20Address.String()),
 		payload,
@@ -284,7 +287,7 @@ func (suite *MultiCallTestSuite) TestRCCCall() {
 	bz, err := rccPacketData.GetBytes()
 	suite.NoError(err)
 	packet := packettypes.NewPacket(
-		1,
+		sequencd,
 		path.EndpointA.ChainName,
 		path.EndpointB.ChainName,
 		"",
@@ -374,11 +377,12 @@ func (suite *MultiCallTestSuite) TestMultiCall_VV() {
 
 	// commit block
 	suite.coordinator.CommitBlock(suite.chainA, suite.chainB)
-
+	sequence := uint64(1)
 	// relay packet
 	rccPacketData := rcctypes.NewRCCPacketData(
 		path.EndpointA.ChainName,
 		path.EndpointB.ChainName,
+		sequence,
 		strings.ToLower(suite.chainA.SenderAddress.String()),
 		strings.ToLower(erc20Address.String()),
 		payload,
@@ -386,6 +390,7 @@ func (suite *MultiCallTestSuite) TestMultiCall_VV() {
 	transferBasePacketData := transfertypes.NewFungibleTokenPacketData(
 		path.EndpointA.ChainName,
 		path.EndpointB.ChainName,
+		sequence,
 		strings.ToLower(suite.chainA.SenderAddress.String()),
 		strings.ToLower(suite.chainB.SenderAddress.String()),
 		amount.Bytes(),
@@ -488,11 +493,13 @@ func (suite *MultiCallTestSuite) TestMultiCall_VX() {
 
 	// commit block
 	suite.coordinator.CommitBlock(suite.chainA, suite.chainB)
+	sequence := uint64(1)
 
 	// relay packet
 	rccPacketData := rcctypes.NewRCCPacketData(
 		path.EndpointA.ChainName,
 		path.EndpointB.ChainName,
+		sequence,
 		strings.ToLower(suite.chainA.SenderAddress.String()),
 		strings.ToLower(erc20Address.String()),
 		payload,
@@ -500,6 +507,7 @@ func (suite *MultiCallTestSuite) TestMultiCall_VX() {
 	transferBasePacketData := transfertypes.NewFungibleTokenPacketData(
 		path.EndpointA.ChainName,
 		path.EndpointB.ChainName,
+		sequence,
 		strings.ToLower(suite.chainA.SenderAddress.String()),
 		strings.ToLower(suite.chainB.SenderAddress.String()),
 		amount.Bytes(),

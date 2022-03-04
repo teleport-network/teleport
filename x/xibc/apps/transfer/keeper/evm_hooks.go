@@ -1,8 +1,6 @@
 package keeper
 
 import (
-	"math/big"
-
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/ethereum/go-ethereum/common"
@@ -10,6 +8,7 @@ import (
 	evmtypes "github.com/tharsis/ethermint/x/evm/types"
 
 	transfer "github.com/teleport-network/teleport/syscontracts/xibc_transfer"
+	"github.com/teleport-network/teleport/x/xibc/apps/transfer/types"
 )
 
 // Hooks wrapper struct for erc20 keeper
@@ -46,32 +45,30 @@ func (h Hooks) PostTxProcessing(
 		if err != nil {
 			return err
 		}
-
-		sendPacketEvent, err := transferContract.Unpack(event.Name, log.Data)
+		packet, err := transferContract.Unpack(event.Name, log.Data)
 		if err != nil {
 			h.k.Logger(ctx).Error("failed to unpack send packet event", "error", err.Error())
 			return err
 		}
 
-		// srcChain := sendPacketEvent[0].(string)
-		destChain := sendPacketEvent[1].(string)
-		relayChain := sendPacketEvent[2].(string)
-		sender := sendPacketEvent[3].(string)
-		receiver := sendPacketEvent[4].(string)
-		amount := sendPacketEvent[5].(*big.Int)
-		token := sendPacketEvent[6].(string)
-		oriToken := sendPacketEvent[7].(string)
+		var sendPacketEvent types.TransferEventSendPacketData
+		err = sendPacketEvent.DecodeInterface(packet[0])
+		if err != nil {
+			h.k.Logger(ctx).Error("failed to decode send packet event", "error", err.Error())
+			return err
+		}
 
 		// send cross chain transfer
 		if err := h.k.SendTransfer(
 			ctx,
-			destChain,
-			relayChain,
-			sender,
-			receiver,
-			amount.Bytes(),
-			token,
-			oriToken,
+			sendPacketEvent.DestChain,
+			sendPacketEvent.RelayChain,
+			sendPacketEvent.Sequence,
+			sendPacketEvent.Sender,
+			sendPacketEvent.Receiver,
+			sendPacketEvent.Amount.Bytes(),
+			sendPacketEvent.Token,
+			sendPacketEvent.OriToken,
 		); err != nil {
 			h.k.Logger(ctx).Debug(
 				"failed to process EVM hook for XIBC transfer",

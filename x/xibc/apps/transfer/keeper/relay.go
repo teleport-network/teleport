@@ -17,6 +17,7 @@ func (k Keeper) SendTransfer(
 	ctx sdk.Context,
 	destChain string,
 	relayChain string,
+	sequence uint64,
 	sender string,
 	receiver string,
 	amount []byte,
@@ -29,12 +30,15 @@ func (k Keeper) SendTransfer(
 	}
 
 	// get the next sequence
-	sequence := k.packetKeeper.GetNextSequenceSend(ctx, sourceChain, destChain)
-
+	sequenceTmp := k.packetKeeper.GetNextSequenceSend(ctx, sourceChain, destChain)
+	if sequence != sequenceTmp {
+		return sdkerrors.Wrapf(types.ErrScChainEqualToDestChain, "invalid sequence %d, %d", sequence, sequenceTmp)
+	}
 	// TODO: validate packetData
 	packetData := types.NewFungibleTokenPacketData(
 		sourceChain,
 		destChain,
+		sequence,
 		strings.ToLower(sender),
 		strings.ToLower(receiver),
 		amount,
