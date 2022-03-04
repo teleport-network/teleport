@@ -869,12 +869,16 @@ func (suite *TransferTestSuite) TestRemoteContractCallAgent() {
 			Amount:       out,
 		},
 	)
+	suite.Require().NoError(err)
+
 	rccDataBytes, err := abi.Arguments{{Type: multicalltypes.TupleRCCData}}.Pack(
 		multicalltypes.RCCData{
 			ContractAddress: strings.ToLower(agentcontract.AgentContractAddress.String()),
 			Data:            agentPayload,
 		},
 	)
+	suite.Require().NoError(err)
+
 	// transfer Erc20 chainC to chainB
 	MultiCallData := multicalltypes.MultiCallData{
 		DestChain:  suite.chainB.ChainID,
@@ -910,6 +914,7 @@ func (suite *TransferTestSuite) TestRemoteContractCallAgent() {
 		agentPayload,
 	)
 	agentBz, err := agentPacketData.GetBytes()
+	suite.Require().NoError(err)
 
 	packet := packettypes.NewPacket(
 		sequence,
