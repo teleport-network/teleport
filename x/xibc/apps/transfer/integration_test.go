@@ -1538,10 +1538,10 @@ func (suite *TransferTestSuite) GetAgentPacketExist(fromChain *xibctesting.TestC
 	suite.Require().NoError(err)
 
 	var exist struct {
-		Sent         bool
-		Refunder     common.Address
-		TokenAddress common.Address
-		Amount       *big.Int
+		Sent                    bool
+		RefundAddressOnTeleport common.Address
+		TokenAddress            common.Address
+		Amount                  *big.Int
 	}
 	err = cus.UnpackIntoInterface(&exist, "agentData", res.Ret)
 	suite.Require().NoError(err)
