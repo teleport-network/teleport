@@ -49,6 +49,9 @@ func (path *Path) RelayPacket(packet packettypes.Packet, ack []byte) error {
 		if err := path.EndpointB.RecvPacket(packet); err != nil {
 			return err
 		}
+		if path.EndpointB.ChainName != packet.DestinationChain {
+			return nil
+		}
 		return path.EndpointA.AcknowledgePacket(packet, ack)
 	}
 
@@ -67,6 +70,9 @@ func (path *Path) RelayPacket(packet packettypes.Packet, ack []byte) error {
 		}
 		if err := path.EndpointA.RecvPacket(packet); err != nil {
 			return err
+		}
+		if path.EndpointA.ChainName != packet.DestinationChain {
+			return nil
 		}
 		return path.EndpointB.AcknowledgePacket(packet, ack)
 	}
