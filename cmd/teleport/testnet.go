@@ -307,8 +307,7 @@ func initTestnetFiles(
 		var addr sdk.AccAddress
 
 		//whether the pre-mnemonic existed
-		_, err = os.Stat(nodeDir + mnemonicPath)
-		if err != nil {
+		if _, err = os.Stat(nodeDir + mnemonicPath); err != nil {
 			addr, secret, err = testutil.GenerateSaveCoinKey(kb, nodeDirName, "", true, algo)
 			if err != nil {
 				_ = os.RemoveAll(args.outputDir)
@@ -324,8 +323,7 @@ func initTestnetFiles(
 				return nil
 			}
 
-			err = json.Unmarshal(mnemonicBytes, &keyseed)
-			if err != nil {
+			if err = json.Unmarshal(mnemonicBytes, &keyseed); err != nil {
 				return nil
 			}
 
@@ -588,8 +586,7 @@ func startTestnet(cmd *cobra.Command, args startArgs) error {
 		return err
 	}
 
-	_, err = testnet.WaitForHeight(1)
-	if err != nil {
+	if _, err = testnet.WaitForHeight(1); err != nil {
 		return err
 	}
 

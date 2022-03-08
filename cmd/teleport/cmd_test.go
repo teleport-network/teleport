@@ -26,3 +26,16 @@ func TestInitCmd(t *testing.T) {
 	err := svrcmd.Execute(rootCmd, app.DefaultNodeHome)
 	require.NoError(t, err)
 }
+
+func TestAddKeyLedgerCmd(t *testing.T) {
+	rootCmd, _ := teleport.NewRootCmd()
+	rootCmd.SetArgs([]string{
+		"keys",
+		"add",
+		"mykey",
+		fmt.Sprintf("--%s", flags.FlagUseLedger),
+	})
+
+	err := svrcmd.Execute(rootCmd, app.DefaultNodeHome)
+	require.Error(t, err)
+}

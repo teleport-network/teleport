@@ -382,8 +382,7 @@ func (k Keeper) convertCoinNativeERC20(
 	}
 
 	// Burn escrowed Coins
-	err = k.bankKeeper.BurnCoins(ctx, types.ModuleName, coins)
-	if err != nil {
+	if err = k.bankKeeper.BurnCoins(ctx, types.ModuleName, coins); err != nil {
 		return nil, sdkerrors.Wrap(err, "failed to burn coins")
 	}
 

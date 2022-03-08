@@ -67,8 +67,7 @@ func (cs ClientState) CheckHeaderAndUpdateState(
 	}
 	// if pruneHeight is set, delete consensus state and metadata
 	if pruneHeight != nil {
-		err = deleteConsensusStateAndIndexHeader(cdc, store, pruneHeight)
-		if err != nil {
+		if err = deleteConsensusStateAndIndexHeader(cdc, store, pruneHeight); err != nil {
 			return nil, nil, err
 		}
 	}
@@ -78,8 +77,7 @@ func (cs ClientState) CheckHeaderAndUpdateState(
 	}
 	//Check the bifurcation
 	if !bytes.Equal(cs.Header.Hash().Bytes(), ethHeader.ParentHash) {
-		err = cs.RestrictChain(cdc, store, *ethHeader)
-		if err != nil {
+		if err = cs.RestrictChain(cdc, store, *ethHeader); err != nil {
 			return nil, nil, err
 		}
 	}

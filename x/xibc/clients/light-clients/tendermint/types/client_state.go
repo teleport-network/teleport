@@ -201,11 +201,7 @@ func (cs ClientState) VerifyPacketCommitment(
 		return err
 	}
 
-	if err := merkleProof.VerifyMembership(cs.ProofSpecs, consensusState.GetRoot(), path, commitmentBytes); err != nil {
-		return err
-	}
-
-	return nil
+	return merkleProof.VerifyMembership(cs.ProofSpecs, consensusState.GetRoot(), path, commitmentBytes)
 }
 
 // VerifyPacketAcknowledgement verifies a proof of an incoming packet
@@ -237,11 +233,7 @@ func (cs ClientState) VerifyPacketAcknowledgement(
 		return err
 	}
 
-	if err := merkleProof.VerifyMembership(cs.ProofSpecs, consensusState.GetRoot(), path, ackBytes); err != nil {
-		return err
-	}
-
-	return nil
+	return merkleProof.VerifyMembership(cs.ProofSpecs, consensusState.GetRoot(), path, ackBytes)
 }
 
 // verifyDelayPeriodPassed will ensure that at least delayPeriod amount of time has passed since consensus state was submitted

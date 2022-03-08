@@ -56,8 +56,7 @@ func (h Hooks) PostTxProcessing(
 		}
 
 		var sendPacketEvent types.RCCEventSendPacketData
-		err = sendPacketEvent.DecodeInterface(packet[0])
-		if err != nil {
+		if err = sendPacketEvent.DecodeInterface(packet[0]); err != nil {
 			h.k.Logger(ctx).Error("failed to decode send packet event", "error", err.Error())
 			return err
 		}
