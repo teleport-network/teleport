@@ -10,9 +10,10 @@ import "gogoproto/gogo.proto";
 message FungibleTokenPacketData {
   string src_chain = 1;
   string dest_chain = 2;
-  string sender = 3;
-  string receiver = 4;
-  bytes amount = 5;
-  string token = 6;
-  string ori_token = 7;
+  uint64 sequence = 3;
+  string sender = 4;
+  string receiver = 5;
+  bytes amount = 6;
+  string token = 7;
+  string ori_token = 8;
 }

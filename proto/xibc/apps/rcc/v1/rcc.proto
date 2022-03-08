@@ -10,7 +10,8 @@ import "gogoproto/gogo.proto";
 message RCCPacketData {
   string src_chain = 1;
   string dest_chain = 2;
-  string sender = 3;
-  string contract_address = 4;
-  bytes data = 5;
+  uint64 sequence = 3;
+  string sender = 4;
+  string contract_address = 5;
+  bytes data = 6;
 }

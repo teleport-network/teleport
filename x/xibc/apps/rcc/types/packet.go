@@ -10,6 +10,7 @@ import (
 func NewRCCPacketData(
 	srcChain string,
 	destChain string,
+	sequence uint64,
 	sender string,
 	contractAddress string,
 	data []byte,
@@ -17,6 +18,7 @@ func NewRCCPacketData(
 	return RCCPacketData{
 		SrcChain:        srcChain,
 		DestChain:       destChain,
+		Sequence:        sequence,
 		Sender:          sender,
 		ContractAddress: contractAddress,
 		Data:            data,

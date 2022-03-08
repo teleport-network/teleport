@@ -86,6 +86,7 @@ func (k Keeper) SendMultiCall(ctx sdk.Context, sender common.Address, calldata t
 			transferBz, err := transfertypes.NewFungibleTokenPacketData(
 				sourceChain,
 				calldata.DestChain,
+				sequence,
 				strings.ToLower(sender.String()),
 				strings.ToLower(erc20TransferData.Receiver),
 				erc20TransferData.Amount.Bytes(),
@@ -116,6 +117,7 @@ func (k Keeper) SendMultiCall(ctx sdk.Context, sender common.Address, calldata t
 			transferBz, err := transfertypes.NewFungibleTokenPacketData(
 				sourceChain,
 				calldata.DestChain,
+				sequence,
 				strings.ToLower(sender.String()),
 				strings.ToLower(baseTransferData.Receiver),
 				baseTransferData.Amount.Bytes(),
@@ -146,6 +148,7 @@ func (k Keeper) SendMultiCall(ctx sdk.Context, sender common.Address, calldata t
 			rccPacketDataBz, err := rcctypes.NewRCCPacketData(
 				sourceChain,
 				calldata.DestChain,
+				sequence,
 				strings.ToLower(sender.String()),
 				strings.ToLower(rccData.ContractAddress),
 				rccData.Data,

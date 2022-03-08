@@ -10,6 +10,7 @@ import (
 func NewFungibleTokenPacketData(
 	srcChain string,
 	destChain string,
+	sequence uint64,
 	sender string,
 	receiver string,
 	amount []byte,
@@ -19,6 +20,7 @@ func NewFungibleTokenPacketData(
 	return FungibleTokenPacketData{
 		SrcChain:  srcChain,
 		DestChain: destChain,
+		Sequence:  sequence,
 		Sender:    sender,
 		Receiver:  receiver,
 		Amount:    amount,

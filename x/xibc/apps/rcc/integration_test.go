@@ -77,11 +77,12 @@ func (suite *RCCTestSuite) TestRemoteContractCall() {
 
 	// commit block
 	suite.coordinator.CommitBlock(suite.chainA, suite.chainB)
-
+	sequence := uint64(1)
 	// relay packet
 	packetData := types.NewRCCPacketData(
 		path.EndpointA.ChainName,
 		path.EndpointB.ChainName,
+		sequence,
 		strings.ToLower(suite.chainA.SenderAddress.String()),
 		strings.ToLower(erc20Adress.String()),
 		payload,
@@ -89,7 +90,7 @@ func (suite *RCCTestSuite) TestRemoteContractCall() {
 	bz, err := packetData.GetBytes()
 	suite.NoError(err)
 	packet := packettypes.NewPacket(
-		1,
+		sequence,
 		path.EndpointA.ChainName,
 		path.EndpointB.ChainName,
 		"",

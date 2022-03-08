@@ -18,6 +18,7 @@ func Test_RLP_Encode_Struct(t *testing.T) {
 	packetData := FungibleTokenPacketData{
 		"SrcChain",
 		"DestChain",
+		1,
 		"Sender",
 		"Receiver",
 		[]byte("Amount"),

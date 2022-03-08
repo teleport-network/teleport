@@ -3,12 +3,12 @@ package keeper
 import (
 	"encoding/json"
 
+	evmtypes "github.com/tharsis/ethermint/x/evm/types"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/ethereum/go-ethereum/common"
 	ethtypes "github.com/ethereum/go-ethereum/core/types"
-
-	evmtypes "github.com/tharsis/ethermint/x/evm/types"
 
 	multicall "github.com/teleport-network/teleport/syscontracts/xibc_multicall"
 	"github.com/teleport-network/teleport/x/xibc/apps/multicall/types"
