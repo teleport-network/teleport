@@ -79,5 +79,6 @@ func (h Header) ValidateBasic() error {
 	if !bytes.Equal(h.Header.ValidatorsHash, tmValset.Hash()) {
 		return sdkerrors.Wrap(clienttypes.ErrInvalidHeader, "validator set does not match hash")
 	}
+
 	return nil
 }

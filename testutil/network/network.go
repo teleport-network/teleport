@@ -404,8 +404,7 @@ func New(l Logger, baseDir string, cfg Config) (*Network, error) {
 		}
 
 		// save private key seed words
-		err = WriteFile(fmt.Sprintf("%v.json", "key_seed"), clientDir, infoBz)
-		if err != nil {
+		if err = WriteFile(fmt.Sprintf("%v.json", "key_seed"), clientDir, infoBz); err != nil {
 			return nil, err
 		}
 
@@ -446,8 +445,7 @@ func New(l Logger, baseDir string, cfg Config) (*Network, error) {
 		memo := fmt.Sprintf("%s@%s:%s", nodeIDs[i], p2pURL.Hostname(), p2pURL.Port())
 		fee := sdk.NewCoins(sdk.NewCoin(cfg.BondDenom, sdk.NewInt(0)))
 		txBuilder := cfg.TxConfig.NewTxBuilder()
-		err = txBuilder.SetMsgs(createValMsg)
-		if err != nil {
+		if err = txBuilder.SetMsgs(createValMsg); err != nil {
 			return nil, err
 		}
 		txBuilder.SetFeeAmount(fee)    // Arbitrary fee
@@ -480,8 +478,7 @@ func New(l Logger, baseDir string, cfg Config) (*Network, error) {
 
 		ctx.Viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_", "-", "_"))
 		ctx.Viper.SetConfigFile(filepath.Join(nodeDir, "config/app.toml"))
-		err = ctx.Viper.ReadInConfig()
-		if err != nil {
+		if err = ctx.Viper.ReadInConfig(); err != nil {
 			return nil, err
 		}
 
@@ -594,12 +591,11 @@ func (n *Network) WaitForNextBlock() error {
 		return err
 	}
 
-	_, err = n.WaitForHeight(lastBlock + 1)
-	if err != nil {
+	if _, err = n.WaitForHeight(lastBlock + 1); err != nil {
 		return err
 	}
 
-	return err
+	return nil
 }
 
 // Cleanup removes the root testing (temporary) directory and stops both the

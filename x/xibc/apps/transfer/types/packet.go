@@ -55,8 +55,5 @@ func (data *FungibleTokenPacketData) DecodeBytes(bz []byte) error {
 	if err != nil {
 		return err
 	}
-	if err := json.Unmarshal(bzTmp, &data); err != nil {
-		return err
-	}
-	return nil
+	return json.Unmarshal(bzTmp, &data)
 }

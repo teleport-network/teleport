@@ -95,8 +95,7 @@ func (k Keeper) DeployERC20Contract(
 	}
 
 	contractAddr := crypto.CreateAddress(types.ModuleAddress, nonce)
-	_, err = k.CallEVMWithData(ctx, types.ModuleAddress, nil, data)
-	if err != nil {
+	if _, err = k.CallEVMWithData(ctx, types.ModuleAddress, nil, data); err != nil {
 		return common.Address{}, sdkerrors.Wrapf(err, "failed to deploy contract for %s", coinMetadata.Name)
 	}
 
@@ -135,8 +134,7 @@ func (k Keeper) CreateCoinMetadata(ctx sdk.Context, contract common.Address) (*b
 		return nil, err
 	}
 
-	_, found := k.bankKeeper.GetDenomMetaData(ctx, types.CreateDenom(strContract))
-	if found {
+	if _, found := k.bankKeeper.GetDenomMetaData(ctx, types.CreateDenom(strContract)); found {
 		// metadata already exists; exit
 		return nil, sdkerrors.Wrap(types.ErrInternalTokenPair, "denom metadata already registered")
 	}
@@ -275,18 +273,17 @@ func (k Keeper) UpdateTokenPairERC20(ctx sdk.Context, erc20Addr, newERC20Addr co
 	// Update the metadata description with the new address
 	metadata.Description = types.CreateDenomDescription(newERC20Addr.String())
 	k.bankKeeper.SetDenomMetaData(ctx, metadata)
-	// Delete old token pair (id is changed because the address was modifed)
+	// Delete old token pair (id is changed because the ERC20 address was modifed)
 	k.DeleteTokenPair(ctx, pair)
 	// Update the address
 	pair.ERC20Address = newERC20Addr.Hex()
+	newID := pair.GetID()
 	// Set the new pair
 	k.SetTokenPair(ctx, pair)
 	// Overwrite the value because id was changed
-	k.SetDenomMap(ctx, pair.Denom, pair.GetID())
-	// Remove old address
-	k.DeleteERC20Map(ctx, erc20Addr)
+	k.SetDenomMap(ctx, pair.Denom, newID)
 	// Add the new address
-	k.SetERC20Map(ctx, common.HexToAddress(pair.ERC20Address), pair.GetID())
+	k.SetERC20Map(ctx, newERC20Addr, newID)
 	return pair, nil
 }
 
