@@ -7,8 +7,6 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/teleport-network/teleport/x/rvesting"
-
 	"github.com/gorilla/mux"
 	"github.com/rakyll/statik/fs"
 	"github.com/spf13/cast"
@@ -82,8 +80,6 @@ import (
 	upgradekeeper "github.com/cosmos/cosmos-sdk/x/upgrade/keeper"
 	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
 
-	rvestingkeeper "github.com/teleport-network/teleport/x/rvesting/keeper"
-
 	ica "github.com/cosmos/ibc-go/v3/modules/apps/27-interchain-accounts"
 	icacontrollerkeeper "github.com/cosmos/ibc-go/v3/modules/apps/27-interchain-accounts/controller/keeper"
 	icacontrollertypes "github.com/cosmos/ibc-go/v3/modules/apps/27-interchain-accounts/controller/types"
@@ -134,6 +130,8 @@ import (
 	aggregatekeeper "github.com/teleport-network/teleport/x/aggregate/keeper"
 	aggregatemodule "github.com/teleport-network/teleport/x/aggregate/module"
 	aggregatetypes "github.com/teleport-network/teleport/x/aggregate/types"
+	"github.com/teleport-network/teleport/x/rvesting"
+	rvestingkeeper "github.com/teleport-network/teleport/x/rvesting/keeper"
 	rvestingtypes "github.com/teleport-network/teleport/x/rvesting/types"
 	xibcmulticallkeeper "github.com/teleport-network/teleport/x/xibc/apps/multicall/keeper"
 	xibcmulticall "github.com/teleport-network/teleport/x/xibc/apps/multicall/module"
