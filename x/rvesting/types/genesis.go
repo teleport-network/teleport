@@ -21,8 +21,7 @@ func ValidateGenesis(data *GenesisState) error {
 		return err
 	}
 	if len(data.From) != 0 {
-		_, err := sdk.AccAddressFromBech32(data.From)
-		if err != nil {
+		if _, err := sdk.AccAddressFromBech32(data.From); err != nil {
 			return err
 		}
 		return data.InitReward.Validate()

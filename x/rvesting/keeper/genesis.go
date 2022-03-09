@@ -15,7 +15,7 @@ func (k Keeper) InitGenesis(ctx sdk.Context, genesisState *types.GenesisState) {
 	if err != nil {
 		panic(err)
 	}
-	if err = k.BankKeeper.SendCoinsFromAccountToModule(ctx, from, types.ModuleName, genesisState.InitReward); err != nil {
+	if err = k.bankKeeper.SendCoinsFromAccountToModule(ctx, from, types.ModuleName, genesisState.InitReward); err != nil {
 		panic(err)
 	}
 }
