@@ -64,9 +64,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/gov"
 	govkeeper "github.com/cosmos/cosmos-sdk/x/gov/keeper"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
-	"github.com/cosmos/cosmos-sdk/x/mint"
-	mintkeeper "github.com/cosmos/cosmos-sdk/x/mint/keeper"
-	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
 	"github.com/cosmos/cosmos-sdk/x/params"
 	paramsclient "github.com/cosmos/cosmos-sdk/x/params/client"
 	paramskeeper "github.com/cosmos/cosmos-sdk/x/params/keeper"
@@ -133,6 +130,9 @@ import (
 	aggregatekeeper "github.com/teleport-network/teleport/x/aggregate/keeper"
 	aggregatemodule "github.com/teleport-network/teleport/x/aggregate/module"
 	aggregatetypes "github.com/teleport-network/teleport/x/aggregate/types"
+	"github.com/teleport-network/teleport/x/rvesting"
+	rvestingkeeper "github.com/teleport-network/teleport/x/rvesting/keeper"
+	rvestingtypes "github.com/teleport-network/teleport/x/rvesting/types"
 	xibcmulticallkeeper "github.com/teleport-network/teleport/x/xibc/apps/multicall/keeper"
 	xibcmulticall "github.com/teleport-network/teleport/x/xibc/apps/multicall/module"
 	xibcmulticalltypes "github.com/teleport-network/teleport/x/xibc/apps/multicall/types"
@@ -177,7 +177,6 @@ var (
 		bank.AppModuleBasic{},
 		capability.AppModuleBasic{},
 		staking.AppModuleBasic{},
-		mint.AppModuleBasic{},
 		distr.AppModuleBasic{},
 		gov.NewAppModuleBasic(
 			paramsclient.ProposalHandler,
@@ -216,13 +215,13 @@ var (
 		xibctransfer.AppModuleBasic{},
 		xibcrcc.AppModuleBasic{},
 		xibcmulticall.AppModuleBasic{},
+		rvesting.AppModuleBasic{},
 	)
 
 	// module account permissions
 	maccPerms = map[string][]string{
 		authtypes.FeeCollectorName:     nil,
 		distrtypes.ModuleName:          nil,
-		minttypes.ModuleName:           {authtypes.Minter},
 		stakingtypes.BondedPoolName:    {authtypes.Burner, authtypes.Staking},
 		stakingtypes.NotBondedPoolName: {authtypes.Burner, authtypes.Staking},
 		govtypes.ModuleName:            {authtypes.Burner},
@@ -233,6 +232,7 @@ var (
 		xibcrcctypes.ModuleName:        nil,
 		aggregatetypes.ModuleName:      {authtypes.Minter, authtypes.Burner},
 		icatypes.ModuleName:            nil,
+		rvestingtypes.ModuleName:       nil,
 	}
 
 	// module accounts that are allowed to receive tokens
@@ -272,7 +272,6 @@ type Teleport struct {
 	CapabilityKeeper    *capabilitykeeper.Keeper
 	StakingKeeper       stakingkeeper.Keeper
 	SlashingKeeper      slashingkeeper.Keeper
-	MintKeeper          mintkeeper.Keeper
 	DistrKeeper         distrkeeper.Keeper
 	GovKeeper           govkeeper.Keeper
 	CrisisKeeper        crisiskeeper.Keeper
@@ -308,6 +307,7 @@ type Teleport struct {
 
 	// Teleport keepers
 	AggregateKeeper aggregatekeeper.Keeper
+	RVestingKeeper  rvestingkeeper.Keeper
 
 	// the module manager
 	mm *module.Manager
@@ -355,7 +355,6 @@ func NewTeleport(
 		authtypes.StoreKey,
 		banktypes.StoreKey,
 		stakingtypes.StoreKey,
-		minttypes.StoreKey,
 		distrtypes.StoreKey,
 		slashingtypes.StoreKey,
 		govtypes.StoreKey,
@@ -425,10 +424,6 @@ func NewTeleport(
 	stakingKeeper := stakingkeeper.NewKeeper(
 		appCodec, keys[stakingtypes.StoreKey], app.AccountKeeper, app.BankKeeper, app.GetSubspace(stakingtypes.ModuleName),
 	)
-	app.MintKeeper = mintkeeper.NewKeeper(
-		appCodec, keys[minttypes.StoreKey], app.GetSubspace(minttypes.ModuleName), &stakingKeeper,
-		app.AccountKeeper, app.BankKeeper, authtypes.FeeCollectorName,
-	)
 	app.DistrKeeper = distrkeeper.NewKeeper(
 		appCodec, keys[distrtypes.StoreKey], app.GetSubspace(distrtypes.ModuleName), app.AccountKeeper, app.BankKeeper,
 		&stakingKeeper, authtypes.FeeCollectorName, app.ModuleAccountAddrs(),
@@ -483,6 +478,11 @@ func NewTeleport(
 		app.StakingKeeper,
 		app.AccountKeeper,
 		app.EvmKeeper,
+	)
+
+	// Create RVesting Keeper
+	app.RVestingKeeper = rvestingkeeper.NewKeeper(
+		app.GetSubspace(rvestingtypes.ModuleName), app.BankKeeper, app.AccountKeeper, authtypes.FeeCollectorName,
 	)
 
 	// register the proposal types
@@ -627,7 +627,6 @@ func NewTeleport(
 		capability.NewAppModule(appCodec, *app.CapabilityKeeper),
 		crisis.NewAppModule(&app.CrisisKeeper, skipGenesisInvariants),
 		gov.NewAppModule(appCodec, app.GovKeeper, app.AccountKeeper, app.BankKeeper),
-		mint.NewAppModule(appCodec, app.MintKeeper, app.AccountKeeper),
 		slashing.NewAppModule(appCodec, app.SlashingKeeper, app.AccountKeeper, app.BankKeeper, app.StakingKeeper),
 		distr.NewAppModule(appCodec, app.DistrKeeper, app.AccountKeeper, app.BankKeeper, app.StakingKeeper),
 		staking.NewAppModule(appCodec, app.StakingKeeper, app.AccountKeeper, app.BankKeeper),
@@ -650,6 +649,7 @@ func NewTeleport(
 		feemarket.NewAppModule(app.FeeMarketKeeper),
 		// teleport app modules
 		aggregatemodule.NewAppModule(app.AggregateKeeper, app.AccountKeeper),
+		rvesting.NewAppModule(app.RVestingKeeper),
 	)
 
 	// During begin block slashing happens after distr.BeginBlocker so that
@@ -663,7 +663,7 @@ func NewTeleport(
 		capabilitytypes.ModuleName,
 		feemarkettypes.ModuleName,
 		evmtypes.ModuleName,
-		minttypes.ModuleName,
+		rvestingtypes.ModuleName, // must come before distribution module
 		distrtypes.ModuleName,
 		slashingtypes.ModuleName,
 		evidencetypes.ModuleName,
@@ -705,7 +705,6 @@ func NewTeleport(
 		banktypes.ModuleName,
 		distrtypes.ModuleName,
 		slashingtypes.ModuleName,
-		minttypes.ModuleName,
 		genutiltypes.ModuleName,
 		evidencetypes.ModuleName,
 		authz.ModuleName,
@@ -717,6 +716,7 @@ func NewTeleport(
 		xibctransfertypes.ModuleName,
 		xibcrcctypes.ModuleName,
 		xibcmulticalltypes.ModuleName,
+		rvestingtypes.ModuleName,
 	)
 
 	// NOTE: The genutils module must occur after staking so that pools are
@@ -733,7 +733,6 @@ func NewTeleport(
 		stakingtypes.ModuleName,
 		slashingtypes.ModuleName,
 		govtypes.ModuleName,
-		minttypes.ModuleName,
 		ibchost.ModuleName,
 		genutiltypes.ModuleName,
 		evidencetypes.ModuleName,
@@ -753,6 +752,7 @@ func NewTeleport(
 		xibctransfertypes.ModuleName,
 		xibcrcctypes.ModuleName,
 		xibcmulticalltypes.ModuleName,
+		rvestingtypes.ModuleName,
 		// NOTE: crisis module must go at the end to check for invariants on each module
 		crisistypes.ModuleName,
 	)
@@ -779,7 +779,6 @@ func NewTeleport(
 		bank.NewAppModule(appCodec, app.BankKeeper, app.AccountKeeper),
 		capability.NewAppModule(appCodec, *app.CapabilityKeeper),
 		gov.NewAppModule(appCodec, app.GovKeeper, app.AccountKeeper, app.BankKeeper),
-		mint.NewAppModule(appCodec, app.MintKeeper, app.AccountKeeper),
 		staking.NewAppModule(appCodec, app.StakingKeeper, app.AccountKeeper, app.BankKeeper),
 		distr.NewAppModule(appCodec, app.DistrKeeper, app.AccountKeeper, app.BankKeeper, app.StakingKeeper),
 		slashing.NewAppModule(appCodec, app.SlashingKeeper, app.AccountKeeper, app.BankKeeper, app.StakingKeeper),
@@ -795,6 +794,7 @@ func NewTeleport(
 		xibcMultiCallModule,
 		evm.NewAppModule(app.EvmKeeper, app.AccountKeeper),
 		feemarket.NewAppModule(app.FeeMarketKeeper),
+		//rvesting.NewAppModule(app.RVestingKeeper), todo to be implemented
 	)
 
 	app.sm.RegisterStoreDecoders()
@@ -1072,7 +1072,6 @@ func initParamsKeeper(appCodec codec.BinaryCodec, legacyAmino *codec.LegacyAmino
 	paramsKeeper.Subspace(authtypes.ModuleName)
 	paramsKeeper.Subspace(banktypes.ModuleName)
 	paramsKeeper.Subspace(stakingtypes.ModuleName)
-	paramsKeeper.Subspace(minttypes.ModuleName)
 	paramsKeeper.Subspace(distrtypes.ModuleName)
 	paramsKeeper.Subspace(slashingtypes.ModuleName)
 	paramsKeeper.Subspace(govtypes.ModuleName).WithKeyTable(govtypes.ParamKeyTable())
@@ -1086,5 +1085,6 @@ func initParamsKeeper(appCodec codec.BinaryCodec, legacyAmino *codec.LegacyAmino
 	paramsKeeper.Subspace(feemarkettypes.ModuleName)
 	// teleport subspaces
 	paramsKeeper.Subspace(aggregatetypes.ModuleName)
+	paramsKeeper.Subspace(rvestingtypes.ModuleName)
 	return paramsKeeper
 }

@@ -42,7 +42,8 @@ rem Change parameter token denominations to atele
 cat %GENESIS% | jq ".app_state[\"staking\"][\"params\"][\"bond_denom\"]=\"atele\""   >   %TMPGENESIS% && move %TMPGENESIS% %GENESIS%
 cat %GENESIS% | jq ".app_state[\"crisis\"][\"constant_fee\"][\"denom\"]=\"atele\"" > %TMPGENESIS% && move %TMPGENESIS% %GENESIS%
 cat %GENESIS% | jq ".app_state[\"gov\"][\"deposit_params\"][\"min_deposit\"][0][\"denom\"]=\"atele\"" > %TMPGENESIS% && move %TMPGENESIS% %GENESIS%
-cat %GENESIS% | jq ".app_state[\"mint\"][\"params\"][\"mint_denom\"]=\"atele\"" > %TMPGENESIS% && move %TMPGENESIS% %GENESIS%
+cat %GENESIS% | jq ".app_state[\"evm\"][\"params\"][\"evm_denom\"]=\"atele\"" > %TMPGENESIS% && move %TMPGENESIS% %GENESIS%
+
 
 rem increase block time (?)
 cat %GENESIS% | jq ".consensus_params[\"block\"][\"time_iota_ms\"]=\"30000\"" > %TMPGENESIS% && move %TMPGENESIS% %GENESIS%
