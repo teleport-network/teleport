@@ -8,8 +8,6 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
-	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
-
 	"github.com/teleport-network/teleport/x/aggregate/types"
 )
 
@@ -451,7 +449,7 @@ func (suite *KeeperTestSuite) TestConvertNativeIBC() {
 		Display: base,
 	}
 
-	err := suite.app.BankKeeper.MintCoins(suite.ctx, minttypes.ModuleName, sdk.Coins{sdk.NewInt64Coin(base, 1)})
+	err := suite.app.BankKeeper.MintCoins(suite.ctx, types.ModuleName, sdk.Coins{sdk.NewInt64Coin(base, 1)})
 	suite.Require().NoError(err)
 
 	_, err = suite.app.AggregateKeeper.RegisterCoin(suite.ctx, validMetadata)
