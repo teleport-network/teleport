@@ -36,6 +36,18 @@
   
     - [Msg](#teleport.aggregate.v1.Msg)
   
+- [teleport/rvesting/v1/genesis.proto](#teleport/rvesting/v1/genesis.proto)
+    - [GenesisState](#teleport.rvesting.v1.GenesisState)
+    - [Params](#teleport.rvesting.v1.Params)
+  
+- [teleport/rvesting/v1/query.proto](#teleport/rvesting/v1/query.proto)
+    - [QueryParamsRequest](#teleport.rvesting.v1.QueryParamsRequest)
+    - [QueryParamsResponse](#teleport.rvesting.v1.QueryParamsResponse)
+    - [QueryRemainingRequest](#teleport.rvesting.v1.QueryRemainingRequest)
+    - [QueryRemainingResponse](#teleport.rvesting.v1.QueryRemainingResponse)
+  
+    - [Query](#teleport.rvesting.v1.Query)
+  
 - [xibc/apps/multicall/v1/multicall.proto](#xibc/apps/multicall/v1/multicall.proto)
 - [xibc/apps/rcc/v1/event.proto](#xibc/apps/rcc/v1/event.proto)
     - [EventAckPacket](#xibc.apps.rcc.v1.EventAckPacket)
@@ -533,6 +545,133 @@ Msg defines the aggregate Msg service.
 | ----------- | ------------ | ------------- | ------------| ------- | -------- |
 | `ConvertCoin` | [MsgConvertCoin](#teleport.aggregate.v1.MsgConvertCoin) | [MsgConvertCoinResponse](#teleport.aggregate.v1.MsgConvertCoinResponse) | ConvertCoin mints a ERC20 representation of the SDK Coin denom that is registered on the token mapping. | GET|/teleport/aggregate/v1/tx/convert_coin|
 | `ConvertERC20` | [MsgConvertERC20](#teleport.aggregate.v1.MsgConvertERC20) | [MsgConvertERC20Response](#teleport.aggregate.v1.MsgConvertERC20Response) | ConvertERC20 mints a Cosmos coin representation of the ERC20 token contract that is registered on the token mapping. | GET|/teleport/aggregate/v1/tx/convert_erc20|
+
+ <!-- end services -->
+
+
+
+<a name="teleport/rvesting/v1/genesis.proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## teleport/rvesting/v1/genesis.proto
+
+
+
+<a name="teleport.rvesting.v1.GenesisState"></a>
+
+### GenesisState
+GenesisState defines the module's genesis state
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `params` | [Params](#teleport.rvesting.v1.Params) |  | module parameters invariant |
+| `from` | [string](#string) |  |  |
+| `init_reward` | [cosmos.base.v1beta1.Coin](#cosmos.base.v1beta1.Coin) | repeated |  |
+
+
+
+
+
+
+<a name="teleport.rvesting.v1.Params"></a>
+
+### Params
+Params defines the rvesting module params
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `enable_vesting` | [bool](#bool) |  | parameter to enable the vesting of staking reward |
+| `per_block_reward` | [cosmos.base.v1beta1.Coin](#cosmos.base.v1beta1.Coin) | repeated |  |
+
+
+
+
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
+<a name="teleport/rvesting/v1/query.proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## teleport/rvesting/v1/query.proto
+
+
+
+<a name="teleport.rvesting.v1.QueryParamsRequest"></a>
+
+### QueryParamsRequest
+QueryParamsRequest is the request type for the Query/Params RPC method.
+
+
+
+
+
+
+<a name="teleport.rvesting.v1.QueryParamsResponse"></a>
+
+### QueryParamsResponse
+QueryParamsResponse is the response type for the Query/Params RPC method.
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `params` | [Params](#teleport.rvesting.v1.Params) |  | params defines the parameters of the module. |
+
+
+
+
+
+
+<a name="teleport.rvesting.v1.QueryRemainingRequest"></a>
+
+### QueryRemainingRequest
+
+
+
+
+
+
+
+<a name="teleport.rvesting.v1.QueryRemainingResponse"></a>
+
+### QueryRemainingResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `address` | [string](#string) |  |  |
+| `remaining` | [cosmos.base.v1beta1.Coin](#cosmos.base.v1beta1.Coin) | repeated |  |
+
+
+
+
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+
+<a name="teleport.rvesting.v1.Query"></a>
+
+### Query
+
+
+| Method Name | Request Type | Response Type | Description | HTTP Verb | Endpoint |
+| ----------- | ------------ | ------------- | ------------| ------- | -------- |
+| `Params` | [QueryParamsRequest](#teleport.rvesting.v1.QueryParamsRequest) | [QueryParamsResponse](#teleport.rvesting.v1.QueryParamsResponse) | Params returns the total set of parameters. | GET|/teleport/rvesting/v1/params|
+| `Remaining` | [QueryRemainingRequest](#teleport.rvesting.v1.QueryRemainingRequest) | [QueryRemainingResponse](#teleport.rvesting.v1.QueryRemainingResponse) |  | GET|/teleport/rvesting/v1/remaining|
 
  <!-- end services -->
 

@@ -40,9 +40,11 @@ func validatePerBlockReward(r interface{}) error {
 // pairs of auth module's parameters.
 func (m *Params) ParamSetPairs() paramtypes.ParamSetPairs {
 	return paramtypes.ParamSetPairs{
-		paramtypes.NewParamSetPair(KeyEnableVesting, &m.EnableVesting, func(value interface{}) error {
-			return nil
-		}),
+		paramtypes.NewParamSetPair(
+			KeyEnableVesting,
+			&m.EnableVesting,
+			func(value interface{}) error { return nil },
+		),
 		paramtypes.NewParamSetPair(KeyPerBlockReward, &m.PerBlockReward, validatePerBlockReward),
 	}
 }

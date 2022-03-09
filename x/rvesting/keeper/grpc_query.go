@@ -19,8 +19,8 @@ func (k Keeper) Params(c context.Context, _ *types.QueryParamsRequest) (*types.Q
 
 func (k Keeper) Remaining(c context.Context, _ *types.QueryRemainingRequest) (*types.QueryRemainingResponse, error) {
 	ctx := sdk.UnwrapSDKContext(c)
-	rvestingAddr := k.AccountKeeper.GetModuleAddress(types.ModuleName)
-	totalRemaining := k.BankKeeper.GetAllBalances(ctx, rvestingAddr)
+	rvestingAddr := k.accountKeeper.GetModuleAddress(types.ModuleName)
+	totalRemaining := k.bankKeeper.GetAllBalances(ctx, rvestingAddr)
 	return &types.QueryRemainingResponse{
 		Address:   rvestingAddr.String(),
 		Remaining: totalRemaining,

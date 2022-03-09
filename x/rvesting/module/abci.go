@@ -13,12 +13,11 @@ import (
 func BeginBlocker(ctx sdk.Context, k keeper.Keeper) {
 	defer telemetry.ModuleMeasureSince(types.ModuleName, time.Now(), telemetry.MetricKeyBeginBlocker)
 
-	rvestingAddr := k.AccountKeeper.GetModuleAddress(types.ModuleName)
 	params := k.GetParams(ctx)
 
 	vestedCoins := sdk.NewCoins()
 	for _, reward := range params.PerBlockReward {
-		remainingCoin := k.BankKeeper.GetBalance(ctx, rvestingAddr, reward.GetDenom())
+		remainingCoin := k.GetRemainingCoin(ctx, reward.GetDenom())
 		if remainingCoin.IsZero() {
 			continue
 		}
@@ -29,10 +28,9 @@ func BeginBlocker(ctx sdk.Context, k keeper.Keeper) {
 		}
 	}
 
-	if vestedCoins.IsZero() {
-		return
-	}
-	if err := k.BankKeeper.SendCoinsFromModuleToModule(ctx, types.ModuleName, k.FeeCollectorName, vestedCoins); err != nil {
-		panic(err)
+	if !vestedCoins.IsZero() {
+		if err := k.SendVestedCoins(ctx, vestedCoins); err != nil {
+			panic(err)
+		}
 	}
 }

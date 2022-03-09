@@ -130,8 +130,8 @@ import (
 	aggregatekeeper "github.com/teleport-network/teleport/x/aggregate/keeper"
 	aggregatemodule "github.com/teleport-network/teleport/x/aggregate/module"
 	aggregatetypes "github.com/teleport-network/teleport/x/aggregate/types"
-	"github.com/teleport-network/teleport/x/rvesting"
 	rvestingkeeper "github.com/teleport-network/teleport/x/rvesting/keeper"
+	rvestingmodule "github.com/teleport-network/teleport/x/rvesting/module"
 	rvestingtypes "github.com/teleport-network/teleport/x/rvesting/types"
 	xibcmulticallkeeper "github.com/teleport-network/teleport/x/xibc/apps/multicall/keeper"
 	xibcmulticall "github.com/teleport-network/teleport/x/xibc/apps/multicall/module"
@@ -216,7 +216,7 @@ var (
 		xibctransfer.AppModuleBasic{},
 		xibcrcc.AppModuleBasic{},
 		xibcmulticall.AppModuleBasic{},
-		rvesting.AppModuleBasic{},
+		rvestingmodule.AppModuleBasic{},
 	)
 
 	// module account permissions
@@ -650,7 +650,7 @@ func NewTeleport(
 		feemarket.NewAppModule(app.FeeMarketKeeper),
 		// teleport app modules
 		aggregatemodule.NewAppModule(app.AggregateKeeper, app.AccountKeeper),
-		rvesting.NewAppModule(app.RVestingKeeper),
+		rvestingmodule.NewAppModule(app.RVestingKeeper),
 	)
 
 	// During begin block slashing happens after distr.BeginBlocker so that
