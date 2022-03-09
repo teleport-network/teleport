@@ -2,11 +2,12 @@ package app
 
 import (
 	"encoding/json"
-	"github.com/teleport-network/teleport/x/rvesting"
 	"io"
 	"net/http"
 	"os"
 	"path/filepath"
+
+	"github.com/teleport-network/teleport/x/rvesting"
 
 	"github.com/gorilla/mux"
 	"github.com/rakyll/statik/fs"
@@ -80,6 +81,7 @@ import (
 	upgradeclient "github.com/cosmos/cosmos-sdk/x/upgrade/client"
 	upgradekeeper "github.com/cosmos/cosmos-sdk/x/upgrade/keeper"
 	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
+
 	rvestingkeeper "github.com/teleport-network/teleport/x/rvesting/keeper"
 
 	ica "github.com/cosmos/ibc-go/v3/modules/apps/27-interchain-accounts"

@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+
 	rvestingtypes "github.com/teleport-network/teleport/x/rvesting/types"
 
 	"github.com/spf13/cobra"

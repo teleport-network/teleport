@@ -15,9 +15,10 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/grpc-ecosystem/grpc-gateway/runtime"
 	"github.com/spf13/cobra"
+	abci "github.com/tendermint/tendermint/abci/types"
+
 	"github.com/teleport-network/teleport/x/rvesting/keeper"
 	"github.com/teleport-network/teleport/x/rvesting/types"
-	abci "github.com/tendermint/tendermint/abci/types"
 )
 
 type AppModuleBasic struct{}
@@ -47,7 +48,9 @@ func (a AppModuleBasic) ValidateGenesis(cdc codec.JSONCodec, config client.TxEnc
 func (a AppModuleBasic) RegisterRESTRoutes(clientCtx client.Context, router *mux.Router) {}
 
 func (a AppModuleBasic) RegisterGRPCGatewayRoutes(clientCtx client.Context, mux *runtime.ServeMux) {
-	types.RegisterQueryHandlerClient(context.Background(), mux, types.NewQueryClient(clientCtx))
+	if err := types.RegisterQueryHandlerClient(context.Background(), mux, types.NewQueryClient(clientCtx)); err != nil {
+		panic(err)
+	}
 }
 
 func (a AppModuleBasic) GetTxCmd() *cobra.Command {

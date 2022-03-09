@@ -2,6 +2,7 @@ package keeper
 
 import (
 	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
+
 	"github.com/teleport-network/teleport/x/rvesting/types"
 )
 
