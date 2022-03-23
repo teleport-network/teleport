@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	sm "github.com/tendermint/tendermint/state"
 	dbm "github.com/tendermint/tm-db"
@@ -33,12 +34,18 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	for _, e := range res.BeginBlock.GetEvents() {
-		fmt.Println("type: ", e.GetType())
-		for _, ea := range e.Attributes {
-			fmt.Println(fmt.Sprintf("key: %s, value: %s", string(ea.Key), string(ea.GetValue())))
-		}
-		fmt.Println()
+
+	jsonStr, err := json.Marshal(res)
+	if err != nil {
+		panic(err)
 	}
+	fmt.Println(string(jsonStr))
+	//for _, e := range res.BeginBlock.GetEvents() {
+	//	fmt.Println("type: ", e.GetType())
+	//	for _, ea := range e.Attributes {
+	//		fmt.Println(fmt.Sprintf("key: %s, value: %s", string(ea.Key), string(ea.GetValue())))
+	//	}
+	//	fmt.Println()
+	//}
 
 }
