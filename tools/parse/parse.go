@@ -26,8 +26,8 @@ func main() {
 }
 
 func parseAddress(key string) (string, string) {
-	addrBytes, _ := hex.DecodeString(key[4:])
-	return key[4:], newBech32Output(addrBytes).Formats[0]
+	addrBytes, _ := hex.DecodeString(key[4:44])
+	return key[4:44], newBech32Output(addrBytes).Formats[0]
 }
 
 func parseBalance(value string) sdk.Coin {
