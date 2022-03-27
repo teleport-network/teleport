@@ -133,7 +133,7 @@ func (suite *TransferTestSuite) TestTransferBase() common.Address {
 		[]string{types.PortID},
 		[][]byte{DataListBaseBz},
 	)
-	ack, err := packettypes.NewResultAcknowledgement([][]byte{{byte(1)}}).GetBytes()
+	ack, err := packettypes.NewResultAcknowledgement([][]byte{{byte(1)}}, "").GetBytes()
 	suite.Require().NoError(err)
 	err = path.RelayPacket(packet, ack)
 	suite.Require().NoError(err)
@@ -206,7 +206,7 @@ func (suite *TransferTestSuite) TestTransferBaseBack() {
 		[][]byte{DataListERC20Bz},
 	)
 
-	ack, err := packettypes.NewResultAcknowledgement([][]byte{{byte(1)}}).GetBytes()
+	ack, err := packettypes.NewResultAcknowledgement([][]byte{{byte(1)}}, "").GetBytes()
 	suite.Require().NoError(err)
 	err = path.RelayPacket(packet, ack)
 	suite.Require().NoError(err)
@@ -314,7 +314,7 @@ func (suite *TransferTestSuite) TestTransferBaseByRelayChain() common.Address {
 	suite.Require().NoError(err)
 
 	// commit block
-	ack, err := packettypes.NewResultAcknowledgement([][]byte{{byte(1)}}).GetBytes()
+	ack, err := packettypes.NewResultAcknowledgement([][]byte{{byte(1)}}, "").GetBytes()
 	suite.Require().NoError(err)
 	suite.coordinator.CommitBlock(suite.chainA, suite.chainB, suite.chainC)
 	err = pathBtoC.RelayPacket(packet, ack)
@@ -426,7 +426,7 @@ func (suite *TransferTestSuite) TestTransferERC20() {
 	// commit block
 	suite.coordinator.CommitBlock(suite.chainA, suite.chainB)
 
-	ack, err := packettypes.NewResultAcknowledgement([][]byte{{byte(1)}}).GetBytes()
+	ack, err := packettypes.NewResultAcknowledgement([][]byte{{byte(1)}}, "").GetBytes()
 	suite.Require().NoError(err)
 	err = path.RelayPacket(packet, ack)
 	suite.Require().NoError(err)
@@ -506,7 +506,7 @@ func (suite *TransferTestSuite) TestTransferERC20Back() {
 		[][]byte{DataListERC20Bz},
 	)
 
-	ack, err := packettypes.NewResultAcknowledgement([][]byte{{byte(1)}}).GetBytes()
+	ack, err := packettypes.NewResultAcknowledgement([][]byte{{byte(1)}}, "").GetBytes()
 	suite.Require().NoError(err)
 	err = path.RelayPacket(packet, ack)
 	suite.Require().NoError(err)
@@ -611,7 +611,7 @@ func (suite *TransferTestSuite) TestTransferScaledERC20() {
 	// commit block
 	suite.coordinator.CommitBlock(suite.chainA, suite.chainB)
 
-	ack, err := packettypes.NewResultAcknowledgement([][]byte{{byte(1)}}).GetBytes()
+	ack, err := packettypes.NewResultAcknowledgement([][]byte{{byte(1)}}, "").GetBytes()
 	suite.Require().NoError(err)
 	err = path.RelayPacket(packet, ack)
 	suite.Require().NoError(err)
@@ -692,7 +692,7 @@ func (suite *TransferTestSuite) TestTransferScaledERC20Back() {
 		[][]byte{DataListERC20Bz},
 	)
 
-	ack, err := packettypes.NewResultAcknowledgement([][]byte{{byte(1)}}).GetBytes()
+	ack, err := packettypes.NewResultAcknowledgement([][]byte{{byte(1)}}, "").GetBytes()
 	suite.Require().NoError(err)
 	err = path.RelayPacket(packet, ack)
 	suite.Require().NoError(err)
@@ -792,7 +792,7 @@ func (suite *TransferTestSuite) TestTransferWTele() {
 	// commit block
 	suite.coordinator.CommitBlock(suite.chainA, suite.chainB)
 
-	ack, err := packettypes.NewResultAcknowledgement([][]byte{{byte(1)}}).GetBytes()
+	ack, err := packettypes.NewResultAcknowledgement([][]byte{{byte(1)}}, "").GetBytes()
 	suite.Require().NoError(err)
 	err = path.RelayPacket(packet, ack)
 	suite.Require().NoError(err)
@@ -873,7 +873,7 @@ func (suite *TransferTestSuite) TestTransferWTeleBack() {
 		[][]byte{DataListERC20Bz},
 	)
 
-	ack, err := packettypes.NewResultAcknowledgement([][]byte{{byte(1)}}).GetBytes()
+	ack, err := packettypes.NewResultAcknowledgement([][]byte{{byte(1)}}, "").GetBytes()
 	suite.Require().NoError(err)
 	err = path.RelayPacket(packet, ack)
 	suite.Require().NoError(err)

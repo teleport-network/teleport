@@ -71,10 +71,13 @@ func (k Keeper) HandleToggleClient(ctx sdk.Context, p *types.ToggleClientProposa
 }
 
 func (k Keeper) HandleRegisterRelayer(ctx sdk.Context, p *types.RegisterRelayerProposal) error {
-	// if _, has := k.GetClientState(ctx, p.ChainName); !has {
-	// 	return sdkerrors.Wrapf(types.ErrClientNotFound, "chain-name: %s", p.ChainName)
+	// for _, chain := range p.Chains {
+	// 	if _, has := k.GetClientState(ctx, chain); !has {
+	// 		return sdkerrors.Wrapf(types.ErrClientNotFound, "chain-name: %s", chain)
+	// 	}
 	// }
-	k.RegisterRelayers(ctx, p.ChainName, p.Relayers)
+
+	k.RegisterRelayers(ctx, p.Address, p.Chains, p.Addresses)
 
 	return nil
 }

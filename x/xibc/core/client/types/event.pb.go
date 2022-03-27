@@ -206,58 +206,6 @@ func (m *EventToggleClientProposal) GetConsensusHeight() string {
 	return ""
 }
 
-type EventRegisterRelayerProposal struct {
-	ChainName string   `protobuf:"bytes,1,opt,name=chain_name,json=chainName,proto3" json:"chain_name,omitempty"`
-	Relayers  []string `protobuf:"bytes,2,rep,name=relayers,proto3" json:"relayers,omitempty"`
-}
-
-func (m *EventRegisterRelayerProposal) Reset()         { *m = EventRegisterRelayerProposal{} }
-func (m *EventRegisterRelayerProposal) String() string { return proto.CompactTextString(m) }
-func (*EventRegisterRelayerProposal) ProtoMessage()    {}
-func (*EventRegisterRelayerProposal) Descriptor() ([]byte, []int) {
-	return fileDescriptor_1a0c7afdb230cd6a, []int{3}
-}
-func (m *EventRegisterRelayerProposal) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *EventRegisterRelayerProposal) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_EventRegisterRelayerProposal.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *EventRegisterRelayerProposal) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_EventRegisterRelayerProposal.Merge(m, src)
-}
-func (m *EventRegisterRelayerProposal) XXX_Size() int {
-	return m.Size()
-}
-func (m *EventRegisterRelayerProposal) XXX_DiscardUnknown() {
-	xxx_messageInfo_EventRegisterRelayerProposal.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_EventRegisterRelayerProposal proto.InternalMessageInfo
-
-func (m *EventRegisterRelayerProposal) GetChainName() string {
-	if m != nil {
-		return m.ChainName
-	}
-	return ""
-}
-
-func (m *EventRegisterRelayerProposal) GetRelayers() []string {
-	if m != nil {
-		return m.Relayers
-	}
-	return nil
-}
-
 // EventUpdateClient is emitted on update client
 type EventUpdateClient struct {
 	ChainName       string `protobuf:"bytes,1,opt,name=chain_name,json=chainName,proto3" json:"chain_name,omitempty"`
@@ -270,7 +218,7 @@ func (m *EventUpdateClient) Reset()         { *m = EventUpdateClient{} }
 func (m *EventUpdateClient) String() string { return proto.CompactTextString(m) }
 func (*EventUpdateClient) ProtoMessage()    {}
 func (*EventUpdateClient) Descriptor() ([]byte, []int) {
-	return fileDescriptor_1a0c7afdb230cd6a, []int{4}
+	return fileDescriptor_1a0c7afdb230cd6a, []int{3}
 }
 func (m *EventUpdateClient) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -327,40 +275,101 @@ func (m *EventUpdateClient) GetHeader() string {
 	return ""
 }
 
+type EventRegisterRelayerProposal struct {
+	Address   string   `protobuf:"bytes,1,opt,name=address,proto3" json:"address,omitempty"`
+	Chains    []string `protobuf:"bytes,2,rep,name=chains,proto3" json:"chains,omitempty"`
+	Addresses []string `protobuf:"bytes,3,rep,name=addresses,proto3" json:"addresses,omitempty"`
+}
+
+func (m *EventRegisterRelayerProposal) Reset()         { *m = EventRegisterRelayerProposal{} }
+func (m *EventRegisterRelayerProposal) String() string { return proto.CompactTextString(m) }
+func (*EventRegisterRelayerProposal) ProtoMessage()    {}
+func (*EventRegisterRelayerProposal) Descriptor() ([]byte, []int) {
+	return fileDescriptor_1a0c7afdb230cd6a, []int{4}
+}
+func (m *EventRegisterRelayerProposal) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *EventRegisterRelayerProposal) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_EventRegisterRelayerProposal.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *EventRegisterRelayerProposal) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_EventRegisterRelayerProposal.Merge(m, src)
+}
+func (m *EventRegisterRelayerProposal) XXX_Size() int {
+	return m.Size()
+}
+func (m *EventRegisterRelayerProposal) XXX_DiscardUnknown() {
+	xxx_messageInfo_EventRegisterRelayerProposal.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_EventRegisterRelayerProposal proto.InternalMessageInfo
+
+func (m *EventRegisterRelayerProposal) GetAddress() string {
+	if m != nil {
+		return m.Address
+	}
+	return ""
+}
+
+func (m *EventRegisterRelayerProposal) GetChains() []string {
+	if m != nil {
+		return m.Chains
+	}
+	return nil
+}
+
+func (m *EventRegisterRelayerProposal) GetAddresses() []string {
+	if m != nil {
+		return m.Addresses
+	}
+	return nil
+}
+
 func init() {
 	proto.RegisterType((*EventCreateClientProposal)(nil), "xibc.core.client.v1.EventCreateClientProposal")
 	proto.RegisterType((*EventUpgradeClientProposal)(nil), "xibc.core.client.v1.EventUpgradeClientProposal")
 	proto.RegisterType((*EventToggleClientProposal)(nil), "xibc.core.client.v1.EventToggleClientProposal")
-	proto.RegisterType((*EventRegisterRelayerProposal)(nil), "xibc.core.client.v1.EventRegisterRelayerProposal")
 	proto.RegisterType((*EventUpdateClient)(nil), "xibc.core.client.v1.EventUpdateClient")
+	proto.RegisterType((*EventRegisterRelayerProposal)(nil), "xibc.core.client.v1.EventRegisterRelayerProposal")
 }
 
 func init() { proto.RegisterFile("xibc/core/client/v1/event.proto", fileDescriptor_1a0c7afdb230cd6a) }
 
 var fileDescriptor_1a0c7afdb230cd6a = []byte{
-	// 343 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xc4, 0x93, 0x31, 0x4f, 0xc2, 0x40,
-	0x14, 0xc7, 0x39, 0x30, 0x44, 0xce, 0x41, 0xad, 0xc6, 0x54, 0xa2, 0x85, 0x30, 0xe1, 0x60, 0x2f,
-	0xc4, 0xd9, 0x45, 0x62, 0xe2, 0x64, 0x4c, 0x83, 0x31, 0xba, 0x90, 0xa3, 0xbc, 0x5c, 0x1b, 0xcb,
-	0xbd, 0xe6, 0xee, 0x40, 0xf8, 0x02, 0xba, 0x3a, 0xf9, 0x99, 0x1c, 0x19, 0x1d, 0x0d, 0xfd, 0x22,
-	0xa6, 0x57, 0xd2, 0xc5, 0xc5, 0x49, 0xb6, 0xbe, 0xff, 0xfb, 0xbd, 0xe6, 0xd7, 0xd7, 0x3b, 0xda,
-	0x9a, 0xc7, 0xa3, 0x90, 0x85, 0xa8, 0x80, 0x85, 0x49, 0x0c, 0xd2, 0xb0, 0x59, 0x8f, 0xc1, 0x0c,
-	0xa4, 0xf1, 0x53, 0x85, 0x06, 0x9d, 0x83, 0x1c, 0xf0, 0x73, 0xc0, 0x2f, 0x00, 0x7f, 0xd6, 0x6b,
-	0x1e, 0x0a, 0x14, 0x68, 0xfb, 0x2c, 0x7f, 0x2a, 0xd0, 0xce, 0x2b, 0xa1, 0xc7, 0xd7, 0xf9, 0x68,
-	0x5f, 0x01, 0x37, 0xd0, 0xb7, 0xf8, 0x9d, 0xc2, 0x14, 0x35, 0x4f, 0x9c, 0x53, 0x4a, 0xc3, 0x88,
-	0xc7, 0x72, 0x28, 0xf9, 0x04, 0x5c, 0xd2, 0x26, 0xdd, 0x46, 0xd0, 0xb0, 0xc9, 0x2d, 0x9f, 0x80,
-	0xd3, 0xa2, 0x3b, 0xc5, 0xfb, 0x87, 0x66, 0x91, 0x82, 0x5b, 0xb5, 0x7d, 0x5a, 0x44, 0x83, 0x45,
-	0x0a, 0xce, 0x19, 0xdd, 0x0b, 0x51, 0x6a, 0x90, 0x7a, 0xaa, 0x87, 0x11, 0xc4, 0x22, 0x32, 0x6e,
-	0xcd, 0x52, 0xbb, 0x65, 0x7e, 0x63, 0xe3, 0xce, 0x1b, 0xa1, 0x4d, 0x2b, 0x72, 0x9f, 0x0a, 0xc5,
-	0xc7, 0x1b, 0x34, 0x29, 0x57, 0x32, 0x40, 0x21, 0x92, 0x0d, 0x8a, 0x3c, 0xd2, 0x13, 0xeb, 0x11,
-	0x80, 0x88, 0xb5, 0x01, 0x15, 0x40, 0xc2, 0x17, 0xa0, 0xfe, 0xaa, 0xd2, 0xa4, 0xdb, 0xaa, 0x98,
-	0xd0, 0x6e, 0xb5, 0x5d, 0xeb, 0x36, 0x82, 0xb2, 0xee, 0x7c, 0x10, 0xba, 0xbf, 0xde, 0xf6, 0xb8,
-	0xfc, 0xed, 0xff, 0xf8, 0x6d, 0xce, 0x11, 0xad, 0x47, 0xc0, 0xc7, 0xa0, 0xdc, 0x2d, 0x0b, 0xac,
-	0xab, 0xab, 0x87, 0xcf, 0x95, 0x47, 0x96, 0x2b, 0x8f, 0x7c, 0xaf, 0x3c, 0xf2, 0x9e, 0x79, 0x95,
-	0x65, 0xe6, 0x55, 0xbe, 0x32, 0xaf, 0xf2, 0x74, 0x29, 0x62, 0x13, 0x4d, 0x47, 0x7e, 0x88, 0x13,
-	0x66, 0x20, 0x81, 0x14, 0x95, 0x39, 0x97, 0x60, 0x5e, 0x50, 0x3d, 0x97, 0x01, 0x9b, 0xb3, 0x5f,
-	0x97, 0x23, 0x97, 0xd5, 0xa3, 0xba, 0x3d, 0xef, 0x17, 0x3f, 0x01, 0x00, 0x00, 0xff, 0xff, 0xbe,
-	0xca, 0x5d, 0x51, 0x3d, 0x03, 0x00, 0x00,
+	// 360 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xc4, 0x93, 0x31, 0x4b, 0xc3, 0x40,
+	0x14, 0xc7, 0x7b, 0xad, 0x54, 0x7a, 0x0e, 0x6a, 0x14, 0x39, 0x4b, 0x4d, 0x4b, 0x27, 0x1d, 0xcc,
+	0x51, 0x9c, 0x5d, 0x2c, 0x82, 0x93, 0x48, 0xa9, 0x08, 0x2e, 0xe5, 0x9a, 0x3c, 0x2e, 0xc1, 0xf4,
+	0x2e, 0xdc, 0x5d, 0x6b, 0xfb, 0x05, 0x74, 0x75, 0xf2, 0x33, 0x39, 0x76, 0x74, 0x94, 0xf6, 0x8b,
+	0xc8, 0x5d, 0x62, 0x1c, 0xdc, 0xed, 0x96, 0xf7, 0x7f, 0xbf, 0x3c, 0x7e, 0xbc, 0xe3, 0xe1, 0xf6,
+	0x3c, 0x19, 0x87, 0x34, 0x94, 0x0a, 0x68, 0x98, 0x26, 0x20, 0x0c, 0x9d, 0xf5, 0x28, 0xcc, 0x40,
+	0x98, 0x20, 0x53, 0xd2, 0x48, 0xef, 0xc0, 0x02, 0x81, 0x05, 0x82, 0x1c, 0x08, 0x66, 0xbd, 0xe6,
+	0x21, 0x97, 0x5c, 0xba, 0x3e, 0xb5, 0x5f, 0x39, 0xda, 0x7d, 0x41, 0xf8, 0xf8, 0xda, 0xfe, 0xda,
+	0x57, 0xc0, 0x0c, 0xf4, 0x1d, 0x7e, 0xa7, 0x64, 0x26, 0x35, 0x4b, 0xbd, 0x13, 0x8c, 0xc3, 0x98,
+	0x25, 0x62, 0x24, 0xd8, 0x04, 0x08, 0xea, 0xa0, 0xd3, 0xc6, 0xa0, 0xe1, 0x92, 0x5b, 0x36, 0x01,
+	0xaf, 0x8d, 0x77, 0xf2, 0xf9, 0x23, 0xb3, 0xc8, 0x80, 0x54, 0x5d, 0x1f, 0xe7, 0xd1, 0x70, 0x91,
+	0x81, 0x77, 0x86, 0xf7, 0x42, 0x29, 0x34, 0x08, 0x3d, 0xd5, 0xa3, 0x18, 0x12, 0x1e, 0x1b, 0x52,
+	0x73, 0xd4, 0x6e, 0x99, 0xdf, 0xb8, 0xb8, 0xfb, 0x8a, 0x70, 0xd3, 0x89, 0xdc, 0x67, 0x5c, 0xb1,
+	0x68, 0x83, 0x26, 0xe5, 0x4a, 0x86, 0x92, 0xf3, 0x74, 0x83, 0x22, 0xef, 0x08, 0xef, 0x17, 0x2b,
+	0x89, 0xca, 0xb7, 0xf9, 0x47, 0x01, 0xef, 0x08, 0xd7, 0x63, 0x60, 0x11, 0x28, 0xb2, 0xe5, 0x80,
+	0xa2, 0xea, 0x0a, 0xdc, 0x72, 0x5e, 0x03, 0xe0, 0x89, 0x36, 0xa0, 0x06, 0x90, 0xb2, 0x05, 0xa8,
+	0x72, 0x47, 0x04, 0x6f, 0xb3, 0x28, 0x52, 0xa0, 0x75, 0xe1, 0xf7, 0x53, 0xda, 0x89, 0x4e, 0x55,
+	0x93, 0x6a, 0xa7, 0x66, 0x27, 0xe6, 0x95, 0xd7, 0xc2, 0x8d, 0x02, 0x01, 0x4d, 0x6a, 0xae, 0xf5,
+	0x1b, 0x5c, 0x3d, 0x7c, 0xac, 0x7c, 0xb4, 0x5c, 0xf9, 0xe8, 0x6b, 0xe5, 0xa3, 0xb7, 0xb5, 0x5f,
+	0x59, 0xae, 0xfd, 0xca, 0xe7, 0xda, 0xaf, 0x3c, 0x5e, 0xf2, 0xc4, 0xc4, 0xd3, 0x71, 0x10, 0xca,
+	0x09, 0x35, 0x90, 0x42, 0x26, 0x95, 0x39, 0x17, 0x60, 0x9e, 0xa5, 0x7a, 0x2a, 0x03, 0x3a, 0xa7,
+	0x7f, 0x2e, 0xc6, 0x2e, 0x47, 0x8f, 0xeb, 0xee, 0x08, 0x2e, 0xbe, 0x03, 0x00, 0x00, 0xff, 0xff,
+	0x48, 0xc4, 0xde, 0x75, 0x52, 0x03, 0x00, 0x00,
 }
 
 func (m *EventCreateClientProposal) Marshal() (dAtA []byte, err error) {
@@ -495,45 +504,6 @@ func (m *EventToggleClientProposal) MarshalToSizedBuffer(dAtA []byte) (int, erro
 	return len(dAtA) - i, nil
 }
 
-func (m *EventRegisterRelayerProposal) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *EventRegisterRelayerProposal) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *EventRegisterRelayerProposal) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if len(m.Relayers) > 0 {
-		for iNdEx := len(m.Relayers) - 1; iNdEx >= 0; iNdEx-- {
-			i -= len(m.Relayers[iNdEx])
-			copy(dAtA[i:], m.Relayers[iNdEx])
-			i = encodeVarintEvent(dAtA, i, uint64(len(m.Relayers[iNdEx])))
-			i--
-			dAtA[i] = 0x12
-		}
-	}
-	if len(m.ChainName) > 0 {
-		i -= len(m.ChainName)
-		copy(dAtA[i:], m.ChainName)
-		i = encodeVarintEvent(dAtA, i, uint64(len(m.ChainName)))
-		i--
-		dAtA[i] = 0xa
-	}
-	return len(dAtA) - i, nil
-}
-
 func (m *EventUpdateClient) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
@@ -579,6 +549,54 @@ func (m *EventUpdateClient) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		i -= len(m.ChainName)
 		copy(dAtA[i:], m.ChainName)
 		i = encodeVarintEvent(dAtA, i, uint64(len(m.ChainName)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *EventRegisterRelayerProposal) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *EventRegisterRelayerProposal) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *EventRegisterRelayerProposal) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.Addresses) > 0 {
+		for iNdEx := len(m.Addresses) - 1; iNdEx >= 0; iNdEx-- {
+			i -= len(m.Addresses[iNdEx])
+			copy(dAtA[i:], m.Addresses[iNdEx])
+			i = encodeVarintEvent(dAtA, i, uint64(len(m.Addresses[iNdEx])))
+			i--
+			dAtA[i] = 0x1a
+		}
+	}
+	if len(m.Chains) > 0 {
+		for iNdEx := len(m.Chains) - 1; iNdEx >= 0; iNdEx-- {
+			i -= len(m.Chains[iNdEx])
+			copy(dAtA[i:], m.Chains[iNdEx])
+			i = encodeVarintEvent(dAtA, i, uint64(len(m.Chains[iNdEx])))
+			i--
+			dAtA[i] = 0x12
+		}
+	}
+	if len(m.Address) > 0 {
+		i -= len(m.Address)
+		copy(dAtA[i:], m.Address)
+		i = encodeVarintEvent(dAtA, i, uint64(len(m.Address)))
 		i--
 		dAtA[i] = 0xa
 	}
@@ -659,25 +677,6 @@ func (m *EventToggleClientProposal) Size() (n int) {
 	return n
 }
 
-func (m *EventRegisterRelayerProposal) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	l = len(m.ChainName)
-	if l > 0 {
-		n += 1 + l + sovEvent(uint64(l))
-	}
-	if len(m.Relayers) > 0 {
-		for _, s := range m.Relayers {
-			l = len(s)
-			n += 1 + l + sovEvent(uint64(l))
-		}
-	}
-	return n
-}
-
 func (m *EventUpdateClient) Size() (n int) {
 	if m == nil {
 		return 0
@@ -699,6 +698,31 @@ func (m *EventUpdateClient) Size() (n int) {
 	l = len(m.Header)
 	if l > 0 {
 		n += 1 + l + sovEvent(uint64(l))
+	}
+	return n
+}
+
+func (m *EventRegisterRelayerProposal) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Address)
+	if l > 0 {
+		n += 1 + l + sovEvent(uint64(l))
+	}
+	if len(m.Chains) > 0 {
+		for _, s := range m.Chains {
+			l = len(s)
+			n += 1 + l + sovEvent(uint64(l))
+		}
+	}
+	if len(m.Addresses) > 0 {
+		for _, s := range m.Addresses {
+			l = len(s)
+			n += 1 + l + sovEvent(uint64(l))
+		}
 	}
 	return n
 }
@@ -1147,120 +1171,6 @@ func (m *EventToggleClientProposal) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *EventRegisterRelayerProposal) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowEvent
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: EventRegisterRelayerProposal: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: EventRegisterRelayerProposal: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field ChainName", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowEvent
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthEvent
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthEvent
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.ChainName = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 2:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Relayers", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowEvent
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthEvent
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthEvent
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Relayers = append(m.Relayers, string(dAtA[iNdEx:postIndex]))
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipEvent(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthEvent
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
 func (m *EventUpdateClient) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
@@ -1417,6 +1327,152 @@ func (m *EventUpdateClient) Unmarshal(dAtA []byte) error {
 				return io.ErrUnexpectedEOF
 			}
 			m.Header = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipEvent(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthEvent
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *EventRegisterRelayerProposal) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowEvent
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: EventRegisterRelayerProposal: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: EventRegisterRelayerProposal: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Address", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowEvent
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthEvent
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthEvent
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Address = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Chains", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowEvent
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthEvent
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthEvent
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Chains = append(m.Chains, string(dAtA[iNdEx:postIndex]))
+			iNdEx = postIndex
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Addresses", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowEvent
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthEvent
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthEvent
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Addresses = append(m.Addresses, string(dAtA[iNdEx:postIndex]))
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex

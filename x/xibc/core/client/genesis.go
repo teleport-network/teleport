@@ -39,7 +39,7 @@ func InitGenesis(ctx sdk.Context, k keeper.Keeper, gs types.GenesisState) {
 	}
 
 	for _, rs := range gs.Relayers {
-		k.RegisterRelayers(ctx, rs.ChainName, rs.Relayers)
+		k.RegisterRelayers(ctx, rs.Address, rs.Chains, rs.Addresses)
 	}
 	k.SetChainName(ctx, gs.NativeChainName)
 }

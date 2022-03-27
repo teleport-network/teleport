@@ -87,7 +87,8 @@ func (suite *TendermintTestSuite) TestInitialize() {
 	suite.Require().NoError(err)
 
 	clientState := path.EndpointA.GetClientState()
-	relayers := path.EndpointA.Chain.App.XIBCKeeper.ClientKeeper.GetRelayers(path.EndpointA.Chain.GetContext(), path.EndpointA.Counterparty.ChainName)
+	// TODO
+	relayers := path.EndpointA.Chain.App.XIBCKeeper.ClientKeeper.GetAllRelayers(path.EndpointA.Chain.GetContext())
 	suite.Require().Equal(path.EndpointA.Chain.SenderAcc.String(), relayers[0], "relayer does not match")
 	store := path.EndpointA.ClientStore()
 
@@ -141,10 +142,12 @@ func (suite *TendermintTestSuite) TestVerifyPacketCommitment() {
 
 			suite.coordinator.SetupClients(path)
 
-			relayerAs := path.EndpointA.Chain.App.XIBCKeeper.ClientKeeper.GetRelayers(path.EndpointA.Chain.GetContext(), path.EndpointA.Counterparty.ChainName)
+			// TODO
+			relayerAs := path.EndpointA.Chain.App.XIBCKeeper.ClientKeeper.GetAllRelayers(path.EndpointA.Chain.GetContext())
 			suite.Require().Equal(path.EndpointA.Chain.SenderAcc.String(), relayerAs[0], "relayer does not match")
 
-			relayerBs := path.EndpointB.Chain.App.XIBCKeeper.ClientKeeper.GetRelayers(path.EndpointB.Chain.GetContext(), path.EndpointB.Counterparty.ChainName)
+			// TODO
+			relayerBs := path.EndpointB.Chain.App.XIBCKeeper.ClientKeeper.GetAllRelayers(path.EndpointB.Chain.GetContext())
 			suite.Require().Equal(path.EndpointB.Chain.SenderAcc.String(), relayerBs[0], "relayer does not match")
 
 			// setup testing conditions

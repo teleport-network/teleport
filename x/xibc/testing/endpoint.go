@@ -93,8 +93,9 @@ func (endpoint *Endpoint) CreateClient() error {
 	endpoint.Chain.App.XIBCKeeper.PacketKeeper.SetNextSequenceSend(ctx, endpoint.ChainName, endpoint.Counterparty.ChainName, 1)
 
 	// set relayers
-	relayers := []string{endpoint.Chain.SenderAcc.String()}
-	endpoint.Chain.App.XIBCKeeper.ClientKeeper.RegisterRelayers(endpoint.Chain.GetContext(), endpoint.Counterparty.ChainName, relayers)
+	// // TODO
+	// relayers := []string{endpoint.Chain.SenderAcc.String()}
+	// endpoint.Chain.App.XIBCKeeper.ClientKeeper.RegisterRelayers(endpoint.Chain.GetContext(), endpoint.Counterparty.ChainName, relayers)
 
 	// create counterparty chain light client
 	err := endpoint.Chain.App.XIBCKeeper.ClientKeeper.CreateClient(

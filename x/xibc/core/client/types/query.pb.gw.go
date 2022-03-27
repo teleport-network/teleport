@@ -295,24 +295,6 @@ func request_Query_Relayers_0(ctx context.Context, marshaler runtime.Marshaler, 
 	var protoReq QueryRelayersRequest
 	var metadata runtime.ServerMetadata
 
-	var (
-		val string
-		ok  bool
-		err error
-		_   = err
-	)
-
-	val, ok = pathParams["chain_name"]
-	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "chain_name")
-	}
-
-	protoReq.ChainName, err = runtime.String(val)
-
-	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "chain_name", err)
-	}
-
 	msg, err := client.Relayers(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
 	return msg, metadata, err
 
@@ -321,24 +303,6 @@ func request_Query_Relayers_0(ctx context.Context, marshaler runtime.Marshaler, 
 func local_request_Query_Relayers_0(ctx context.Context, marshaler runtime.Marshaler, server QueryServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var protoReq QueryRelayersRequest
 	var metadata runtime.ServerMetadata
-
-	var (
-		val string
-		ok  bool
-		err error
-		_   = err
-	)
-
-	val, ok = pathParams["chain_name"]
-	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "chain_name")
-	}
-
-	protoReq.ChainName, err = runtime.String(val)
-
-	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "chain_name", err)
-	}
 
 	msg, err := server.Relayers(ctx, &protoReq)
 	return msg, metadata, err
@@ -604,7 +568,7 @@ var (
 
 	pattern_Query_ConsensusStates_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 2, 4, 1, 0, 4, 1, 5, 5}, []string{"ibc", "core", "client", "v1beta1", "consensus_states", "chain_name"}, "", runtime.AssumeColonVerbOpt(true)))
 
-	pattern_Query_Relayers_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 2, 4, 1, 0, 4, 1, 5, 5}, []string{"ibc", "core", "client", "v1beta1", "relayers", "chain_name"}, "", runtime.AssumeColonVerbOpt(true)))
+	pattern_Query_Relayers_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3, 2, 4}, []string{"ibc", "core", "client", "v1beta1", "relayers"}, "", runtime.AssumeColonVerbOpt(true)))
 )
 
 var (

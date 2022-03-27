@@ -17,12 +17,13 @@ message IdentifiedClientState {
 
 // IdentifiedRelayer defines a list of authorized relayers for the specified
 // client.
-message IdentifiedRelayers {
-  // client identifier
-  string chain_name = 1;
-
-  // authorized relayer list
-  repeated string relayers = 2;
+message IdentifiedRelayer {
+  // relayer address on this chain
+  string address = 1;
+  // client identifiers
+  repeated string chains = 2;
+  // relayer addresses on other chains
+  repeated string addresses = 3;
 }
 
 // ConsensusStateWithHeight defines a consensus state with an additional height
@@ -100,10 +101,12 @@ message RegisterRelayerProposal {
   string title = 1;
   // the description of the proposal
   string description = 2;
-  // the client identifier for the client to be updated if the proposal passes
-  string chain_name = 3;
-  // relayer address list
-  repeated string relayers = 4;
+  // relayer address on this chain
+  string address = 3;
+  // the client identifiers for the clients to be updated if the proposal passes
+  repeated string chains = 4;
+  // relayer addresses on other chains
+  repeated string addresses = 5;
 }
 
 // Height is a monotonically increasing data type

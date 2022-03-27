@@ -23,9 +23,8 @@ message GenesisState {
       [ (gogoproto.nullable) = false ];
   // the chain name of the current chain
   string native_chain_name = 4;
-  // IdentifiedRelayer defines a list of authorized relayers for the specified
-  // client.
-  repeated IdentifiedRelayers relayers = 5 [ (gogoproto.nullable) = false ];
+  // IdentifiedRelayer defines a list of authorized relayers
+  repeated IdentifiedRelayer relayers = 5 [ (gogoproto.nullable) = false ];
 }
 
 // GenesisMetadata defines the genesis type for metadata that clients may return

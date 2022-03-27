@@ -168,7 +168,7 @@ func (suite *TransferTestSuite) TestRemoteContractCallAgent() {
 	resultTransferErc20 := []byte{byte(1)}
 	resultRcc, err := hex.DecodeString("0000000000000000000000000000000000000000000000000000000000000001")
 	suite.Require().NoError(err)
-	ack, err := packettypes.NewResultAcknowledgement([][]byte{resultTransferErc20, resultRcc}).GetBytes()
+	ack, err := packettypes.NewResultAcknowledgement([][]byte{resultTransferErc20, resultRcc}, "").GetBytes()
 	suite.Require().NoError(err)
 	err = pathAtoB.RelayPacket(packet, ack)
 	suite.Require().NoError(err)
@@ -201,7 +201,7 @@ func (suite *TransferTestSuite) TestRemoteContractCallAgent() {
 	// commit block
 	suite.coordinator.CommitBlock(suite.chainA, suite.chainB, suite.chainC)
 
-	BtoCTransferErc20ack, err := packettypes.NewResultAcknowledgement([][]byte{{byte(1)}}).GetBytes()
+	BtoCTransferErc20ack, err := packettypes.NewResultAcknowledgement([][]byte{{byte(1)}}, "").GetBytes()
 	suite.Require().NoError(err)
 	err = pathBtoC.RelayPacket(BtoCTransferErc20packet, BtoCTransferErc20ack)
 	suite.Require().NoError(err)
@@ -325,7 +325,7 @@ func (suite *TransferTestSuite) TestRemoteContractCallAgentBack() {
 	resultTransferErc20 := []byte{byte(1)}
 	resultRcc, err := hex.DecodeString("0000000000000000000000000000000000000000000000000000000000000001")
 	suite.Require().NoError(err)
-	ack, err := packettypes.NewResultAcknowledgement([][]byte{resultTransferErc20, resultRcc}).GetBytes()
+	ack, err := packettypes.NewResultAcknowledgement([][]byte{resultTransferErc20, resultRcc}, "").GetBytes()
 	suite.Require().NoError(err)
 	err = pathCtoB.RelayPacket(multiCallPacket, ack)
 	suite.Require().NoError(err)
@@ -354,7 +354,7 @@ func (suite *TransferTestSuite) TestRemoteContractCallAgentBack() {
 	// commit block
 	suite.coordinator.CommitBlock(suite.chainA, suite.chainB)
 
-	BtoATransferErc20ack, err := packettypes.NewResultAcknowledgement([][]byte{{byte(1)}}).GetBytes()
+	BtoATransferErc20ack, err := packettypes.NewResultAcknowledgement([][]byte{{byte(1)}}, "").GetBytes()
 	suite.Require().NoError(err)
 	err = pathBtoA.RelayPacket(BToATransferErc20packet, BtoATransferErc20ack)
 	suite.Require().NoError(err)
@@ -497,7 +497,7 @@ func (suite *TransferTestSuite) TestAgentSendBase() {
 	resultTransferErc20 := []byte{byte(1)}
 	resultRcc, err := hex.DecodeString("0000000000000000000000000000000000000000000000000000000000000001")
 	suite.Require().NoError(err)
-	ack, err := packettypes.NewResultAcknowledgement([][]byte{resultTransferErc20, resultRcc}).GetBytes()
+	ack, err := packettypes.NewResultAcknowledgement([][]byte{resultTransferErc20, resultRcc}, "").GetBytes()
 	suite.Require().NoError(err)
 	err = pathBtoA.RelayPacket(multiCallPacket, ack)
 	suite.Require().NoError(err)
@@ -526,7 +526,7 @@ func (suite *TransferTestSuite) TestAgentSendBase() {
 	)
 	// commit block
 	suite.coordinator.CommitBlock(suite.chainA, suite.chainB, suite.chainC)
-	AToCTransferBaseAck, err := packettypes.NewResultAcknowledgement([][]byte{{byte(1)}}).GetBytes()
+	AToCTransferBaseAck, err := packettypes.NewResultAcknowledgement([][]byte{{byte(1)}}, "").GetBytes()
 	suite.Require().NoError(err)
 	err = pathAtoC.RelayPacket(AToCTransferBasePacket, AToCTransferBaseAck)
 	suite.Require().NoError(err)
@@ -659,7 +659,7 @@ func (suite *TransferTestSuite) TestAgentRefund() {
 	resultTransferErc20 := []byte{byte(1)}
 	resultRcc, err := hex.DecodeString("0000000000000000000000000000000000000000000000000000000000000001")
 	suite.Require().NoError(err)
-	ack, err := packettypes.NewResultAcknowledgement([][]byte{resultTransferErc20, resultRcc}).GetBytes()
+	ack, err := packettypes.NewResultAcknowledgement([][]byte{resultTransferErc20, resultRcc}, "").GetBytes()
 	suite.Require().NoError(err)
 	err = pathAtoB.RelayPacket(multiCallPacket, ack)
 	suite.Require().NoError(err)
@@ -688,7 +688,7 @@ func (suite *TransferTestSuite) TestAgentRefund() {
 		[][]byte{DataListERC20Bz},
 	)
 	// commit block
-	errAck, err := packettypes.NewErrorAcknowledgement("onRecvPackt: binding is not exist").GetBytes()
+	errAck, err := packettypes.NewErrorAcknowledgement("onRecvPackt: binding is not exist", "").GetBytes()
 	suite.NoError(err)
 	err = pathBtoC.RelayPacket(BtoCTransferErc20packet, errAck)
 	suite.NoError(err)

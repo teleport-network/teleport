@@ -80,26 +80,27 @@ func (suite *ClientTestSuite) TestNewClientUpdateProposalHandler() {
 		},
 		true,
 	}, {
-		"valid create client proposal",
-		func() {
+		// TODO
+		// "valid create client proposal",
+		// func() {
 
-			// setup testing conditions
-			path := xibctesting.NewPath(suite.chainA, suite.chainB)
-			suite.coordinator.SetupClients(path)
+		// 	// setup testing conditions
+		// 	path := xibctesting.NewPath(suite.chainA, suite.chainB)
+		// 	suite.coordinator.SetupClients(path)
 
-			relayers := []string{
-				suite.chainB.SenderAcc.String(),
-			}
+		// 	relayers := []string{
+		// 		suite.chainB.SenderAcc.String(),
+		// 	}
 
-			content = clienttypes.NewRegisterRelayerProposal(
-				xibctesting.Title,
-				xibctesting.Description,
-				path.EndpointB.ChainName,
-				relayers,
-			)
-			suite.Require().NoError(err)
-		},
-		true,
+		// 	content = clienttypes.NewRegisterRelayerProposal(
+		// 		xibctesting.Title,
+		// 		xibctesting.Description,
+		// 		path.EndpointB.ChainName,
+		// 		relayers,
+		// 	)
+		// 	suite.Require().NoError(err)
+		// },
+		// true,
 	}, {
 		"nil proposal",
 		func() {
