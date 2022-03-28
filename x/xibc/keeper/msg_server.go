@@ -151,13 +151,18 @@ func (k Keeper) Acknowledgement(goCtx context.Context, msg *packettypes.MsgAckno
 		}
 	}
 
+	relayer, found := k.ClientKeeper.GetRelayerAddressOnTeleport(ctx, msg.Packet.GetDestChain(), ack.Relayer)
+	if !found {
+		return nil, sdkerrors.Wrapf(packettypes.ErrRelayerNotFound, "relayer on source chain not found")
+	}
+
 	if _, err := k.PacketKeeper.CallPacket(
 		ctx,
 		"snedPacketFeeToRelayer",
 		msg.Packet.GetSourceChain(),
 		msg.Packet.GetDestChain(),
 		msg.Packet.Sequence,
-		common.HexToAddress(ack.Relayer),
+		common.HexToAddress(relayer),
 	); err != nil {
 		return nil, err
 	}
