@@ -307,7 +307,7 @@ type Teleport struct {
 	FeeMarketKeeper feemarketkeeper.Keeper
 
 	// Teleport keepers
-	AggregateKeeper aggregatekeeper.Keeper
+	AggregateKeeper *aggregatekeeper.Keeper
 	RVestingKeeper  rvestingkeeper.Keeper
 
 	// the module manager
@@ -486,6 +486,15 @@ func NewTeleport(
 		app.GetSubspace(rvestingtypes.ModuleName), app.BankKeeper, app.AccountKeeper, authtypes.FeeCollectorName,
 	)
 
+	// Aggregate Keeper
+	app.AggregateKeeper = aggregatekeeper.NewKeeper(
+		keys[aggregatetypes.StoreKey],
+		appCodec,
+		app.GetSubspace(aggregatetypes.ModuleName),
+		app.AccountKeeper,
+		app.BankKeeper,
+		app.EvmKeeper,
+	)
 	// register the proposal types
 	govRouter := govtypes.NewRouter()
 	govRouter.AddRoute(govtypes.RouterKey, govtypes.ProposalHandler).
@@ -494,7 +503,7 @@ func NewTeleport(
 		AddRoute(upgradetypes.RouterKey, upgrade.NewSoftwareUpgradeProposalHandler(app.UpgradeKeeper)).
 		AddRoute(ibchost.RouterKey, ibcclient.NewClientProposalHandler(app.IBCKeeper.ClientKeeper)).
 		AddRoute(xibcclienttypes.GovRouterKey, xibcclient.NewClientProposalHandler(app.XIBCKeeper.ClientKeeper)).
-		AddRoute(aggregatetypes.GovRouterKey, aggregate.NewAggregateProposalHandler(&app.AggregateKeeper))
+		AddRoute(aggregatetypes.GovRouterKey, aggregate.NewAggregateProposalHandler(app.AggregateKeeper))
 
 	govKeeper := govkeeper.NewKeeper(
 		appCodec,
@@ -506,16 +515,6 @@ func NewTeleport(
 		govRouter,
 	)
 
-	// Aggregate Keeper
-	app.AggregateKeeper = aggregatekeeper.NewKeeper(
-		keys[aggregatetypes.StoreKey],
-		appCodec,
-		app.GetSubspace(aggregatetypes.ModuleName),
-		app.AccountKeeper,
-		app.BankKeeper,
-		app.EvmKeeper,
-	)
-
 	app.GovKeeper = *govKeeper.SetHooks(govtypes.NewMultiGovHooks())
 
 	// Create IBCTransfer Keepers
@@ -523,15 +522,21 @@ func NewTeleport(
 		appCodec,
 		keys[ibctransfertypes.StoreKey],
 		app.GetSubspace(ibctransfertypes.ModuleName),
-		app.IBCKeeper.ChannelKeeper,
+		app.AggregateKeeper, // ICS4 Wrapper: IBC middleware
+		//app.IBCKeeper.ChannelKeeper,
 		app.IBCKeeper.ChannelKeeper,
 		&app.IBCKeeper.PortKeeper,
 		app.AccountKeeper,
 		app.BankKeeper,
 		scopedIBCTransferKeeper,
 	)
+	app.AggregateKeeper.SetICS4Wrapper(app.IBCKeeper.ChannelKeeper)
+
 	ibcTransferModule := ibctransfer.NewAppModule(app.IBCTransferKeeper)
 	ibcTransferIBCModule := ibctransfer.NewIBCModule(app.IBCTransferKeeper)
+	// create IBC module from bottom to top of stack
+	var transferStack porttypes.IBCModule
+	transferStack = aggregate.NewIBCMiddleware(*app.AggregateKeeper, ibcTransferIBCModule)
 
 	app.ICAControllerKeeper = icacontrollerkeeper.NewKeeper(
 		appCodec,
@@ -562,7 +567,7 @@ func NewTeleport(
 
 	// Create static IBC router, add transfer route, then set and seal it
 	ibcRouter := porttypes.NewRouter()
-	ibcRouter.AddRoute(ibctransfertypes.ModuleName, ibcTransferIBCModule).
+	ibcRouter.AddRoute(ibctransfertypes.ModuleName, transferStack).
 		// TODO: uncomment ICA controller once custom logic is supported
 		// AddRoute(icacontrollertypes.SubModuleName, icaControllerIBCModule).
 		AddRoute(icahosttypes.SubModuleName, icaHostIBCModule)
@@ -649,7 +654,7 @@ func NewTeleport(
 		evm.NewAppModule(app.EvmKeeper, app.AccountKeeper),
 		feemarket.NewAppModule(app.FeeMarketKeeper),
 		// teleport app modules
-		aggregatemodule.NewAppModule(app.AggregateKeeper, app.AccountKeeper),
+		aggregatemodule.NewAppModule(*app.AggregateKeeper, app.AccountKeeper),
 		rvestingmodule.NewAppModule(app.RVestingKeeper),
 	)
 
@@ -810,14 +815,15 @@ func NewTeleport(
 	app.SetBeginBlocker(app.BeginBlocker)
 
 	options := ante.HandlerOptions{
-		AccountKeeper:    app.AccountKeeper,
-		BankKeeper:       app.BankKeeper,
-		EvmKeeper:        app.EvmKeeper,
-		FeegrantKeeper:   app.FeeGrantKeeper,
-		IBCChannelKeeper: app.IBCKeeper.ChannelKeeper,
-		FeeMarketKeeper:  app.FeeMarketKeeper,
-		SignModeHandler:  encodingConfig.TxConfig.SignModeHandler(),
-		SigGasConsumer:   ante.DefaultSigVerificationGasConsumer,
+		AccountKeeper:  app.AccountKeeper,
+		BankKeeper:     app.BankKeeper,
+		EvmKeeper:      app.EvmKeeper,
+		FeegrantKeeper: app.FeeGrantKeeper,
+		IBCKeeper:      app.IBCKeeper,
+		//IBCChannelKeeper: app.IBCKeeper.ChannelKeeper,
+		FeeMarketKeeper: app.FeeMarketKeeper,
+		SignModeHandler: encodingConfig.TxConfig.SignModeHandler(),
+		SigGasConsumer:  ante.DefaultSigVerificationGasConsumer,
 	}
 
 	if err := options.Validate(); err != nil {

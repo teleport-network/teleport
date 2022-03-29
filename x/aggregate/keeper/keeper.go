@@ -3,6 +3,8 @@ package keeper
 import (
 	"fmt"
 
+	porttypes "github.com/cosmos/ibc-go/v3/modules/core/05-port/types"
+
 	"github.com/tendermint/tendermint/libs/log"
 
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -20,6 +22,7 @@ type Keeper struct {
 	accountKeeper types.AccountKeeper
 	bankKeeper    types.BankKeeper
 	evmKeeper     types.EVMKeeper
+	ics4Wrapper   porttypes.ICS4Wrapper
 }
 
 // NewKeeper creates new instances of the aggregate Keeper
@@ -30,13 +33,13 @@ func NewKeeper(
 	accountKeeper types.AccountKeeper,
 	bankkeeper types.BankKeeper,
 	evmKeeper types.EVMKeeper,
-) Keeper {
+) *Keeper {
 	// set KeyTable if it has not already been set
 	if !paramSpace.HasKeyTable() {
 		paramSpace = paramSpace.WithKeyTable(types.ParamKeyTable())
 	}
 
-	return Keeper{
+	return &Keeper{
 		storeKey:      storeKey,
 		cdc:           cdc,
 		paramSpace:    paramSpace,
@@ -49,4 +52,14 @@ func NewKeeper(
 // Logger returns a module-specific logger.
 func (k Keeper) Logger(ctx sdk.Context) log.Logger {
 	return ctx.Logger().With("module", fmt.Sprintf("x/%s", types.ModuleName))
+}
+
+// SetICS4Wrapper sets the ICS4 wrapper to the keeper.
+// It panics if already set
+func (k *Keeper) SetICS4Wrapper(ics4Wrapper porttypes.ICS4Wrapper) {
+	if k.ics4Wrapper != nil {
+		panic("ICS4 wrapper already set")
+	}
+
+	k.ics4Wrapper = ics4Wrapper
 }
