@@ -6,6 +6,7 @@ import (
 	channeltypes "github.com/cosmos/ibc-go/v3/modules/core/04-channel/types"
 	"github.com/cosmos/ibc-go/v3/modules/core/exported"
 	"github.com/ethereum/go-ethereum/common"
+
 	"github.com/teleport-network/teleport/x/aggregate/types"
 
 	transfertypes "github.com/cosmos/ibc-go/v3/modules/apps/transfer/types"
@@ -22,7 +23,7 @@ func (k Keeper) OnRecvPacket(
 		return nil
 	}
 	transferAmount, ok := sdk.NewIntFromString(data.Amount)
-	if ok != true {
+	if !ok {
 		return nil
 	}
 	receiver, _ := sdk.AccAddressFromBech32(data.Receiver)

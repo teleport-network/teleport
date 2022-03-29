@@ -535,8 +535,7 @@ func NewTeleport(
 	ibcTransferModule := ibctransfer.NewAppModule(app.IBCTransferKeeper)
 	ibcTransferIBCModule := ibctransfer.NewIBCModule(app.IBCTransferKeeper)
 	// create IBC module from bottom to top of stack
-	var transferStack porttypes.IBCModule
-	transferStack = aggregate.NewIBCMiddleware(*app.AggregateKeeper, ibcTransferIBCModule)
+	transferStack := aggregate.NewIBCMiddleware(*app.AggregateKeeper, ibcTransferIBCModule)
 
 	app.ICAControllerKeeper = icacontrollerkeeper.NewKeeper(
 		appCodec,

@@ -20,8 +20,9 @@ import (
 	ibcgotesting "github.com/cosmos/ibc-go/v3/testing"
 	"github.com/cosmos/ibc-go/v3/testing/simapp"
 
-	teleportapp "github.com/teleport-network/teleport/app"
 	ethermint "github.com/tharsis/ethermint/types"
+
+	teleportapp "github.com/teleport-network/teleport/app"
 )
 
 var DefaultTestingAppInit func() (ibcgotesting.TestingApp, map[string]json.RawMessage) = teleportapp.SetupTestingApp
