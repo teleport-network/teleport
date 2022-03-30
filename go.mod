@@ -6,7 +6,7 @@ require (
 	github.com/armon/go-metrics v0.3.10
 	github.com/confio/ics23/go v0.7.0
 	github.com/cosmos/cosmos-sdk v0.45.1
-	github.com/cosmos/ibc-go/v3 v3.0.0-rc1
+	github.com/cosmos/ibc-go/v3 v3.0.0
 	github.com/edsrzf/mmap-go v1.1.0
 	github.com/ethereum/go-ethereum v1.10.16
 	github.com/gogo/protobuf v1.3.3
@@ -17,16 +17,16 @@ require (
 	github.com/pkg/errors v0.9.1
 	github.com/rakyll/statik v0.1.7
 	github.com/spf13/cast v1.4.1
-	github.com/spf13/cobra v1.3.0
+	github.com/spf13/cobra v1.4.0
 	github.com/spf13/viper v1.10.1
-	github.com/stretchr/testify v1.7.0
+	github.com/stretchr/testify v1.7.1
 	github.com/tendermint/tendermint v0.34.16
 	github.com/tendermint/tm-db v0.6.7
-	github.com/tharsis/ethermint v0.11.0
+	github.com/tharsis/ethermint v0.12.1
 	golang.org/x/crypto v0.0.0-20220307211146-efcb8507fb70
 	google.golang.org/genproto v0.0.0-20220308174144-ae0e22291548
 	google.golang.org/grpc v1.44.0
-	google.golang.org/protobuf v1.27.1
+	google.golang.org/protobuf v1.28.0
 )
 
 require (
