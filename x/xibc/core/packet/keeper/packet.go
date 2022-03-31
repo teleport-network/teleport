@@ -135,10 +135,6 @@ func (k Keeper) RecvPacket(
 	)
 
 	if packet.GetRelayChain() == chainName {
-		if _, found = k.clientKeeper.GetClientState(ctx, packet.GetDestChain()); !found {
-			return sdkerrors.Wrap(clienttypes.ErrClientNotFound, fromChain)
-		}
-
 		k.SetPacketCommitment(ctx, packet.GetSourceChain(), packet.GetDestChain(), packet.GetSequence(), commitment)
 		k.SetPacketRelayer(ctx, packet.GetSourceChain(), packet.GetDestChain(), packet.GetSequence(), msg.Signer)
 
@@ -152,6 +148,17 @@ func (k Keeper) RecvPacket(
 				DataList:   packet.GetDataList(),
 			},
 		)
+
+		// if destChain not exist, return error ack to source chain
+		if _, found := k.clientKeeper.GetClientState(ctx, msg.Packet.GetDestChain()); !found {
+			errAckBz, err := types.NewErrorAcknowledgement("invalid destChain", msg.Signer).GetBytes()
+			if err != nil {
+				return sdkerrors.Wrapf(types.ErrInvalidAcknowledgement, "pack ack failed")
+			}
+			if err := k.WriteAcknowledgement(ctx, msg.Packet, errAckBz); err != nil {
+				return err
+			}
+		}
 	}
 
 	return nil
@@ -342,7 +349,7 @@ func (k Keeper) AcknowledgePacket(
 		ack.Relayer = relayer
 		ackBz, err := ack.GetBytes()
 		if err != nil {
-			return err
+			return sdkerrors.Wrapf(types.ErrInvalidAcknowledgement, "pack ack failed")
 		}
 
 		k.deletePacketRelayer(ctx,

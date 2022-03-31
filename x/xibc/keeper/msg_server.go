@@ -73,7 +73,7 @@ func (k Keeper) RecvPacket(goCtx context.Context, msg *packettypes.MsgRecvPacket
 			if len(result.Result) == 0 {
 				errAckBz, err := packettypes.NewErrorAcknowledgement(result.Message, msg.Signer).GetBytes()
 				if err != nil {
-					return nil, err
+					return nil, sdkerrors.Wrapf(packettypes.ErrInvalidAcknowledgement, "pack ack failed")
 				}
 				if err := k.PacketKeeper.WriteAcknowledgement(
 					ctx,
@@ -90,7 +90,7 @@ func (k Keeper) RecvPacket(goCtx context.Context, msg *packettypes.MsgRecvPacket
 		}
 		ackBz, err := packettypes.NewResultAcknowledgement(results, msg.Signer).GetBytes()
 		if err != nil {
-			return nil, err
+			return nil, sdkerrors.Wrapf(packettypes.ErrInvalidAcknowledgement, "pack ack failed")
 		}
 		if err := k.PacketKeeper.WriteAcknowledgement(ctx, msg.Packet, ackBz); err != nil {
 			return nil, err
