@@ -20,15 +20,36 @@ func (k Keeper) OnRecvPacket(
 ) exported.Acknowledgement {
 	var data transfertypes.FungibleTokenPacketData
 	if err := transfertypes.ModuleCdc.UnmarshalJSON(packet.GetData(), &data); err != nil {
+		ctx.EventManager().EmitEvent(
+			sdk.NewEvent(
+				types.EventTypeIBCAggregate,
+				sdk.NewAttribute(types.AttributeKeyStatus, "failed"),
+				sdk.NewAttribute(types.AttributeKeyMsg, err.Error()),
+			),
+		)
 		return nil
 	}
 	transferAmount, ok := sdk.NewIntFromString(data.Amount)
 	if !ok {
+		ctx.EventManager().EmitEvent(
+			sdk.NewEvent(
+				types.EventTypeIBCAggregate,
+				sdk.NewAttribute(types.AttributeKeyStatus, "failed"),
+				sdk.NewAttribute(types.AttributeKeyMsg, "Change data.Amount type to int error"),
+			),
+		)
 		return nil
 	}
 	receiver, _ := sdk.AccAddressFromBech32(data.Receiver)
 	denom, err := types.IBCDenom(packet.GetDestPort(), packet.GetDestChannel(), data.Denom)
 	if err != nil {
+		ctx.EventManager().EmitEvent(
+			sdk.NewEvent(
+				types.EventTypeIBCAggregate,
+				sdk.NewAttribute(types.AttributeKeyStatus, "failed"),
+				sdk.NewAttribute(types.AttributeKeyMsg, err.Error()),
+			),
+		)
 		return nil
 	}
 	msg := types.NewMsgConvertCoin(
@@ -39,8 +60,22 @@ func (k Keeper) OnRecvPacket(
 	context := sdk.WrapSDKContext(ctx)
 	_, err = k.ConvertCoin(context, msg)
 	if err != nil {
+		ctx.EventManager().EmitEvent(
+			sdk.NewEvent(
+				types.EventTypeIBCAggregate,
+				sdk.NewAttribute(types.AttributeKeyStatus, "failed"),
+				sdk.NewAttribute(types.AttributeKeyMsg, err.Error()),
+			),
+		)
 		return nil
 	}
+	ctx.EventManager().EmitEvent(
+		sdk.NewEvent(
+			types.EventTypeIBCAggregate,
+			sdk.NewAttribute(types.AttributeKeyStatus, "success"),
+			sdk.NewAttribute(types.AttributeKeyMsg, ""),
+		),
+	)
 	return nil
 }
 
