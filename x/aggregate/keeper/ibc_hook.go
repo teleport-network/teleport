@@ -1,6 +1,8 @@
 package keeper
 
 import (
+	"fmt"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	capabilitytypes "github.com/cosmos/cosmos-sdk/x/capability/types"
 	channeltypes "github.com/cosmos/ibc-go/v3/modules/core/04-channel/types"
@@ -45,6 +47,13 @@ func (k Keeper) OnRecvPacket(
 	if err != nil {
 		event.Status = types.STATUS_FAILED
 		event.Message = err.Error()
+		_ = ctx.EventManager().EmitTypedEvent(event)
+		return nil
+	}
+
+	if !k.IsDenomRegistered(ctx, denom) {
+		event.Status = types.STATUS_FAILED
+		event.Message = fmt.Sprintf("denom %s not registered", denom)
 		_ = ctx.EventManager().EmitTypedEvent(event)
 		return nil
 	}
