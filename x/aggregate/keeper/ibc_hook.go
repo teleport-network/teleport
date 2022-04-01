@@ -18,38 +18,34 @@ func (k Keeper) OnRecvPacket(
 	packet channeltypes.Packet,
 	ack exported.Acknowledgement,
 ) exported.Acknowledgement {
+	event := &types.EventIBCAggregate{
+		Status:             types.STATUS_UNKNOWN,
+		Message:            "",
+		Sequence:           packet.Sequence,
+		SourceChannel:      packet.SourceChannel,
+		DestinationChannel: packet.DestinationChannel,
+	}
+
 	var data transfertypes.FungibleTokenPacketData
 	if err := transfertypes.ModuleCdc.UnmarshalJSON(packet.GetData(), &data); err != nil {
-		ctx.EventManager().EmitEvent(
-			sdk.NewEvent(
-				types.EventTypeIBCAggregate,
-				sdk.NewAttribute(types.AttributeKeyStatus, "failed"),
-				sdk.NewAttribute(types.AttributeKeyMsg, err.Error()),
-			),
-		)
+		event.Status = types.STATUS_FAILED
+		event.Message = err.Error()
+		_ = ctx.EventManager().EmitTypedEvent(event)
 		return nil
 	}
 	transferAmount, ok := sdk.NewIntFromString(data.Amount)
 	if !ok {
-		ctx.EventManager().EmitEvent(
-			sdk.NewEvent(
-				types.EventTypeIBCAggregate,
-				sdk.NewAttribute(types.AttributeKeyStatus, "failed"),
-				sdk.NewAttribute(types.AttributeKeyMsg, "Change data.Amount type to int error"),
-			),
-		)
+		event.Status = types.STATUS_FAILED
+		event.Message = "Change data.Amount type to int error"
+		_ = ctx.EventManager().EmitTypedEvent(event)
 		return nil
 	}
 	receiver, _ := sdk.AccAddressFromBech32(data.Receiver)
 	denom, err := types.IBCDenom(packet.GetDestPort(), packet.GetDestChannel(), data.Denom)
 	if err != nil {
-		ctx.EventManager().EmitEvent(
-			sdk.NewEvent(
-				types.EventTypeIBCAggregate,
-				sdk.NewAttribute(types.AttributeKeyStatus, "failed"),
-				sdk.NewAttribute(types.AttributeKeyMsg, err.Error()),
-			),
-		)
+		event.Status = types.STATUS_FAILED
+		event.Message = err.Error()
+		_ = ctx.EventManager().EmitTypedEvent(event)
 		return nil
 	}
 	msg := types.NewMsgConvertCoin(
@@ -60,22 +56,14 @@ func (k Keeper) OnRecvPacket(
 	context := sdk.WrapSDKContext(ctx)
 	_, err = k.ConvertCoin(context, msg)
 	if err != nil {
-		ctx.EventManager().EmitEvent(
-			sdk.NewEvent(
-				types.EventTypeIBCAggregate,
-				sdk.NewAttribute(types.AttributeKeyStatus, "failed"),
-				sdk.NewAttribute(types.AttributeKeyMsg, err.Error()),
-			),
-		)
+		event.Status = types.STATUS_FAILED
+		event.Message = err.Error()
+		_ = ctx.EventManager().EmitTypedEvent(event)
 		return nil
 	}
-	ctx.EventManager().EmitEvent(
-		sdk.NewEvent(
-			types.EventTypeIBCAggregate,
-			sdk.NewAttribute(types.AttributeKeyStatus, "success"),
-			sdk.NewAttribute(types.AttributeKeyMsg, ""),
-		),
-	)
+	event.Status = types.STATUS_SUCCESS
+	event.Message = err.Error()
+	_ = ctx.EventManager().EmitTypedEvent(event)
 	return nil
 }
 

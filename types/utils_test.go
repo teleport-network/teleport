@@ -58,7 +58,7 @@ func TestIsSupportedKeys(t *testing.T) {
 		{
 			"cosmos secp256k1",
 			&secp256k1.PubKey{},
-			false,
+			true,
 		},
 	}
 

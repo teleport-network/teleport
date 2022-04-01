@@ -1,8 +1,6 @@
 package keeper_test
 
 import (
-	"fmt"
-
 	transfertypes "github.com/cosmos/ibc-go/v3/modules/apps/transfer/types"
 )
 
@@ -16,6 +14,6 @@ func (suite *KeeperTestSuite) TestDenom() {
 
 	traceHash := denomTrace.Hash()
 	voucherDenom := denomTrace.IBCDenom()
-	fmt.Println(traceHash)
-	fmt.Println(voucherDenom)
+	prifix := "ibc/"
+	suite.Assert().Equal(prifix+traceHash.String(), voucherDenom)
 }

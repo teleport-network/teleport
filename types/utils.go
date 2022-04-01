@@ -6,6 +6,7 @@ import (
 	"github.com/tharsis/ethermint/crypto/ethsecp256k1"
 
 	"github.com/cosmos/cosmos-sdk/crypto/keys/ed25519"
+	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
 	cryptotypes "github.com/cosmos/cosmos-sdk/crypto/types"
 	"github.com/cosmos/cosmos-sdk/crypto/types/multisig"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -17,7 +18,7 @@ import (
 // NOTE: Nested multisigs are not supported.
 func IsSupportedKey(pubkey cryptotypes.PubKey) bool {
 	switch pubkey := pubkey.(type) {
-	case *ethsecp256k1.PubKey, *ed25519.PubKey:
+	case *ethsecp256k1.PubKey, *ed25519.PubKey, *secp256k1.PubKey:
 		return true
 	case multisig.PubKey:
 		if len(pubkey.GetPubKeys()) == 0 {
@@ -42,7 +43,7 @@ func IsSupportedKey(pubkey cryptotypes.PubKey) bool {
 
 // GetAddressFromBech32 returns the sdk.Account address of given address,
 // while also changing bech32 human readable prefix (HRP) to the value set on
-// the global sdk.Config (eg: `evmos`).
+// the global sdk.Config (eg: `teleport`).
 // The function fails if the provided bech32 address is invalid.
 func GetAddressFromBech32(address string) (sdk.AccAddress, error) {
 	bech32Prefix := strings.SplitN(address, "1", 2)[0]
