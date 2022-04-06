@@ -14,6 +14,11 @@
   
     - [Owner](#teleport.aggregate.v1.Owner)
   
+- [teleport/aggregate/v1/event.proto](#teleport/aggregate/v1/event.proto)
+    - [EventIBCAggregate](#teleport.aggregate.v1.EventIBCAggregate)
+  
+    - [Status](#teleport.aggregate.v1.Status)
+  
 - [teleport/aggregate/v1/genesis.proto](#teleport/aggregate/v1/genesis.proto)
     - [GenesisState](#teleport.aggregate.v1.GenesisState)
     - [Params](#teleport.aggregate.v1.Params)
@@ -293,6 +298,54 @@ Owner enumerates the ownership of a ERC20 contract
 | OWNER_UNSPECIFIED | 0 | OWNER_UNSPECIFIED defines an invalid/undefined owner |
 | OWNER_MODULE | 1 | OWNER_MODULE erc20 is owned by the intrarelayer module account |
 | OWNER_EXTERNAL | 2 | EXTERNAL erc20 is owned by an external account |
+
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+ <!-- end services -->
+
+
+
+<a name="teleport/aggregate/v1/event.proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## teleport/aggregate/v1/event.proto
+
+
+
+<a name="teleport.aggregate.v1.EventIBCAggregate"></a>
+
+### EventIBCAggregate
+EventIBCAggregate is emitted on IBC Aggregate
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `status` | [Status](#teleport.aggregate.v1.Status) |  |  |
+| `message` | [string](#string) |  |  |
+| `sequence` | [uint64](#uint64) |  |  |
+| `source_channel` | [string](#string) |  |  |
+| `destination_channel` | [string](#string) |  |  |
+
+
+
+
+
+ <!-- end messages -->
+
+
+<a name="teleport.aggregate.v1.Status"></a>
+
+### Status
+Status enumerates the status of IBC Aggregate
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| STATUS_UNKNOWN | 0 | STATUS_UNKNOWN defines the invalid/undefined status |
+| STATUS_SUCCESS | 1 | STATUS_SUCCESS defines the success IBC Aggregate execute |
+| STATUS_FAILED | 2 | STATUS_FAILED defines the failed IBC Aggregate execute |
 
 
  <!-- end enums -->
