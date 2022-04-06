@@ -587,3 +587,12 @@ func CreateSortedSignerArray(
 		return []tmtypes.PrivValidator{suitePrivVal, altPrivVal}
 	}
 }
+
+func (chain *TestChain) RegisterRelayer(chains []string, addresses []string) {
+	chain.App.XIBCKeeper.ClientKeeper.RegisterRelayers(
+		chain.GetContext(),
+		chain.SenderAcc.String(),
+		chains,
+		addresses,
+	)
+}
