@@ -12,7 +12,7 @@ type Amount struct {
 	Value *big.Int
 }
 
-type ERC20TransferData struct {
+type TransferData struct {
 	TokenAddress common.Address
 	Receiver     string
 	Amount       *big.Int
@@ -20,10 +20,9 @@ type ERC20TransferData struct {
 	RelayChain   string
 }
 
-type BaseTransferData struct {
-	Receiver   string
-	DestChain  string
-	RelayChain string
+type Fee struct {
+	TokenAddress common.Address
+	Amount       *big.Int
 }
 
 var (
