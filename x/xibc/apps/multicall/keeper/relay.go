@@ -2,7 +2,6 @@ package keeper
 
 import (
 	"encoding/json"
-	"math/big"
 	"strings"
 
 	"github.com/ethereum/go-ethereum/accounts/abi"
@@ -26,21 +25,10 @@ func (k Keeper) SendMultiCall(ctx sdk.Context, sender common.Address, calldata t
 	// get the next sequence
 	sequence := k.packetKeeper.GetNextSequenceSend(ctx, sourceChain, calldata.DestChain)
 
-	TupleERC20TransferData, err := abi.NewType(
+	TupleTransferData, err := abi.NewType(
 		"tuple", "",
 		[]abi.ArgumentMarshaling{
 			{Name: "token_address", Type: "address"},
-			{Name: "receiver", Type: "string"},
-			{Name: "amount", Type: "uint256"},
-		},
-	)
-	if err != nil {
-		return err
-	}
-
-	TupleBaseTransferData, err := abi.NewType(
-		"tuple", "",
-		[]abi.ArgumentMarshaling{
 			{Name: "receiver", Type: "string"},
 			{Name: "amount", Type: "uint256"},
 		},
@@ -65,21 +53,21 @@ func (k Keeper) SendMultiCall(ctx sdk.Context, sender common.Address, calldata t
 
 	for i, fid := range calldata.Functions {
 		switch fid {
-		case types.TransferERC20:
-			data, err := abi.Arguments{{Type: TupleERC20TransferData}}.Unpack(calldata.Data[i])
+		case types.Transfer:
+			data, err := abi.Arguments{{Type: TupleTransferData}}.Unpack(calldata.Data[i])
 			if err != nil {
 				return sdkerrors.Wrapf(types.ErrInvalidMultiCallEvent, "unpack failed, function ID %d", fid)
 			}
-			var erc20TransferData types.ERC20TransferData
+			var transferData types.TransferData
 			bz, err := json.Marshal(data[0])
 			if err != nil {
 				return sdkerrors.Wrapf(types.ErrInvalidMultiCallEvent, "unpack failed, function ID %d", fid)
 			}
-			if err := json.Unmarshal(bz, &erc20TransferData); err != nil {
+			if err := json.Unmarshal(bz, &transferData); err != nil {
 				return sdkerrors.Wrapf(types.ErrInvalidMultiCallEvent, "unpack failed, function ID %d", fid)
 			}
 			ports = append(ports, transfertypes.PortID)
-			oriToken, _, _, err := k.aggregateKeeper.QueryERC20Trace(ctx, erc20TransferData.TokenAddress, calldata.DestChain)
+			oriToken, _, _, err := k.aggregateKeeper.QueryERC20Trace(ctx, transferData.TokenAddress, calldata.DestChain)
 			if err != nil {
 				return err
 			}
@@ -88,41 +76,10 @@ func (k Keeper) SendMultiCall(ctx sdk.Context, sender common.Address, calldata t
 				calldata.DestChain,
 				sequence,
 				strings.ToLower(sender.String()),
-				strings.ToLower(erc20TransferData.Receiver),
-				erc20TransferData.Amount.Bytes(),
-				strings.ToLower(erc20TransferData.TokenAddress.String()),
+				strings.ToLower(transferData.Receiver),
+				transferData.Amount.Bytes(),
+				strings.ToLower(transferData.TokenAddress.String()),
 				oriToken,
-			).GetBytes()
-			if err != nil {
-				return err
-			}
-			dataList = append(
-				dataList,
-				transferBz,
-			)
-		case types.TransferBase:
-			data, err := abi.Arguments{{Type: TupleBaseTransferData}}.Unpack(calldata.Data[i])
-			if err != nil {
-				return sdkerrors.Wrapf(types.ErrInvalidMultiCallEvent, "unpack failed, function ID %d", fid)
-			}
-			var baseTransferData types.BaseTransferData
-			bz, err := json.Marshal(data[0])
-			if err != nil {
-				return sdkerrors.Wrapf(types.ErrInvalidMultiCallEvent, "unpack failed, function ID %d", fid)
-			}
-			if err := json.Unmarshal(bz, &baseTransferData); err != nil {
-				return sdkerrors.Wrapf(types.ErrInvalidMultiCallEvent, "unpack failed, function ID %d", fid)
-			}
-			ports = append(ports, transfertypes.PortID)
-			transferBz, err := transfertypes.NewFungibleTokenPacketData(
-				sourceChain,
-				calldata.DestChain,
-				sequence,
-				strings.ToLower(sender.String()),
-				strings.ToLower(baseTransferData.Receiver),
-				baseTransferData.Amount.Bytes(),
-				common.BigToAddress(big.NewInt(0)).String(),
-				"",
 			).GetBytes()
 			if err != nil {
 				return err
