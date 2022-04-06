@@ -170,6 +170,8 @@ func (k Keeper) UpdateClient(
 		"client state updated",
 		"chain-name", chainName,
 		"height", consensusHeight.String(),
+		"isCheckTx", ctx.IsCheckTx(),
+		"isRecheckTx", ctx.IsReCheckTx(),
 	)
 
 	defer func() {
