@@ -56,6 +56,11 @@ func (k Keeper) RecvPacket(goCtx context.Context, msg *packettypes.MsgRecvPacket
 	cctx, write := ctx.CacheContext()
 
 	if msg.Packet.GetDestChain() == k.ClientKeeper.GetChainName(cctx) {
+		relayer, found := k.ClientKeeper.GetRelayerAddressOnOtherChain(ctx, msg.Packet.SourceChain, msg.Signer)
+		if !found {
+			return nil, sdkerrors.Wrapf(packettypes.ErrRelayerNotFound, "relayer on source chain not found")
+		}
+
 		var results [][]byte
 		for i, port := range msg.Packet.Ports {
 			// Retrieve callbacks from router
@@ -71,7 +76,7 @@ func (k Keeper) RecvPacket(goCtx context.Context, msg *packettypes.MsgRecvPacket
 			}
 
 			if len(result.Result) == 0 {
-				errAckBz, err := packettypes.NewErrorAcknowledgement(result.Message, msg.Signer).GetBytes()
+				errAckBz, err := packettypes.NewErrorAcknowledgement(result.Message, relayer).GetBytes()
 				if err != nil {
 					return nil, sdkerrors.Wrapf(packettypes.ErrInvalidAcknowledgement, "pack ack failed")
 				}
@@ -88,7 +93,7 @@ func (k Keeper) RecvPacket(goCtx context.Context, msg *packettypes.MsgRecvPacket
 
 			results = append(results, result.Result)
 		}
-		ackBz, err := packettypes.NewResultAcknowledgement(results, msg.Signer).GetBytes()
+		ackBz, err := packettypes.NewResultAcknowledgement(results, relayer).GetBytes()
 		if err != nil {
 			return nil, sdkerrors.Wrapf(packettypes.ErrInvalidAcknowledgement, "pack ack failed")
 		}
