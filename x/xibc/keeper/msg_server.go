@@ -163,7 +163,7 @@ func (k Keeper) Acknowledgement(goCtx context.Context, msg *packettypes.MsgAckno
 
 	if _, err := k.PacketKeeper.CallPacket(
 		ctx,
-		"snedPacketFeeToRelayer",
+		"sendPacketFeeToRelayer",
 		msg.Packet.GetSourceChain(),
 		msg.Packet.GetDestChain(),
 		msg.Packet.Sequence,
