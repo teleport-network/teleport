@@ -171,33 +171,37 @@ func (suite KeeperTestSuite) TestHandleRegisterRelayerProposal() {
 		{
 			"success, exist client",
 			func() {
-				// TODO
-				// clientState := xibctmtypes.NewClientState(
-				// 	"test", xibctmtypes.DefaultTrustLevel,
-				// 	trustingPeriod, ubdPeriod, maxClockDrift, types.NewHeight(0, 5),
-				// 	commitmenttypes.GetSDKSpecs(), xibctesting.Prefix, 0,
-				// )
-				// consensusState := xibctmtypes.NewConsensusState(
-				// 	header.GetTime(), header.Header.AppHash, header.Header.NextValidatorsHash,
-				// )
-				// var proposalCreate *types.CreateClientProposal
-				// var err error
-				// proposalCreate, err = types.NewCreateClientProposal("test", "test", "test", clientState, consensusState)
-				// suite.Require().NoError(err)
-				// _, err = suite.chainA.App.XIBCKeeper.ClientKeeper.HandleCreateClient(suite.chainA.GetContext(), proposalCreate)
-				// suite.Require().NoError(err)
+				clientState := xibctmtypes.NewClientState(
+					"test", xibctmtypes.DefaultTrustLevel,
+					trustingPeriod, ubdPeriod, maxClockDrift, types.NewHeight(0, 5),
+					commitmenttypes.GetSDKSpecs(), xibctesting.Prefix, 0,
+				)
+				consensusState := xibctmtypes.NewConsensusState(
+					header.GetTime(), header.Header.AppHash, header.Header.NextValidatorsHash,
+				)
+				var proposalCreate *types.CreateClientProposal
+				var err error
+				proposalCreate, err = types.NewCreateClientProposal("test", "test", "test", clientState, consensusState)
+				suite.Require().NoError(err)
+				_, err = suite.chainA.App.XIBCKeeper.ClientKeeper.HandleCreateClient(suite.chainA.GetContext(), proposalCreate)
+				suite.Require().NoError(err)
 
-				// // set relayers
-				// address := "xxx"
-				// chians := []string{"xxx", "yyy"}
-				// addresses := []string{"xxx", "yyy"}
-				// relayerProposal := types.NewRegisterRelayerProposal("test", "test", address, chians, addresses)
-				// err = suite.chainA.App.XIBCKeeper.ClientKeeper.HandleRegisterRelayer(suite.chainA.GetContext(), relayerProposal)
-				// suite.Require().NoError(err)
+				// set relayers
+				address := "xxx"
+				chains := []string{"xxx", "yyy"}
+				addresses := []string{"xxx", "yyy"}
 
-				// // get relayers and compare
-				// relayers2 := suite.chainA.App.XIBCKeeper.ClientKeeper.GetRelayers(suite.chainA.GetContext(), "test")
-				// suite.Require().Equal(relayers, relayers2)
+				relayerProposal := types.NewRegisterRelayerProposal("test", "test", address, chains, addresses)
+				err = suite.chainA.App.XIBCKeeper.ClientKeeper.HandleRegisterRelayer(suite.chainA.GetContext(), relayerProposal)
+				suite.Require().NoError(err)
+
+				// get relayers and compare
+				relayer, exist := suite.chainA.App.XIBCKeeper.ClientKeeper.GetRelayer(suite.chainA.GetContext(), "xxx")
+				suite.Require().True(exist)
+
+				suite.Require().Equal(address, relayer.Address)
+				suite.Require().Equal(chains, relayer.Chains)
+				suite.Require().Equal(addresses, relayer.Addresses)
 			},
 		},
 		{

@@ -83,13 +83,14 @@ func (suite *TendermintTestSuite) TestInitialize() {
 	}}
 
 	path := xibctesting.NewPath(suite.chainA, suite.chainB)
+	path.RegisterRelayers()
 	err := path.EndpointA.CreateClient()
 	suite.Require().NoError(err)
 
 	clientState := path.EndpointA.GetClientState()
-	// TODO
+
 	relayers := path.EndpointA.Chain.App.XIBCKeeper.ClientKeeper.GetAllRelayers(path.EndpointA.Chain.GetContext())
-	suite.Require().Equal(path.EndpointA.Chain.SenderAcc.String(), relayers[0], "relayer does not match")
+	suite.Require().Equal(path.EndpointA.Chain.SenderAcc.String(), relayers[0].Address, "relayer does not match")
 	store := path.EndpointA.ClientStore()
 
 	for _, tc := range testCases {
@@ -142,13 +143,11 @@ func (suite *TendermintTestSuite) TestVerifyPacketCommitment() {
 
 			suite.coordinator.SetupClients(path)
 
-			// TODO
-			relayerAs := path.EndpointA.Chain.App.XIBCKeeper.ClientKeeper.GetAllRelayers(path.EndpointA.Chain.GetContext())
-			suite.Require().Equal(path.EndpointA.Chain.SenderAcc.String(), relayerAs[0], "relayer does not match")
+			relayerA := path.EndpointA.Chain.App.XIBCKeeper.ClientKeeper.GetAllRelayers(path.EndpointA.Chain.GetContext())
+			suite.Require().Equal(path.EndpointA.Chain.SenderAcc.String(), relayerA[0].Address, "relayer does not match")
 
-			// TODO
-			relayerBs := path.EndpointB.Chain.App.XIBCKeeper.ClientKeeper.GetAllRelayers(path.EndpointB.Chain.GetContext())
-			suite.Require().Equal(path.EndpointB.Chain.SenderAcc.String(), relayerBs[0], "relayer does not match")
+			relayerB := path.EndpointB.Chain.App.XIBCKeeper.ClientKeeper.GetAllRelayers(path.EndpointB.Chain.GetContext())
+			suite.Require().Equal(path.EndpointB.Chain.SenderAcc.String(), relayerB[0].Address, "relayer does not match")
 
 			// setup testing conditions
 			packet := packettypes.NewPacket(1, path.EndpointA.ChainName, path.EndpointB.ChainName, "", []string{xibctesting.MockPort}, [][]byte{xibctesting.TestHash})

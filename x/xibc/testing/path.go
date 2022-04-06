@@ -29,6 +29,22 @@ func NewPath(chainA, chainB *TestChain) *Path {
 	}
 }
 
+// RegisterRelayers register relayers on both endpoints
+func (path *Path) RegisterRelayers() {
+	path.EndpointA.Chain.App.XIBCKeeper.ClientKeeper.RegisterRelayers(
+		path.EndpointA.Chain.GetContext(),
+		path.EndpointA.Chain.SenderAcc.String(),
+		[]string{path.EndpointB.ChainName},
+		[]string{path.EndpointB.Chain.SenderAcc.String()},
+	)
+	path.EndpointB.Chain.App.XIBCKeeper.ClientKeeper.RegisterRelayers(
+		path.EndpointB.Chain.GetContext(),
+		path.EndpointB.Chain.SenderAcc.String(),
+		[]string{path.EndpointA.ChainName},
+		[]string{path.EndpointA.Chain.SenderAcc.String()},
+	)
+}
+
 // RelayPacket attempts to relay the packet first on EndpointA and then on EndpointB
 // if EndpointA does not contain a packet commitment for that packet. An error is returned
 // if a relay step fails or the packet commitment does not exist on either endpoint.

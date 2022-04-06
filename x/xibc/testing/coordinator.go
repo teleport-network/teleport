@@ -79,6 +79,8 @@ func (coord *Coordinator) SetupClients(path *Path) {
 
 	err = path.EndpointB.CreateClient()
 	require.NoError(coord.t, err)
+
+	path.RegisterRelayers()
 }
 
 // GetChain returns the TestChain using the given chainID and returns an error if it does not exist.
