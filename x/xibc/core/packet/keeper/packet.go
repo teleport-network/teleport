@@ -69,10 +69,7 @@ func (k Keeper) SendPacket(ctx sdk.Context, packet exported.PacketI) error {
 
 // RecvPacket is called by a module to receive & process an XIBC packet
 // sent on the corresponding port on the counterparty chain.
-func (k Keeper) RecvPacket(
-	ctx sdk.Context,
-	msg *types.MsgRecvPacket,
-) error {
+func (k Keeper) RecvPacket(ctx sdk.Context, msg *types.MsgRecvPacket) error {
 	packet := msg.Packet
 	if err := k.ValidatePacket(ctx, packet); err != nil {
 		return sdkerrors.Wrap(err, "packet failed basic validation")

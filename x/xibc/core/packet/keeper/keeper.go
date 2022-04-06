@@ -118,19 +118,19 @@ func (k Keeper) deletePacketCommitment(ctx sdk.Context, sourceChain, destChain s
 // GetPacketRelayer gets the packet relayer from the store
 func (k Keeper) GetPacketRelayer(ctx sdk.Context, sourceChain, destChain string, sequence uint64) string {
 	store := ctx.KVStore(k.storeKey)
-	bz := store.Get(host.PacketCommitmentKey(sourceChain, destChain, sequence))
+	bz := store.Get(host.PacketRelayerKey(sourceChain, destChain, sequence))
 	return string(bz)
 }
 
 // SetPacketRelayer sets the packet relayer  to the store
 func (k Keeper) SetPacketRelayer(ctx sdk.Context, sourceChain, destChain string, sequence uint64, relayer string) {
 	store := ctx.KVStore(k.storeKey)
-	store.Set(host.PacketCommitmentKey(sourceChain, destChain, sequence), []byte(relayer))
+	store.Set(host.PacketRelayerKey(sourceChain, destChain, sequence), []byte(relayer))
 }
 
 func (k Keeper) deletePacketRelayer(ctx sdk.Context, sourceChain, destChain string, sequence uint64) {
 	store := ctx.KVStore(k.storeKey)
-	store.Delete(host.PacketCommitmentKey(sourceChain, destChain, sequence))
+	store.Delete(host.PacketRelayerKey(sourceChain, destChain, sequence))
 }
 
 // SetMaxAckSequence sets the max ack height to the store
