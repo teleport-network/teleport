@@ -33,6 +33,9 @@ func (suite *KeeperTestSuite) SetupTest() {
 	// commit some blocks so that QueryProof returns valid proof (cannot return valid query if height <= 1)
 	suite.coordinator.CommitNBlocks(suite.chainA, 2)
 	suite.coordinator.CommitNBlocks(suite.chainB, 2)
+
+	suite.chainA.RegisterRelayer([]string{suite.chainB.ChainID}, []string{string(suite.chainB.SenderAcc)})
+	suite.chainB.RegisterRelayer([]string{suite.chainA.ChainID}, []string{string(suite.chainB.SenderAcc)})
 }
 
 // TestGetAllSequences sets all packet sequences

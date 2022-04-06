@@ -10,7 +10,6 @@ import (
 	packettypes "github.com/teleport-network/teleport/x/xibc/core/packet/types"
 	"github.com/teleport-network/teleport/x/xibc/exported"
 	xibctesting "github.com/teleport-network/teleport/x/xibc/testing"
-	xibcmock "github.com/teleport-network/teleport/x/xibc/testing/mock"
 )
 
 var (
@@ -198,23 +197,27 @@ func (suite *TendermintTestSuite) TestVerifyPacketAcknowledgement() {
 		name     string
 		malleate func()
 		expPass  bool
-	}{{
-		"successful verification",
-		func() {},
-		true,
-	}, {
-		"latest client height < height",
-		func() {
-			proofHeight = clientState.LatestHeight.Increment()
+	}{
+		{
+			"successful verification",
+			func() {},
+			true,
 		},
-		false,
-	}, {
-		"proof verification failed",
-		func() {
-			proof = invalidProof
+		{
+			"latest client height < height",
+			func() {
+				proofHeight = clientState.LatestHeight.Increment()
+			},
+			false,
 		},
-		false,
-	}}
+		{
+			"proof verification failed",
+			func() {
+				proof = invalidProof
+			},
+			false,
+		},
+	}
 
 	for _, tc := range testCases {
 		suite.Run(tc.name, func() {
@@ -224,7 +227,14 @@ func (suite *TendermintTestSuite) TestVerifyPacketAcknowledgement() {
 			path := xibctesting.NewPath(suite.chainA, suite.chainB)
 			suite.coordinator.SetupClients(path)
 
-			packet := packettypes.NewPacket(1, path.EndpointA.ChainName, path.EndpointB.ChainName, "", []string{xibctesting.MockPort}, [][]byte{xibctesting.TestHash})
+			packet := packettypes.NewPacket(
+				1,
+				path.EndpointA.ChainName,
+				path.EndpointB.ChainName,
+				"",
+				[]string{xibctesting.MockPort},
+				[][]byte{xibctesting.TestHash},
+			)
 
 			// send packet
 			err := path.EndpointA.SendPacket(packet)
@@ -251,6 +261,12 @@ func (suite *TendermintTestSuite) TestVerifyPacketAcknowledgement() {
 			ctx := suite.chainA.GetContext()
 			store := path.EndpointA.ClientStore()
 
+			ack, err := packettypes.NewResultAcknowledgement(
+				[][]byte{[]byte("mock result")},
+				suite.chainB.SenderAcc.String(),
+			).GetBytes()
+			suite.Require().NoError(err)
+
 			err = clientState.VerifyPacketAcknowledgement(
 				ctx,
 				store,
@@ -260,7 +276,7 @@ func (suite *TendermintTestSuite) TestVerifyPacketAcknowledgement() {
 				packet.GetSourceChain(),
 				packet.GetDestChain(),
 				packet.GetSequence(),
-				packettypes.CommitAcknowledgement(xibcmock.MockAcknowledgement),
+				packettypes.CommitAcknowledgement(ack),
 			)
 
 			if tc.expPass {
