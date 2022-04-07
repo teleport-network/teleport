@@ -78,7 +78,7 @@ package transfer_test
 // 	suite.Require().NoError(err)
 // 	suite.Require().True(exist)
 // 	// send remote contract call
-// 	agentData := types.ERC20TransferData{
+// 	agentData := types.TransferData{
 // 		TokenAddress: chainBErc20,
 // 		Receiver:     strings.ToLower(suite.chainC.SenderAddress.String()),
 // 		DestChain:    suite.chainC.ChainID,
@@ -98,8 +98,8 @@ package transfer_test
 
 // 	sequence := uint64(1)
 // 	// send multi call
-// 	transferBaseBackDataBytes, err := abi.Arguments{{Type: multicalltypes.TupleERC20TransferData}}.Pack(
-// 		multicalltypes.ERC20TransferData{
+// 	transferBaseBackDataBytes, err := abi.Arguments{{Type: multicalltypes.TupleTransferData}}.Pack(
+// 		multicalltypes.TransferData{
 // 			TokenAddress: wtelecontract.WTELEContractAddress,
 // 			Receiver:     strings.ToLower(agentcontract.AgentContractAddress.String()),
 // 			Amount:       out,
@@ -115,16 +115,22 @@ package transfer_test
 // 	)
 // 	suite.Require().NoError(err)
 
-// 	// transfer Erc20 chainC to chainB
-// 	MultiCallData := multicalltypes.MultiCallData{
-// 		DestChain:  suite.chainB.ChainID,
-// 		RelayChain: "",
-// 		Functions:  []uint8{0, 2},
-// 		Data:       [][]byte{transferBaseBackDataBytes, rccDataBytes},
-// 	}
 // 	// Approve erc20 to transfer
 // 	suite.Approve(suite.chainA, wtelecontract.WTELEContractAddress, amount)
-// 	suite.SendMultiCall(suite.chainA, big.NewInt(0), MultiCallData)
+// 	suite.SendMultiCall(
+// 		suite.chainA,
+// 		big.NewInt(0),
+// 		multicalltypes.MultiCallData{
+// 			DestChain:  suite.chainB.ChainID,
+// 			RelayChain: "",
+// 			Functions:  []uint8{0, 1},
+// 			Data:       [][]byte{transferBaseBackDataBytes, rccDataBytes},
+// 		},
+// 		types.Fee{
+// 			TokenAddress: common.HexToAddress("0x0000000000000000000000000000000000000000"),
+// 			Amount:       big.NewInt(0),
+// 		},
+// 	)
 // 	suite.coordinator.CommitBlock(suite.chainA, suite.chainB, suite.chainC)
 
 // 	// relay packet
@@ -165,10 +171,15 @@ package transfer_test
 // 	ackBZ := suite.RCCAcks(suite.chainA, sha256.Sum256(agentBz))
 // 	suite.Require().Equal([]byte{}, ackBZ)
 
-// 	resultTransferErc20 := []byte{byte(1)}
+// 	resultTransferERC20 := []byte{byte(1)}
 // 	resultRcc, err := hex.DecodeString("0000000000000000000000000000000000000000000000000000000000000001")
 // 	suite.Require().NoError(err)
-// 	ack, err := packettypes.NewResultAcknowledgement([][]byte{resultTransferErc20, resultRcc}, "").GetBytes()
+
+// 	ack, err := packettypes.NewResultAcknowledgement(
+// 		[][]byte{resultTransferERC20, resultRcc},
+// 		"",
+// 	).GetBytes()
+
 // 	suite.Require().NoError(err)
 // 	err = pathAtoB.RelayPacket(packet, ack)
 // 	suite.Require().NoError(err)
@@ -236,7 +247,7 @@ package transfer_test
 // 	suite.Require().NoError(err)
 // 	suite.Require().True(exist)
 // 	// send remote contract call
-// 	agentData := types.ERC20TransferData{
+// 	agentData := types.TransferData{
 // 		TokenAddress: chainBERC20,
 // 		Receiver:     strings.ToLower(suite.chainA.SenderAddress.String()),
 // 		DestChain:    suite.chainA.ChainID,
@@ -262,8 +273,8 @@ package transfer_test
 // 	)
 // 	suite.Require().NoError(err)
 // 	// send multi call
-// 	transferBaseDataBytes, err := abi.Arguments{{Type: multicalltypes.TupleERC20TransferData}}.Pack(
-// 		multicalltypes.ERC20TransferData{
+// 	transferBaseDataBytes, err := abi.Arguments{{Type: multicalltypes.TupleTransferData}}.Pack(
+// 		multicalltypes.TransferData{
 // 			TokenAddress: chainCERC20,
 // 			Receiver:     strings.ToLower(agentcontract.AgentContractAddress.String()),
 // 			Amount:       agentOut,
@@ -271,17 +282,22 @@ package transfer_test
 // 	)
 // 	suite.Require().NoError(err)
 
-// 	// transfer Erc20 chainC to chainB
-// 	MultiCallData := multicalltypes.MultiCallData{
-// 		DestChain:  suite.chainB.ChainID,
-// 		RelayChain: "",
-// 		Functions:  []uint8{0, 2},
-// 		Data:       [][]byte{transferBaseDataBytes, rccDataBytes},
-// 	}
-
 // 	// Approve erc20 to transfer
 // 	suite.Approve(suite.chainC, chainCERC20, agentOut)
-// 	suite.SendMultiCall(suite.chainC, big.NewInt(0), MultiCallData)
+// 	suite.SendMultiCall(
+// 		suite.chainC,
+// 		big.NewInt(0),
+// 		multicalltypes.MultiCallData{
+// 			DestChain:  suite.chainB.ChainID,
+// 			RelayChain: "",
+// 			Functions:  []uint8{0, 1},
+// 			Data:       [][]byte{transferBaseDataBytes, rccDataBytes},
+// 		},
+// 		types.Fee{
+// 			TokenAddress: common.HexToAddress("0x0000000000000000000000000000000000000000"),
+// 			Amount:       big.NewInt(0),
+// 		},
+// 	)
 // 	suite.coordinator.CommitBlock(suite.chainA, suite.chainB, suite.chainC)
 
 // 	balances := suite.BalanceOf(suite.chainC, chainCERC20, suite.chainC.SenderAddress)
@@ -322,10 +338,15 @@ package transfer_test
 // 		[][]byte{DataListERC20Bz, rccBz},
 // 	)
 
-// 	resultTransferErc20 := []byte{byte(1)}
+// 	resultTransferERC20 := []byte{byte(1)}
 // 	resultRcc, err := hex.DecodeString("0000000000000000000000000000000000000000000000000000000000000001")
 // 	suite.Require().NoError(err)
-// 	ack, err := packettypes.NewResultAcknowledgement([][]byte{resultTransferErc20, resultRcc}, "").GetBytes()
+
+// 	ack, err := packettypes.NewResultAcknowledgement(
+// 		[][]byte{resultTransferERC20, resultRcc},
+// 		"",
+// 	).GetBytes()
+
 // 	suite.Require().NoError(err)
 // 	err = pathCtoB.RelayPacket(multiCallPacket, ack)
 // 	suite.Require().NoError(err)
@@ -411,7 +432,7 @@ package transfer_test
 // 	suite.Require().True(exist)
 
 // 	// chainA transferBase to ChainC
-// 	agentData := types.ERC20TransferData{
+// 	agentData := types.TransferData{
 // 		TokenAddress: common.BigToAddress(big.NewInt(0)),
 // 		Receiver:     strings.ToLower(suite.chainC.SenderAddress.String()),
 // 		DestChain:    suite.chainC.ChainID,
@@ -437,8 +458,8 @@ package transfer_test
 // 	)
 // 	suite.Require().NoError(err)
 // 	// send multi call
-// 	transferBaseBackDataBytes, err := abi.Arguments{{Type: multicalltypes.TupleERC20TransferData}}.Pack(
-// 		multicalltypes.ERC20TransferData{
+// 	transferBaseBackDataBytes, err := abi.Arguments{{Type: multicalltypes.TupleTransferData}}.Pack(
+// 		multicalltypes.TransferData{
 // 			TokenAddress: chainBERC20,
 // 			Receiver:     strings.ToLower(agentcontract.AgentContractAddress.String()),
 // 			Amount:       amount,
@@ -446,16 +467,22 @@ package transfer_test
 // 	)
 // 	suite.Require().NoError(err)
 
-// 	// transfer Erc20 chainC to chainB
-// 	MultiCallData := multicalltypes.MultiCallData{
-// 		DestChain:  suite.chainA.ChainID,
-// 		RelayChain: "",
-// 		Functions:  []uint8{0, 2},
-// 		Data:       [][]byte{transferBaseBackDataBytes, rccDataBytes},
-// 	}
 // 	// Approve erc20 to transfer
 // 	suite.Approve(suite.chainB, chainBERC20, amount)
-// 	suite.SendMultiCall(suite.chainB, big.NewInt(0), MultiCallData)
+// 	suite.SendMultiCall(
+// 		suite.chainB,
+// 		big.NewInt(0),
+// 		multicalltypes.MultiCallData{
+// 			DestChain:  suite.chainA.ChainID,
+// 			RelayChain: "",
+// 			Functions:  []uint8{0, 1},
+// 			Data:       [][]byte{transferBaseBackDataBytes, rccDataBytes},
+// 		},
+// 		types.Fee{
+// 			TokenAddress: common.HexToAddress("0x0000000000000000000000000000000000000000"),
+// 			Amount:       big.NewInt(0),
+// 		},
+// 	)
 // 	suite.coordinator.CommitBlock(suite.chainA, suite.chainB, suite.chainC)
 
 // 	balances = suite.BalanceOf(suite.chainB, chainBERC20, suite.chainB.SenderAddress)
@@ -494,10 +521,15 @@ package transfer_test
 // 		[][]byte{DataListERC20Bz, DataListRccBz},
 // 	)
 
-// 	resultTransferErc20 := []byte{byte(1)}
+// 	resultTransferERC20 := []byte{byte(1)}
 // 	resultRcc, err := hex.DecodeString("0000000000000000000000000000000000000000000000000000000000000001")
 // 	suite.Require().NoError(err)
-// 	ack, err := packettypes.NewResultAcknowledgement([][]byte{resultTransferErc20, resultRcc}, "").GetBytes()
+
+// 	ack, err := packettypes.NewResultAcknowledgement(
+// 		[][]byte{resultTransferERC20, resultRcc},
+// 		"",
+// 	).GetBytes()
+
 // 	suite.Require().NoError(err)
 // 	err = pathBtoA.RelayPacket(multiCallPacket, ack)
 // 	suite.Require().NoError(err)
@@ -573,7 +605,7 @@ package transfer_test
 // 	suite.Require().True(exist)
 
 // 	// send remote contract call
-// 	agentData := types.ERC20TransferData{
+// 	agentData := types.TransferData{
 // 		TokenAddress: chainBErc20,
 // 		Receiver:     strings.ToLower(suite.chainC.SenderAddress.String()),
 // 		DestChain:    suite.chainC.ChainID,
@@ -600,28 +632,33 @@ package transfer_test
 // 	suite.Require().NoError(err)
 // 	suite.Require().NotNil(rccDataBytes)
 // 	// send multi call
-// 	dataBz := multicalltypes.ERC20TransferData{
+// 	dataBz := multicalltypes.TransferData{
 // 		TokenAddress: wtelecontract.WTELEContractAddress,
 // 		Receiver:     strings.ToLower(agentcontract.AgentContractAddress.String()),
 // 		Amount:       out,
 // 	}
-// 	transferERC20DataBytes, err := abi.Arguments{{Type: multicalltypes.TupleERC20TransferData}}.Pack(
+// 	transferERC20DataBytes, err := abi.Arguments{{Type: multicalltypes.TupleTransferData}}.Pack(
 // 		dataBz,
 // 	)
 // 	suite.Require().NoError(err)
 
-// 	// transfer Erc20 chainC to chainB
-// 	MultiCallData := multicalltypes.MultiCallData{
-// 		DestChain:  suite.chainB.ChainID,
-// 		RelayChain: "",
-// 		Functions:  []uint8{0, 2},
-// 		Data:       [][]byte{transferERC20DataBytes, rccDataBytes},
-// 	}
-
 // 	// Approve erc20 to transfer
 // 	suite.Approve(suite.chainA, wtelecontract.WTELEContractAddress, out)
 
-// 	suite.SendMultiCall(suite.chainA, big.NewInt(0), MultiCallData)
+// 	suite.SendMultiCall(
+// 		suite.chainA,
+// 		big.NewInt(0),
+// 		multicalltypes.MultiCallData{
+// 			DestChain:  suite.chainB.ChainID,
+// 			RelayChain: "",
+// 			Functions:  []uint8{0, 1},
+// 			Data:       [][]byte{transferERC20DataBytes, rccDataBytes},
+// 		},
+// 		types.Fee{
+// 			TokenAddress: common.HexToAddress("0x0000000000000000000000000000000000000000"),
+// 			Amount:       big.NewInt(0),
+// 		},
+// 	)
 // 	suite.coordinator.CommitBlock(suite.chainA, suite.chainB, suite.chainC)
 // 	sequence := uint64(1)
 // 	// relay packet
@@ -656,10 +693,15 @@ package transfer_test
 // 		[]string{types.PortID, rcctypes.PortID},
 // 		[][]byte{DataListERC20Bz, DataListRccBz},
 // 	)
-// 	resultTransferErc20 := []byte{byte(1)}
+// 	resultTransferERC20 := []byte{byte(1)}
 // 	resultRcc, err := hex.DecodeString("0000000000000000000000000000000000000000000000000000000000000001")
 // 	suite.Require().NoError(err)
-// 	ack, err := packettypes.NewResultAcknowledgement([][]byte{resultTransferErc20, resultRcc}, "").GetBytes()
+
+// 	ack, err := packettypes.NewResultAcknowledgement(
+// 		[][]byte{resultTransferERC20, resultRcc},
+// 		"",
+// 	).GetBytes()
+
 // 	suite.Require().NoError(err)
 // 	err = pathAtoB.RelayPacket(multiCallPacket, ack)
 // 	suite.Require().NoError(err)

@@ -934,20 +934,16 @@ func (suite *TransferTestSuite) AgentRefund(fromChain *xibctesting.TestChain, sr
 	suite.coordinator.CommitBlock(suite.chainA, suite.chainB, suite.chainC)
 }
 
-func (suite *TransferTestSuite) SendMultiCall(fromChain *xibctesting.TestChain, amount *big.Int, data multicalltypes.MultiCallData) {
-	multiCallData, err := multicallcontract.MultiCallContract.ABI.Pack("multiCall", data)
+func (suite *TransferTestSuite) SendMultiCall(fromChain *xibctesting.TestChain, amount *big.Int, data multicalltypes.MultiCallData, fee types.Fee) {
+	multiCallData, err := multicallcontract.MultiCallContract.ABI.Pack("multiCall", data, fee)
 	suite.Require().NoError(err)
+
+	if fee.TokenAddress == common.HexToAddress("0x0000000000000000000000000000000000000000") {
+		amount = amount.Add(amount, fee.Amount)
+	}
 
 	_ = suite.SendTx(fromChain, multicallcontract.MultiCallContractAddress, amount, multiCallData)
 	suite.coordinator.CommitBlock(suite.chainA, suite.chainB, suite.chainC)
-}
-
-func (suite *TransferTestSuite) SendRemoteContractCall(fromChain *xibctesting.TestChain, data rcctypes.CallRCCData) {
-	rccData, err := rcccontract.RCCContract.ABI.Pack("sendRemoteContractCall", data)
-	suite.Require().NoError(err)
-
-	_ = suite.SendTx(fromChain, rcccontract.RCCContractAddress, big.NewInt(0), rccData)
-	suite.coordinator.CommitBlock(suite.chainA, suite.chainB)
 }
 
 func (suite *TransferTestSuite) RCCAcks(fromChain *xibctesting.TestChain, hash [32]byte) []byte {
