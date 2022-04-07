@@ -14,13 +14,15 @@ import (
 )
 
 // CommitPacket returns the packet commitment bytes. The commitment consists of:
-// sha256_hash(timeout_timestamp + timeout_height.RevisionNumber + timeout_height.RevisionHeight + sha256_hash(data))
+// sha256_hash(timeout_timestamp + timeout_height.RevisionNumber + timeout_height.RevisionHeight + sha256_hash(port + data))
 // from a given packet. This results in a fixed length preimage.
 // NOTE: sdk.Uint64ToBigEndian sets the uint64 to a slice of length 8.
 func CommitPacket(packet exported.PacketI) []byte {
 	var dataSum []byte
-	for _, data := range packet.GetDataList() {
-		dataHash := sha256.Sum256(data)
+	for i, data := range packet.GetDataList() {
+		dataHash := sha256.Sum256(
+			append([]byte(packet.GetPorts()[i]), data...),
+		)
 		dataSum = append(dataSum, dataHash[:]...)
 	}
 	hash := sha256.Sum256(dataSum)
