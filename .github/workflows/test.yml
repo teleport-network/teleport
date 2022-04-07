@@ -26,7 +26,7 @@ jobs:
       - name: Install tparse
         run: |
           export GO111MODULE="on" && go get github.com/mfridman/tparse@latest
-      - uses: actions/cache@v2.1.7
+      - uses: actions/cache@v3
         with:
           path: ~/go/bin
           key: ${{ runner.os }}-go-tparse-binary
@@ -37,7 +37,7 @@ jobs:
       - uses: actions/setup-go@v2.1.4
         with:
           go-version: 1.17
-      - uses: actions/checkout@v2.4.0
+      - uses: actions/checkout@v3
       - uses: technote-space/get-diff-action@v6.0.1
         with:
           PATTERNS: |
@@ -49,7 +49,7 @@ jobs:
         run: |
           make test-unit-cover
         if: env.GIT_DIFF
-      # - uses: codecov/codecov-action@v2.1.0
+      # - uses: codecov/codecov-action@v3
       #   with:
       #     file: ./coverage.txt
       #     fail_ci_if_error: true
