@@ -81,14 +81,18 @@ func (suite *KeeperTestSuite) TestRecvPacket() {
 				suite.Require().Equal(amount, allowance)
 
 				// send transfer ERC20
-				suite.SendTransferERC20(
+				suite.SendTransfer(
 					suite.address,
-					types.ERC20TransferData{
+					types.TransferData{
 						TokenAddress: tokenAddress,
 						Receiver:     sender,
 						Amount:       amount,
 						DestChain:    srcChain,
 						RelayChain:   "",
+					},
+					types.Fee{
+						TokenAddress: common.HexToAddress("0x0000000000000000000000000000000000000000"),
+						Amount:       big.NewInt(0),
 					},
 				)
 
@@ -137,14 +141,19 @@ func (suite *KeeperTestSuite) TestRecvPacket() {
 				suite.Require().Equal(supply, balance)
 
 				// send transfer base
-				suite.SendTransferBase(
+				suite.SendTransfer(
 					suite.address,
-					types.BaseTransferData{
-						Receiver:   sender,
-						DestChain:  srcChain,
-						RelayChain: "",
+					types.TransferData{
+						TokenAddress: common.HexToAddress("0x0000000000000000000000000000000000000000"),
+						Receiver:     sender,
+						Amount:       amount,
+						DestChain:    srcChain,
+						RelayChain:   "",
 					},
-					amount,
+					types.Fee{
+						TokenAddress: common.HexToAddress("0x0000000000000000000000000000000000000000"),
+						Amount:       big.NewInt(0),
+					},
 				)
 
 				// check balance
@@ -240,14 +249,18 @@ func (suite *KeeperTestSuite) TestAcknowledgementPacket() {
 				suite.Require().Equal(amount, allowance)
 
 				// send transfer ERC20
-				suite.SendTransferERC20(
+				suite.SendTransfer(
 					suite.address,
-					types.ERC20TransferData{
+					types.TransferData{
 						TokenAddress: tokenAddress,
 						Receiver:     sender,
 						Amount:       amount,
 						DestChain:    srcChain,
 						RelayChain:   "",
+					},
+					types.Fee{
+						TokenAddress: common.HexToAddress("0x0000000000000000000000000000000000000000"),
+						Amount:       big.NewInt(0),
 					},
 				)
 
@@ -301,14 +314,18 @@ func (suite *KeeperTestSuite) TestAcknowledgementPacket() {
 				suite.Require().Equal(amount, allowance)
 
 				// send transfer ERC20
-				suite.SendTransferERC20(
+				suite.SendTransfer(
 					suite.address,
-					types.ERC20TransferData{
+					types.TransferData{
 						TokenAddress: tokenAddress,
 						Receiver:     receiver,
 						Amount:       amount,
 						DestChain:    dstChain,
 						RelayChain:   "",
+					},
+					types.Fee{
+						TokenAddress: common.HexToAddress("0x0000000000000000000000000000000000000000"),
+						Amount:       big.NewInt(0),
 					},
 				)
 
@@ -360,14 +377,19 @@ func (suite *KeeperTestSuite) TestAcknowledgementPacket() {
 				suite.Require().Equal(supply, balance)
 
 				// send transfer base
-				suite.SendTransferBase(
+				suite.SendTransfer(
 					suite.address,
-					types.BaseTransferData{
-						Receiver:   receiver,
-						DestChain:  dstChain,
-						RelayChain: "",
+					types.TransferData{
+						TokenAddress: common.HexToAddress("0x0000000000000000000000000000000000000000"),
+						Receiver:     receiver,
+						Amount:       amount,
+						DestChain:    dstChain,
+						RelayChain:   "",
 					},
-					amount,
+					types.Fee{
+						TokenAddress: common.HexToAddress("0x0000000000000000000000000000000000000000"),
+						Amount:       big.NewInt(0),
+					},
 				)
 
 				// check balance

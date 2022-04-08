@@ -314,10 +314,10 @@ func NewToggleClientProposalCmd() *cobra.Command {
 // NewRegisterRelayerProposalCmd implements a command handler for submitting a relayer register proposal transaction.
 func NewRegisterRelayerProposalCmd() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "relayer-register [chain-name] [relayers-address] [flags]",
-		Args:  cobra.ExactArgs(2),
+		Use:   "relayer-register [address] [chains] [addresses] [flags]",
+		Args:  cobra.ExactArgs(3),
 		Short: "Submit a relayer register proposal",
-		Long:  "Submit a relayer register proposal for the specified client",
+		Long:  "Submit a relayer register proposal",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
@@ -334,8 +334,10 @@ func NewRegisterRelayerProposalCmd() *cobra.Command {
 				return err
 			}
 
-			relayers := strings.Split(args[1], ",")
-			content := types.NewRegisterRelayerProposal(title, description, args[0], relayers)
+			chains := strings.Split(args[1], ",")
+			addresses := strings.Split(args[2], ",")
+
+			content := types.NewRegisterRelayerProposal(title, description, args[0], chains, addresses)
 
 			depositStr, err := cmd.Flags().GetString(cli.FlagDeposit)
 			if err != nil {

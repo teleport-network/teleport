@@ -73,7 +73,13 @@ func (suite *KeeperTestSuite) TestQueryPacketCommitment() {
 			suite.coordinator.SetupClients(path)
 
 			expCommitment = []byte("hash")
-			suite.chainA.App.XIBCKeeper.PacketKeeper.SetPacketCommitment(suite.chainA.GetContext(), path.EndpointA.ChainName, path.EndpointB.ChainName, 1, expCommitment)
+			suite.chainA.App.XIBCKeeper.PacketKeeper.SetPacketCommitment(
+				suite.chainA.GetContext(),
+				path.EndpointA.ChainName,
+				path.EndpointB.ChainName,
+				1,
+				expCommitment,
+			)
 
 			req = &types.QueryPacketCommitmentRequest{
 				SourceChain: path.EndpointA.ChainName,

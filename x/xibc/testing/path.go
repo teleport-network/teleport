@@ -29,19 +29,35 @@ func NewPath(chainA, chainB *TestChain) *Path {
 	}
 }
 
+// RegisterRelayers register relayers on both endpoints
+func (path *Path) RegisterRelayers() {
+	path.EndpointA.Chain.App.XIBCKeeper.ClientKeeper.RegisterRelayers(
+		path.EndpointA.Chain.GetContext(),
+		path.EndpointA.Chain.SenderAcc.String(),
+		[]string{path.EndpointB.ChainName},
+		[]string{path.EndpointB.Chain.SenderAcc.String()},
+	)
+	path.EndpointB.Chain.App.XIBCKeeper.ClientKeeper.RegisterRelayers(
+		path.EndpointB.Chain.GetContext(),
+		path.EndpointB.Chain.SenderAcc.String(),
+		[]string{path.EndpointA.ChainName},
+		[]string{path.EndpointB.Chain.SenderAcc.String()}, // use EndpointB address
+	)
+}
+
 // RelayPacket attempts to relay the packet first on EndpointA and then on EndpointB
 // if EndpointA does not contain a packet commitment for that packet. An error is returned
 // if a relay step fails or the packet commitment does not exist on either endpoint.
 func (path *Path) RelayPacket(packet packettypes.Packet, ack []byte) error {
-	if bytes.Equal(
-		packettypes.CommitPacket(packet),
-		path.EndpointA.Chain.App.XIBCKeeper.PacketKeeper.GetPacketCommitment(
-			path.EndpointA.Chain.GetContext(),
-			packet.GetSourceChain(),
-			packet.GetDestChain(),
-			packet.GetSequence(),
-		),
-	) {
+	packetCommit := packettypes.CommitPacket(packet)
+	packetCommitA := path.EndpointA.Chain.App.XIBCKeeper.PacketKeeper.GetPacketCommitment(
+		path.EndpointA.Chain.GetContext(),
+		packet.GetSourceChain(),
+		packet.GetDestChain(),
+		packet.GetSequence(),
+	)
+
+	if bytes.Equal(packetCommit, packetCommitA) {
 		// packet found, relay from A to B
 		if err := path.EndpointB.UpdateClient(); err != nil {
 			return err
@@ -55,15 +71,14 @@ func (path *Path) RelayPacket(packet packettypes.Packet, ack []byte) error {
 		return path.EndpointA.AcknowledgePacket(packet, ack)
 	}
 
-	if bytes.Equal(
-		packettypes.CommitPacket(packet),
-		path.EndpointB.Chain.App.XIBCKeeper.PacketKeeper.GetPacketCommitment(
-			path.EndpointB.Chain.GetContext(),
-			packet.GetSourceChain(),
-			packet.GetDestChain(),
-			packet.GetSequence(),
-		),
-	) {
+	packetCommitB := path.EndpointB.Chain.App.XIBCKeeper.PacketKeeper.GetPacketCommitment(
+		path.EndpointB.Chain.GetContext(),
+		packet.GetSourceChain(),
+		packet.GetDestChain(),
+		packet.GetSequence(),
+	)
+
+	if bytes.Equal(packetCommit, packetCommitB) {
 		// packet found, relay B to A
 		if err := path.EndpointA.UpdateClient(); err != nil {
 			return err

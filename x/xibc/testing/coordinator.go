@@ -79,6 +79,18 @@ func (coord *Coordinator) SetupClients(path *Path) {
 
 	err = path.EndpointB.CreateClient()
 	require.NoError(coord.t, err)
+
+	path.RegisterRelayers()
+}
+
+// SetupClientsWithoutRelayer is a helper function to create clients on both chains but not register rleayers.
+// It assumes the caller does not anticipate any errors.
+func (coord *Coordinator) SetupClientsWithoutRelayer(path *Path) {
+	err := path.EndpointA.CreateClient()
+	require.NoError(coord.t, err)
+
+	err = path.EndpointB.CreateClient()
+	require.NoError(coord.t, err)
 }
 
 // GetChain returns the TestChain using the given chainID and returns an error if it does not exist.

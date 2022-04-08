@@ -26,4 +26,4 @@
   - docs/**/*
   - x/*/spec/**/*
 "Type: ADR":
-    - docs/architecture/**/*
+  - docs/architecture/**/*

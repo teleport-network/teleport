@@ -7,7 +7,6 @@ import (
 	"github.com/teleport-network/teleport/x/xibc/core/packet/types"
 	"github.com/teleport-network/teleport/x/xibc/exported"
 	xibctesting "github.com/teleport-network/teleport/x/xibc/testing"
-	xibcmock "github.com/teleport-network/teleport/x/xibc/testing/mock"
 )
 
 type testCase = struct {
@@ -231,55 +230,72 @@ func (suite *KeeperTestSuite) TestWriteAcknowledgement() {
 
 // TestAcknowledgePacket tests the call AcknowledgePacket on chainA.
 func (suite *KeeperTestSuite) TestAcknowledgePacket() {
-	var (
-		packet types.Packet
-		ack    = xibcmock.MockAcknowledgement
-	)
+	var packet types.Packet
+	testCases := []testCase{
+		{
+			"success",
+			func() {
+				// setup
+				path := xibctesting.NewPath(suite.chainA, suite.chainB)
+				suite.coordinator.SetupClients(path)
+				packet = types.NewPacket(
+					1,
+					path.EndpointA.ChainName,
+					path.EndpointB.ChainName,
+					relayChain,
+					[]string{xibctesting.MockPort},
+					[][]byte{validPacketData},
+				)
 
-	testCases := []testCase{{
-		"success",
-		func() {
-			// setup
-			path := xibctesting.NewPath(suite.chainA, suite.chainB)
-			suite.coordinator.SetupClients(path)
-			packet = types.NewPacket(1, path.EndpointA.ChainName, path.EndpointB.ChainName, relayChain, []string{xibctesting.MockPort}, [][]byte{validPacketData})
+				// create packet commitment
+				err := path.EndpointA.SendPacket(packet)
+				suite.Require().NoError(err)
 
-			// create packet commitment
-			err := path.EndpointA.SendPacket(packet)
-			suite.Require().NoError(err)
-
-			// create packet receipt and acknowledgement
-			err = path.EndpointB.RecvPacket(packet)
-			suite.Require().NoError(err)
+				// create packet receipt and acknowledgement
+				err = path.EndpointB.RecvPacket(packet)
+				suite.Require().NoError(err)
+			},
+			true,
 		},
-		true,
-	}, {
-		"port not found",
-		func() {
-			// use wrong port naming
-			path := xibctesting.NewPath(suite.chainA, suite.chainB)
-			suite.coordinator.SetupClients(path)
-			packet = types.NewPacket(1, path.EndpointA.ChainName, path.EndpointB.ChainName, relayChain, []string{xibctesting.InvalidID}, [][]byte{validPacketData})
+		{
+			"port not found",
+			func() {
+				// use wrong port naming
+				path := xibctesting.NewPath(suite.chainA, suite.chainB)
+				suite.coordinator.SetupClients(path)
+				packet = types.NewPacket(1, path.EndpointA.ChainName, path.EndpointB.ChainName, relayChain, []string{xibctesting.InvalidID}, [][]byte{validPacketData})
+			},
+			false,
 		},
-		false,
-	}, {
-		"packet hasn't been sent",
-		func() {
-			// packet commitment never written
-			path := xibctesting.NewPath(suite.chainA, suite.chainB)
-			suite.coordinator.SetupClients(path)
-			packet = types.NewPacket(1, path.EndpointA.ChainName, path.EndpointB.ChainName, relayChain, []string{xibctesting.MockPort}, [][]byte{validPacketData})
+		{
+			"packet hasn't been sent",
+			func() {
+				// packet commitment never written
+				path := xibctesting.NewPath(suite.chainA, suite.chainB)
+				suite.coordinator.SetupClients(path)
+				packet = types.NewPacket(1, path.EndpointA.ChainName, path.EndpointB.ChainName, relayChain, []string{xibctesting.MockPort}, [][]byte{validPacketData})
+			},
+			false,
 		},
-		false,
-	}}
+	}
 
 	for i, tc := range testCases {
 		suite.Run(fmt.Sprintf("Case %s, %d/%d tests", tc.name, i, len(testCases)), func() {
 			suite.SetupTest() // reset
 			tc.malleate()
 
-			packetKey := host.PacketAcknowledgementKey(packet.GetSourceChain(), packet.GetDestChain(), packet.GetSequence())
+			packetKey := host.PacketAcknowledgementKey(
+				packet.GetSourceChain(),
+				packet.GetDestChain(),
+				packet.GetSequence(),
+			)
 			proof, proofHeight := suite.chainB.QueryProof(packetKey)
+
+			ack, err := types.NewResultAcknowledgement(
+				[][]byte{[]byte("mock result")},
+				suite.chainB.SenderAcc.String(),
+			).GetBytes()
+			suite.Require().NoError(err)
 
 			msg := &types.MsgAcknowledgement{
 				Packet:          packet,
@@ -287,8 +303,13 @@ func (suite *KeeperTestSuite) TestAcknowledgePacket() {
 				ProofAcked:      proof,
 				ProofHeight:     proofHeight,
 			}
-			err := suite.chainA.App.XIBCKeeper.PacketKeeper.AcknowledgePacket(suite.chainA.GetContext(), msg)
-			pc := suite.chainA.App.XIBCKeeper.PacketKeeper.GetPacketCommitment(suite.chainA.GetContext(), packet.GetSourceChain(), packet.GetDestChain(), packet.GetSequence())
+			err = suite.chainA.App.XIBCKeeper.PacketKeeper.AcknowledgePacket(suite.chainA.GetContext(), msg)
+			pc := suite.chainA.App.XIBCKeeper.PacketKeeper.GetPacketCommitment(
+				suite.chainA.GetContext(),
+				packet.GetSourceChain(),
+				packet.GetDestChain(),
+				packet.GetSequence(),
+			)
 
 			if tc.expPass {
 				suite.Require().NoError(err, "Case %d failed: %s", i, tc.name)

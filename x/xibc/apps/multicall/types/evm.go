@@ -8,9 +8,8 @@ import (
 )
 
 const (
-	TransferERC20 = uint8(0)
-	TransferBase  = uint8(1)
-	RemoteCall    = uint8(2)
+	Transfer   = uint8(0)
+	RemoteCall = uint8(1)
 )
 
 type Amount struct {
@@ -24,15 +23,10 @@ type MultiCallData struct {
 	Data       [][]byte `json:"data"`
 }
 
-type ERC20TransferData struct {
+type TransferData struct {
 	TokenAddress common.Address `json:"token_address"`
 	Receiver     string         `json:"receiver"`
 	Amount       *big.Int       `json:"amount"`
-}
-
-type BaseTransferData struct {
-	Receiver string   `json:"receiver"`
-	Amount   *big.Int `json:"amount"`
 }
 
 type RCCData struct {
@@ -40,20 +34,23 @@ type RCCData struct {
 	Data            []byte `json:"data"`
 }
 
+type Fee struct {
+	TokenAddress common.Address
+	Amount       *big.Int
+}
+
 var (
-	TupleERC20TransferData abi.Type
-	TupleBaseTransferData  abi.Type
-	TupleRCCData           abi.Type
+	TupleTransferData abi.Type
+	TupleRCCData      abi.Type
 )
 
 func init() {
-	initERC20TransferData()
-	initBaseTransferData()
+	initTransferData()
 	initRCCData()
 }
 
-func initERC20TransferData() {
-	tupleERC20TransferData, err := abi.NewType(
+func initTransferData() {
+	tupleTransferData, err := abi.NewType(
 		"tuple", "",
 		[]abi.ArgumentMarshaling{
 			{Name: "token_address", Type: "address"},
@@ -64,27 +61,10 @@ func initERC20TransferData() {
 	if err != nil {
 		panic(err)
 	}
-	if tupleERC20TransferData.T != abi.TupleTy {
+	if tupleTransferData.T != abi.TupleTy {
 		panic("New TupleERC20TransferData type err")
 	}
-	TupleERC20TransferData = tupleERC20TransferData
-}
-
-func initBaseTransferData() {
-	tupleBaseTransferData, err := abi.NewType(
-		"tuple", "",
-		[]abi.ArgumentMarshaling{
-			{Name: "receiver", Type: "string"},
-			{Name: "amount", Type: "uint256"},
-		},
-	)
-	if err != nil {
-		panic(err)
-	}
-	if tupleBaseTransferData.T != abi.TupleTy {
-		panic("New TupleBaseTransferData type err")
-	}
-	TupleBaseTransferData = tupleBaseTransferData
+	TupleTransferData = tupleTransferData
 }
 
 func initRCCData() {

@@ -79,7 +79,7 @@
     - [CreateClientProposal](#xibc.core.client.v1.CreateClientProposal)
     - [Height](#xibc.core.client.v1.Height)
     - [IdentifiedClientState](#xibc.core.client.v1.IdentifiedClientState)
-    - [IdentifiedRelayers](#xibc.core.client.v1.IdentifiedRelayers)
+    - [IdentifiedRelayer](#xibc.core.client.v1.IdentifiedRelayer)
     - [RegisterRelayerProposal](#xibc.core.client.v1.RegisterRelayerProposal)
     - [ToggleClientProposal](#xibc.core.client.v1.ToggleClientProposal)
     - [UpgradeClientProposal](#xibc.core.client.v1.UpgradeClientProposal)
@@ -1099,17 +1099,18 @@ identifier field.
 
 
 
-<a name="xibc.core.client.v1.IdentifiedRelayers"></a>
+<a name="xibc.core.client.v1.IdentifiedRelayer"></a>
 
-### IdentifiedRelayers
+### IdentifiedRelayer
 IdentifiedRelayer defines a list of authorized relayers for the specified
 client.
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `chain_name` | [string](#string) |  | client identifier |
-| `relayers` | [string](#string) | repeated | authorized relayer list |
+| `address` | [string](#string) |  | relayer address on this chain |
+| `chains` | [string](#string) | repeated | client identifiers |
+| `addresses` | [string](#string) | repeated | relayer addresses on other chains |
 
 
 
@@ -1127,8 +1128,9 @@ relayers for updating a client state.
 | ----- | ---- | ----- | ----------- |
 | `title` | [string](#string) |  | the title of the update proposal |
 | `description` | [string](#string) |  | the description of the proposal |
-| `chain_name` | [string](#string) |  | the client identifier for the client to be updated if the proposal passes |
-| `relayers` | [string](#string) | repeated | relayer address list |
+| `address` | [string](#string) |  | relayer address on this chain |
+| `chains` | [string](#string) | repeated | the client identifiers for the clients to be updated if the proposal passes |
+| `addresses` | [string](#string) | repeated | relayer addresses on other chains |
 
 
 
@@ -1215,8 +1217,9 @@ EventCreateClientProposal is emitted on create client proposal
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `chain_name` | [string](#string) |  |  |
-| `relayers` | [string](#string) | repeated |  |
+| `address` | [string](#string) |  |  |
+| `chains` | [string](#string) | repeated |  |
+| `addresses` | [string](#string) | repeated |  |
 
 
 
@@ -1320,7 +1323,7 @@ GenesisState defines the xibc client submodule's genesis state.
 | `clients_consensus` | [ClientConsensusStates](#xibc.core.client.v1.ClientConsensusStates) | repeated | consensus states from each client |
 | `clients_metadata` | [IdentifiedGenesisMetadata](#xibc.core.client.v1.IdentifiedGenesisMetadata) | repeated | metadata from each client |
 | `native_chain_name` | [string](#string) |  | the chain name of the current chain |
-| `relayers` | [IdentifiedRelayers](#xibc.core.client.v1.IdentifiedRelayers) | repeated | IdentifiedRelayer defines a list of authorized relayers for the specified client. |
+| `relayers` | [IdentifiedRelayer](#xibc.core.client.v1.IdentifiedRelayer) | repeated | IdentifiedRelayer defines a list of authorized relayers |
 
 
 
@@ -1500,11 +1503,6 @@ Query/ConsensusStates RPC method
 QueryRelayersRequest is the request type for the Query/Relayers RPC method.
 
 
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `chain_name` | [string](#string) |  | client identifier |
-
-
 
 
 
@@ -1518,7 +1516,7 @@ method
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `relayers` | [string](#string) | repeated | relayers address associated with the client |
+| `relayers` | [IdentifiedRelayer](#xibc.core.client.v1.IdentifiedRelayer) | repeated | IdentifiedRelayer defines a list of authorized relayers |
 
 
 
@@ -1542,7 +1540,7 @@ Query provides defines the gRPC querier service
 | `ClientStates` | [QueryClientStatesRequest](#xibc.core.client.v1.QueryClientStatesRequest) | [QueryClientStatesResponse](#xibc.core.client.v1.QueryClientStatesResponse) | ClientStates queries all the XIBC clients of a chain. | GET|/ibc/core/client/v1beta1/client_states|
 | `ConsensusState` | [QueryConsensusStateRequest](#xibc.core.client.v1.QueryConsensusStateRequest) | [QueryConsensusStateResponse](#xibc.core.client.v1.QueryConsensusStateResponse) | ConsensusState queries a consensus state associated with a client state at a given height. | GET|/ibc/core/client/v1beta1/consensus_states/{chain_name}/revision/{revision_number}/height/{revision_height}|
 | `ConsensusStates` | [QueryConsensusStatesRequest](#xibc.core.client.v1.QueryConsensusStatesRequest) | [QueryConsensusStatesResponse](#xibc.core.client.v1.QueryConsensusStatesResponse) | ConsensusStates queries all the consensus state associated with a given client. | GET|/ibc/core/client/v1beta1/consensus_states/{chain_name}|
-| `Relayers` | [QueryRelayersRequest](#xibc.core.client.v1.QueryRelayersRequest) | [QueryRelayersResponse](#xibc.core.client.v1.QueryRelayersResponse) | Relayers queries all the relayers associated with a given client. | GET|/ibc/core/client/v1beta1/relayers/{chain_name}|
+| `Relayers` | [QueryRelayersRequest](#xibc.core.client.v1.QueryRelayersRequest) | [QueryRelayersResponse](#xibc.core.client.v1.QueryRelayersResponse) | Relayers queries all the relayers associated with a given client. | GET|/ibc/core/client/v1beta1/relayers|
 
  <!-- end services -->
 
@@ -1787,6 +1785,7 @@ app-specific protocols.
 | ----- | ---- | ----- | ----------- |
 | `results` | [bytes](#bytes) | repeated | the execution results of the packet data list |
 | `message` | [string](#string) |  | error message |
+| `relayer` | [string](#string) |  | relayer address |
 
 
 

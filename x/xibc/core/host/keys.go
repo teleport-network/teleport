@@ -33,6 +33,7 @@ const (
 	KeyNextSeqRecvPrefix      = "nextSequenceRecv"
 	KeyNextSeqAckPrefix       = "nextSequenceAck"
 	KeyPacketCommitmentPrefix = "commitments"
+	KeyPacketRelayerPrefix    = "relayer"
 	KeyPacketAckPrefix        = "acks"
 	KeyPacketReceiptPrefix    = "receipts"
 	keyMaxAckSeqPrefix        = "maxAckSeq"
@@ -109,6 +110,21 @@ func PacketCommitmentKey(sourceChain, destinationChain string, sequence uint64) 
 // PacketCommitmentPrefixPath defines the prefix for commitments to packet data fields store path
 func PacketCommitmentPrefixPath(sourceChain, destinationChain string) string {
 	return fmt.Sprintf("%s/%s/%s", KeyPacketCommitmentPrefix, packetPath(sourceChain, destinationChain), KeySequencePrefix)
+}
+
+// PacketRelayerPath defines the packet data fields store path
+func PacketRelayerPath(sourceChain, destinationChain string, sequence uint64) string {
+	return fmt.Sprintf("%s/%d", PacketRelayerPrefixPath(sourceChain, destinationChain), sequence)
+}
+
+// PacketRelayerKey returns the store key of under which a packet relayer is stored
+func PacketRelayerKey(sourceChain, destinationChain string, sequence uint64) []byte {
+	return []byte(PacketRelayerPath(sourceChain, destinationChain, sequence))
+}
+
+// PacketRelayerPrefixPath defines the prefix for relayer to packet data fields store path
+func PacketRelayerPrefixPath(sourceChain, destinationChain string) string {
+	return fmt.Sprintf("%s/%s/%s", KeyPacketRelayerPrefix, packetPath(sourceChain, destinationChain), KeySequencePrefix)
 }
 
 // PacketAcknowledgementPath defines the packet acknowledgement store path

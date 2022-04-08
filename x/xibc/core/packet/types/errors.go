@@ -16,4 +16,5 @@ var (
 	ErrAcknowledgementExists    = sdkerrors.Register(moduleName, 5, "packet acknowledgement already exists")
 	ErrWritingEthTxData         = sdkerrors.Register(moduleName, 6, "writing ethereum tx data error")
 	ErrScChainEqualToDestChain  = sdkerrors.Register(moduleName, 7, "source chain equals to destination chain")
+	ErrRelayerNotFound          = sdkerrors.Register(moduleName, 8, "relayer not found")
 )

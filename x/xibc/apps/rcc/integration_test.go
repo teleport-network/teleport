@@ -67,13 +67,19 @@ func (suite *RCCTestSuite) TestRemoteContractCall() {
 	payload, err := erc20contracts.ERC20MinterBurnerDecimalsContract.ABI.Pack("approve", suite.chainA.SenderAddress, amount)
 	suite.Require().NoError(err)
 
-	data := types.CallRCCData{
-		ContractAddress: strings.ToLower(erc20Adress.String()),
-		Data:            payload,
-		DestChain:       path.EndpointB.ChainName,
-		RelayChain:      "",
-	}
-	suite.SendRemoteContractCall(suite.chainA, data)
+	suite.SendRemoteContractCall(
+		suite.chainA,
+		types.CallRCCData{
+			ContractAddress: strings.ToLower(erc20Adress.String()),
+			Data:            payload,
+			DestChain:       path.EndpointB.ChainName,
+			RelayChain:      "",
+		},
+		types.Fee{
+			TokenAddress: common.HexToAddress("0x0000000000000000000000000000000000000000"),
+			Amount:       big.NewInt(0),
+		},
+	)
 
 	// commit block
 	suite.coordinator.CommitBlock(suite.chainA, suite.chainB)
@@ -104,7 +110,7 @@ func (suite *RCCTestSuite) TestRemoteContractCall() {
 	result, err := hex.DecodeString("0000000000000000000000000000000000000000000000000000000000000001")
 	suite.Require().NoError(err)
 
-	ack, err := packettypes.NewResultAcknowledgement([][]byte{result}).GetBytes()
+	ack, err := packettypes.NewResultAcknowledgement([][]byte{result}, path.EndpointB.Chain.SenderAcc.String()).GetBytes()
 	suite.Require().NoError(err)
 	err = path.RelayPacket(packet, ack)
 	suite.Require().NoError(err)
@@ -122,11 +128,16 @@ func (suite *RCCTestSuite) TestRemoteContractCall() {
 // Functions for step
 // ================================================================================================================
 
-func (suite *RCCTestSuite) SendRemoteContractCall(fromChain *xibctesting.TestChain, data types.CallRCCData) {
-	rccData, err := rcccontract.RCCContract.ABI.Pack("sendRemoteContractCall", data)
+func (suite *RCCTestSuite) SendRemoteContractCall(fromChain *xibctesting.TestChain, data types.CallRCCData, fee types.Fee) {
+	rccData, err := rcccontract.RCCContract.ABI.Pack("sendRemoteContractCall", data, fee)
 	suite.Require().NoError(err)
 
-	_ = suite.SendTx(fromChain, rcccontract.RCCContractAddress, big.NewInt(0), rccData)
+	amount := big.NewInt(0)
+	if fee.TokenAddress == common.HexToAddress("0x0000000000000000000000000000000000000000") {
+		amount = amount.Add(amount, fee.Amount)
+	}
+
+	_ = suite.SendTx(fromChain, rcccontract.RCCContractAddress, amount, rccData)
 }
 
 func (suite *RCCTestSuite) DeployERC20(fromChain *xibctesting.TestChain, deployer common.Address, scale uint8) common.Address {

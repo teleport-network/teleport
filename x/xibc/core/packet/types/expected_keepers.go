@@ -22,6 +22,7 @@ type ClientKeeper interface {
 	GetClientConsensusState(ctx sdk.Context, chainName string, height exported.Height) (exported.ConsensusState, bool)
 	ClientStore(ctx sdk.Context, chainName string) sdk.KVStore
 	GetChainName(ctx sdk.Context) string
+	GetRelayerAddressOnOtherChain(ctx sdk.Context, chainName string, address string) (string, bool)
 }
 
 // AccountKeeper defines the expected account keeper

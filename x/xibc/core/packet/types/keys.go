@@ -33,13 +33,14 @@ func initTupleAckData() {
 		[]abi.ArgumentMarshaling{
 			{Name: "results", Type: "bytes[]"},
 			{Name: "message", Type: "string"},
+			{Name: "relayer", Type: "string"},
 		},
 	)
 	if err != nil {
 		panic(err)
 	}
 	if tupleAckData.T != abi.TupleTy {
-		panic("New TupleERC20TransferData type err")
+		panic("New TupleAckData type err")
 	}
 	TupleAckData = tupleAckData
 }

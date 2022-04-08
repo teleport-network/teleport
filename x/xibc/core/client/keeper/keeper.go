@@ -163,8 +163,11 @@ func (k Keeper) GetAllClientMetadata(ctx sdk.Context, genClients []types.Identif
 		for i, metadata := range gms {
 			cmd, ok := metadata.(types.GenesisMetadata)
 			if !ok {
-				return nil, sdkerrors.Wrapf(types.ErrInvalidClientMetadata, "expected metadata type: %T, got: %T",
-					types.GenesisMetadata{}, cmd)
+				return nil, sdkerrors.Wrapf(
+					types.ErrInvalidClientMetadata,
+					"expected metadata type: %T, got: %T",
+					types.GenesisMetadata{}, cmd,
+				)
 			}
 			clientMetadata[i] = cmd
 		}

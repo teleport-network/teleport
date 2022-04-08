@@ -5,6 +5,7 @@ import (
 	"math/big"
 
 	"github.com/ethereum/go-ethereum/accounts/abi"
+	"github.com/ethereum/go-ethereum/common"
 )
 
 const (
@@ -21,6 +22,11 @@ type CallRCCData struct {
 	Data            []byte
 	DestChain       string
 	RelayChain      string
+}
+
+type Fee struct {
+	TokenAddress common.Address
+	Amount       *big.Int
 }
 
 var (
