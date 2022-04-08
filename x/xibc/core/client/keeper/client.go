@@ -142,6 +142,7 @@ func (k Keeper) UpdateClient(
 	ctx sdk.Context,
 	chainName string,
 	header exported.Header,
+	randomId int64,
 ) error {
 	clientState, found := k.GetClientState(ctx, chainName)
 	if !found {
@@ -172,6 +173,7 @@ func (k Keeper) UpdateClient(
 		"height", consensusHeight.String(),
 		"isCheckTx", ctx.IsCheckTx(),
 		"isRecheckTx", ctx.IsReCheckTx(),
+		"randomId", randomId,
 	)
 
 	defer func() {

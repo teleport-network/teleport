@@ -2,6 +2,8 @@ package keeper
 
 import (
 	"context"
+	"fmt"
+	"time"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -36,7 +38,14 @@ func (k Keeper) UpdateClient(goCtx context.Context, msg *clienttypes.MsgUpdateCl
 		return nil, err
 	}
 
-	if err = k.ClientKeeper.UpdateClient(ctx, msg.ChainName, header); err != nil {
+	randomId := time.Now().Unix()
+	fmt.Println("-----------clientKeeper updateClient-------------------")
+	fmt.Printf("msg signer:%s, header.height:%s, randomId:%d \n",
+		msg.Signer, header.GetHeight().String(), randomId)
+	if err = k.ClientKeeper.UpdateClient(ctx, msg.ChainName, header, randomId); err != nil {
+		fmt.Println("-----------clientKeeper updateClient error-------------------")
+		fmt.Printf("error:%s, msg signer:%s, header.height:%s, randomId:%d \n",
+			err.Error(), msg.Signer, header.GetHeight().String(), randomId)
 		return nil, err
 	}
 
