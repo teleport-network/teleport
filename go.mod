@@ -151,7 +151,7 @@ require (
 replace (
 	github.com/99designs/keyring => github.com/cosmos/keyring v1.1.7-0.20210622111912-ef00f8ac3d76
 
-	github.com/cosmos/cosmos-sdk => github.com/teleport-network/cosmos-sdk v0.45.2-0.20220406080256-29866aec9805
+	github.com/cosmos/cosmos-sdk => github.com/teleport-network/cosmos-sdk v0.45.2-0.20220408161037-121130c25e54
 	github.com/gogo/protobuf => github.com/regen-network/protobuf v1.3.3-alpha.regen.1
 	github.com/tharsis/ethermint => github.com/teleport-network/ethermint v0.11.1-0.20220403143035-32b2e0bba59e
 	google.golang.org/grpc => google.golang.org/grpc v1.33.2
