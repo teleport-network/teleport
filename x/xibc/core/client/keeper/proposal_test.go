@@ -187,21 +187,30 @@ func (suite KeeperTestSuite) TestHandleRegisterRelayerProposal() {
 				suite.Require().NoError(err)
 
 				// set relayers
-				relayers := []string{"xxx", "yyy"}
-				relayerProposal := types.NewRegisterRelayerProposal("test", "test", "test", relayers)
+				address := "xxx"
+				chains := []string{"xxx", "yyy"}
+				addresses := []string{"xxx", "yyy"}
+
+				relayerProposal := types.NewRegisterRelayerProposal("test", "test", address, chains, addresses)
 				err = suite.chainA.App.XIBCKeeper.ClientKeeper.HandleRegisterRelayer(suite.chainA.GetContext(), relayerProposal)
 				suite.Require().NoError(err)
 
 				// get relayers and compare
-				relayers2 := suite.chainA.App.XIBCKeeper.ClientKeeper.GetRelayers(suite.chainA.GetContext(), "test")
-				suite.Require().Equal(relayers, relayers2)
+				relayer, exist := suite.chainA.App.XIBCKeeper.ClientKeeper.GetRelayer(suite.chainA.GetContext(), "xxx")
+				suite.Require().True(exist)
+
+				suite.Require().Equal(address, relayer.Address)
+				suite.Require().Equal(chains, relayer.Chains)
+				suite.Require().Equal(addresses, relayer.Addresses)
 			},
 		},
 		{
 			"success, no client",
 			func() {
-				relayers := []string{"xxx", "yyy"}
-				relayerProposal := types.NewRegisterRelayerProposal("test", "test", "test", relayers)
+				address := "xxx"
+				chians := []string{"xxx", "yyy"}
+				addresses := []string{"xxx", "yyy"}
+				relayerProposal := types.NewRegisterRelayerProposal("test", "test", address, chians, addresses)
 				err := suite.chainA.App.XIBCKeeper.ClientKeeper.HandleRegisterRelayer(suite.chainA.GetContext(), relayerProposal)
 				suite.Require().NoError(err)
 			},

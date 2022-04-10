@@ -240,14 +240,16 @@ func (cup ToggleClientProposal) UnpackInterfaces(unpacker codectypes.AnyUnpacker
 func NewRegisterRelayerProposal(
 	title string,
 	description string,
-	chainName string,
-	relayers []string,
+	address string,
+	chains []string,
+	addresses []string,
 ) *RegisterRelayerProposal {
 	return &RegisterRelayerProposal{
 		Title:       title,
 		Description: description,
-		ChainName:   chainName,
-		Relayers:    relayers,
+		Address:     address,
+		Chains:      chains,
+		Addresses:   addresses,
 	}
 }
 
@@ -269,16 +271,22 @@ func (rrp *RegisterRelayerProposal) ValidateBasic() error {
 		return err
 	}
 
-	if err := host.ClientIdentifierValidator(rrp.ChainName); err != nil {
-		return err
+	if _, err := sdk.AccAddressFromBech32(rrp.Address); err != nil {
+		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "string could not be parsed as address: %v", err)
 	}
 
-	if len(rrp.Relayers) == 0 {
+	if len(rrp.Addresses) == 0 || len(rrp.Addresses) != len(rrp.Chains) {
 		return govtypes.ErrInvalidLengthGov
 	}
 
-	for _, relayer := range rrp.Relayers {
-		if _, err := sdk.AccAddressFromBech32(relayer); err != nil {
+	for _, chain := range rrp.Chains {
+		if err := host.ClientIdentifierValidator(chain); err != nil {
+			return err
+		}
+	}
+
+	for _, addr := range rrp.Addresses {
+		if _, err := sdk.AccAddressFromBech32(addr); err != nil {
 			return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "string could not be parsed as address: %v", err)
 		}
 	}

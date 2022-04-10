@@ -10,7 +10,6 @@ import (
 	packettypes "github.com/teleport-network/teleport/x/xibc/core/packet/types"
 	"github.com/teleport-network/teleport/x/xibc/exported"
 	xibctesting "github.com/teleport-network/teleport/x/xibc/testing"
-	xibcmock "github.com/teleport-network/teleport/x/xibc/testing/mock"
 )
 
 var (
@@ -83,12 +82,14 @@ func (suite *TendermintTestSuite) TestInitialize() {
 	}}
 
 	path := xibctesting.NewPath(suite.chainA, suite.chainB)
+	path.RegisterRelayers()
 	err := path.EndpointA.CreateClient()
 	suite.Require().NoError(err)
 
 	clientState := path.EndpointA.GetClientState()
-	relayers := path.EndpointA.Chain.App.XIBCKeeper.ClientKeeper.GetRelayers(path.EndpointA.Chain.GetContext(), path.EndpointA.Counterparty.ChainName)
-	suite.Require().Equal(path.EndpointA.Chain.SenderAcc.String(), relayers[0], "relayer does not match")
+
+	relayers := path.EndpointA.Chain.App.XIBCKeeper.ClientKeeper.GetAllRelayers(path.EndpointA.Chain.GetContext())
+	suite.Require().Equal(path.EndpointA.Chain.SenderAcc.String(), relayers[0].Address, "relayer does not match")
 	store := path.EndpointA.ClientStore()
 
 	for _, tc := range testCases {
@@ -141,11 +142,11 @@ func (suite *TendermintTestSuite) TestVerifyPacketCommitment() {
 
 			suite.coordinator.SetupClients(path)
 
-			relayerAs := path.EndpointA.Chain.App.XIBCKeeper.ClientKeeper.GetRelayers(path.EndpointA.Chain.GetContext(), path.EndpointA.Counterparty.ChainName)
-			suite.Require().Equal(path.EndpointA.Chain.SenderAcc.String(), relayerAs[0], "relayer does not match")
+			relayerA := path.EndpointA.Chain.App.XIBCKeeper.ClientKeeper.GetAllRelayers(path.EndpointA.Chain.GetContext())
+			suite.Require().Equal(path.EndpointA.Chain.SenderAcc.String(), relayerA[0].Address, "relayer does not match")
 
-			relayerBs := path.EndpointB.Chain.App.XIBCKeeper.ClientKeeper.GetRelayers(path.EndpointB.Chain.GetContext(), path.EndpointB.Counterparty.ChainName)
-			suite.Require().Equal(path.EndpointB.Chain.SenderAcc.String(), relayerBs[0], "relayer does not match")
+			relayerB := path.EndpointB.Chain.App.XIBCKeeper.ClientKeeper.GetAllRelayers(path.EndpointB.Chain.GetContext())
+			suite.Require().Equal(path.EndpointB.Chain.SenderAcc.String(), relayerB[0].Address, "relayer does not match")
 
 			// setup testing conditions
 			packet := packettypes.NewPacket(1, path.EndpointA.ChainName, path.EndpointB.ChainName, "", []string{xibctesting.MockPort}, [][]byte{xibctesting.TestHash})
@@ -196,23 +197,27 @@ func (suite *TendermintTestSuite) TestVerifyPacketAcknowledgement() {
 		name     string
 		malleate func()
 		expPass  bool
-	}{{
-		"successful verification",
-		func() {},
-		true,
-	}, {
-		"latest client height < height",
-		func() {
-			proofHeight = clientState.LatestHeight.Increment()
+	}{
+		{
+			"successful verification",
+			func() {},
+			true,
 		},
-		false,
-	}, {
-		"proof verification failed",
-		func() {
-			proof = invalidProof
+		{
+			"latest client height < height",
+			func() {
+				proofHeight = clientState.LatestHeight.Increment()
+			},
+			false,
 		},
-		false,
-	}}
+		{
+			"proof verification failed",
+			func() {
+				proof = invalidProof
+			},
+			false,
+		},
+	}
 
 	for _, tc := range testCases {
 		suite.Run(tc.name, func() {
@@ -222,7 +227,14 @@ func (suite *TendermintTestSuite) TestVerifyPacketAcknowledgement() {
 			path := xibctesting.NewPath(suite.chainA, suite.chainB)
 			suite.coordinator.SetupClients(path)
 
-			packet := packettypes.NewPacket(1, path.EndpointA.ChainName, path.EndpointB.ChainName, "", []string{xibctesting.MockPort}, [][]byte{xibctesting.TestHash})
+			packet := packettypes.NewPacket(
+				1,
+				path.EndpointA.ChainName,
+				path.EndpointB.ChainName,
+				"",
+				[]string{xibctesting.MockPort},
+				[][]byte{xibctesting.TestHash},
+			)
 
 			// send packet
 			err := path.EndpointA.SendPacket(packet)
@@ -249,6 +261,12 @@ func (suite *TendermintTestSuite) TestVerifyPacketAcknowledgement() {
 			ctx := suite.chainA.GetContext()
 			store := path.EndpointA.ClientStore()
 
+			ack, err := packettypes.NewResultAcknowledgement(
+				[][]byte{[]byte("mock result")},
+				suite.chainB.SenderAcc.String(),
+			).GetBytes()
+			suite.Require().NoError(err)
+
 			err = clientState.VerifyPacketAcknowledgement(
 				ctx,
 				store,
@@ -258,7 +276,7 @@ func (suite *TendermintTestSuite) TestVerifyPacketAcknowledgement() {
 				packet.GetSourceChain(),
 				packet.GetDestChain(),
 				packet.GetSequence(),
-				packettypes.CommitAcknowledgement(xibcmock.MockAcknowledgement),
+				packettypes.CommitAcknowledgement(ack),
 			)
 
 			if tc.expPass {

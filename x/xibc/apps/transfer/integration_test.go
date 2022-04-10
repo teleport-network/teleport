@@ -87,14 +87,19 @@ func (suite *TransferTestSuite) TestTransferBase() common.Address {
 	suite.Require().True(exist)
 
 	// send transferBase on chainA
-	suite.SendTransferBase(
+	suite.SendTransfer(
 		suite.chainA,
-		types.BaseTransferData{
-			Receiver:   strings.ToLower(suite.chainB.SenderAddress.String()),
-			DestChain:  suite.chainB.ChainID,
-			RelayChain: "",
+		types.TransferData{
+			TokenAddress: common.HexToAddress("0x0000000000000000000000000000000000000000"),
+			Receiver:     strings.ToLower(suite.chainB.SenderAddress.String()),
+			Amount:       amount,
+			DestChain:    suite.chainB.ChainID,
+			RelayChain:   "",
 		},
-		amount,
+		types.Fee{
+			TokenAddress: common.HexToAddress("0x0000000000000000000000000000000000000000"),
+			Amount:       big.NewInt(0),
+		},
 	)
 
 	// commit block
@@ -133,7 +138,11 @@ func (suite *TransferTestSuite) TestTransferBase() common.Address {
 		[]string{types.PortID},
 		[][]byte{DataListBaseBz},
 	)
-	ack, err := packettypes.NewResultAcknowledgement([][]byte{{byte(1)}}).GetBytes()
+	ack, err := packettypes.NewResultAcknowledgement(
+		[][]byte{{byte(1)}},
+		path.EndpointB.Chain.SenderAcc.String(),
+	).GetBytes()
+
 	suite.Require().NoError(err)
 	err = path.RelayPacket(packet, ack)
 	suite.Require().NoError(err)
@@ -168,16 +177,19 @@ func (suite *TransferTestSuite) TestTransferBaseBack() {
 	// Approve erc20 to transfer
 	suite.Approve(suite.chainB, erc20Address, amount)
 
-	suite.SendTransferERC20(
+	suite.SendTransfer(
 		suite.chainB,
-		types.ERC20TransferData{
+		types.TransferData{
 			TokenAddress: erc20Address,
 			Receiver:     strings.ToLower(suite.chainA.SenderAddress.String()),
 			Amount:       amount,
 			DestChain:    suite.chainA.ChainID,
 			RelayChain:   "",
 		},
-		big.NewInt(0),
+		types.Fee{
+			TokenAddress: common.HexToAddress("0x0000000000000000000000000000000000000000"),
+			Amount:       big.NewInt(0),
+		},
 	)
 
 	recvBalance = suite.BalanceOf(suite.chainB, erc20Address, suite.chainB.SenderAddress)
@@ -206,7 +218,11 @@ func (suite *TransferTestSuite) TestTransferBaseBack() {
 		[][]byte{DataListERC20Bz},
 	)
 
-	ack, err := packettypes.NewResultAcknowledgement([][]byte{{byte(1)}}).GetBytes()
+	ack, err := packettypes.NewResultAcknowledgement(
+		[][]byte{{byte(1)}},
+		path.EndpointB.Chain.SenderAcc.String(),
+	).GetBytes()
+
 	suite.Require().NoError(err)
 	err = path.RelayPacket(packet, ack)
 	suite.Require().NoError(err)
@@ -223,116 +239,6 @@ func (suite *TransferTestSuite) TestTransferBaseBack() {
 		suite.chainB.ChainID,
 	)
 	suite.Require().Equal("0", outAmount.String())
-}
-
-func (suite *TransferTestSuite) TestTransferBaseByRelayChain() common.Address {
-	pathAtoB := xibctesting.NewPath(suite.chainA, suite.chainB)
-	pathBtoC := xibctesting.NewPath(suite.chainB, suite.chainC)
-
-	suite.coordinator.SetupClients(pathAtoB)
-	suite.coordinator.SetupClients(pathBtoC)
-
-	// prepare test data
-	total := big.NewInt(100000000000000)
-	amount := big.NewInt(100)
-
-	// check balance
-	balance := suite.chainA.App.EvmKeeper.GetBalance(suite.chainA.GetContext(), suite.chainA.SenderAddress)
-	suite.Require().Equal(total.String(), balance.String())
-
-	// deploy ERC20 on chainB
-	erc20Address := suite.DeployERC20(suite.chainC, transfercontract.TransferContractAddress, uint8(18))
-
-	// add erc20 trace on chainC
-	err := suite.chainC.App.AggregateKeeper.RegisterERC20Trace(
-		suite.chainC.GetContext(),
-		erc20Address,
-		common.BigToAddress(big.NewInt(0)).String(),
-		suite.chainA.ChainID,
-		uint8(0),
-	)
-	suite.Require().NoError(err)
-
-	// check ERC20 trace
-	_, _, exist, err := suite.chainC.App.AggregateKeeper.QueryERC20Trace(
-		suite.chainC.GetContext(),
-		erc20Address,
-		suite.chainA.ChainID,
-	)
-	suite.Require().NoError(err)
-	suite.Require().True(exist)
-
-	// send transferBase on chainA
-	suite.SendTransferBase(
-		suite.chainA,
-		types.BaseTransferData{
-			Receiver:   strings.ToLower(suite.chainC.SenderAddress.String()),
-			DestChain:  suite.chainC.ChainID,
-			RelayChain: suite.chainB.ChainID,
-		},
-		amount,
-	)
-
-	// commit block
-	suite.coordinator.CommitBlock(suite.chainA, suite.chainB, suite.chainC)
-
-	// check balance
-	balance = suite.chainA.App.EvmKeeper.GetBalance(suite.chainA.GetContext(), suite.chainA.SenderAddress)
-	suite.Require().Equal(big.NewInt(0).Sub(total, amount).String(), balance.String())
-
-	// check token out
-	outAmount := suite.OutTokens(
-		suite.chainA,
-		common.BigToAddress(big.NewInt(0)),
-		suite.chainC.ChainID,
-	)
-	suite.Require().Equal(amount.String(), outAmount.String())
-	sequence := uint64(1)
-	// relay packet
-	packetData := types.NewFungibleTokenPacketData(
-		pathAtoB.EndpointA.ChainName,
-		pathBtoC.EndpointB.ChainName,
-		sequence,
-		strings.ToLower(suite.chainA.SenderAddress.String()),
-		strings.ToLower(suite.chainC.SenderAddress.String()),
-		amount.Bytes(),
-		strings.ToLower(common.BigToAddress(big.NewInt(0)).String()),
-		strings.ToLower(""),
-	)
-	DataListBaseBz, err := packetData.GetBytes()
-	suite.Require().NoError(err)
-	packet := packettypes.NewPacket(
-		sequence,
-		pathAtoB.EndpointA.ChainName,
-		pathBtoC.EndpointB.ChainName,
-		pathAtoB.EndpointB.ChainName,
-		[]string{types.PortID},
-		[][]byte{DataListBaseBz},
-	)
-
-	err = pathAtoB.RelayPacket(packet, nil)
-	suite.Require().NoError(err)
-
-	// commit block
-	ack, err := packettypes.NewResultAcknowledgement([][]byte{{byte(1)}}).GetBytes()
-	suite.Require().NoError(err)
-	suite.coordinator.CommitBlock(suite.chainA, suite.chainB, suite.chainC)
-	err = pathBtoC.RelayPacket(packet, ack)
-	suite.NoError(err)
-
-	// commit block
-	suite.coordinator.CommitBlock(suite.chainA, suite.chainB, suite.chainC)
-
-	err = pathAtoB.EndpointA.UpdateClient()
-	suite.Require().NoError(err)
-	err = pathAtoB.EndpointA.AcknowledgePacket(packet, ack)
-	suite.NoError(err)
-
-	//check balance
-	recvBalance := suite.BalanceOf(suite.chainC, erc20Address, suite.chainC.SenderAddress)
-	suite.Require().Equal(amount.String(), recvBalance.String())
-
-	return erc20Address
 }
 
 func (suite *TransferTestSuite) TestTransferERC20() {
@@ -378,16 +284,19 @@ func (suite *TransferTestSuite) TestTransferERC20() {
 	suite.Require().True(exist)
 
 	// send transferBase on chainA
-	suite.SendTransferERC20(
+	suite.SendTransfer(
 		suite.chainA,
-		types.ERC20TransferData{
+		types.TransferData{
 			TokenAddress: chainAERC20Address,
 			Receiver:     suite.chainB.SenderAddress.String(),
 			Amount:       out,
 			DestChain:    suite.chainB.ChainID,
 			RelayChain:   "",
 		},
-		big.NewInt(0),
+		types.Fee{
+			TokenAddress: common.HexToAddress("0x0000000000000000000000000000000000000000"),
+			Amount:       big.NewInt(0),
+		},
 	)
 	recvBalance = suite.BalanceOf(suite.chainA, chainAERC20Address, suite.chainA.SenderAddress)
 	suite.Require().Equal(strconv.FormatUint(amount.Uint64()-out.Uint64(), 10), recvBalance.String())
@@ -426,7 +335,11 @@ func (suite *TransferTestSuite) TestTransferERC20() {
 	// commit block
 	suite.coordinator.CommitBlock(suite.chainA, suite.chainB)
 
-	ack, err := packettypes.NewResultAcknowledgement([][]byte{{byte(1)}}).GetBytes()
+	ack, err := packettypes.NewResultAcknowledgement(
+		[][]byte{{byte(1)}},
+		path.EndpointB.Chain.SenderAcc.String(),
+	).GetBytes()
+
 	suite.Require().NoError(err)
 	err = path.RelayPacket(packet, ack)
 	suite.Require().NoError(err)
@@ -469,16 +382,19 @@ func (suite *TransferTestSuite) TestTransferERC20Back() {
 	// Approve erc20 to transfer
 	suite.Approve(suite.chainB, chainBERC20Address, amount)
 
-	suite.SendTransferERC20(
+	suite.SendTransfer(
 		suite.chainB,
-		types.ERC20TransferData{
+		types.TransferData{
 			TokenAddress: chainBERC20Address,
 			Receiver:     suite.chainA.SenderAddress.String(),
 			Amount:       amount,
 			DestChain:    suite.chainA.ChainID,
 			RelayChain:   "",
 		},
-		big.NewInt(0),
+		types.Fee{
+			TokenAddress: common.HexToAddress("0x0000000000000000000000000000000000000000"),
+			Amount:       big.NewInt(0),
+		},
 	)
 
 	recvBalance = suite.BalanceOf(suite.chainB, chainBERC20Address, suite.chainB.SenderAddress)
@@ -506,7 +422,11 @@ func (suite *TransferTestSuite) TestTransferERC20Back() {
 		[][]byte{DataListERC20Bz},
 	)
 
-	ack, err := packettypes.NewResultAcknowledgement([][]byte{{byte(1)}}).GetBytes()
+	ack, err := packettypes.NewResultAcknowledgement(
+		[][]byte{{byte(1)}},
+		path.EndpointB.Chain.SenderAcc.String(),
+	).GetBytes()
+
 	suite.Require().NoError(err)
 	err = path.RelayPacket(packet, ack)
 	suite.Require().NoError(err)
@@ -564,16 +484,19 @@ func (suite *TransferTestSuite) TestTransferScaledERC20() {
 	suite.Require().True(exist)
 
 	// send transferBase on chainA
-	suite.SendTransferERC20(
+	suite.SendTransfer(
 		suite.chainA,
-		types.ERC20TransferData{
+		types.TransferData{
 			TokenAddress: chainAERC20Address,
 			Receiver:     suite.chainB.SenderAddress.String(),
 			Amount:       out,
 			DestChain:    suite.chainB.ChainID,
 			RelayChain:   "",
 		},
-		big.NewInt(0),
+		types.Fee{
+			TokenAddress: common.HexToAddress("0x0000000000000000000000000000000000000000"),
+			Amount:       big.NewInt(0),
+		},
 	)
 	recvBalance = suite.BalanceOf(suite.chainA, chainAERC20Address, suite.chainA.SenderAddress)
 	suite.Require().Equal(strconv.FormatUint(amount.Uint64()-out.Uint64(), 10), recvBalance.String())
@@ -611,7 +534,11 @@ func (suite *TransferTestSuite) TestTransferScaledERC20() {
 	// commit block
 	suite.coordinator.CommitBlock(suite.chainA, suite.chainB)
 
-	ack, err := packettypes.NewResultAcknowledgement([][]byte{{byte(1)}}).GetBytes()
+	ack, err := packettypes.NewResultAcknowledgement(
+		[][]byte{{byte(1)}},
+		path.EndpointB.Chain.SenderAcc.String(),
+	).GetBytes()
+
 	suite.Require().NoError(err)
 	err = path.RelayPacket(packet, ack)
 	suite.Require().NoError(err)
@@ -655,16 +582,19 @@ func (suite *TransferTestSuite) TestTransferScaledERC20Back() {
 	// Approve erc20 to transfer
 	suite.Approve(suite.chainB, chainBERC20Address, new(big.Int).Mul(amount, scale.BigInt()))
 
-	suite.SendTransferERC20(
+	suite.SendTransfer(
 		suite.chainB,
-		types.ERC20TransferData{
+		types.TransferData{
 			TokenAddress: chainBERC20Address,
 			Receiver:     suite.chainA.SenderAddress.String(),
 			Amount:       amount,
 			DestChain:    suite.chainA.ChainID,
 			RelayChain:   "",
 		},
-		big.NewInt(0),
+		types.Fee{
+			TokenAddress: common.HexToAddress("0x0000000000000000000000000000000000000000"),
+			Amount:       big.NewInt(0),
+		},
 	)
 
 	recvBalance = suite.BalanceOf(suite.chainB, chainBERC20Address, suite.chainB.SenderAddress)
@@ -692,7 +622,11 @@ func (suite *TransferTestSuite) TestTransferScaledERC20Back() {
 		[][]byte{DataListERC20Bz},
 	)
 
-	ack, err := packettypes.NewResultAcknowledgement([][]byte{{byte(1)}}).GetBytes()
+	ack, err := packettypes.NewResultAcknowledgement(
+		[][]byte{{byte(1)}},
+		path.EndpointB.Chain.SenderAcc.String(),
+	).GetBytes()
+
 	suite.Require().NoError(err)
 	err = path.RelayPacket(packet, ack)
 	suite.Require().NoError(err)
@@ -745,16 +679,19 @@ func (suite *TransferTestSuite) TestTransferWTele() {
 	suite.Require().True(exist)
 
 	// send transferBase on chainA
-	suite.SendTransferERC20(
+	suite.SendTransfer(
 		suite.chainA,
-		types.ERC20TransferData{
+		types.TransferData{
 			TokenAddress: wtelecontract.WTELEContractAddress,
 			Receiver:     suite.chainB.SenderAddress.String(),
 			Amount:       out,
 			DestChain:    suite.chainB.ChainID,
 			RelayChain:   "",
 		},
-		big.NewInt(0),
+		types.Fee{
+			TokenAddress: common.HexToAddress("0x0000000000000000000000000000000000000000"),
+			Amount:       big.NewInt(0),
+		},
 	)
 	recvBalance = suite.BalanceOf(suite.chainA, wtelecontract.WTELEContractAddress, suite.chainA.SenderAddress)
 	suite.Require().Equal(strconv.FormatUint(amount.Uint64()-out.Uint64(), 10), recvBalance.String())
@@ -792,7 +729,11 @@ func (suite *TransferTestSuite) TestTransferWTele() {
 	// commit block
 	suite.coordinator.CommitBlock(suite.chainA, suite.chainB)
 
-	ack, err := packettypes.NewResultAcknowledgement([][]byte{{byte(1)}}).GetBytes()
+	ack, err := packettypes.NewResultAcknowledgement(
+		[][]byte{{byte(1)}},
+		path.EndpointB.Chain.SenderAcc.String(),
+	).GetBytes()
+
 	suite.Require().NoError(err)
 	err = path.RelayPacket(packet, ack)
 	suite.Require().NoError(err)
@@ -835,16 +776,19 @@ func (suite *TransferTestSuite) TestTransferWTeleBack() {
 	// Approve erc20 to transfer
 	suite.Approve(suite.chainB, chainBERC20Address, amount)
 
-	suite.SendTransferERC20(
+	suite.SendTransfer(
 		suite.chainB,
-		types.ERC20TransferData{
+		types.TransferData{
 			TokenAddress: chainBERC20Address,
 			Receiver:     suite.chainA.SenderAddress.String(),
 			Amount:       amount,
 			DestChain:    suite.chainA.ChainID,
 			RelayChain:   "",
 		},
-		big.NewInt(0),
+		types.Fee{
+			TokenAddress: common.HexToAddress("0x0000000000000000000000000000000000000000"),
+			Amount:       big.NewInt(0),
+		},
 	)
 
 	recvBalance = suite.BalanceOf(suite.chainB, chainBERC20Address, suite.chainB.SenderAddress)
@@ -873,7 +817,11 @@ func (suite *TransferTestSuite) TestTransferWTeleBack() {
 		[][]byte{DataListERC20Bz},
 	)
 
-	ack, err := packettypes.NewResultAcknowledgement([][]byte{{byte(1)}}).GetBytes()
+	ack, err := packettypes.NewResultAcknowledgement(
+		[][]byte{{byte(1)}},
+		path.EndpointB.Chain.SenderAcc.String(),
+	).GetBytes()
+
 	suite.Require().NoError(err)
 	err = path.RelayPacket(packet, ack)
 	suite.Require().NoError(err)
@@ -986,20 +934,16 @@ func (suite *TransferTestSuite) AgentRefund(fromChain *xibctesting.TestChain, sr
 	suite.coordinator.CommitBlock(suite.chainA, suite.chainB, suite.chainC)
 }
 
-func (suite *TransferTestSuite) SendMultiCall(fromChain *xibctesting.TestChain, amount *big.Int, data multicalltypes.MultiCallData) {
-	multiCallData, err := multicallcontract.MultiCallContract.ABI.Pack("multiCall", data)
+func (suite *TransferTestSuite) SendMultiCall(fromChain *xibctesting.TestChain, amount *big.Int, data multicalltypes.MultiCallData, fee types.Fee) {
+	multiCallData, err := multicallcontract.MultiCallContract.ABI.Pack("multiCall", data, fee)
 	suite.Require().NoError(err)
+
+	if fee.TokenAddress == common.HexToAddress("0x0000000000000000000000000000000000000000") {
+		amount = amount.Add(amount, fee.Amount)
+	}
 
 	_ = suite.SendTx(fromChain, multicallcontract.MultiCallContractAddress, amount, multiCallData)
 	suite.coordinator.CommitBlock(suite.chainA, suite.chainB, suite.chainC)
-}
-
-func (suite *TransferTestSuite) SendRemoteContractCall(fromChain *xibctesting.TestChain, data rcctypes.CallRCCData) {
-	rccData, err := rcccontract.RCCContract.ABI.Pack("sendRemoteContractCall", data)
-	suite.Require().NoError(err)
-
-	_ = suite.SendTx(fromChain, rcccontract.RCCContractAddress, big.NewInt(0), rccData)
-	suite.coordinator.CommitBlock(suite.chainA, suite.chainB)
 }
 
 func (suite *TransferTestSuite) RCCAcks(fromChain *xibctesting.TestChain, hash [32]byte) []byte {
@@ -1060,11 +1004,21 @@ func (suite *TransferTestSuite) BalanceOf(fromChain *xibctesting.TestChain, cont
 	return balance.Value
 }
 
-func (suite *TransferTestSuite) SendTransferBase(fromChain *xibctesting.TestChain, data types.BaseTransferData, amount *big.Int) {
-	transferData, err := transfercontract.TransferContract.ABI.Pack("sendTransferBase", data)
+func (suite *TransferTestSuite) SendTransfer(fromChain *xibctesting.TestChain, data types.TransferData, fee types.Fee) {
+	transferData, err := transfercontract.TransferContract.ABI.Pack("sendTransfer", data, fee)
 	suite.Require().NoError(err)
 
+	amount := big.NewInt(0)
+	if data.TokenAddress == common.HexToAddress("0x0000000000000000000000000000000000000000") {
+		amount = amount.Add(amount, data.Amount)
+	}
+
+	if fee.TokenAddress == common.HexToAddress("0x0000000000000000000000000000000000000000") {
+		amount = amount.Add(amount, fee.Amount)
+	}
+
 	_ = suite.SendTx(fromChain, transfercontract.TransferContractAddress, amount, transferData)
+	suite.coordinator.CommitBlock(suite.chainA, suite.chainB)
 }
 
 func (suite *TransferTestSuite) MintERC20Token(fromChain *xibctesting.TestChain, to, erc20Address common.Address, amount *big.Int) {
@@ -1079,14 +1033,6 @@ func (suite *TransferTestSuite) Approve(fromChain *xibctesting.TestChain, erc20A
 	suite.Require().NoError(err)
 
 	_ = suite.SendTx(fromChain, erc20Address, big.NewInt(0), transferData)
-	suite.coordinator.CommitBlock(suite.chainA, suite.chainB)
-}
-
-func (suite *TransferTestSuite) SendTransferERC20(fromChain *xibctesting.TestChain, data types.ERC20TransferData, amount *big.Int) {
-	transferData, err := transfercontract.TransferContract.ABI.Pack("sendTransferERC20", data)
-	suite.Require().NoError(err)
-
-	_ = suite.SendTx(fromChain, transfercontract.TransferContractAddress, amount, transferData)
 	suite.coordinator.CommitBlock(suite.chainA, suite.chainB)
 }
 

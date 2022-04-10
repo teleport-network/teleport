@@ -96,14 +96,18 @@ func (p Packet) ValidateBasic() error {
 }
 
 // NewResultAcknowledgement returns a new instance of Acknowledgement using an Acknowledgement_Result type in the Response field.
-func NewResultAcknowledgement(results [][]byte) Acknowledgement {
-	return Acknowledgement{Results: results}
+func NewResultAcknowledgement(results [][]byte, relayer string) Acknowledgement {
+	return Acknowledgement{
+		Results: results,
+		Relayer: relayer,
+	}
 }
 
 // NewErrorAcknowledgement returns a new instance of Acknowledgement using an Acknowledgement_Error type in the Response field.
-func NewErrorAcknowledgement(message string) Acknowledgement {
+func NewErrorAcknowledgement(message string, relayer string) Acknowledgement {
 	return Acknowledgement{
 		Message: message,
+		Relayer: relayer,
 	}
 }
 

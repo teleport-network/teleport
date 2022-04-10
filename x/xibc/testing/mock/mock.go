@@ -26,7 +26,7 @@ const (
 
 var (
 	MockResult             = []byte("mock result")
-	MockAcknowledgement, _ = packettypes.NewResultAcknowledgement([][]byte{MockResult}).GetBytes()
+	MockAcknowledgement, _ = packettypes.NewResultAcknowledgement([][]byte{MockResult}, "").GetBytes()
 )
 
 var _ porttypes.XIBCModule = AppModule{}

@@ -51,4 +51,6 @@ message Acknowledgement {
   repeated bytes results = 1;
   // error message
   string message = 2;
+  // relayer address
+  string relayer = 3;
 }

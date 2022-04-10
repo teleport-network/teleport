@@ -183,12 +183,8 @@ func (q Keeper) Relayers(c context.Context, req *types.QueryRelayersRequest) (*t
 		return nil, status.Error(codes.InvalidArgument, "empty request")
 	}
 
-	if err := host.ClientIdentifierValidator(req.ChainName); err != nil {
-		return nil, status.Error(codes.InvalidArgument, err.Error())
-	}
-
 	ctx := sdk.UnwrapSDKContext(c)
 	return &types.QueryRelayersResponse{
-		Relayers: q.GetRelayers(ctx, req.ChainName),
+		Relayers: q.GetAllRelayers(ctx),
 	}, nil
 }

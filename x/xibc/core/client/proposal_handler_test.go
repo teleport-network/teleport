@@ -87,15 +87,12 @@ func (suite *ClientTestSuite) TestNewClientUpdateProposalHandler() {
 			path := xibctesting.NewPath(suite.chainA, suite.chainB)
 			suite.coordinator.SetupClients(path)
 
-			relayers := []string{
-				suite.chainB.SenderAcc.String(),
-			}
-
 			content = clienttypes.NewRegisterRelayerProposal(
 				xibctesting.Title,
 				xibctesting.Description,
-				path.EndpointB.ChainName,
-				relayers,
+				suite.chainA.SenderAcc.String(),
+				[]string{path.EndpointB.ChainName},
+				[]string{suite.chainB.SenderAcc.String()},
 			)
 			suite.Require().NoError(err)
 		},

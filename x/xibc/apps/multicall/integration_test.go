@@ -84,21 +84,29 @@ func (suite *MultiCallTestSuite) TestTransferBaseCall() common.Address {
 	suite.Require().NoError(err)
 	suite.Require().True(exist)
 
-	transferBaseDataBytes, err := abi.Arguments{{Type: types.TupleBaseTransferData}}.Pack(
-		types.BaseTransferData{
-			Receiver: suite.chainB.SenderAddress.String(),
-			Amount:   amount,
+	transferBaseDataBytes, err := abi.Arguments{{Type: types.TupleTransferData}}.Pack(
+		types.TransferData{
+			TokenAddress: common.HexToAddress("0x0000000000000000000000000000000000000000"),
+			Receiver:     suite.chainB.SenderAddress.String(),
+			Amount:       amount,
 		},
 	)
 	suite.Require().NoError(err)
 
-	data := types.MultiCallData{
-		DestChain:  suite.chainB.ChainID,
-		RelayChain: "",
-		Functions:  []uint8{1},
-		Data:       [][]byte{transferBaseDataBytes},
-	}
-	suite.SendMultiCall(suite.chainA, amount, data)
+	suite.SendMultiCall(
+		suite.chainA,
+		amount,
+		types.MultiCallData{
+			DestChain:  suite.chainB.ChainID,
+			RelayChain: "",
+			Functions:  []uint8{0},
+			Data:       [][]byte{transferBaseDataBytes},
+		},
+		types.Fee{
+			TokenAddress: common.HexToAddress("0x0000000000000000000000000000000000000000"),
+			Amount:       big.NewInt(0),
+		},
+	)
 
 	// commit block
 	suite.coordinator.CommitBlock(suite.chainA, suite.chainB)
@@ -137,7 +145,11 @@ func (suite *MultiCallTestSuite) TestTransferBaseCall() common.Address {
 		[][]byte{DataListBaseBz},
 	)
 
-	ack, err := packettypes.NewResultAcknowledgement([][]byte{{byte(1)}}).GetBytes()
+	ack, err := packettypes.NewResultAcknowledgement(
+		[][]byte{{byte(1)}},
+		path.EndpointB.Chain.SenderAcc.String(),
+	).GetBytes()
+
 	suite.NoError(err)
 	err = path.RelayPacket(packet, ack)
 	suite.Require().NoError(err)
@@ -173,8 +185,8 @@ func (suite *MultiCallTestSuite) TestTransferBaseBackCall() {
 	suite.Approve(suite.chainB, erc20Address, amount)
 
 	// send multi call
-	transferBaseBackDataBytes, err := abi.Arguments{{Type: types.TupleERC20TransferData}}.Pack(
-		types.ERC20TransferData{
+	transferBaseBackDataBytes, err := abi.Arguments{{Type: types.TupleTransferData}}.Pack(
+		types.TransferData{
 			TokenAddress: erc20Address,
 			Receiver:     suite.chainA.SenderAddress.String(),
 			Amount:       amount,
@@ -182,13 +194,20 @@ func (suite *MultiCallTestSuite) TestTransferBaseBackCall() {
 	)
 	suite.Require().NoError(err)
 
-	data := types.MultiCallData{
-		DestChain:  suite.chainA.ChainID,
-		RelayChain: "",
-		Functions:  []uint8{0},
-		Data:       [][]byte{transferBaseBackDataBytes},
-	}
-	suite.SendMultiCall(suite.chainB, big.NewInt(0), data)
+	suite.SendMultiCall(
+		suite.chainB,
+		big.NewInt(0),
+		types.MultiCallData{
+			DestChain:  suite.chainA.ChainID,
+			RelayChain: "",
+			Functions:  []uint8{0},
+			Data:       [][]byte{transferBaseBackDataBytes},
+		},
+		types.Fee{
+			TokenAddress: common.HexToAddress("0x0000000000000000000000000000000000000000"),
+			Amount:       big.NewInt(0),
+		},
+	)
 
 	// commit block
 	suite.coordinator.CommitBlock(suite.chainA, suite.chainB)
@@ -219,7 +238,11 @@ func (suite *MultiCallTestSuite) TestTransferBaseBackCall() {
 		[][]byte{DataListERC20Bz},
 	)
 
-	ack, err := packettypes.NewResultAcknowledgement([][]byte{{byte(1)}}).GetBytes()
+	ack, err := packettypes.NewResultAcknowledgement(
+		[][]byte{{byte(1)}},
+		path.EndpointB.Chain.SenderAcc.String(),
+	).GetBytes()
+
 	suite.NoError(err)
 	err = path.RelayPacket(packet, ack)
 	suite.Require().NoError(err)
@@ -264,13 +287,20 @@ func (suite *MultiCallTestSuite) TestRCCCall() {
 	)
 	suite.Require().NoError(err)
 
-	data := types.MultiCallData{
-		DestChain:  path.EndpointB.ChainName,
-		RelayChain: "",
-		Functions:  []uint8{2},
-		Data:       [][]byte{rccDataBytes},
-	}
-	suite.SendMultiCall(suite.chainA, amount, data)
+	suite.SendMultiCall(
+		suite.chainA,
+		amount,
+		types.MultiCallData{
+			DestChain:  path.EndpointB.ChainName,
+			RelayChain: "",
+			Functions:  []uint8{1},
+			Data:       [][]byte{rccDataBytes},
+		},
+		types.Fee{
+			TokenAddress: common.HexToAddress("0x0000000000000000000000000000000000000000"),
+			Amount:       big.NewInt(0),
+		},
+	)
 
 	// commit block
 	suite.coordinator.CommitBlock(suite.chainA, suite.chainB)
@@ -295,10 +325,14 @@ func (suite *MultiCallTestSuite) TestRCCCall() {
 		[][]byte{bz},
 	)
 
-	resultRcc, err := hex.DecodeString("0000000000000000000000000000000000000000000000000000000000000001")
+	resultRCC, err := hex.DecodeString("0000000000000000000000000000000000000000000000000000000000000001")
 	suite.Require().NoError(err)
 
-	ack, err := packettypes.NewResultAcknowledgement([][]byte{resultRcc}).GetBytes()
+	ack, err := packettypes.NewResultAcknowledgement(
+		[][]byte{resultRCC},
+		path.EndpointB.Chain.SenderAcc.String(),
+	).GetBytes()
+
 	suite.Require().NoError(err)
 	err = path.RelayPacket(packet, ack)
 	suite.Require().NoError(err)
@@ -359,21 +393,29 @@ func (suite *MultiCallTestSuite) TestMultiCall_VV() {
 	)
 	suite.Require().NoError(err)
 
-	transferBaseDataBytes, err := abi.Arguments{{Type: types.TupleBaseTransferData}}.Pack(
-		types.BaseTransferData{
-			Receiver: suite.chainB.SenderAddress.String(),
-			Amount:   amount,
+	transferBaseDataBytes, err := abi.Arguments{{Type: types.TupleTransferData}}.Pack(
+		types.TransferData{
+			TokenAddress: common.HexToAddress("0x0000000000000000000000000000000000000000"),
+			Receiver:     suite.chainB.SenderAddress.String(),
+			Amount:       amount,
 		},
 	)
 	suite.Require().NoError(err)
 
-	data := types.MultiCallData{
-		DestChain:  path.EndpointB.ChainName,
-		RelayChain: "",
-		Functions:  []uint8{2, 1},
-		Data:       [][]byte{rccDataBytes, transferBaseDataBytes},
-	}
-	suite.SendMultiCall(suite.chainA, amount, data)
+	suite.SendMultiCall(
+		suite.chainA,
+		amount,
+		types.MultiCallData{
+			DestChain:  path.EndpointB.ChainName,
+			RelayChain: "",
+			Functions:  []uint8{1, 0},
+			Data:       [][]byte{rccDataBytes, transferBaseDataBytes},
+		},
+		types.Fee{
+			TokenAddress: common.HexToAddress("0x0000000000000000000000000000000000000000"),
+			Amount:       big.NewInt(0),
+		},
+	)
 
 	// commit block
 	suite.coordinator.CommitBlock(suite.chainA, suite.chainB)
@@ -416,11 +458,15 @@ func (suite *MultiCallTestSuite) TestMultiCall_VV() {
 		},
 	)
 
-	resultRcc, err := hex.DecodeString("0000000000000000000000000000000000000000000000000000000000000001")
+	resultRCC, err := hex.DecodeString("0000000000000000000000000000000000000000000000000000000000000001")
 	suite.Require().NoError(err)
 	resultTransferBase := []byte{byte(1)}
 
-	ack, err := packettypes.NewResultAcknowledgement([][]byte{resultRcc, resultTransferBase}).GetBytes()
+	ack, err := packettypes.NewResultAcknowledgement(
+		[][]byte{resultRCC, resultTransferBase},
+		path.EndpointB.Chain.SenderAcc.String(),
+	).GetBytes()
+
 	suite.Require().NoError(err)
 	err = path.RelayPacket(packet, ack)
 	suite.Require().NoError(err)
@@ -475,21 +521,29 @@ func (suite *MultiCallTestSuite) TestMultiCall_VX() {
 	)
 	suite.Require().NoError(err)
 
-	transferBaseDataBytes, err := abi.Arguments{{Type: types.TupleBaseTransferData}}.Pack(
-		types.BaseTransferData{
-			Receiver: suite.chainB.SenderAddress.String(),
-			Amount:   amount,
+	transferBaseDataBytes, err := abi.Arguments{{Type: types.TupleTransferData}}.Pack(
+		types.TransferData{
+			TokenAddress: common.HexToAddress("0x0000000000000000000000000000000000000000"),
+			Receiver:     suite.chainB.SenderAddress.String(),
+			Amount:       amount,
 		},
 	)
 	suite.Require().NoError(err)
 
-	data := types.MultiCallData{
-		DestChain:  path.EndpointB.ChainName,
-		RelayChain: "",
-		Functions:  []uint8{2, 1},
-		Data:       [][]byte{rccDataBytes, transferBaseDataBytes},
-	}
-	suite.SendMultiCall(suite.chainA, amount, data)
+	suite.SendMultiCall(
+		suite.chainA,
+		amount,
+		types.MultiCallData{
+			DestChain:  path.EndpointB.ChainName,
+			RelayChain: "",
+			Functions:  []uint8{1, 0},
+			Data:       [][]byte{rccDataBytes, transferBaseDataBytes},
+		},
+		types.Fee{
+			TokenAddress: common.HexToAddress("0x0000000000000000000000000000000000000000"),
+			Amount:       big.NewInt(0),
+		},
+	)
 
 	// commit block
 	suite.coordinator.CommitBlock(suite.chainA, suite.chainB)
@@ -533,7 +587,11 @@ func (suite *MultiCallTestSuite) TestMultiCall_VX() {
 		},
 	)
 
-	ack, err := packettypes.NewErrorAcknowledgement("onRecvPackt: binding is not exist").GetBytes()
+	ack, err := packettypes.NewErrorAcknowledgement(
+		"onRecvPackt: binding is not exist",
+		path.EndpointB.Chain.SenderAcc.String(),
+	).GetBytes()
+
 	suite.Require().NoError(err)
 
 	err = path.RelayPacket(packet, ack)
@@ -552,9 +610,13 @@ func (suite *MultiCallTestSuite) TestMultiCall_VX() {
 // Functions for step
 // ================================================================================================================
 
-func (suite *MultiCallTestSuite) SendMultiCall(fromChain *xibctesting.TestChain, amount *big.Int, data types.MultiCallData) {
-	multiCallData, err := multicallcontract.MultiCallContract.ABI.Pack("multiCall", data)
+func (suite *MultiCallTestSuite) SendMultiCall(fromChain *xibctesting.TestChain, amount *big.Int, data types.MultiCallData, fee types.Fee) {
+	multiCallData, err := multicallcontract.MultiCallContract.ABI.Pack("multiCall", data, fee)
 	suite.Require().NoError(err)
+
+	if fee.TokenAddress == common.HexToAddress("0x0000000000000000000000000000000000000000") {
+		amount = amount.Add(amount, fee.Amount)
+	}
 
 	_ = suite.SendTx(fromChain, multicallcontract.MultiCallContractAddress, amount, multiCallData)
 }

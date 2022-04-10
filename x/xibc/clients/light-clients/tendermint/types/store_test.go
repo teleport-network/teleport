@@ -67,6 +67,7 @@ func (suite *TendermintTestSuite) TestGetConsensusState() {
 func (suite *TendermintTestSuite) TestGetProcessedTime() {
 	// setup
 	path := xibctesting.NewPath(suite.chainA, suite.chainB)
+	path.RegisterRelayers()
 
 	suite.coordinator.UpdateTime()
 	// coordinator increments time before creating client

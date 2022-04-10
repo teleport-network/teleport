@@ -6,6 +6,8 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
+	"github.com/ethereum/go-ethereum/common"
+
 	clienttypes "github.com/teleport-network/teleport/x/xibc/core/client/types"
 	packettypes "github.com/teleport-network/teleport/x/xibc/core/packet/types"
 	routingtypes "github.com/teleport-network/teleport/x/xibc/core/routing/types"
@@ -54,6 +56,11 @@ func (k Keeper) RecvPacket(goCtx context.Context, msg *packettypes.MsgRecvPacket
 	cctx, write := ctx.CacheContext()
 
 	if msg.Packet.GetDestChain() == k.ClientKeeper.GetChainName(cctx) {
+		relayer, found := k.ClientKeeper.GetRelayerAddressOnOtherChain(ctx, msg.Packet.SourceChain, msg.Signer)
+		if !found {
+			return nil, sdkerrors.Wrapf(packettypes.ErrRelayerNotFound, "relayer on source chain not found")
+		}
+
 		var results [][]byte
 		for i, port := range msg.Packet.Ports {
 			// Retrieve callbacks from router
@@ -69,9 +76,9 @@ func (k Keeper) RecvPacket(goCtx context.Context, msg *packettypes.MsgRecvPacket
 			}
 
 			if len(result.Result) == 0 {
-				errAckBz, err := packettypes.NewErrorAcknowledgement(result.Message).GetBytes()
+				errAckBz, err := packettypes.NewErrorAcknowledgement(result.Message, relayer).GetBytes()
 				if err != nil {
-					return nil, err
+					return nil, sdkerrors.Wrapf(packettypes.ErrInvalidAcknowledgement, "pack ack failed")
 				}
 				if err := k.PacketKeeper.WriteAcknowledgement(
 					ctx,
@@ -86,9 +93,9 @@ func (k Keeper) RecvPacket(goCtx context.Context, msg *packettypes.MsgRecvPacket
 
 			results = append(results, result.Result)
 		}
-		ackBz, err := packettypes.NewResultAcknowledgement(results).GetBytes()
+		ackBz, err := packettypes.NewResultAcknowledgement(results, relayer).GetBytes()
 		if err != nil {
-			return nil, err
+			return nil, sdkerrors.Wrapf(packettypes.ErrInvalidAcknowledgement, "pack ack failed")
 		}
 		if err := k.PacketKeeper.WriteAcknowledgement(ctx, msg.Packet, ackBz); err != nil {
 			return nil, err
@@ -109,6 +116,11 @@ func (k Keeper) Acknowledgement(goCtx context.Context, msg *packettypes.MsgAckno
 		return nil, sdkerrors.Wrap(err, "acknowledge packet verification failed")
 	}
 
+	chainName := k.ClientKeeper.GetChainName(ctx)
+	if msg.Packet.GetRelayChain() == chainName {
+		return &packettypes.MsgAcknowledgementResponse{}, nil
+	}
+
 	var ack packettypes.Acknowledgement
 	if err := ack.DecodeBytes(msg.Acknowledgement); err != nil {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest, "decode acknowledgement bytes failed: %v", err)
@@ -118,27 +130,60 @@ func (k Keeper) Acknowledgement(goCtx context.Context, msg *packettypes.MsgAckno
 	}
 
 	success := ack.Results != nil && len(ack.Results) > 0
+	if success {
+		// set sequence in packet contract
+		if _, err := k.PacketKeeper.CallPacket(
+			ctx,
+			"setAckStatus",
+			msg.Packet.GetSourceChain(),
+			msg.Packet.GetDestChain(),
+			msg.Packet.Sequence,
+			uint8(1),
+		); err != nil {
+			return nil, err
+		}
+	} else {
+		// set sequence in packet contract
+		if _, err := k.PacketKeeper.CallPacket(
+			ctx,
+			"setAckStatus",
+			msg.Packet.GetSourceChain(),
+			msg.Packet.GetDestChain(),
+			msg.Packet.Sequence,
+			uint8(2),
+		); err != nil {
+			return nil, err
+		}
+	}
+
+	relayer, found := k.ClientKeeper.GetRelayerAddressOnTeleport(ctx, msg.Packet.GetDestChain(), ack.Relayer)
+	if !found {
+		return nil, sdkerrors.Wrapf(packettypes.ErrRelayerNotFound, "relayer on source chain not found")
+	}
+
+	if _, err := k.PacketKeeper.CallPacket(
+		ctx,
+		"sendPacketFeeToRelayer",
+		msg.Packet.GetSourceChain(),
+		msg.Packet.GetDestChain(),
+		msg.Packet.Sequence,
+		common.HexToAddress(relayer),
+	); err != nil {
+		return nil, err
+	}
+
 	for i, port := range msg.Packet.Ports {
 		cbs, ok := k.RoutingKeeper.Router.GetRoute(port)
 		if !ok {
 			return nil, sdkerrors.Wrapf(routingtypes.ErrInvalidRoute, "route not found to module: %s", port)
 		}
-
 		if success {
 			if _, err := cbs.OnAcknowledgementPacket(ctx, msg.Packet.GetDataList()[i], ack.Results[i]); err != nil {
 				return nil, sdkerrors.Wrap(err, "acknowledge packet callback failed")
 			}
-			// set sequence in packet contract
-			if _, err := k.PacketKeeper.CallPacket(ctx, "setAckStatus", msg.Packet.GetSourceChain(), msg.Packet.GetDestChain(), msg.Packet.Sequence, uint8(1)); err != nil {
-				return nil, err
-			}
 		} else {
 			if _, err := cbs.OnAcknowledgementPacket(ctx, msg.Packet.GetDataList()[i], []byte{}); err != nil {
 				return nil, sdkerrors.Wrap(err, "acknowledge packet callback failed")
-			}
-			// set sequence in packet contract
-			if _, err := k.PacketKeeper.CallPacket(ctx, "setAckStatus", msg.Packet.GetSourceChain(), msg.Packet.GetDestChain(), msg.Packet.Sequence, uint8(2)); err != nil {
-				return nil, err
 			}
 		}
 	}

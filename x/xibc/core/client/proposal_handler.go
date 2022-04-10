@@ -82,8 +82,9 @@ func handleRegisterRelayerProposal(ctx sdk.Context, k keeper.Keeper, p *types.Re
 	}
 
 	_ = ctx.EventManager().EmitTypedEvent(&types.EventRegisterRelayerProposal{
-		ChainName: p.ChainName,
-		Relayers:  p.Relayers,
+		Address:   p.Address,
+		Chains:    p.Chains,
+		Addresses: p.Addresses,
 	})
 
 	return nil

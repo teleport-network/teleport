@@ -27,15 +27,16 @@ message EventToggleClientProposal {
   string consensus_height = 3;
 }
 
-message EventRegisterRelayerProposal {
-  string chain_name = 1;
-  repeated string relayers = 2;
-}
-
 // EventUpdateClient is emitted on update client
 message EventUpdateClient {
   string chain_name = 1;
   string client_type = 2;
   string consensus_height = 3;
   string header = 4;
+}
+
+message EventRegisterRelayerProposal {
+  string address = 1;
+  repeated string chains = 2;
+  repeated string addresses = 3;
 }

@@ -362,25 +362,21 @@ func (suite *KeeperTestSuite) Allowance(contract common.Address, owner common.Ad
 // XIBC transfer contract
 // ================================================================================================================
 
-func (suite *KeeperTestSuite) SendTransferERC20(sender common.Address, data types.ERC20TransferData) {
-	res, err := suite.app.XIBCTransferKeeper.CallEVM(
-		suite.ctx,
-		transfer.TransferContract.ABI,
-		sender,
-		transfer.TransferContractAddress,
-		"sendTransferERC20",
-		data,
-	)
-	suite.Require().NoError(err)
-	suite.Require().False(res.Failed(), res.VmError)
-}
-
-func (suite *KeeperTestSuite) SendTransferBase(sender common.Address, data types.BaseTransferData, amount *big.Int) {
-	transferData, err := transfer.TransferContract.ABI.Pack("sendTransferBase", data)
+func (suite *KeeperTestSuite) SendTransfer(sender common.Address, data types.TransferData, fee types.Fee) {
+	transferData, err := transfer.TransferContract.ABI.Pack("sendTransfer", data, fee)
 	suite.Require().NoError(err)
 
 	nonce, err := suite.app.AccountKeeper.GetSequence(suite.ctx, sender.Bytes())
 	suite.Require().NoError(err)
+
+	amount := big.NewInt(0)
+	if data.TokenAddress == common.HexToAddress("0x0000000000000000000000000000000000000000") {
+		amount = amount.Add(amount, data.Amount)
+	}
+
+	if fee.TokenAddress == common.HexToAddress("0x0000000000000000000000000000000000000000") {
+		amount = amount.Add(amount, fee.Amount)
+	}
 
 	msg := ethtypes.NewMessage(
 		sender,
