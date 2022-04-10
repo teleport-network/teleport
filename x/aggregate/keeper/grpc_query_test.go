@@ -36,7 +36,7 @@ func (suite *KeeperTestSuite) TestTokenPairs() {
 				req = &types.QueryTokenPairsRequest{
 					Pagination: &query.PageRequest{Limit: 10, CountTotal: true},
 				}
-				pair := types.NewTokenPair(tests.GenerateAddress(), "coin", true, types.OWNER_MODULE)
+				pair := types.NewTokenPair(tests.GenerateAddress(), []string{"coin"}, true, types.OWNER_MODULE)
 				suite.app.AggregateKeeper.SetTokenPair(suite.ctx, pair)
 
 				expRes = &types.QueryTokenPairsResponse{
@@ -50,8 +50,8 @@ func (suite *KeeperTestSuite) TestTokenPairs() {
 			"2 pairs registered wo/pagination",
 			func() {
 				req = &types.QueryTokenPairsRequest{}
-				pair := types.NewTokenPair(tests.GenerateAddress(), "coin", true, types.OWNER_MODULE)
-				pair2 := types.NewTokenPair(tests.GenerateAddress(), "coin2", true, types.OWNER_MODULE)
+				pair := types.NewTokenPair(tests.GenerateAddress(), []string{"coin"}, true, types.OWNER_MODULE)
+				pair2 := types.NewTokenPair(tests.GenerateAddress(), []string{"coin2"}, true, types.OWNER_MODULE)
 				suite.app.AggregateKeeper.SetTokenPair(suite.ctx, pair)
 				suite.app.AggregateKeeper.SetTokenPair(suite.ctx, pair2)
 
@@ -124,10 +124,10 @@ func (suite *KeeperTestSuite) TestTokenPair() {
 			"token pair found",
 			func() {
 				addr := tests.GenerateAddress()
-				pair := types.NewTokenPair(addr, "coin", true, types.OWNER_MODULE)
+				pair := types.NewTokenPair(addr, []string{"coin"}, true, types.OWNER_MODULE)
 				suite.app.AggregateKeeper.SetTokenPair(suite.ctx, pair)
 				suite.app.AggregateKeeper.SetERC20Map(suite.ctx, addr, pair.GetID())
-				suite.app.AggregateKeeper.SetDenomMap(suite.ctx, pair.Denom, pair.GetID())
+				suite.app.AggregateKeeper.SetDenomsMap(suite.ctx, pair.Denoms, pair.GetID())
 
 				req = &types.QueryTokenPairRequest{
 					Token: pair.ERC20Address,

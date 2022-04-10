@@ -192,6 +192,7 @@ var (
 			xibcclientcli.ToggleClientProposalHandler,
 			xibcclientcli.RegisterRelayerProposalHandler,
 			// aggregate
+			aggregateclient.AddCoinProposalHandler,
 			aggregateclient.RegisterCoinProposalHandler,
 			aggregateclient.RegisterERC20PairProposalHandler,
 			aggregateclient.ToggleTokenRelayProposalHandler,

@@ -10,18 +10,18 @@ import (
 )
 
 // NewTokenPair returns an instance of TokenPair
-func NewTokenPair(erc20Address common.Address, denom string, enabled bool, contractOwner Owner) TokenPair {
+func NewTokenPair(erc20Address common.Address, denoms []string, enabled bool, contractOwner Owner) TokenPair {
 	return TokenPair{
 		ERC20Address:  erc20Address.String(),
-		Denom:         denom,
-		Enabled:       true,
+		Denoms:        denoms,
+		Enabled:       enabled,
 		ContractOwner: contractOwner,
 	}
 }
 
 // GetID returns the SHA256 hash of the ERC20 address and denomination
 func (tp TokenPair) GetID() []byte {
-	id := tp.ERC20Address + "|" + tp.Denom
+	id := tp.ERC20Address + "|" + tp.Denoms[0]
 	return tmhash.Sum([]byte(id))
 }
 
@@ -32,10 +32,11 @@ func (tp TokenPair) GetERC20Contract() common.Address {
 
 // Validate performs a stateless validation of a TokenPair
 func (tp TokenPair) Validate() error {
-	if err := sdk.ValidateDenom(tp.Denom); err != nil {
-		return err
+	for _, denom := range tp.Denoms {
+		if err := sdk.ValidateDenom(denom); err != nil {
+			return err
+		}
 	}
-
 	if err := ethermint.ValidateAddress(tp.ERC20Address); err != nil {
 		return err
 	}

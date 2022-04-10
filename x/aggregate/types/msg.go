@@ -58,12 +58,13 @@ func (msg MsgConvertCoin) GetSigners() []sdk.AccAddress {
 }
 
 // NewMsgConvertERC20 creates a new instance of MsgConvertERC20
-func NewMsgConvertERC20(amount sdk.Int, receiver sdk.AccAddress, contract, sender common.Address) *MsgConvertERC20 { // nolint: interfacer
+func NewMsgConvertERC20(amount sdk.Int, receiver sdk.AccAddress, contract, sender common.Address, denom string) *MsgConvertERC20 { // nolint: interfacer
 	return &MsgConvertERC20{
 		ContractAddress: contract.String(),
 		Amount:          amount,
 		Receiver:        receiver.String(),
 		Sender:          sender.Hex(),
+		Denom:           denom,
 	}
 }
 

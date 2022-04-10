@@ -48,6 +48,8 @@ message MsgConvertERC20 {
   string receiver = 3;
   // sender hex address from the owner of the given ERC20 tokens
   string sender = 4;
+  // denom for contract convert to
+  string denom = 5;
 }
 
 // MsgConvertERC20Response returns no fields

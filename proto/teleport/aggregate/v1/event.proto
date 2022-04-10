@@ -22,3 +22,9 @@ message EventIBCAggregate {
   string source_channel = 4;
   string destination_channel = 5;
 }
+
+// EventRegisterTokens is emitted on aggregate register coins
+message EventRegisterTokens {
+  repeated string cosmos_coin = 1;
+  string erc20_token = 2;
+}
