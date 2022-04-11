@@ -102,7 +102,6 @@ import (
 	"github.com/ethereum/go-ethereum/crypto"
 
 	"github.com/tharsis/ethermint/app/ante"
-	_ "github.com/tharsis/ethermint/client/docs/statik" // unnamed import of statik for swagger UI support
 	"github.com/tharsis/ethermint/encoding"
 	srvflags "github.com/tharsis/ethermint/server/flags"
 	ethermint "github.com/tharsis/ethermint/types"
@@ -117,6 +116,7 @@ import (
 	"github.com/teleport-network/teleport/adapter"
 	adgov "github.com/teleport-network/teleport/adapter/gov"
 	adstaking "github.com/teleport-network/teleport/adapter/staking"
+	_ "github.com/teleport-network/teleport/client/docs/statik"
 	gabci "github.com/teleport-network/teleport/grpc_abci"
 	syscontracts "github.com/teleport-network/teleport/syscontracts"
 	agentcontract "github.com/teleport-network/teleport/syscontracts/agent"
