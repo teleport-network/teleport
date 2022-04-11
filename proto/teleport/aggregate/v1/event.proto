@@ -25,6 +25,6 @@ message EventIBCAggregate {
 
 // EventRegisterTokens is emitted on aggregate register coins
 message EventRegisterTokens {
-  repeated string cosmos_coin = 1;
+  repeated string denom = 1;
   string erc20_token = 2;
 }

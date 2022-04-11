@@ -40,7 +40,7 @@ func handleRegisterCoinProposal(ctx sdk.Context, k *keeper.Keeper, p *types.Regi
 	if err != nil {
 		return err
 	}
-	err = ctx.EventManager().EmitTypedEvent(&types.EventRegisterTokens{CosmosCoin: pair.Denoms, Erc20Token: pair.ERC20Address})
+	err = ctx.EventManager().EmitTypedEvent(&types.EventRegisterTokens{Denom: pair.Denoms, Erc20Token: pair.ERC20Address})
 	if err != nil {
 		return err
 	}
@@ -53,7 +53,7 @@ func handleAddCoinProposal(ctx sdk.Context, k *keeper.Keeper, p *types.AddCoinPr
 		return err
 	}
 
-	err = ctx.EventManager().EmitTypedEvent(&types.EventRegisterTokens{CosmosCoin: pair.Denoms, Erc20Token: pair.ERC20Address})
+	err = ctx.EventManager().EmitTypedEvent(&types.EventRegisterTokens{Denom: pair.Denoms, Erc20Token: pair.ERC20Address})
 	if err != nil {
 		return err
 	}
@@ -66,7 +66,7 @@ func handleRegisterERC20Proposal(ctx sdk.Context, k *keeper.Keeper, p *types.Reg
 		return err
 	}
 
-	err = ctx.EventManager().EmitTypedEvent(&types.EventRegisterTokens{CosmosCoin: pair.Denoms, Erc20Token: pair.ERC20Address})
+	err = ctx.EventManager().EmitTypedEvent(&types.EventRegisterTokens{Denom: pair.Denoms, Erc20Token: pair.ERC20Address})
 	if err != nil {
 		return err
 	}
@@ -80,7 +80,7 @@ func handleToggleRelayProposal(ctx sdk.Context, k *keeper.Keeper, p *types.Toggl
 		return err
 	}
 
-	err = ctx.EventManager().EmitTypedEvent(&types.EventRegisterTokens{CosmosCoin: pair.Denoms, Erc20Token: pair.ERC20Address})
+	err = ctx.EventManager().EmitTypedEvent(&types.EventRegisterTokens{Denom: pair.Denoms, Erc20Token: pair.ERC20Address})
 	if err != nil {
 		return err
 	}
@@ -94,7 +94,7 @@ func handleUpdateTokenPairERC20Proposal(ctx sdk.Context, k *keeper.Keeper, p *ty
 		return err
 	}
 
-	err = ctx.EventManager().EmitTypedEvent(&types.EventRegisterTokens{CosmosCoin: pair.Denoms, Erc20Token: pair.ERC20Address})
+	err = ctx.EventManager().EmitTypedEvent(&types.EventRegisterTokens{Denom: pair.Denoms, Erc20Token: pair.ERC20Address})
 	if err != nil {
 		return err
 	}

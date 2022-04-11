@@ -203,6 +203,98 @@ func (suite KeeperTestSuite) TestRegisterCoin() {
 	}
 }
 
+func (suite KeeperTestSuite) TestAddCoin() {
+	var (
+		pair     *types.TokenPair
+		contract common.Address
+		err      error
+	)
+
+	metadata := banktypes.Metadata{
+		Description: "description",
+		Base:        cosmosTokenBase,
+		// NOTE: Denom units MUST be increasing
+		DenomUnits: []*banktypes.DenomUnit{
+			{
+				Denom:    cosmosTokenBase,
+				Exponent: 0,
+			},
+			{
+				Denom:    cosmosTokenDisplay,
+				Exponent: defaultExponent,
+			},
+		},
+		Name:    cosmosTokenBase,
+		Symbol:  erc20Symbol,
+		Display: cosmosTokenDisplay,
+	}
+
+	testCases := []struct {
+		name     string
+		malleate func()
+		expPass  bool
+	}{
+		{
+			"pair not exist",
+			func() {
+				contract, err = suite.app.AggregateKeeper.DeployERC20Contract(suite.ctx, metadata)
+				suite.NoError(err)
+			},
+			false,
+		},
+		{
+			"denom already exist",
+			func() {
+				err = suite.app.BankKeeper.MintCoins(suite.ctx, types.ModuleName, sdk.Coins{sdk.NewInt64Coin(metadata.Base, 1)})
+				suite.NoError(err)
+				pair, err = suite.app.AggregateKeeper.RegisterCoin(suite.ctx, metadata)
+				suite.NoError(err)
+				contract = common.HexToAddress(pair.ERC20Address)
+			},
+			false,
+		},
+		{
+			"add coin success",
+			func() {
+				err = suite.app.BankKeeper.MintCoins(suite.ctx, types.ModuleName, sdk.Coins{sdk.NewInt64Coin(metadata.Base, 1)})
+				suite.NoError(err)
+				pair, err = suite.app.AggregateKeeper.RegisterCoin(suite.ctx, metadata)
+				suite.NoError(err)
+				contract = common.HexToAddress(pair.ERC20Address)
+
+				metadata.Name = "test"
+				metadata.Base = "test"
+				err = suite.app.BankKeeper.MintCoins(suite.ctx, types.ModuleName, sdk.Coins{sdk.NewInt64Coin("test", 1)})
+				suite.NoError(err)
+			},
+			true,
+		},
+	}
+	for _, tc := range testCases {
+		suite.Run(fmt.Sprintf("Case %s", tc.name), func() {
+			suite.SetupTest() // reset
+
+			tc.malleate()
+
+			pair, err = suite.app.AggregateKeeper.AddCoin(suite.ctx, metadata, contract.String())
+			suite.Commit()
+			expPair := &types.TokenPair{
+				ERC20Address:  "0x90d3e9B208998d1048467bFDcbE3661322373712",
+				Denoms:        []string{"acoin", "test"},
+				Enabled:       true,
+				ContractOwner: 1,
+			}
+
+			if tc.expPass {
+				suite.Require().NoError(err, tc.name)
+				suite.Require().Equal(expPair, pair)
+			} else {
+				suite.Require().Error(err, tc.name)
+			}
+		})
+	}
+}
+
 func (suite KeeperTestSuite) TestRegisterERC20() {
 	var (
 		contractAddr common.Address

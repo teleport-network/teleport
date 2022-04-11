@@ -362,7 +362,7 @@ EventRegisterTokens is emitted on aggregate register coins
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `cosmos_coin` | [string](#string) | repeated |  |
+| `denom` | [string](#string) | repeated |  |
 | `erc20_token` | [string](#string) |  |  |
 
 
