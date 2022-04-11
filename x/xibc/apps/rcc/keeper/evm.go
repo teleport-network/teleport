@@ -110,7 +110,7 @@ func (k Keeper) CallEVMWithData(
 			TxHash: common.HexToHash(res.Hash),
 		}
 		// Only call hooks if tx executed successfully.
-		if err = k.evmKeeper.PostTxProcessing(ctx, msg.From(), msg.To(), receipt); err != nil {
+		if err = k.evmKeeper.PostTxProcessing(ctx, msg, receipt); err != nil {
 			// If hooks return error, revert the whole tx.
 			res.VmError = evmtypes.ErrPostTxProcessing.Error()
 			k.Logger(ctx).Error("tx post processing failed", "error", err)
