@@ -3,7 +3,7 @@ package keeper
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/core"
 	ethtypes "github.com/ethereum/go-ethereum/core/types"
 	evmtypes "github.com/tharsis/ethermint/x/evm/types"
 
@@ -25,8 +25,7 @@ func (k Keeper) Hooks() Hooks {
 
 func (h Hooks) PostTxProcessing(
 	ctx sdk.Context,
-	from common.Address,
-	to *common.Address,
+	msg core.Message,
 	receipt *ethtypes.Receipt,
 ) error {
 	transferContract := transfer.TransferContract.ABI
