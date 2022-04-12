@@ -132,37 +132,173 @@ func (m *EventIBCAggregate) GetDestinationChannel() string {
 	return ""
 }
 
+// Event
+type EventEnableTimeBasedSupplyLimit struct {
+	ERC20Address string `protobuf:"bytes,3,opt,name=erc20_address,json=erc20Address,proto3" json:"erc20_address,omitempty"`
+	// time peroid in seconds
+	TimePeriod string `protobuf:"bytes,4,opt,name=timePeriod,proto3" json:"timePeriod,omitempty"`
+	// time based limit
+	TimeBasedLimit string `protobuf:"bytes,5,opt,name=timeBasedLimit,proto3" json:"timeBasedLimit,omitempty"`
+	// max amount single transfer
+	MaxAmount string `protobuf:"bytes,6,opt,name=maxAmount,proto3" json:"maxAmount,omitempty"`
+	// min amount single transfer
+	MinAmount string `protobuf:"bytes,7,opt,name=minAmount,proto3" json:"minAmount,omitempty"`
+}
+
+func (m *EventEnableTimeBasedSupplyLimit) Reset()         { *m = EventEnableTimeBasedSupplyLimit{} }
+func (m *EventEnableTimeBasedSupplyLimit) String() string { return proto.CompactTextString(m) }
+func (*EventEnableTimeBasedSupplyLimit) ProtoMessage()    {}
+func (*EventEnableTimeBasedSupplyLimit) Descriptor() ([]byte, []int) {
+	return fileDescriptor_b70b4a642b9b3cca, []int{1}
+}
+func (m *EventEnableTimeBasedSupplyLimit) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *EventEnableTimeBasedSupplyLimit) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_EventEnableTimeBasedSupplyLimit.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *EventEnableTimeBasedSupplyLimit) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_EventEnableTimeBasedSupplyLimit.Merge(m, src)
+}
+func (m *EventEnableTimeBasedSupplyLimit) XXX_Size() int {
+	return m.Size()
+}
+func (m *EventEnableTimeBasedSupplyLimit) XXX_DiscardUnknown() {
+	xxx_messageInfo_EventEnableTimeBasedSupplyLimit.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_EventEnableTimeBasedSupplyLimit proto.InternalMessageInfo
+
+func (m *EventEnableTimeBasedSupplyLimit) GetERC20Address() string {
+	if m != nil {
+		return m.ERC20Address
+	}
+	return ""
+}
+
+func (m *EventEnableTimeBasedSupplyLimit) GetTimePeriod() string {
+	if m != nil {
+		return m.TimePeriod
+	}
+	return ""
+}
+
+func (m *EventEnableTimeBasedSupplyLimit) GetTimeBasedLimit() string {
+	if m != nil {
+		return m.TimeBasedLimit
+	}
+	return ""
+}
+
+func (m *EventEnableTimeBasedSupplyLimit) GetMaxAmount() string {
+	if m != nil {
+		return m.MaxAmount
+	}
+	return ""
+}
+
+func (m *EventEnableTimeBasedSupplyLimit) GetMinAmount() string {
+	if m != nil {
+		return m.MinAmount
+	}
+	return ""
+}
+
+// Event
+type EventDisableTimeBasedSupplyLimit struct {
+	ERC20Address string `protobuf:"bytes,3,opt,name=erc20_address,json=erc20Address,proto3" json:"erc20_address,omitempty"`
+}
+
+func (m *EventDisableTimeBasedSupplyLimit) Reset()         { *m = EventDisableTimeBasedSupplyLimit{} }
+func (m *EventDisableTimeBasedSupplyLimit) String() string { return proto.CompactTextString(m) }
+func (*EventDisableTimeBasedSupplyLimit) ProtoMessage()    {}
+func (*EventDisableTimeBasedSupplyLimit) Descriptor() ([]byte, []int) {
+	return fileDescriptor_b70b4a642b9b3cca, []int{2}
+}
+func (m *EventDisableTimeBasedSupplyLimit) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *EventDisableTimeBasedSupplyLimit) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_EventDisableTimeBasedSupplyLimit.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *EventDisableTimeBasedSupplyLimit) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_EventDisableTimeBasedSupplyLimit.Merge(m, src)
+}
+func (m *EventDisableTimeBasedSupplyLimit) XXX_Size() int {
+	return m.Size()
+}
+func (m *EventDisableTimeBasedSupplyLimit) XXX_DiscardUnknown() {
+	xxx_messageInfo_EventDisableTimeBasedSupplyLimit.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_EventDisableTimeBasedSupplyLimit proto.InternalMessageInfo
+
+func (m *EventDisableTimeBasedSupplyLimit) GetERC20Address() string {
+	if m != nil {
+		return m.ERC20Address
+	}
+	return ""
+}
+
 func init() {
 	proto.RegisterEnum("teleport.aggregate.v1.Status", Status_name, Status_value)
 	proto.RegisterType((*EventIBCAggregate)(nil), "teleport.aggregate.v1.EventIBCAggregate")
+	proto.RegisterType((*EventEnableTimeBasedSupplyLimit)(nil), "teleport.aggregate.v1.EventEnableTimeBasedSupplyLimit")
+	proto.RegisterType((*EventDisableTimeBasedSupplyLimit)(nil), "teleport.aggregate.v1.EventDisableTimeBasedSupplyLimit")
 }
 
 func init() { proto.RegisterFile("teleport/aggregate/v1/event.proto", fileDescriptor_b70b4a642b9b3cca) }
 
 var fileDescriptor_b70b4a642b9b3cca = []byte{
-	// 339 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x6c, 0x91, 0x41, 0x4b, 0x32, 0x41,
-	0x18, 0xc7, 0x77, 0x7c, 0x7d, 0xad, 0x06, 0x14, 0x9d, 0x0a, 0x16, 0xa1, 0xc1, 0x82, 0x40, 0x82,
-	0x76, 0xb0, 0xa8, 0xbb, 0x6e, 0x06, 0x52, 0x58, 0xb8, 0x4a, 0xd0, 0x45, 0xd6, 0xed, 0x61, 0x94,
-	0x74, 0xc6, 0x76, 0x66, 0xad, 0xbe, 0x41, 0xc7, 0xbe, 0x43, 0x5f, 0xa6, 0xa3, 0x47, 0x8f, 0xa1,
-	0x5f, 0x24, 0xdc, 0x75, 0x97, 0x3d, 0x74, 0x9b, 0xe7, 0x37, 0xbf, 0xff, 0x30, 0xfc, 0x1f, 0x7c,
-	0xa8, 0x61, 0x0c, 0x53, 0xe9, 0x6b, 0xe6, 0x72, 0xee, 0x03, 0x77, 0x35, 0xb0, 0x59, 0x8d, 0xc1,
-	0x0c, 0x84, 0xb6, 0xa6, 0xbe, 0xd4, 0x92, 0xec, 0xc7, 0x8a, 0x95, 0x28, 0xd6, 0xac, 0x56, 0xde,
-	0xe3, 0x92, 0xcb, 0xd0, 0x60, 0xeb, 0x53, 0x24, 0x1f, 0x2d, 0x10, 0x2e, 0x35, 0xd7, 0xe1, 0x56,
-	0xc3, 0xae, 0xc7, 0x3a, 0xb9, 0xc0, 0x39, 0xa5, 0x5d, 0x1d, 0x28, 0x13, 0x55, 0x50, 0xb5, 0x70,
-	0x76, 0x60, 0xfd, 0xf9, 0xa6, 0xe5, 0x84, 0x52, 0x67, 0x23, 0x13, 0x13, 0x6f, 0x4d, 0x40, 0x29,
-	0x97, 0x83, 0x99, 0xa9, 0xa0, 0xea, 0x4e, 0x27, 0x1e, 0x49, 0x19, 0x6f, 0x2b, 0x78, 0x09, 0x40,
-	0x78, 0x60, 0xfe, 0xab, 0xa0, 0x6a, 0xb6, 0x93, 0xcc, 0xe4, 0x18, 0x17, 0x94, 0x0c, 0x7c, 0x0f,
-	0xfa, 0xde, 0xd0, 0x15, 0x02, 0xc6, 0x66, 0x36, 0x0c, 0xe7, 0x23, 0x6a, 0x47, 0x90, 0x30, 0xbc,
-	0xfb, 0x04, 0x4a, 0x8f, 0x84, 0xab, 0x47, 0x52, 0x24, 0xee, 0xff, 0xd0, 0x25, 0xa9, 0xab, 0x4d,
-	0xe0, 0xa4, 0x85, 0x73, 0xd1, 0xff, 0x08, 0xc1, 0x05, 0xa7, 0x5b, 0xef, 0xf6, 0x9c, 0x7e, 0xaf,
-	0x7d, 0xd3, 0xbe, 0x7b, 0x68, 0x17, 0x8d, 0x14, 0x73, 0x7a, 0xb6, 0xdd, 0x74, 0x9c, 0x22, 0x22,
-	0x25, 0x9c, 0xdf, 0xb0, 0xeb, 0x7a, 0xeb, 0xb6, 0x79, 0x55, 0xcc, 0x94, 0xb3, 0x1f, 0x5f, 0xd4,
-	0x68, 0xdc, 0x7f, 0x2f, 0x29, 0x9a, 0x2f, 0x29, 0xfa, 0x59, 0x52, 0xf4, 0xb9, 0xa2, 0xc6, 0x7c,
-	0x45, 0x8d, 0xc5, 0x8a, 0x1a, 0x8f, 0x97, 0x7c, 0xa4, 0x87, 0xc1, 0xc0, 0xf2, 0xe4, 0x84, 0xc5,
-	0x1d, 0x9d, 0x0a, 0xd0, 0xaf, 0xd2, 0x7f, 0x4e, 0x00, 0x7b, 0x4b, 0x6d, 0x4b, 0xbf, 0x4f, 0x41,
-	0x0d, 0x72, 0x61, 0xfd, 0xe7, 0xbf, 0x01, 0x00, 0x00, 0xff, 0xff, 0x15, 0x46, 0xde, 0xe9, 0xd0,
-	0x01, 0x00, 0x00,
+	// 466 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xac, 0x92, 0xc1, 0x6e, 0xd3, 0x40,
+	0x10, 0x40, 0xb3, 0xa5, 0xa4, 0x64, 0xd5, 0x44, 0xe9, 0x02, 0x92, 0x15, 0x81, 0x1b, 0x22, 0x81,
+	0x22, 0x24, 0xec, 0x36, 0xa8, 0xdc, 0x1d, 0xd7, 0x48, 0x11, 0x55, 0xa8, 0xec, 0x44, 0x08, 0x2e,
+	0xd1, 0xc6, 0x1e, 0xb9, 0x2b, 0xe2, 0x5d, 0xe3, 0x5d, 0x87, 0xf6, 0x0f, 0x38, 0xf2, 0x0f, 0xfc,
+	0x0c, 0xc7, 0x1e, 0x7b, 0x40, 0x08, 0x25, 0x3f, 0x82, 0xba, 0xb6, 0x43, 0x84, 0x38, 0x72, 0xf3,
+	0xbc, 0x79, 0xe3, 0x99, 0xd1, 0x0e, 0x7e, 0xa2, 0x60, 0x01, 0xa9, 0xc8, 0x94, 0x4d, 0xe3, 0x38,
+	0x83, 0x98, 0x2a, 0xb0, 0x97, 0xc7, 0x36, 0x2c, 0x81, 0x2b, 0x2b, 0xcd, 0x84, 0x12, 0xe4, 0x61,
+	0xa5, 0x58, 0x1b, 0xc5, 0x5a, 0x1e, 0x77, 0x1e, 0xc4, 0x22, 0x16, 0xda, 0xb0, 0x6f, 0xbf, 0x0a,
+	0xb9, 0x77, 0x83, 0xf0, 0x81, 0x77, 0x5b, 0x3c, 0x1a, 0xba, 0x4e, 0xa5, 0x93, 0x13, 0x5c, 0x97,
+	0x8a, 0xaa, 0x5c, 0x1a, 0xa8, 0x8b, 0xfa, 0xad, 0xc1, 0x63, 0xeb, 0x9f, 0xff, 0xb4, 0x02, 0x2d,
+	0xf9, 0xa5, 0x4c, 0x0c, 0xbc, 0x97, 0x80, 0x94, 0x34, 0x06, 0x63, 0xa7, 0x8b, 0xfa, 0x0d, 0xbf,
+	0x0a, 0x49, 0x07, 0xdf, 0x93, 0xf0, 0x29, 0x07, 0x1e, 0x82, 0x71, 0xa7, 0x8b, 0xfa, 0xbb, 0xfe,
+	0x26, 0x26, 0x4f, 0x71, 0x4b, 0x8a, 0x3c, 0x0b, 0x61, 0x16, 0x5e, 0x50, 0xce, 0x61, 0x61, 0xec,
+	0xea, 0xe2, 0x66, 0x41, 0xdd, 0x02, 0x12, 0x1b, 0xdf, 0x8f, 0x40, 0x2a, 0xc6, 0xa9, 0x62, 0x82,
+	0x6f, 0xdc, 0xbb, 0xda, 0x25, 0x5b, 0xa9, 0xb2, 0xa0, 0xf7, 0x03, 0xe1, 0x43, 0xbd, 0x9a, 0xc7,
+	0xe9, 0x7c, 0x01, 0x13, 0x96, 0xc0, 0x90, 0x4a, 0x88, 0x82, 0x3c, 0x4d, 0x17, 0x57, 0x67, 0x2c,
+	0x61, 0x8a, 0x9c, 0xe0, 0x26, 0x64, 0xe1, 0xe0, 0x68, 0x46, 0xa3, 0x28, 0x03, 0x29, 0xf5, 0x70,
+	0x8d, 0x61, 0x7b, 0xf5, 0xf3, 0x70, 0xdf, 0xf3, 0xdd, 0xc1, 0x91, 0x53, 0x70, 0x7f, 0x5f, 0x6b,
+	0x65, 0x44, 0x4c, 0x8c, 0x15, 0x4b, 0xe0, 0x1c, 0x32, 0x26, 0xa2, 0x72, 0xdc, 0x2d, 0x42, 0x9e,
+	0xe1, 0x96, 0xaa, 0xda, 0xe9, 0x46, 0xe5, 0x98, 0x7f, 0x51, 0xf2, 0x08, 0x37, 0x12, 0x7a, 0xe9,
+	0x24, 0x22, 0xe7, 0xca, 0xa8, 0x6b, 0xe5, 0x0f, 0xd0, 0x59, 0xc6, 0xcb, 0xec, 0x5e, 0x99, 0xad,
+	0x40, 0xef, 0x3d, 0xee, 0xea, 0xed, 0x4e, 0x99, 0xfc, 0xcf, 0xeb, 0x3d, 0x1f, 0xe1, 0x7a, 0xf1,
+	0xb2, 0x84, 0xe0, 0x56, 0x30, 0x71, 0x26, 0xd3, 0x60, 0x36, 0x1d, 0xbf, 0x19, 0xbf, 0x7d, 0x37,
+	0x6e, 0xd7, 0xb6, 0x58, 0x30, 0x75, 0x5d, 0x2f, 0x08, 0xda, 0x88, 0x1c, 0xe0, 0x66, 0xc9, 0x5e,
+	0x3b, 0xa3, 0x33, 0xef, 0xb4, 0xbd, 0xd3, 0xd9, 0xfd, 0xf2, 0xcd, 0xac, 0x0d, 0xcf, 0xbf, 0xaf,
+	0x4c, 0x74, 0xbd, 0x32, 0xd1, 0xaf, 0x95, 0x89, 0xbe, 0xae, 0xcd, 0xda, 0xf5, 0xda, 0xac, 0xdd,
+	0xac, 0xcd, 0xda, 0x87, 0x57, 0x31, 0x53, 0x17, 0xf9, 0xdc, 0x0a, 0x45, 0x62, 0x57, 0xd7, 0xf5,
+	0x82, 0x83, 0xfa, 0x2c, 0xb2, 0x8f, 0x1b, 0x60, 0x5f, 0x6e, 0xdd, 0xb9, 0xba, 0x4a, 0x41, 0xce,
+	0xeb, 0xfa, 0x70, 0x5f, 0xfe, 0x0e, 0x00, 0x00, 0xff, 0xff, 0xbc, 0xa2, 0xef, 0xe6, 0x0a, 0x03,
+	0x00, 0x00,
 }
 
 func (m *EventIBCAggregate) Marshal() (dAtA []byte, err error) {
@@ -219,6 +355,94 @@ func (m *EventIBCAggregate) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
+func (m *EventEnableTimeBasedSupplyLimit) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *EventEnableTimeBasedSupplyLimit) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *EventEnableTimeBasedSupplyLimit) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.MinAmount) > 0 {
+		i -= len(m.MinAmount)
+		copy(dAtA[i:], m.MinAmount)
+		i = encodeVarintEvent(dAtA, i, uint64(len(m.MinAmount)))
+		i--
+		dAtA[i] = 0x3a
+	}
+	if len(m.MaxAmount) > 0 {
+		i -= len(m.MaxAmount)
+		copy(dAtA[i:], m.MaxAmount)
+		i = encodeVarintEvent(dAtA, i, uint64(len(m.MaxAmount)))
+		i--
+		dAtA[i] = 0x32
+	}
+	if len(m.TimeBasedLimit) > 0 {
+		i -= len(m.TimeBasedLimit)
+		copy(dAtA[i:], m.TimeBasedLimit)
+		i = encodeVarintEvent(dAtA, i, uint64(len(m.TimeBasedLimit)))
+		i--
+		dAtA[i] = 0x2a
+	}
+	if len(m.TimePeriod) > 0 {
+		i -= len(m.TimePeriod)
+		copy(dAtA[i:], m.TimePeriod)
+		i = encodeVarintEvent(dAtA, i, uint64(len(m.TimePeriod)))
+		i--
+		dAtA[i] = 0x22
+	}
+	if len(m.ERC20Address) > 0 {
+		i -= len(m.ERC20Address)
+		copy(dAtA[i:], m.ERC20Address)
+		i = encodeVarintEvent(dAtA, i, uint64(len(m.ERC20Address)))
+		i--
+		dAtA[i] = 0x1a
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *EventDisableTimeBasedSupplyLimit) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *EventDisableTimeBasedSupplyLimit) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *EventDisableTimeBasedSupplyLimit) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.ERC20Address) > 0 {
+		i -= len(m.ERC20Address)
+		copy(dAtA[i:], m.ERC20Address)
+		i = encodeVarintEvent(dAtA, i, uint64(len(m.ERC20Address)))
+		i--
+		dAtA[i] = 0x1a
+	}
+	return len(dAtA) - i, nil
+}
+
 func encodeVarintEvent(dAtA []byte, offset int, v uint64) int {
 	offset -= sovEvent(v)
 	base := offset
@@ -251,6 +475,48 @@ func (m *EventIBCAggregate) Size() (n int) {
 		n += 1 + l + sovEvent(uint64(l))
 	}
 	l = len(m.DestinationChannel)
+	if l > 0 {
+		n += 1 + l + sovEvent(uint64(l))
+	}
+	return n
+}
+
+func (m *EventEnableTimeBasedSupplyLimit) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.ERC20Address)
+	if l > 0 {
+		n += 1 + l + sovEvent(uint64(l))
+	}
+	l = len(m.TimePeriod)
+	if l > 0 {
+		n += 1 + l + sovEvent(uint64(l))
+	}
+	l = len(m.TimeBasedLimit)
+	if l > 0 {
+		n += 1 + l + sovEvent(uint64(l))
+	}
+	l = len(m.MaxAmount)
+	if l > 0 {
+		n += 1 + l + sovEvent(uint64(l))
+	}
+	l = len(m.MinAmount)
+	if l > 0 {
+		n += 1 + l + sovEvent(uint64(l))
+	}
+	return n
+}
+
+func (m *EventDisableTimeBasedSupplyLimit) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.ERC20Address)
 	if l > 0 {
 		n += 1 + l + sovEvent(uint64(l))
 	}
@@ -425,6 +691,298 @@ func (m *EventIBCAggregate) Unmarshal(dAtA []byte) error {
 				return io.ErrUnexpectedEOF
 			}
 			m.DestinationChannel = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipEvent(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthEvent
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *EventEnableTimeBasedSupplyLimit) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowEvent
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: EventEnableTimeBasedSupplyLimit: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: EventEnableTimeBasedSupplyLimit: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ERC20Address", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowEvent
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthEvent
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthEvent
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.ERC20Address = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 4:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field TimePeriod", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowEvent
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthEvent
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthEvent
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.TimePeriod = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 5:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field TimeBasedLimit", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowEvent
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthEvent
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthEvent
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.TimeBasedLimit = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 6:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field MaxAmount", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowEvent
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthEvent
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthEvent
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.MaxAmount = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 7:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field MinAmount", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowEvent
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthEvent
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthEvent
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.MinAmount = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipEvent(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthEvent
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *EventDisableTimeBasedSupplyLimit) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowEvent
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: EventDisableTimeBasedSupplyLimit: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: EventDisableTimeBasedSupplyLimit: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ERC20Address", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowEvent
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthEvent
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthEvent
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.ERC20Address = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex

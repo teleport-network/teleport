@@ -5,6 +5,8 @@
 ## Table of Contents
 
 - [teleport/aggregate/v1/aggregate.proto](#teleport/aggregate/v1/aggregate.proto)
+    - [DisableTimeBasedSupplyLimitProposal](#teleport.aggregate.v1.DisableTimeBasedSupplyLimitProposal)
+    - [EnableTimeBasedSupplyLimitProposal](#teleport.aggregate.v1.EnableTimeBasedSupplyLimitProposal)
     - [RegisterCoinProposal](#teleport.aggregate.v1.RegisterCoinProposal)
     - [RegisterERC20Proposal](#teleport.aggregate.v1.RegisterERC20Proposal)
     - [RegisterERC20TraceProposal](#teleport.aggregate.v1.RegisterERC20TraceProposal)
@@ -15,6 +17,8 @@
     - [Owner](#teleport.aggregate.v1.Owner)
   
 - [teleport/aggregate/v1/event.proto](#teleport/aggregate/v1/event.proto)
+    - [EventDisableTimeBasedSupplyLimit](#teleport.aggregate.v1.EventDisableTimeBasedSupplyLimit)
+    - [EventEnableTimeBasedSupplyLimit](#teleport.aggregate.v1.EventEnableTimeBasedSupplyLimit)
     - [EventIBCAggregate](#teleport.aggregate.v1.EventIBCAggregate)
   
     - [Status](#teleport.aggregate.v1.Status)
@@ -176,6 +180,46 @@
 
 
 
+<a name="teleport.aggregate.v1.DisableTimeBasedSupplyLimitProposal"></a>
+
+### DisableTimeBasedSupplyLimitProposal
+DisableTimeBasedSupplyLimitProposal is a gov Content type to disable time
+based supply limit of an ERC20
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `title` | [string](#string) |  | title of the proposal |
+| `description` | [string](#string) |  | proposal description |
+| `erc20_address` | [string](#string) |  | contract address of ERC20 token |
+
+
+
+
+
+
+<a name="teleport.aggregate.v1.EnableTimeBasedSupplyLimitProposal"></a>
+
+### EnableTimeBasedSupplyLimitProposal
+EnableTimeBasedSupplyLimitProposal is a gov Content type to enable time based
+supply limit of an ERC20
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `title` | [string](#string) |  | title of the proposal |
+| `description` | [string](#string) |  | proposal description |
+| `erc20_address` | [string](#string) |  | contract address of ERC20 token |
+| `time_period` | [string](#string) |  | time peroid in seconds |
+| `time_based_limit` | [string](#string) |  | time based limit |
+| `max_amount` | [string](#string) |  | max amount single transfer |
+| `min_amount` | [string](#string) |  | min amount single transfer |
+
+
+
+
+
+
 <a name="teleport.aggregate.v1.RegisterCoinProposal"></a>
 
 ### RegisterCoinProposal
@@ -312,6 +356,40 @@ Owner enumerates the ownership of a ERC20 contract
 <p align="right"><a href="#top">Top</a></p>
 
 ## teleport/aggregate/v1/event.proto
+
+
+
+<a name="teleport.aggregate.v1.EventDisableTimeBasedSupplyLimit"></a>
+
+### EventDisableTimeBasedSupplyLimit
+Event
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `erc20_address` | [string](#string) |  |  |
+
+
+
+
+
+
+<a name="teleport.aggregate.v1.EventEnableTimeBasedSupplyLimit"></a>
+
+### EventEnableTimeBasedSupplyLimit
+Event
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `erc20_address` | [string](#string) |  |  |
+| `timePeriod` | [string](#string) |  | time peroid in seconds |
+| `timeBasedLimit` | [string](#string) |  | time based limit |
+| `maxAmount` | [string](#string) |  | max amount single transfer |
+| `minAmount` | [string](#string) |  | min amount single transfer |
+
+
+
 
 
 

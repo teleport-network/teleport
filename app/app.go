@@ -197,6 +197,8 @@ var (
 			aggregateclient.ToggleTokenRelayProposalHandler,
 			aggregateclient.UpdateTokenPairERC20Proposal,
 			aggregateclient.RegisterERC20TraceProposalHandler,
+			aggregateclient.EnableTimeBasedSupplyLimitProposalHandler,
+			aggregateclient.DisableTimeBasedSupplyLimitProposalHandler,
 		),
 		params.AppModuleBasic{},
 		crisis.AppModuleBasic{},

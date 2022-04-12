@@ -29,6 +29,8 @@ func RegisterInterfaces(registry codectypes.InterfaceRegistry) {
 		&ToggleTokenRelayProposal{},
 		&UpdateTokenPairERC20Proposal{},
 		&RegisterERC20TraceProposal{},
+		&EnableTimeBasedSupplyLimitProposal{},
+		&DisableTimeBasedSupplyLimitProposal{},
 	)
 
 	msgservice.RegisterMsgServiceDesc(registry, &_Msg_serviceDesc)
