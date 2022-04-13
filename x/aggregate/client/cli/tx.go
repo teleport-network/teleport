@@ -88,9 +88,9 @@ func NewConvertCoinCmd() *cobra.Command {
 // NewConvertERC20Cmd returns a CLI command handler for converting ERC20s
 func NewConvertERC20Cmd() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "convert-erc20 [contract-address] [amount] [receiver]",
+		Use:   "convert-erc20 [contract-address] [denom] [amount] [receiver]",
 		Short: "Convert an ERC20 token to Cosmos coin",
-		Args:  cobra.RangeArgs(2, 3),
+		Args:  cobra.RangeArgs(3, 4),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			cliCtx, err := client.GetClientTxContext(cmd)
 			if err != nil {
@@ -101,8 +101,8 @@ func NewConvertERC20Cmd() *cobra.Command {
 			if err := ethermint.ValidateAddress(contract); err != nil {
 				return fmt.Errorf("invalid ERC20 contract address %w", err)
 			}
-
-			amount, ok := sdk.NewIntFromString(args[1])
+			denom := args[1]
+			amount, ok := sdk.NewIntFromString(args[2])
 			if !ok {
 				return fmt.Errorf("invalid amount %s", args[1])
 			}
@@ -111,7 +111,7 @@ func NewConvertERC20Cmd() *cobra.Command {
 
 			receiver := cliCtx.GetFromAddress()
 			if len(args) == 3 {
-				receiver, err = sdk.AccAddressFromBech32(args[2])
+				receiver, err = sdk.AccAddressFromBech32(args[3])
 				if err != nil {
 					return err
 				}
@@ -122,6 +122,7 @@ func NewConvertERC20Cmd() *cobra.Command {
 				Amount:          amount,
 				Receiver:        receiver.String(),
 				Sender:          from.Hex(),
+				Denom:           denom,
 			}
 
 			if err := msg.ValidateBasic(); err != nil {
@@ -202,6 +203,103 @@ Where metadata.json contains (example):
 			from := clientCtx.GetFromAddress()
 
 			content := types.NewRegisterCoinProposal(title, description, metadata)
+
+			msg, err := govtypes.NewMsgSubmitProposal(content, deposit, from)
+			if err != nil {
+				return err
+			}
+
+			if err := msg.ValidateBasic(); err != nil {
+				return err
+			}
+
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+		},
+	}
+
+	cmd.Flags().String(cli.FlagTitle, "", "title of proposal")
+	cmd.Flags().String(cli.FlagDescription, "", "description of proposal")
+	cmd.Flags().String(cli.FlagDeposit, "1tele", "deposit of proposal")
+	if err := cmd.MarkFlagRequired(cli.FlagTitle); err != nil {
+		panic(err)
+	}
+	if err := cmd.MarkFlagRequired(cli.FlagDescription); err != nil {
+		panic(err)
+	}
+	if err := cmd.MarkFlagRequired(cli.FlagDeposit); err != nil {
+		panic(err)
+	}
+	return cmd
+}
+
+// NewAddCoinProposalCmd implements the command to submit a community-pool-spend proposal
+func NewAddCoinProposalCmd() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "add-coin [ERC20Address] [metadata]",
+		Args:  cobra.ExactArgs(2),
+		Short: "Submit a register coin proposal",
+		Long: `Submit a proposal to register a Cosmos coin to the intrarelayer along with an initial deposit.
+Upon passing, the
+The proposal details must be supplied via a JSON file.`,
+		Example: fmt.Sprintf(`$ %s tx gov submit-proposal add-coin <ERC20Address> <path/to/metadata.json> --from=<key_or_address>
+
+Where metadata.json contains (example):
+
+{
+  "description": "staking, gas and governance token of the Teleport testnets",
+  "denom_units": [
+		{
+			"denom": "atele",
+			"exponent": 0,
+			"aliases": ["atto tele"]
+		},
+		{
+			"denom": "tele",
+			"exponent": 18
+		}
+	],
+	"base": "atele",
+	"display": "tele",
+	"name": "Tele",
+	"symbol": "TELE"
+}`, version.AppName,
+		),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+
+			title, err := cmd.Flags().GetString(cli.FlagTitle)
+			if err != nil {
+				return err
+			}
+
+			description, err := cmd.Flags().GetString(cli.FlagDescription)
+			if err != nil {
+				return err
+			}
+
+			depositStr, err := cmd.Flags().GetString(cli.FlagDeposit)
+			if err != nil {
+				return err
+			}
+
+			deposit, err := sdk.ParseCoinsNormalized(depositStr)
+			if err != nil {
+				return err
+			}
+
+			contract := args[0]
+
+			metadata, err := ParseMetadata(clientCtx.Codec, args[1])
+			if err != nil {
+				return err
+			}
+
+			from := clientCtx.GetFromAddress()
+
+			content := types.NewAddCoinProposal(title, description, metadata, contract)
 
 			msg, err := govtypes.NewMsgSubmitProposal(content, deposit, from)
 			if err != nil {

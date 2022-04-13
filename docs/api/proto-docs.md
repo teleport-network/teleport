@@ -5,6 +5,7 @@
 ## Table of Contents
 
 - [teleport/aggregate/v1/aggregate.proto](#teleport/aggregate/v1/aggregate.proto)
+    - [AddCoinProposal](#teleport.aggregate.v1.AddCoinProposal)
     - [DisableTimeBasedSupplyLimitProposal](#teleport.aggregate.v1.DisableTimeBasedSupplyLimitProposal)
     - [EnableTimeBasedSupplyLimitProposal](#teleport.aggregate.v1.EnableTimeBasedSupplyLimitProposal)
     - [RegisterCoinProposal](#teleport.aggregate.v1.RegisterCoinProposal)
@@ -20,6 +21,7 @@
     - [EventDisableTimeBasedSupplyLimit](#teleport.aggregate.v1.EventDisableTimeBasedSupplyLimit)
     - [EventEnableTimeBasedSupplyLimit](#teleport.aggregate.v1.EventEnableTimeBasedSupplyLimit)
     - [EventIBCAggregate](#teleport.aggregate.v1.EventIBCAggregate)
+    - [EventRegisterTokens](#teleport.aggregate.v1.EventRegisterTokens)
   
     - [Status](#teleport.aggregate.v1.Status)
   
@@ -180,6 +182,24 @@
 
 
 
+<a name="teleport.aggregate.v1.AddCoinProposal"></a>
+
+### AddCoinProposal
+RegisterCoinProposal is a gov Content type to register a token pair
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `title` | [string](#string) |  | title of the proposal |
+| `description` | [string](#string) |  | proposal description |
+| `metadata` | [cosmos.bank.v1beta1.Metadata](#cosmos.bank.v1beta1.Metadata) |  | token pair of Cosmos native denom and ERC20 token address |
+| `contract_address` | [string](#string) |  | erc20 address for query the token pair |
+
+
+
+
+
+
 <a name="teleport.aggregate.v1.DisableTimeBasedSupplyLimitProposal"></a>
 
 ### DisableTimeBasedSupplyLimitProposal
@@ -302,7 +322,7 @@ native Coin and an ERC20 token address
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `erc20_address` | [string](#string) |  | address of ERC20 contract token |
-| `denom` | [string](#string) |  | cosmos base denomination to be mapped to |
+| `denoms` | [string](#string) | repeated | cosmos base denomination to be mapped to |
 | `enabled` | [bool](#bool) |  | shows token mapping enable status |
 | `contract_owner` | [Owner](#teleport.aggregate.v1.Owner) |  | ERC20 owner address ENUM (0 invalid, 1 ModuleAccount, 2 external address) |
 
@@ -406,6 +426,22 @@ EventIBCAggregate is emitted on IBC Aggregate
 | `sequence` | [uint64](#uint64) |  |  |
 | `source_channel` | [string](#string) |  |  |
 | `destination_channel` | [string](#string) |  |  |
+
+
+
+
+
+
+<a name="teleport.aggregate.v1.EventRegisterTokens"></a>
+
+### EventRegisterTokens
+EventRegisterTokens is emitted on aggregate register coins
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `denom` | [string](#string) | repeated |  |
+| `erc20_token` | [string](#string) |  |  |
 
 
 
@@ -645,6 +681,7 @@ MsgConvertERC20 defines a Msg to convert an ERC20 token to a Cosmos SDK coin.
 | `amount` | [string](#string) |  | amount of ERC20 tokens to mint |
 | `receiver` | [string](#string) |  | bech32 address to receive SDK coins. |
 | `sender` | [string](#string) |  | sender hex address from the owner of the given ERC20 tokens |
+| `denom` | [string](#string) |  | denom for contract convert to |
 
 
 

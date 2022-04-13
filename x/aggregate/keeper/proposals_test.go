@@ -117,8 +117,8 @@ func (suite KeeperTestSuite) TestRegisterCoin() {
 		{
 			"denom already registered",
 			func() {
-				regPair := types.NewTokenPair(tests.GenerateAddress(), metadata.Base, true, types.OWNER_MODULE)
-				suite.app.AggregateKeeper.SetDenomMap(suite.ctx, regPair.Denom, regPair.GetID())
+				regPair := types.NewTokenPair(tests.GenerateAddress(), []string{metadata.Base}, true, types.OWNER_MODULE)
+				suite.app.AggregateKeeper.SetDenomsMap(suite.ctx, regPair.Denoms, regPair.GetID())
 				suite.Commit()
 			},
 			false,
@@ -188,7 +188,99 @@ func (suite KeeperTestSuite) TestRegisterCoin() {
 
 			expPair := &types.TokenPair{
 				ERC20Address:  "0x90d3e9B208998d1048467bFDcbE3661322373712",
-				Denom:         "acoin",
+				Denoms:        []string{"acoin"},
+				Enabled:       true,
+				ContractOwner: 1,
+			}
+
+			if tc.expPass {
+				suite.Require().NoError(err, tc.name)
+				suite.Require().Equal(expPair, pair)
+			} else {
+				suite.Require().Error(err, tc.name)
+			}
+		})
+	}
+}
+
+func (suite KeeperTestSuite) TestAddCoin() {
+	var (
+		pair     *types.TokenPair
+		contract common.Address
+		err      error
+	)
+
+	metadata := banktypes.Metadata{
+		Description: "description",
+		Base:        cosmosTokenBase,
+		// NOTE: Denom units MUST be increasing
+		DenomUnits: []*banktypes.DenomUnit{
+			{
+				Denom:    cosmosTokenBase,
+				Exponent: 0,
+			},
+			{
+				Denom:    cosmosTokenDisplay,
+				Exponent: defaultExponent,
+			},
+		},
+		Name:    cosmosTokenBase,
+		Symbol:  erc20Symbol,
+		Display: cosmosTokenDisplay,
+	}
+
+	testCases := []struct {
+		name     string
+		malleate func()
+		expPass  bool
+	}{
+		{
+			"pair not exist",
+			func() {
+				contract, err = suite.app.AggregateKeeper.DeployERC20Contract(suite.ctx, metadata)
+				suite.NoError(err)
+			},
+			false,
+		},
+		{
+			"denom already exist",
+			func() {
+				err = suite.app.BankKeeper.MintCoins(suite.ctx, types.ModuleName, sdk.Coins{sdk.NewInt64Coin(metadata.Base, 1)})
+				suite.NoError(err)
+				pair, err = suite.app.AggregateKeeper.RegisterCoin(suite.ctx, metadata)
+				suite.NoError(err)
+				contract = common.HexToAddress(pair.ERC20Address)
+			},
+			false,
+		},
+		{
+			"add coin success",
+			func() {
+				err = suite.app.BankKeeper.MintCoins(suite.ctx, types.ModuleName, sdk.Coins{sdk.NewInt64Coin(metadata.Base, 1)})
+				suite.NoError(err)
+				pair, err = suite.app.AggregateKeeper.RegisterCoin(suite.ctx, metadata)
+				suite.NoError(err)
+				contract = common.HexToAddress(pair.ERC20Address)
+
+				metadata.Name = "test"
+				metadata.Base = "test"
+				err = suite.app.BankKeeper.MintCoins(suite.ctx, types.ModuleName, sdk.Coins{sdk.NewInt64Coin("test", 1)})
+				suite.NoError(err)
+			},
+			true,
+		},
+	}
+	for _, tc := range testCases {
+		suite.Run(fmt.Sprintf("Case %s", tc.name), func() {
+			suite.SetupTest() // reset
+
+			tc.malleate()
+
+			pair, err = suite.app.AggregateKeeper.AddCoin(suite.ctx, metadata, contract.String())
+			suite.Commit()
+			expPair := &types.TokenPair{
+				ERC20Address:  "0x90d3e9B208998d1048467bFDcbE3661322373712",
+				Denoms:        []string{"acoin", "test"},
 				Enabled:       true,
 				ContractOwner: 1,
 			}
@@ -232,7 +324,7 @@ func (suite KeeperTestSuite) TestRegisterERC20() {
 		{
 			"denom already registered",
 			func() {
-				suite.app.AggregateKeeper.SetDenomMap(suite.ctx, pair.Denom, pair.GetID())
+				suite.app.AggregateKeeper.SetDenomsMap(suite.ctx, pair.Denoms, pair.GetID())
 			},
 			false,
 		},
@@ -257,7 +349,7 @@ func (suite KeeperTestSuite) TestRegisterERC20() {
 			contractAddr = suite.DeployContract(erc20Name, erc20Symbol, cosmosDecimals)
 			suite.Commit()
 			coinName := types.CreateDenom(contractAddr.String())
-			pair = types.NewTokenPair(contractAddr, coinName, true, types.OWNER_EXTERNAL)
+			pair = types.NewTokenPair(contractAddr, []string{coinName}, true, types.OWNER_EXTERNAL)
 
 			tc.malleate()
 
@@ -303,7 +395,7 @@ func (suite KeeperTestSuite) TestToggleRelay() {
 			func() {
 				contractAddr = suite.DeployContract(erc20Name, erc20Symbol, erc20Decimals)
 				suite.Commit()
-				pair = types.NewTokenPair(contractAddr, cosmosTokenBase, true, types.OWNER_MODULE)
+				pair = types.NewTokenPair(contractAddr, []string{cosmosTokenBase}, true, types.OWNER_MODULE)
 			},
 			false,
 			false,
@@ -313,7 +405,7 @@ func (suite KeeperTestSuite) TestToggleRelay() {
 			func() {
 				contractAddr = suite.DeployContract(erc20Name, erc20Symbol, erc20Decimals)
 				suite.Commit()
-				pair = types.NewTokenPair(contractAddr, cosmosTokenBase, true, types.OWNER_MODULE)
+				pair = types.NewTokenPair(contractAddr, []string{cosmosTokenBase}, true, types.OWNER_MODULE)
 				suite.app.AggregateKeeper.SetERC20Map(suite.ctx, common.HexToAddress(pair.ERC20Address), pair.GetID())
 			},
 			false,
@@ -383,7 +475,7 @@ func (suite KeeperTestSuite) TestUpdateTokenPairERC20() {
 			func() {
 				contractAddr = suite.DeployContract(erc20Name, erc20Symbol, erc20Decimals)
 				suite.Commit()
-				pair = types.NewTokenPair(contractAddr, cosmosTokenBase, true, types.OWNER_MODULE)
+				pair = types.NewTokenPair(contractAddr, []string{cosmosTokenBase}, true, types.OWNER_MODULE)
 			},
 			false,
 		},
@@ -392,7 +484,7 @@ func (suite KeeperTestSuite) TestUpdateTokenPairERC20() {
 			func() {
 				contractAddr = suite.DeployContract(erc20Name, erc20Symbol, erc20Decimals)
 				suite.Commit()
-				pair = types.NewTokenPair(contractAddr, cosmosTokenBase, true, types.OWNER_MODULE)
+				pair = types.NewTokenPair(contractAddr, []string{cosmosTokenBase}, true, types.OWNER_MODULE)
 
 				suite.app.AggregateKeeper.SetERC20Map(suite.ctx, common.HexToAddress(pair.ERC20Address), pair.GetID())
 			},
@@ -403,11 +495,7 @@ func (suite KeeperTestSuite) TestUpdateTokenPairERC20() {
 			func() {
 				contractAddr = suite.DeployContract(erc20Name, erc20Symbol, erc20Decimals)
 				suite.Commit()
-				pair = types.NewTokenPair(contractAddr, cosmosTokenBase, true, types.OWNER_MODULE)
-
-				suite.app.AggregateKeeper.SetTokenPair(suite.ctx, pair)
-				suite.app.AggregateKeeper.SetDenomMap(suite.ctx, pair.Denom, pair.GetID())
-				suite.app.AggregateKeeper.SetERC20Map(suite.ctx, common.HexToAddress(pair.ERC20Address), pair.GetID())
+				pair = types.NewTokenPair(contractAddr, []string{cosmosTokenBase}, true, types.OWNER_MODULE)
 			},
 			false,
 		},
@@ -427,7 +515,13 @@ func (suite KeeperTestSuite) TestUpdateTokenPairERC20() {
 				id := suite.app.AggregateKeeper.GetTokenPairID(suite.ctx, contractAddr.String())
 				pair, found = suite.app.AggregateKeeper.GetTokenPair(suite.ctx, id)
 				suite.Require().True(found)
-				suite.app.BankKeeper.SetDenomMetaData(suite.ctx, banktypes.Metadata{Base: pair.Denom})
+				suite.app.BankKeeper.SetDenomMetaData(
+					suite.ctx,
+					banktypes.Metadata{
+						Description: types.CreateDenomDescription(contractAddr.String()),
+						Base:        pair.Denoms[0],
+					},
+				)
 				suite.Commit()
 
 				// Deploy a new contract with the same values
@@ -443,7 +537,7 @@ func (suite KeeperTestSuite) TestUpdateTokenPairERC20() {
 				id := suite.app.AggregateKeeper.GetTokenPairID(suite.ctx, contractAddr.String())
 				pair, found = suite.app.AggregateKeeper.GetTokenPair(suite.ctx, id)
 				suite.Require().True(found)
-				metadata := banktypes.Metadata{Base: pair.Denom, DenomUnits: []*banktypes.DenomUnit{{}}}
+				metadata := banktypes.Metadata{Description: types.CreateDenomDescription(contractAddr.String()), Base: pair.Denoms[0], DenomUnits: []*banktypes.DenomUnit{{}}}
 				suite.app.BankKeeper.SetDenomMetaData(suite.ctx, metadata)
 				suite.Commit()
 
@@ -460,7 +554,7 @@ func (suite KeeperTestSuite) TestUpdateTokenPairERC20() {
 				id := suite.app.AggregateKeeper.GetTokenPairID(suite.ctx, contractAddr.String())
 				pair, found = suite.app.AggregateKeeper.GetTokenPair(suite.ctx, id)
 				suite.Require().True(found)
-				metadata := banktypes.Metadata{Base: pair.Denom, Display: erc20Name, Description: types.CreateDenomDescription(contractAddr.String()), Symbol: erc20Symbol, DenomUnits: []*banktypes.DenomUnit{{}}}
+				metadata := banktypes.Metadata{Base: pair.Denoms[0], Display: erc20Name, Description: types.CreateDenomDescription(contractAddr.String()), Symbol: erc20Symbol, DenomUnits: []*banktypes.DenomUnit{{}}}
 				suite.app.BankKeeper.SetDenomMetaData(suite.ctx, metadata)
 				suite.Commit()
 
@@ -477,7 +571,7 @@ func (suite KeeperTestSuite) TestUpdateTokenPairERC20() {
 				id := suite.app.AggregateKeeper.GetTokenPairID(suite.ctx, contractAddr.String())
 				pair, found = suite.app.AggregateKeeper.GetTokenPair(suite.ctx, id)
 				suite.Require().True(found)
-				metadata := banktypes.Metadata{Base: pair.Denom, Display: erc20Name, Description: types.CreateDenomDescription(contractAddr.String()), Symbol: erc20Symbol, DenomUnits: []*banktypes.DenomUnit{{Denom: erc20Name}}}
+				metadata := banktypes.Metadata{Base: pair.Denoms[0], Display: erc20Name, Description: types.CreateDenomDescription(contractAddr.String()), Symbol: erc20Symbol, DenomUnits: []*banktypes.DenomUnit{{Denom: erc20Name}}}
 				suite.app.BankKeeper.SetDenomMetaData(suite.ctx, metadata)
 				suite.Commit()
 
@@ -494,7 +588,7 @@ func (suite KeeperTestSuite) TestUpdateTokenPairERC20() {
 				id := suite.app.AggregateKeeper.GetTokenPairID(suite.ctx, contractAddr.String())
 				pair, found = suite.app.AggregateKeeper.GetTokenPair(suite.ctx, id)
 				suite.Require().True(found)
-				metadata := banktypes.Metadata{Base: pair.Denom, Display: erc20Name, Description: types.CreateDenomDescription(contractAddr.String()), Symbol: erc20Symbol, DenomUnits: []*banktypes.DenomUnit{{Denom: erc20Name, Exponent: 18}}}
+				metadata := banktypes.Metadata{Base: pair.Denoms[0], Display: erc20Name, Description: types.CreateDenomDescription(contractAddr.String()), Symbol: erc20Symbol, DenomUnits: []*banktypes.DenomUnit{{Denom: erc20Name, Exponent: 18}}}
 				suite.app.BankKeeper.SetDenomMetaData(suite.ctx, metadata)
 				suite.Commit()
 
@@ -511,12 +605,12 @@ func (suite KeeperTestSuite) TestUpdateTokenPairERC20() {
 			tc.malleate()
 
 			var err error
-			pair, err = suite.app.AggregateKeeper.UpdateTokenPairERC20(suite.ctx, contractAddr, newContractAddr)
+			newPair, err := suite.app.AggregateKeeper.UpdateTokenPairERC20(suite.ctx, contractAddr, newContractAddr)
 			metadata, _ = suite.app.BankKeeper.GetDenomMetaData(suite.ctx, types.CreateDenom(contractAddr.String()))
 
 			if tc.expPass {
 				suite.Require().NoError(err, tc.name)
-				suite.Require().Equal(newContractAddr.String(), pair.ERC20Address)
+				suite.Require().Equal(newContractAddr.String(), newPair.ERC20Address)
 				suite.Require().Equal(types.CreateDenomDescription(newContractAddr.String()), metadata.Description)
 			} else {
 				suite.Require().Error(err, tc.name)

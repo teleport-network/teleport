@@ -28,8 +28,8 @@ func (gs GenesisState) Validate() error {
 		if seenErc20[b.ERC20Address] {
 			return fmt.Errorf("token ERC20 contract duplicated on genesis '%s'", b.ERC20Address)
 		}
-		if seenDenom[b.Denom] {
-			return fmt.Errorf("coin denomination duplicated on genesis: '%s'", b.Denom)
+		if seenDenom[b.Denoms[0]] {
+			return fmt.Errorf("coin denomination duplicated on genesis: '%s'", b.Denoms[0])
 		}
 
 		if err := b.Validate(); err != nil {
@@ -37,7 +37,7 @@ func (gs GenesisState) Validate() error {
 		}
 
 		seenErc20[b.ERC20Address] = true
-		seenDenom[b.Denom] = true
+		seenDenom[b.Denoms[0]] = true
 	}
 
 	return gs.Params.Validate()

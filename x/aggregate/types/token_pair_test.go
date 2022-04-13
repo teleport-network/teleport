@@ -43,7 +43,7 @@ func (suite *TokenPairTestSuite) TestTokenPairNew() {
 	}
 
 	for i, tc := range testCases {
-		tp := NewTokenPair(tc.erc20Address, tc.denom, tc.enabled, tc.owner)
+		tp := NewTokenPair(tc.erc20Address, []string{tc.denom}, tc.enabled, tc.owner)
 		err := tp.Validate()
 
 		if tc.expectPass {
@@ -60,10 +60,10 @@ func (suite *TokenPairTestSuite) TestTokenPair() {
 		pair       TokenPair
 		expectPass bool
 	}{
-		{msg: "Register token pair - invalid address (no hex)", pair: TokenPair{"0x5dCA2483280D9727c80b5518faC4556617fb19ZZ", "test", true, OWNER_MODULE}, expectPass: false},
-		{msg: "Register token pair - invalid address (invalid length 1)", pair: TokenPair{"0x5dCA2483280D9727c80b5518faC4556617fb19", "test", true, OWNER_MODULE}, expectPass: false},
-		{msg: "Register token pair - invalid address (invalid length 2)", pair: TokenPair{"0x5dCA2483280D9727c80b5518faC4556617fb194FFF", "test", true, OWNER_MODULE}, expectPass: false},
-		{msg: "pass", pair: TokenPair{tests.GenerateAddress().String(), "test", true, OWNER_MODULE}, expectPass: true},
+		{msg: "Register token pair - invalid address (no hex)", pair: TokenPair{"0x5dCA2483280D9727c80b5518faC4556617fb19ZZ", []string{"test"}, true, OWNER_MODULE}, expectPass: false},
+		{msg: "Register token pair - invalid address (invalid length 1)", pair: TokenPair{"0x5dCA2483280D9727c80b5518faC4556617fb19", []string{"test"}, true, OWNER_MODULE}, expectPass: false},
+		{msg: "Register token pair - invalid address (invalid length 2)", pair: TokenPair{"0x5dCA2483280D9727c80b5518faC4556617fb194FFF", []string{"test"}, true, OWNER_MODULE}, expectPass: false},
+		{msg: "pass", pair: TokenPair{tests.GenerateAddress().String(), []string{"test"}, true, OWNER_MODULE}, expectPass: true},
 	}
 
 	for i, tc := range testCases {
@@ -78,7 +78,7 @@ func (suite *TokenPairTestSuite) TestTokenPair() {
 func (suite *TokenPairTestSuite) TestGetID() {
 	addr := tests.GenerateAddress()
 	denom := "test"
-	pair := NewTokenPair(addr, denom, true, OWNER_MODULE)
+	pair := NewTokenPair(addr, []string{denom}, true, OWNER_MODULE)
 	id := pair.GetID()
 	expID := tmhash.Sum([]byte(addr.String() + "|" + denom))
 	suite.Require().Equal(expID, id)
@@ -87,7 +87,7 @@ func (suite *TokenPairTestSuite) TestGetID() {
 func (suite *TokenPairTestSuite) TestGetERC20Contract() {
 	expAddr := tests.GenerateAddress()
 	denom := "test"
-	pair := NewTokenPair(expAddr, denom, true, OWNER_MODULE)
+	pair := NewTokenPair(expAddr, []string{denom}, true, OWNER_MODULE)
 	addr := pair.GetERC20Contract()
 	suite.Require().Equal(expAddr, addr)
 }
@@ -99,15 +99,15 @@ func (suite *TokenPairTestSuite) TestIsNativeCoin() {
 		expectPass bool
 	}{{
 		"no owner",
-		TokenPair{tests.GenerateAddress().String(), "test", true, OWNER_UNSPECIFIED},
+		TokenPair{tests.GenerateAddress().String(), []string{"test"}, true, OWNER_UNSPECIFIED},
 		false,
 	}, {
 		"external ERC20 owner",
-		TokenPair{tests.GenerateAddress().String(), "test", true, OWNER_EXTERNAL},
+		TokenPair{tests.GenerateAddress().String(), []string{"test"}, true, OWNER_EXTERNAL},
 		false,
 	}, {
 		"pass",
-		TokenPair{tests.GenerateAddress().String(), "test", true, OWNER_MODULE},
+		TokenPair{tests.GenerateAddress().String(), []string{"test"}, true, OWNER_MODULE},
 		true,
 	}}
 
@@ -127,15 +127,15 @@ func (suite *TokenPairTestSuite) TestIsNativeERC20() {
 		expectPass bool
 	}{{
 		"no owner",
-		TokenPair{tests.GenerateAddress().String(), "test", true, OWNER_UNSPECIFIED},
+		TokenPair{tests.GenerateAddress().String(), []string{"test"}, true, OWNER_UNSPECIFIED},
 		false,
 	}, {
 		"module owner",
-		TokenPair{tests.GenerateAddress().String(), "test", true, OWNER_MODULE},
+		TokenPair{tests.GenerateAddress().String(), []string{"test"}, true, OWNER_MODULE},
 		false,
 	}, {
 		"pass",
-		TokenPair{tests.GenerateAddress().String(), "test", true, OWNER_EXTERNAL},
+		TokenPair{tests.GenerateAddress().String(), []string{"test"}, true, OWNER_EXTERNAL},
 		true,
 	}}
 

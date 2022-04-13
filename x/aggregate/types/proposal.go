@@ -19,6 +19,7 @@ import (
 // constants
 const (
 	ProposalTypeRegisterCoin                string = "RegisterCoin"
+	ProposalTypeAddCoin                     string = "AddCoin"
 	ProposalTypeRegisterERC20               string = "RegisterERC20"
 	ProposalTypeToggleTokenRelay            string = "ToggleTokenRelay" // #nosec
 	ProposalTypeUpdateTokenPairERC20        string = "UpdateTokenPairERC20"
@@ -40,6 +41,7 @@ var (
 
 func init() {
 	govtypes.RegisterProposalType(ProposalTypeRegisterCoin)
+	govtypes.RegisterProposalType(ProposalTypeAddCoin)
 	govtypes.RegisterProposalType(ProposalTypeRegisterERC20)
 	govtypes.RegisterProposalType(ProposalTypeToggleTokenRelay)
 	govtypes.RegisterProposalType(ProposalTypeUpdateTokenPairERC20)
@@ -133,6 +135,47 @@ func ValidateAggregateDenom(denom string) error {
 	}
 
 	return ethermint.ValidateAddress(denomSplit[1])
+}
+
+// ================================================================================================================
+
+// NewAddCoinProposal returns new instance of AddCoinProposal
+func NewAddCoinProposal(title, description string, coinMetadata banktypes.Metadata, contractAddr string) govtypes.Content {
+	return &AddCoinProposal{
+		Title:           title,
+		Description:     description,
+		Metadata:        coinMetadata,
+		ContractAddress: contractAddr,
+	}
+}
+
+// ProposalRoute returns router key for this proposal
+func (*AddCoinProposal) ProposalRoute() string { return GovRouterKey }
+
+// ProposalType returns proposal type for this proposal
+func (*AddCoinProposal) ProposalType() string {
+	return ProposalTypeAddCoin
+}
+
+// ValidateBasic performs a stateless check of the proposal fields
+func (rtbp *AddCoinProposal) ValidateBasic() error {
+	if err := rtbp.Metadata.Validate(); err != nil {
+		return err
+	}
+
+	if err := ibctransfertypes.ValidateIBCDenom(rtbp.Metadata.Base); err != nil {
+		return err
+	}
+
+	if err := validateIBC(rtbp.Metadata); err != nil {
+		return err
+	}
+
+	if check := common.IsHexAddress(rtbp.ContractAddress); !check {
+		return sdkerrors.Wrap(ErrERC20Disabled, "ERC20 address invalid")
+	}
+
+	return govtypes.ValidateAbstract(rtbp)
 }
 
 // ================================================================================================================

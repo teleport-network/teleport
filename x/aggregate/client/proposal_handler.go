@@ -14,6 +14,7 @@ func EmptyProposalRESTHandler(client.Context) rest.ProposalRESTHandler {
 
 var (
 	RegisterCoinProposalHandler                = govclient.NewProposalHandler(cli.NewRegisterCoinProposalCmd, EmptyProposalRESTHandler)
+	AddCoinProposalHandler                     = govclient.NewProposalHandler(cli.NewAddCoinProposalCmd, EmptyProposalRESTHandler)
 	RegisterERC20PairProposalHandler           = govclient.NewProposalHandler(cli.NewRegisterERC20ProposalCmd, EmptyProposalRESTHandler)
 	ToggleTokenRelayProposalHandler            = govclient.NewProposalHandler(cli.NewToggleTokenRelayProposalCmd, EmptyProposalRESTHandler)
 	UpdateTokenPairERC20Proposal               = govclient.NewProposalHandler(cli.NewUpdateTokenPairERC20ProposalCmd, EmptyProposalRESTHandler)

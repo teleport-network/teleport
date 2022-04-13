@@ -23,6 +23,12 @@ message EventIBCAggregate {
   string destination_channel = 5;
 }
 
+// EventRegisterTokens is emitted on aggregate register coins
+message EventRegisterTokens {
+  repeated string denom = 1;
+  string erc20_token = 2;
+}
+
 // Event
 message EventEnableTimeBasedSupplyLimit {
   string erc20_address = 3 [ (gogoproto.customname) = "ERC20Address" ];

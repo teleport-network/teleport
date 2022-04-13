@@ -14,7 +14,7 @@ import (
 func (suite *KeeperTestSuite) TestMintingEnabled() {
 	sender := sdk.AccAddress(tests.GenerateAddress().Bytes())
 	receiver := sdk.AccAddress(tests.GenerateAddress().Bytes())
-	expPair := types.NewTokenPair(tests.GenerateAddress(), "coin", true, types.OWNER_MODULE)
+	expPair := types.NewTokenPair(tests.GenerateAddress(), []string{"coin"}, true, types.OWNER_MODULE)
 	id := expPair.GetID()
 
 	testCases := []struct {
@@ -41,7 +41,7 @@ func (suite *KeeperTestSuite) TestMintingEnabled() {
 			func() {
 				expPair.Enabled = false
 				suite.app.AggregateKeeper.SetTokenPair(suite.ctx, expPair)
-				suite.app.AggregateKeeper.SetDenomMap(suite.ctx, expPair.Denom, id)
+				suite.app.AggregateKeeper.SetDenomsMap(suite.ctx, expPair.Denoms, id)
 				suite.app.AggregateKeeper.SetERC20Map(suite.ctx, expPair.GetERC20Contract(), id)
 			},
 			false,
@@ -51,12 +51,12 @@ func (suite *KeeperTestSuite) TestMintingEnabled() {
 			func() {
 				expPair.Enabled = true
 				suite.app.AggregateKeeper.SetTokenPair(suite.ctx, expPair)
-				suite.app.AggregateKeeper.SetDenomMap(suite.ctx, expPair.Denom, id)
+				suite.app.AggregateKeeper.SetDenomsMap(suite.ctx, expPair.Denoms, id)
 				suite.app.AggregateKeeper.SetERC20Map(suite.ctx, expPair.GetERC20Contract(), id)
 
 				params := banktypes.DefaultParams()
 				params.SendEnabled = []*banktypes.SendEnabled{
-					{Denom: expPair.Denom, Enabled: false},
+					{Denom: expPair.Denoms[0], Enabled: false},
 				}
 				suite.app.BankKeeper.SetParams(suite.ctx, params)
 			},
@@ -66,7 +66,7 @@ func (suite *KeeperTestSuite) TestMintingEnabled() {
 			"ok",
 			func() {
 				suite.app.AggregateKeeper.SetTokenPair(suite.ctx, expPair)
-				suite.app.AggregateKeeper.SetDenomMap(suite.ctx, expPair.Denom, id)
+				suite.app.AggregateKeeper.SetDenomsMap(suite.ctx, expPair.Denoms, id)
 				suite.app.AggregateKeeper.SetERC20Map(suite.ctx, expPair.GetERC20Contract(), id)
 			},
 			true,
@@ -79,7 +79,7 @@ func (suite *KeeperTestSuite) TestMintingEnabled() {
 
 			tc.malleate()
 
-			pair, err := suite.app.AggregateKeeper.MintingEnabled(suite.ctx, sender, receiver, expPair.ERC20Address)
+			pair, err := suite.app.AggregateKeeper.MintingEnabled(suite.ctx, sender, receiver, expPair.ERC20Address, expPair.Denoms[0])
 			if tc.expPass {
 				suite.Require().NoError(err)
 				suite.Require().Equal(expPair, pair)

@@ -27,6 +27,7 @@ func (k Keeper) OnRecvPacket(
 		SourceChannel:      packet.SourceChannel,
 		DestinationChannel: packet.DestinationChannel,
 	}
+	cctx, write := ctx.CacheContext()
 
 	var data transfertypes.FungibleTokenPacketData
 	if err := transfertypes.ModuleCdc.UnmarshalJSON(packet.GetData(), &data); err != nil {
@@ -62,7 +63,8 @@ func (k Keeper) OnRecvPacket(
 		common.BytesToAddress(receiver.Bytes()),
 		receiver,
 	)
-	context := sdk.WrapSDKContext(ctx)
+	// use cctx to ConvertCoin
+	context := sdk.WrapSDKContext(cctx)
 	_, err = k.ConvertCoin(context, msg)
 	if err != nil {
 		event.Status = types.STATUS_FAILED
@@ -70,8 +72,10 @@ func (k Keeper) OnRecvPacket(
 		_ = ctx.EventManager().EmitTypedEvent(event)
 		return nil
 	}
+
+	write()
+	ctx.EventManager().EmitEvents(cctx.EventManager().Events())
 	event.Status = types.STATUS_SUCCESS
-	event.Message = err.Error()
 	_ = ctx.EventManager().EmitTypedEvent(event)
 	return nil
 }
