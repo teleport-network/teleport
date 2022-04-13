@@ -2,6 +2,7 @@ package types
 
 import (
 	"fmt"
+	"math/big"
 	"strings"
 
 	"github.com/ethereum/go-ethereum/common"
@@ -17,11 +18,13 @@ import (
 
 // constants
 const (
-	ProposalTypeRegisterCoin         string = "RegisterCoin"
-	ProposalTypeRegisterERC20        string = "RegisterERC20"
-	ProposalTypeToggleTokenRelay     string = "ToggleTokenRelay" // #nosec
-	ProposalTypeUpdateTokenPairERC20 string = "UpdateTokenPairERC20"
-	ProposalTypeRegisterERC20Trace   string = "RegisterERC20Trace"
+	ProposalTypeRegisterCoin                string = "RegisterCoin"
+	ProposalTypeRegisterERC20               string = "RegisterERC20"
+	ProposalTypeToggleTokenRelay            string = "ToggleTokenRelay" // #nosec
+	ProposalTypeUpdateTokenPairERC20        string = "UpdateTokenPairERC20"
+	ProposalTypeRegisterERC20Trace          string = "RegisterERC20Trace"
+	ProposalTypeEnableTimeBasedSupplyLimit  string = "EnableTimeBasedSupplyLimit"
+	ProposalTypeDisableTimeBasedSupplyLimit string = "DisableTimeBasedSupplyLimit"
 )
 
 // Implements Proposal Interface
@@ -31,6 +34,8 @@ var (
 	_ govtypes.Content = &ToggleTokenRelayProposal{}
 	_ govtypes.Content = &UpdateTokenPairERC20Proposal{}
 	_ govtypes.Content = &RegisterERC20TraceProposal{}
+	_ govtypes.Content = &EnableTimeBasedSupplyLimitProposal{}
+	_ govtypes.Content = &DisableTimeBasedSupplyLimitProposal{}
 )
 
 func init() {
@@ -44,6 +49,8 @@ func init() {
 	govtypes.RegisterProposalTypeCodec(&ToggleTokenRelayProposal{}, "aggregate/ToggleTokenRelayProposal")
 	govtypes.RegisterProposalTypeCodec(&UpdateTokenPairERC20Proposal{}, "aggregate/UpdateTokenPairERC20Proposal")
 	govtypes.RegisterProposalTypeCodec(&RegisterERC20TraceProposal{}, "aggregate/RegisterERC20TraceProposal")
+	govtypes.RegisterProposalTypeCodec(&EnableTimeBasedSupplyLimitProposal{}, "aggregate/EnableTimeBasedSupplyLimitProposal")
+	govtypes.RegisterProposalTypeCodec(&DisableTimeBasedSupplyLimitProposal{}, "aggregate/DisableTimeBasedSupplyLimitProposal")
 }
 
 // CreateDenomDescription generates a string with the coin description
@@ -55,6 +62,8 @@ func CreateDenomDescription(address string) string {
 func CreateDenom(address string) string {
 	return fmt.Sprintf("%s/%s", ModuleName, address)
 }
+
+// ================================================================================================================
 
 // NewRegisterCoinProposal returns new instance of RegisterCoinProposal
 func NewRegisterCoinProposal(title, description string, coinMetadata banktypes.Metadata) govtypes.Content {
@@ -74,20 +83,20 @@ func (*RegisterCoinProposal) ProposalType() string {
 }
 
 // ValidateBasic performs a stateless check of the proposal fields
-func (rtbp *RegisterCoinProposal) ValidateBasic() error {
-	if err := rtbp.Metadata.Validate(); err != nil {
+func (p *RegisterCoinProposal) ValidateBasic() error {
+	if err := p.Metadata.Validate(); err != nil {
 		return err
 	}
 
-	if err := ibctransfertypes.ValidateIBCDenom(rtbp.Metadata.Base); err != nil {
+	if err := ibctransfertypes.ValidateIBCDenom(p.Metadata.Base); err != nil {
 		return err
 	}
 
-	if err := validateIBC(rtbp.Metadata); err != nil {
+	if err := validateIBC(p.Metadata); err != nil {
 		return err
 	}
 
-	return govtypes.ValidateAbstract(rtbp)
+	return govtypes.ValidateAbstract(p)
 }
 
 func validateIBC(metadata banktypes.Metadata) error {
@@ -126,6 +135,8 @@ func ValidateAggregateDenom(denom string) error {
 	return ethermint.ValidateAddress(denomSplit[1])
 }
 
+// ================================================================================================================
+
 // NewRegisterERC20Proposal returns new instance of RegisterERC20Proposal
 func NewRegisterERC20Proposal(title, description, erc20Addr string) govtypes.Content {
 	return &RegisterERC20Proposal{
@@ -144,12 +155,14 @@ func (*RegisterERC20Proposal) ProposalType() string {
 }
 
 // ValidateBasic performs a stateless check of the proposal fields
-func (rtbp *RegisterERC20Proposal) ValidateBasic() error {
-	if err := ethermint.ValidateAddress(rtbp.ERC20Address); err != nil {
+func (p *RegisterERC20Proposal) ValidateBasic() error {
+	if err := ethermint.ValidateAddress(p.ERC20Address); err != nil {
 		return sdkerrors.Wrap(err, "ERC20 address")
 	}
-	return govtypes.ValidateAbstract(rtbp)
+	return govtypes.ValidateAbstract(p)
 }
+
+// ================================================================================================================
 
 // NewToggleTokenRelayProposal returns new instance of ToggleTokenRelayProposal
 func NewToggleTokenRelayProposal(title, description string, token string) govtypes.Content {
@@ -180,6 +193,8 @@ func (etrp *ToggleTokenRelayProposal) ValidateBasic() error {
 
 	return govtypes.ValidateAbstract(etrp)
 }
+
+// ================================================================================================================
 
 // NewUpdateTokenPairERC20Proposal returns new instance of UpdateTokenPairERC20Proposal
 func NewUpdateTokenPairERC20Proposal(title, description, erc20Addr, newERC20Addr string) govtypes.Content {
@@ -222,6 +237,8 @@ func (p UpdateTokenPairERC20Proposal) ConvertNewERC20Address() common.Address {
 	return common.HexToAddress(p.NewERC20Address)
 }
 
+// ================================================================================================================
+
 // NewRegisterERC20TraceProposal returns new instance of RegisterERC20Proposal
 func NewRegisterERC20TraceProposal(
 	title string,
@@ -250,24 +267,115 @@ func (*RegisterERC20TraceProposal) ProposalType() string {
 }
 
 // ValidateBasic performs a stateless check of the proposal fields
-func (rtbp *RegisterERC20TraceProposal) ValidateBasic() error {
-	if err := ethermint.ValidateAddress(rtbp.ERC20Address); err != nil {
+func (p *RegisterERC20TraceProposal) ValidateBasic() error {
+	if err := ethermint.ValidateAddress(p.ERC20Address); err != nil {
 		return sdkerrors.Wrap(err, "ERC20 address")
 	}
 
 	// TODO: validate originToken
-	if len(strings.TrimSpace(rtbp.OriginToken)) == 0 {
+	if len(strings.TrimSpace(p.OriginToken)) == 0 {
 		return sdkerrors.Wrap(ErrInvalidOriginToken, "originToken cannot be blank")
 	}
 
 	// TODO: validate originChain
-	if len(strings.TrimSpace(rtbp.OriginChain)) == 0 {
+	if len(strings.TrimSpace(p.OriginChain)) == 0 {
 		return sdkerrors.Wrap(ErrInvalidOriginChain, "originChain cannot be blank")
 	}
 
-	if rtbp.Scale > 18 {
+	if p.Scale > 18 {
 		return sdkerrors.Wrap(ErrERC20TraceScale, "ERC20 trace scale should be smaller than 18")
 	}
 
-	return govtypes.ValidateAbstract(rtbp)
+	return govtypes.ValidateAbstract(p)
+}
+
+// ================================================================================================================
+
+// NewRegisterERC20TraceProposal returns new instance of RegisterERC20Proposal
+func NewEnableTimeBasedSupplyLimitProposal(
+	title string,
+	description string,
+	erc20Address string,
+	timePeriod string,
+	timeBasedLimit string,
+	maxAmount string,
+	minAmount string,
+) govtypes.Content {
+	return &EnableTimeBasedSupplyLimitProposal{
+		Title:          title,
+		Description:    description,
+		ERC20Address:   erc20Address,
+		TimePeriod:     timePeriod,
+		TimeBasedLimit: timeBasedLimit,
+		MaxAmount:      maxAmount,
+		MinAmount:      minAmount,
+	}
+}
+
+// ProposalRoute returns router key for this proposal
+func (*EnableTimeBasedSupplyLimitProposal) ProposalRoute() string { return GovRouterKey }
+
+// ProposalType returns proposal type for this proposal
+func (*EnableTimeBasedSupplyLimitProposal) ProposalType() string {
+	return ProposalTypeEnableTimeBasedSupplyLimit
+}
+
+// ValidateBasic performs a stateless check of the proposal fields
+func (p *EnableTimeBasedSupplyLimitProposal) ValidateBasic() error {
+	if err := ethermint.ValidateAddress(p.ERC20Address); err != nil {
+		return sdkerrors.Wrap(err, "ERC20 address")
+	}
+
+	timePeriod, valid := new(big.Int).SetString(p.TimePeriod, 10)
+	if !valid || timePeriod.Cmp(big.NewInt(0)) <= 0 {
+		return sdkerrors.Wrapf(ErrInvalidTimePeriod, "timePeriod: %s", p.TimePeriod)
+	}
+
+	minAmount, valid := new(big.Int).SetString(p.MinAmount, 10)
+	if !valid || minAmount.Cmp(big.NewInt(0)) <= 0 {
+		return sdkerrors.Wrapf(ErrInvalidMinAmount, "minAmount: %s", p.TimePeriod)
+	}
+
+	maxAmount, valid := new(big.Int).SetString(p.MaxAmount, 10)
+	if !valid || maxAmount.Cmp(minAmount) <= 0 {
+		return sdkerrors.Wrapf(ErrInvalidMaxAmount, "maxAmount: %s", p.TimePeriod)
+	}
+
+	timeBasedLimit, valid := new(big.Int).SetString(p.TimeBasedLimit, 10)
+	if !valid || timeBasedLimit.Cmp(maxAmount) <= 0 {
+		return sdkerrors.Wrapf(ErrInvalidTimeBasedLimit, "timeBasedLimit: %s", p.TimePeriod)
+	}
+
+	return govtypes.ValidateAbstract(p)
+}
+
+// ================================================================================================================
+
+// NewRegisterERC20TraceProposal returns new instance of RegisterERC20Proposal
+func NewDisableTimeBasedSupplyLimitProposal(
+	title string,
+	description string,
+	erc20Address string,
+) govtypes.Content {
+	return &DisableTimeBasedSupplyLimitProposal{
+		Title:        title,
+		Description:  description,
+		ERC20Address: erc20Address,
+	}
+}
+
+// ProposalRoute returns router key for this proposal
+func (*DisableTimeBasedSupplyLimitProposal) ProposalRoute() string { return GovRouterKey }
+
+// ProposalType returns proposal type for this proposal
+func (*DisableTimeBasedSupplyLimitProposal) ProposalType() string {
+	return ProposalTypeDisableTimeBasedSupplyLimit
+}
+
+// ValidateBasic performs a stateless check of the proposal fields
+func (p *DisableTimeBasedSupplyLimitProposal) ValidateBasic() error {
+	if err := ethermint.ValidateAddress(p.ERC20Address); err != nil {
+		return sdkerrors.Wrap(err, "ERC20 address")
+	}
+	return govtypes.ValidateAbstract(p)
 }

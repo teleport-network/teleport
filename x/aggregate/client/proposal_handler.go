@@ -13,9 +13,11 @@ func EmptyProposalRESTHandler(client.Context) rest.ProposalRESTHandler {
 }
 
 var (
-	RegisterCoinProposalHandler       = govclient.NewProposalHandler(cli.NewRegisterCoinProposalCmd, EmptyProposalRESTHandler)
-	RegisterERC20PairProposalHandler  = govclient.NewProposalHandler(cli.NewRegisterERC20ProposalCmd, EmptyProposalRESTHandler)
-	ToggleTokenRelayProposalHandler   = govclient.NewProposalHandler(cli.NewToggleTokenRelayProposalCmd, EmptyProposalRESTHandler)
-	UpdateTokenPairERC20Proposal      = govclient.NewProposalHandler(cli.NewUpdateTokenPairERC20ProposalCmd, EmptyProposalRESTHandler)
-	RegisterERC20TraceProposalHandler = govclient.NewProposalHandler(cli.NewRegisterERC20TraceProposalCmd, EmptyProposalRESTHandler)
+	RegisterCoinProposalHandler                = govclient.NewProposalHandler(cli.NewRegisterCoinProposalCmd, EmptyProposalRESTHandler)
+	RegisterERC20PairProposalHandler           = govclient.NewProposalHandler(cli.NewRegisterERC20ProposalCmd, EmptyProposalRESTHandler)
+	ToggleTokenRelayProposalHandler            = govclient.NewProposalHandler(cli.NewToggleTokenRelayProposalCmd, EmptyProposalRESTHandler)
+	UpdateTokenPairERC20Proposal               = govclient.NewProposalHandler(cli.NewUpdateTokenPairERC20ProposalCmd, EmptyProposalRESTHandler)
+	RegisterERC20TraceProposalHandler          = govclient.NewProposalHandler(cli.NewRegisterERC20TraceProposalCmd, EmptyProposalRESTHandler)
+	EnableTimeBasedSupplyLimitProposalHandler  = govclient.NewProposalHandler(cli.NewEnableTimeBasedSupplyLimitProposalCmd, EmptyProposalRESTHandler)
+	DisableTimeBasedSupplyLimitProposalHandler = govclient.NewProposalHandler(cli.NewDisableTimeBasedSupplyLimitProposalCmd, EmptyProposalRESTHandler)
 )

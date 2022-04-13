@@ -2,6 +2,7 @@ package keeper
 
 import (
 	"fmt"
+	"math/big"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
@@ -296,6 +297,38 @@ func (k Keeper) RegisterERC20Trace(
 	scale uint8,
 ) error {
 	if _, err := k.AddERC20TraceToTransferContract(ctx, contract, originToken, originChain, scale); err != nil {
+		return fmt.Errorf("call bindToken failed: %s", err)
+	}
+	return nil
+}
+
+func (k Keeper) EnableTimeBasedSupplyLimit(
+	ctx sdk.Context,
+	erc20Address common.Address,
+	timePeriod *big.Int,
+	timeBasedLimit *big.Int,
+	maxAmount *big.Int,
+	minAmount *big.Int,
+) error {
+	if _, err := k.EnableTimeBasedSupplyLimitInTransferContract(
+		ctx,
+		erc20Address,
+		timePeriod,
+		timeBasedLimit,
+		maxAmount,
+		minAmount,
+	); err != nil {
+		return fmt.Errorf("call bindToken failed: %s", err)
+	}
+
+	return nil
+}
+
+func (k Keeper) DisableTimeBasedSupplyLimit(
+	ctx sdk.Context,
+	erc20Address common.Address,
+) error {
+	if _, err := k.DisableTimeBasedSupplyLimitInTransferContract(ctx, erc20Address); err != nil {
 		return fmt.Errorf("call bindToken failed: %s", err)
 	}
 

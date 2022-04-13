@@ -20,4 +20,8 @@ var (
 	ErrInvalidOriginChain     = sdkerrors.Register(ModuleName, 13, "invalid origin chain")
 	ErrERC20TraceExist        = sdkerrors.Register(ModuleName, 14, "erc20 trace already exist")
 	ErrERC20TraceScale        = sdkerrors.Register(ModuleName, 15, "invalid erc20 trace scale")
+	ErrInvalidTimePeriod      = sdkerrors.Register(ModuleName, 16, "invalid time period")
+	ErrInvalidTimeBasedLimit  = sdkerrors.Register(ModuleName, 17, "invalid time based limit")
+	ErrInvalidMaxAmount       = sdkerrors.Register(ModuleName, 18, "invalid max amount")
+	ErrInvalidMinAmount       = sdkerrors.Register(ModuleName, 19, "invalid min amount")
 )

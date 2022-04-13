@@ -22,3 +22,21 @@ message EventIBCAggregate {
   string source_channel = 4;
   string destination_channel = 5;
 }
+
+// Event
+message EventEnableTimeBasedSupplyLimit {
+  string erc20_address = 3 [ (gogoproto.customname) = "ERC20Address" ];
+  // time peroid in seconds
+  string timePeriod = 4;
+  // time based limit
+  string timeBasedLimit = 5;
+  // max amount single transfer
+  string maxAmount = 6;
+  // min amount single transfer
+  string minAmount = 7;
+}
+
+// Event
+message EventDisableTimeBasedSupplyLimit {
+  string erc20_address = 3 [ (gogoproto.customname) = "ERC20Address" ];
+}
