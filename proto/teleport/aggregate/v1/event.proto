@@ -18,7 +18,7 @@ enum Status {
 message EventIBCAggregate {
   Status status = 1;
   string message = 2;
-  uint64 sequence  = 3;
+  uint64 sequence = 3;
   string source_channel = 4;
   string destination_channel = 5;
 }
@@ -27,4 +27,22 @@ message EventIBCAggregate {
 message EventRegisterTokens {
   repeated string denom = 1;
   string erc20_token = 2;
+}
+
+// Event
+message EventEnableTimeBasedSupplyLimit {
+  string erc20_address = 3 [ (gogoproto.customname) = "ERC20Address" ];
+  // time peroid in seconds
+  string timePeriod = 4;
+  // time based limit
+  string timeBasedLimit = 5;
+  // max amount single transfer
+  string maxAmount = 6;
+  // min amount single transfer
+  string minAmount = 7;
+}
+
+// Event
+message EventDisableTimeBasedSupplyLimit {
+  string erc20_address = 3 [ (gogoproto.customname) = "ERC20Address" ];
 }

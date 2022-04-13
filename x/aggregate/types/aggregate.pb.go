@@ -562,6 +562,172 @@ func (m *RegisterERC20TraceProposal) GetScale() uint64 {
 	return 0
 }
 
+// EnableTimeBasedSupplyLimitProposal is a gov Content type to enable time based
+// supply limit of an ERC20
+type EnableTimeBasedSupplyLimitProposal struct {
+	// title of the proposal
+	Title string `protobuf:"bytes,1,opt,name=title,proto3" json:"title,omitempty"`
+	// proposal description
+	Description string `protobuf:"bytes,2,opt,name=description,proto3" json:"description,omitempty"`
+	// contract address of ERC20 token
+	ERC20Address string `protobuf:"bytes,3,opt,name=erc20_address,json=erc20Address,proto3" json:"erc20_address,omitempty"`
+	// time peroid in seconds
+	TimePeriod string `protobuf:"bytes,4,opt,name=time_period,json=timePeriod,proto3" json:"time_period,omitempty"`
+	// time based limit
+	TimeBasedLimit string `protobuf:"bytes,5,opt,name=time_based_limit,json=timeBasedLimit,proto3" json:"time_based_limit,omitempty"`
+	// max amount single transfer
+	MaxAmount string `protobuf:"bytes,6,opt,name=max_amount,json=maxAmount,proto3" json:"max_amount,omitempty"`
+	// min amount single transfer
+	MinAmount string `protobuf:"bytes,7,opt,name=min_amount,json=minAmount,proto3" json:"min_amount,omitempty"`
+}
+
+func (m *EnableTimeBasedSupplyLimitProposal) Reset()         { *m = EnableTimeBasedSupplyLimitProposal{} }
+func (m *EnableTimeBasedSupplyLimitProposal) String() string { return proto.CompactTextString(m) }
+func (*EnableTimeBasedSupplyLimitProposal) ProtoMessage()    {}
+func (*EnableTimeBasedSupplyLimitProposal) Descriptor() ([]byte, []int) {
+	return fileDescriptor_4eb0564220021b15, []int{7}
+}
+func (m *EnableTimeBasedSupplyLimitProposal) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *EnableTimeBasedSupplyLimitProposal) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_EnableTimeBasedSupplyLimitProposal.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *EnableTimeBasedSupplyLimitProposal) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_EnableTimeBasedSupplyLimitProposal.Merge(m, src)
+}
+func (m *EnableTimeBasedSupplyLimitProposal) XXX_Size() int {
+	return m.Size()
+}
+func (m *EnableTimeBasedSupplyLimitProposal) XXX_DiscardUnknown() {
+	xxx_messageInfo_EnableTimeBasedSupplyLimitProposal.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_EnableTimeBasedSupplyLimitProposal proto.InternalMessageInfo
+
+func (m *EnableTimeBasedSupplyLimitProposal) GetTitle() string {
+	if m != nil {
+		return m.Title
+	}
+	return ""
+}
+
+func (m *EnableTimeBasedSupplyLimitProposal) GetDescription() string {
+	if m != nil {
+		return m.Description
+	}
+	return ""
+}
+
+func (m *EnableTimeBasedSupplyLimitProposal) GetERC20Address() string {
+	if m != nil {
+		return m.ERC20Address
+	}
+	return ""
+}
+
+func (m *EnableTimeBasedSupplyLimitProposal) GetTimePeriod() string {
+	if m != nil {
+		return m.TimePeriod
+	}
+	return ""
+}
+
+func (m *EnableTimeBasedSupplyLimitProposal) GetTimeBasedLimit() string {
+	if m != nil {
+		return m.TimeBasedLimit
+	}
+	return ""
+}
+
+func (m *EnableTimeBasedSupplyLimitProposal) GetMaxAmount() string {
+	if m != nil {
+		return m.MaxAmount
+	}
+	return ""
+}
+
+func (m *EnableTimeBasedSupplyLimitProposal) GetMinAmount() string {
+	if m != nil {
+		return m.MinAmount
+	}
+	return ""
+}
+
+// DisableTimeBasedSupplyLimitProposal is a gov Content type to disable time
+// based supply limit of an ERC20
+type DisableTimeBasedSupplyLimitProposal struct {
+	// title of the proposal
+	Title string `protobuf:"bytes,1,opt,name=title,proto3" json:"title,omitempty"`
+	// proposal description
+	Description string `protobuf:"bytes,2,opt,name=description,proto3" json:"description,omitempty"`
+	// contract address of ERC20 token
+	ERC20Address string `protobuf:"bytes,3,opt,name=erc20_address,json=erc20Address,proto3" json:"erc20_address,omitempty"`
+}
+
+func (m *DisableTimeBasedSupplyLimitProposal) Reset()         { *m = DisableTimeBasedSupplyLimitProposal{} }
+func (m *DisableTimeBasedSupplyLimitProposal) String() string { return proto.CompactTextString(m) }
+func (*DisableTimeBasedSupplyLimitProposal) ProtoMessage()    {}
+func (*DisableTimeBasedSupplyLimitProposal) Descriptor() ([]byte, []int) {
+	return fileDescriptor_4eb0564220021b15, []int{8}
+}
+func (m *DisableTimeBasedSupplyLimitProposal) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *DisableTimeBasedSupplyLimitProposal) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_DisableTimeBasedSupplyLimitProposal.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *DisableTimeBasedSupplyLimitProposal) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DisableTimeBasedSupplyLimitProposal.Merge(m, src)
+}
+func (m *DisableTimeBasedSupplyLimitProposal) XXX_Size() int {
+	return m.Size()
+}
+func (m *DisableTimeBasedSupplyLimitProposal) XXX_DiscardUnknown() {
+	xxx_messageInfo_DisableTimeBasedSupplyLimitProposal.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_DisableTimeBasedSupplyLimitProposal proto.InternalMessageInfo
+
+func (m *DisableTimeBasedSupplyLimitProposal) GetTitle() string {
+	if m != nil {
+		return m.Title
+	}
+	return ""
+}
+
+func (m *DisableTimeBasedSupplyLimitProposal) GetDescription() string {
+	if m != nil {
+		return m.Description
+	}
+	return ""
+}
+
+func (m *DisableTimeBasedSupplyLimitProposal) GetERC20Address() string {
+	if m != nil {
+		return m.ERC20Address
+	}
+	return ""
+}
+
 func init() {
 	proto.RegisterEnum("teleport.aggregate.v1.Owner", Owner_name, Owner_value)
 	proto.RegisterType((*TokenPair)(nil), "teleport.aggregate.v1.TokenPair")
@@ -571,6 +737,8 @@ func init() {
 	proto.RegisterType((*ToggleTokenRelayProposal)(nil), "teleport.aggregate.v1.ToggleTokenRelayProposal")
 	proto.RegisterType((*UpdateTokenPairERC20Proposal)(nil), "teleport.aggregate.v1.UpdateTokenPairERC20Proposal")
 	proto.RegisterType((*RegisterERC20TraceProposal)(nil), "teleport.aggregate.v1.RegisterERC20TraceProposal")
+	proto.RegisterType((*EnableTimeBasedSupplyLimitProposal)(nil), "teleport.aggregate.v1.EnableTimeBasedSupplyLimitProposal")
+	proto.RegisterType((*DisableTimeBasedSupplyLimitProposal)(nil), "teleport.aggregate.v1.DisableTimeBasedSupplyLimitProposal")
 }
 
 func init() {
@@ -578,48 +746,54 @@ func init() {
 }
 
 var fileDescriptor_4eb0564220021b15 = []byte{
-	// 642 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xcc, 0x54, 0x41, 0x4f, 0x13, 0x41,
-	0x14, 0xee, 0x40, 0x41, 0x18, 0x0a, 0x2d, 0x23, 0x98, 0x4d, 0x83, 0xdb, 0xda, 0xc4, 0xa4, 0x9a,
-	0xb8, 0xa5, 0x35, 0x7a, 0xf0, 0x42, 0x68, 0x59, 0x13, 0x0c, 0x94, 0x66, 0x2d, 0xd1, 0x78, 0x69,
-	0xa6, 0xbb, 0x2f, 0xcb, 0x86, 0xed, 0x4c, 0x33, 0x3b, 0x52, 0xf9, 0x07, 0x1e, 0x3c, 0x78, 0xf1,
-	0x6e, 0xe2, 0xcf, 0xf0, 0xe0, 0x95, 0x23, 0x07, 0x0f, 0x9e, 0x88, 0x29, 0x17, 0x2f, 0xfe, 0x07,
-	0xd3, 0x99, 0xdd, 0x52, 0xd4, 0x83, 0x09, 0x07, 0xbc, 0xf5, 0xfb, 0xe6, 0x7b, 0xed, 0xf7, 0xbe,
-	0xf7, 0xfa, 0xf0, 0x5d, 0x09, 0x21, 0xf4, 0xb9, 0x90, 0x15, 0xea, 0xfb, 0x02, 0x7c, 0x2a, 0xa1,
-	0x72, 0x54, 0xbd, 0x00, 0x56, 0x5f, 0x70, 0xc9, 0xc9, 0x6a, 0x22, 0xb3, 0x2e, 0x5e, 0x8e, 0xaa,
-	0xf9, 0x15, 0x9f, 0xfb, 0x5c, 0x29, 0x2a, 0xa3, 0x4f, 0x5a, 0x9c, 0x37, 0x5d, 0x1e, 0xf5, 0x78,
-	0x54, 0xe9, 0x52, 0x76, 0x58, 0x39, 0xaa, 0x76, 0x41, 0xd2, 0xaa, 0x02, 0xfa, 0xbd, 0xf4, 0x05,
-	0xe1, 0xf9, 0x36, 0x3f, 0x04, 0xd6, 0xa2, 0x81, 0x20, 0x8f, 0xf0, 0x22, 0x08, 0xb7, 0xb6, 0xde,
-	0xa1, 0x9e, 0x27, 0x20, 0x8a, 0x0c, 0x54, 0x44, 0xe5, 0xf9, 0x7a, 0x6e, 0x78, 0x56, 0xc8, 0xd8,
-	0x4e, 0xa3, 0xb6, 0xbe, 0xa9, 0x79, 0x27, 0xa3, 0x64, 0x31, 0x22, 0xb7, 0xf0, 0xac, 0x07, 0x8c,
-	0xf7, 0x22, 0x63, 0xaa, 0x38, 0x5d, 0x9e, 0x77, 0x62, 0x44, 0x0c, 0x7c, 0x03, 0x18, 0xed, 0x86,
-	0xe0, 0x19, 0xd3, 0x45, 0x54, 0x9e, 0x73, 0x12, 0x48, 0x1a, 0x78, 0xc9, 0xe5, 0x4c, 0x0a, 0xea,
-	0xca, 0x0e, 0x1f, 0x30, 0x10, 0x46, 0xba, 0x88, 0xca, 0x4b, 0xb5, 0x35, 0xeb, 0xaf, 0xcd, 0x59,
-	0x7b, 0x23, 0x8d, 0xb3, 0x98, 0xd4, 0x28, 0xf8, 0x24, 0xfd, 0xe3, 0x63, 0x01, 0x95, 0x3e, 0x20,
-	0xbc, 0xe2, 0x80, 0x1f, 0x44, 0x12, 0x44, 0x83, 0x07, 0xac, 0x25, 0x78, 0x9f, 0x47, 0x34, 0x24,
-	0x2b, 0x78, 0x46, 0x06, 0x32, 0x04, 0xdd, 0x84, 0xa3, 0x01, 0x29, 0xe2, 0x05, 0x0f, 0x22, 0x57,
-	0x04, 0x7d, 0x19, 0x70, 0x66, 0x4c, 0xa9, 0xb7, 0x49, 0x8a, 0x6c, 0xe0, 0xb9, 0x1e, 0x48, 0xea,
-	0x51, 0x49, 0x95, 0xed, 0x85, 0xda, 0x6d, 0x4b, 0xa7, 0x68, 0xa9, 0xe0, 0xe2, 0x14, 0xad, 0xdd,
-	0x58, 0x54, 0x4f, 0x9f, 0x9c, 0x15, 0x52, 0xce, 0xb8, 0x48, 0xf9, 0x4a, 0x95, 0x3e, 0x23, 0x9c,
-	0xdd, 0xf4, 0xbc, 0xff, 0xc2, 0x12, 0xb9, 0x87, 0x73, 0xe3, 0xbc, 0x93, 0xd9, 0xa6, 0xd5, 0xef,
-	0x64, 0x13, 0x3e, 0x1e, 0x66, 0xec, 0xfe, 0x1d, 0xc2, 0xab, 0x49, 0xaa, 0x6a, 0xf2, 0x57, 0xee,
-	0xe1, 0x8f, 0xdd, 0x9a, 0xfe, 0x97, 0xdd, 0x8a, 0xed, 0x30, 0x6c, 0xb4, 0xb9, 0xef, 0x87, 0xa0,
-	0x76, 0xd5, 0x81, 0x90, 0x1e, 0x5f, 0xd9, 0xd0, 0xa8, 0x6e, 0xf4, 0x6d, 0xda, 0x88, 0xa3, 0x41,
-	0xbc, 0x54, 0x5f, 0x11, 0x5e, 0xdb, 0xef, 0x7b, 0x54, 0xc2, 0xf8, 0xcf, 0x71, 0x9d, 0x29, 0x90,
-	0x0d, 0xbc, 0xcc, 0x60, 0xd0, 0xb9, 0x5c, 0xaa, 0x06, 0x58, 0xbf, 0x39, 0x3c, 0x2b, 0x64, 0x9b,
-	0x30, 0xb8, 0x54, 0x9d, 0x65, 0x30, 0xb0, 0x7f, 0x8f, 0x11, 0x95, 0x7e, 0x22, 0x9c, 0xbf, 0x34,
-	0xd5, 0xb6, 0xa0, 0x2e, 0x5c, 0x57, 0x53, 0x77, 0x70, 0x86, 0x8b, 0xc0, 0x0f, 0x58, 0x47, 0xcf,
-	0x41, 0x2f, 0xe4, 0x82, 0xe6, 0x54, 0xee, 0x13, 0x12, 0xf7, 0x80, 0x06, 0xcc, 0x98, 0x99, 0x94,
-	0x34, 0x46, 0xd4, 0xc8, 0x74, 0xe4, 0xd2, 0x10, 0x8c, 0xd9, 0x22, 0x2a, 0xa7, 0x1d, 0x0d, 0xf4,
-	0xda, 0xdc, 0x7f, 0x86, 0x67, 0xd4, 0xa9, 0x20, 0xab, 0x78, 0x79, 0xef, 0x45, 0xd3, 0x76, 0x3a,
-	0xfb, 0xcd, 0xe7, 0x2d, 0xbb, 0xb1, 0xfd, 0x74, 0xdb, 0xde, 0xca, 0xa5, 0x48, 0x0e, 0x67, 0x34,
-	0xbd, 0xbb, 0xb7, 0xb5, 0xbf, 0x63, 0xe7, 0x10, 0x21, 0x78, 0x49, 0x33, 0xf6, 0xcb, 0xb6, 0xed,
-	0x34, 0x37, 0x77, 0x72, 0x53, 0xf9, 0xf4, 0xdb, 0x4f, 0x66, 0xaa, 0xde, 0x3a, 0x19, 0x9a, 0xe8,
-	0x74, 0x68, 0xa2, 0xef, 0x43, 0x13, 0xbd, 0x3f, 0x37, 0x53, 0xa7, 0xe7, 0x66, 0xea, 0xdb, 0xb9,
-	0x99, 0x7a, 0xf5, 0xd8, 0x0f, 0xe4, 0xc1, 0xeb, 0xae, 0xe5, 0xf2, 0x5e, 0x25, 0x39, 0x5f, 0x0f,
-	0x18, 0xc8, 0x01, 0x17, 0x87, 0x63, 0xa2, 0xf2, 0x66, 0xe2, 0xaa, 0xcb, 0xe3, 0x3e, 0x44, 0xdd,
-	0x59, 0x75, 0x82, 0x1f, 0xfe, 0x0a, 0x00, 0x00, 0xff, 0xff, 0xb3, 0x87, 0xc3, 0x70, 0xf8, 0x05,
-	0x00, 0x00,
+	// 750 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xcc, 0x55, 0xb1, 0x6f, 0xfb, 0x44,
+	0x14, 0xce, 0xa5, 0x69, 0x7f, 0xcd, 0x25, 0x4d, 0xd2, 0xa3, 0x45, 0x56, 0xd4, 0x3a, 0x21, 0x08,
+	0x29, 0x20, 0xe1, 0x34, 0x41, 0x30, 0xb0, 0x54, 0x49, 0x6a, 0xa4, 0xa2, 0x36, 0x8d, 0xdc, 0x54,
+	0x20, 0x16, 0xeb, 0x62, 0x9f, 0xdc, 0x53, 0xed, 0x3b, 0xcb, 0xbe, 0x36, 0xed, 0x7f, 0xc0, 0xc0,
+	0xc0, 0xc2, 0xc2, 0x84, 0xe0, 0xcf, 0x60, 0x60, 0xed, 0xd8, 0x81, 0x81, 0xa9, 0x42, 0xe9, 0xc2,
+	0xc2, 0xff, 0x80, 0x7c, 0x67, 0xa7, 0x29, 0x30, 0xfc, 0xa4, 0x0e, 0xed, 0x96, 0xf7, 0xbd, 0xef,
+	0x25, 0xdf, 0xf7, 0xbd, 0x17, 0x1b, 0x7e, 0x20, 0x88, 0x4f, 0x42, 0x1e, 0x89, 0x0e, 0xf6, 0xbc,
+	0x88, 0x78, 0x58, 0x90, 0xce, 0x55, 0xf7, 0xb1, 0x30, 0xc2, 0x88, 0x0b, 0x8e, 0xb6, 0x33, 0x9a,
+	0xf1, 0xd8, 0xb9, 0xea, 0xd6, 0xb7, 0x3c, 0xee, 0x71, 0xc9, 0xe8, 0x24, 0x9f, 0x14, 0xb9, 0xae,
+	0x3b, 0x3c, 0x0e, 0x78, 0xdc, 0x99, 0x62, 0x76, 0xd1, 0xb9, 0xea, 0x4e, 0x89, 0xc0, 0x5d, 0x59,
+	0xa8, 0x7e, 0xeb, 0x37, 0x00, 0x8b, 0x13, 0x7e, 0x41, 0xd8, 0x18, 0xd3, 0x08, 0x7d, 0x0a, 0x37,
+	0x48, 0xe4, 0xf4, 0xf6, 0x6c, 0xec, 0xba, 0x11, 0x89, 0x63, 0x0d, 0x34, 0x41, 0xbb, 0x38, 0xa8,
+	0xcd, 0xef, 0x1b, 0x65, 0xd3, 0x1a, 0xf6, 0xf6, 0xfa, 0x0a, 0xb7, 0xca, 0x92, 0x96, 0x56, 0xe8,
+	0x5d, 0xb8, 0xe6, 0x12, 0xc6, 0x83, 0x58, 0xcb, 0x37, 0x57, 0xda, 0x45, 0x2b, 0xad, 0x90, 0x06,
+	0xdf, 0x10, 0x86, 0xa7, 0x3e, 0x71, 0xb5, 0x95, 0x26, 0x68, 0xaf, 0x5b, 0x59, 0x89, 0x86, 0xb0,
+	0xe2, 0x70, 0x26, 0x22, 0xec, 0x08, 0x9b, 0xcf, 0x18, 0x89, 0xb4, 0x42, 0x13, 0xb4, 0x2b, 0xbd,
+	0x1d, 0xe3, 0x7f, 0xcd, 0x19, 0x27, 0x09, 0xc7, 0xda, 0xc8, 0x66, 0x64, 0xf9, 0x79, 0xe1, 0xaf,
+	0x9f, 0x1a, 0xa0, 0xf5, 0x03, 0x80, 0x5b, 0x16, 0xf1, 0x68, 0x2c, 0x48, 0x34, 0xe4, 0x94, 0x8d,
+	0x23, 0x1e, 0xf2, 0x18, 0xfb, 0x68, 0x0b, 0xae, 0x0a, 0x2a, 0x7c, 0xa2, 0x4c, 0x58, 0xaa, 0x40,
+	0x4d, 0x58, 0x72, 0x49, 0xec, 0x44, 0x34, 0x14, 0x94, 0x33, 0x2d, 0x2f, 0x7b, 0xcb, 0x10, 0xda,
+	0x87, 0xeb, 0x01, 0x11, 0xd8, 0xc5, 0x02, 0x4b, 0xd9, 0xa5, 0xde, 0xae, 0xa1, 0x52, 0x34, 0x64,
+	0x70, 0x69, 0x8a, 0xc6, 0x71, 0x4a, 0x1a, 0x14, 0x6e, 0xef, 0x1b, 0x39, 0x6b, 0x31, 0x24, 0x75,
+	0xe5, 0x5a, 0xbf, 0x02, 0x58, 0xed, 0xbb, 0xee, 0xab, 0x90, 0x84, 0x3e, 0x84, 0xb5, 0x45, 0xde,
+	0xd9, 0x6e, 0x0b, 0xf2, 0x77, 0xaa, 0x19, 0x9e, 0x2e, 0x33, 0x55, 0xff, 0x1d, 0x80, 0xdb, 0x59,
+	0xaa, 0x72, 0xf3, 0xcf, 0xf6, 0xf0, 0x9f, 0xdb, 0x5a, 0x79, 0x9b, 0xdb, 0x4a, 0xe5, 0x30, 0xa8,
+	0x4d, 0xb8, 0xe7, 0xf9, 0x44, 0xde, 0xaa, 0x45, 0x7c, 0x7c, 0xf3, 0x6c, 0x41, 0xc9, 0x5c, 0xf2,
+	0x6d, 0x4a, 0x88, 0xa5, 0x8a, 0xf4, 0xa8, 0x7e, 0x07, 0x70, 0xe7, 0x2c, 0x74, 0xb1, 0x20, 0x8b,
+	0x3f, 0xc7, 0x4b, 0xa6, 0x80, 0xf6, 0xe1, 0x26, 0x23, 0x33, 0xfb, 0xe9, 0xa8, 0x5c, 0xe0, 0xe0,
+	0x9d, 0xf9, 0x7d, 0xa3, 0x3a, 0x22, 0xb3, 0x27, 0xd3, 0x55, 0x46, 0x66, 0xe6, 0xbf, 0x63, 0x04,
+	0xad, 0xbf, 0x01, 0xac, 0x3f, 0xd9, 0xea, 0x24, 0xc2, 0x0e, 0x79, 0x29, 0x53, 0xef, 0xc1, 0x32,
+	0x8f, 0xa8, 0x47, 0x99, 0xad, 0xf6, 0xa0, 0x0e, 0xb2, 0xa4, 0x30, 0x99, 0xfb, 0x12, 0xc5, 0x39,
+	0xc7, 0x94, 0x69, 0xab, 0xcb, 0x94, 0x61, 0x02, 0x25, 0xa2, 0x63, 0x07, 0xfb, 0x44, 0x5b, 0x6b,
+	0x82, 0x76, 0xc1, 0x52, 0x45, 0x7a, 0x36, 0x3f, 0xe7, 0x61, 0xcb, 0x94, 0x8f, 0x9c, 0x09, 0x0d,
+	0xc8, 0x00, 0xc7, 0xc4, 0x3d, 0xbd, 0x0c, 0x43, 0xff, 0xe6, 0x88, 0x06, 0x54, 0xbc, 0x94, 0xef,
+	0x06, 0x2c, 0x09, 0x1a, 0x10, 0x3b, 0x24, 0x11, 0xe5, 0x6e, 0x6a, 0x1b, 0x26, 0xd0, 0x58, 0x22,
+	0xa8, 0x0d, 0x6b, 0x92, 0x30, 0x4d, 0x04, 0xdb, 0x7e, 0xa2, 0x35, 0x75, 0x5e, 0x11, 0x99, 0x0f,
+	0xe9, 0x00, 0xed, 0x42, 0x18, 0xe0, 0x6b, 0x1b, 0x07, 0xfc, 0x92, 0x09, 0x99, 0x40, 0xd1, 0x2a,
+	0x06, 0xf8, 0xba, 0x2f, 0x01, 0xd9, 0xa6, 0x2c, 0x6b, 0xbf, 0x49, 0xdb, 0x94, 0xa9, 0x76, 0x1a,
+	0xd2, 0x8f, 0x00, 0xbe, 0x7f, 0x40, 0xe3, 0x57, 0x96, 0x92, 0x12, 0xf7, 0xd1, 0x97, 0x70, 0x55,
+	0x3e, 0xec, 0xd1, 0x36, 0xdc, 0x3c, 0xf9, 0x6a, 0x64, 0x5a, 0xf6, 0xd9, 0xe8, 0x74, 0x6c, 0x0e,
+	0x0f, 0xbf, 0x38, 0x34, 0x0f, 0x6a, 0x39, 0x54, 0x83, 0x65, 0x05, 0x1f, 0x9f, 0x1c, 0x9c, 0x1d,
+	0x99, 0x35, 0x80, 0x10, 0xac, 0x28, 0xc4, 0xfc, 0x7a, 0x62, 0x5a, 0xa3, 0xfe, 0x51, 0x2d, 0x5f,
+	0x2f, 0x7c, 0xfb, 0x8b, 0x9e, 0x1b, 0x8c, 0x6f, 0xe7, 0x3a, 0xb8, 0x9b, 0xeb, 0xe0, 0xcf, 0xb9,
+	0x0e, 0xbe, 0x7f, 0xd0, 0x73, 0x77, 0x0f, 0x7a, 0xee, 0x8f, 0x07, 0x3d, 0xf7, 0xcd, 0x67, 0x1e,
+	0x15, 0xe7, 0x97, 0x53, 0xc3, 0xe1, 0x41, 0x27, 0x7b, 0x01, 0x7d, 0xcc, 0x88, 0x98, 0xf1, 0xe8,
+	0x62, 0x01, 0x74, 0xae, 0x97, 0xde, 0xcb, 0xe2, 0x26, 0x24, 0xf1, 0x74, 0x4d, 0xbe, 0x44, 0x3f,
+	0xf9, 0x27, 0x00, 0x00, 0xff, 0xff, 0xd1, 0x67, 0xa2, 0x22, 0xba, 0x07, 0x00, 0x00,
 }
 
 func (this *TokenPair) Equal(that interface{}) bool {
@@ -1080,6 +1254,122 @@ func (m *RegisterERC20TraceProposal) MarshalToSizedBuffer(dAtA []byte) (int, err
 	return len(dAtA) - i, nil
 }
 
+func (m *EnableTimeBasedSupplyLimitProposal) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *EnableTimeBasedSupplyLimitProposal) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *EnableTimeBasedSupplyLimitProposal) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.MinAmount) > 0 {
+		i -= len(m.MinAmount)
+		copy(dAtA[i:], m.MinAmount)
+		i = encodeVarintAggregate(dAtA, i, uint64(len(m.MinAmount)))
+		i--
+		dAtA[i] = 0x3a
+	}
+	if len(m.MaxAmount) > 0 {
+		i -= len(m.MaxAmount)
+		copy(dAtA[i:], m.MaxAmount)
+		i = encodeVarintAggregate(dAtA, i, uint64(len(m.MaxAmount)))
+		i--
+		dAtA[i] = 0x32
+	}
+	if len(m.TimeBasedLimit) > 0 {
+		i -= len(m.TimeBasedLimit)
+		copy(dAtA[i:], m.TimeBasedLimit)
+		i = encodeVarintAggregate(dAtA, i, uint64(len(m.TimeBasedLimit)))
+		i--
+		dAtA[i] = 0x2a
+	}
+	if len(m.TimePeriod) > 0 {
+		i -= len(m.TimePeriod)
+		copy(dAtA[i:], m.TimePeriod)
+		i = encodeVarintAggregate(dAtA, i, uint64(len(m.TimePeriod)))
+		i--
+		dAtA[i] = 0x22
+	}
+	if len(m.ERC20Address) > 0 {
+		i -= len(m.ERC20Address)
+		copy(dAtA[i:], m.ERC20Address)
+		i = encodeVarintAggregate(dAtA, i, uint64(len(m.ERC20Address)))
+		i--
+		dAtA[i] = 0x1a
+	}
+	if len(m.Description) > 0 {
+		i -= len(m.Description)
+		copy(dAtA[i:], m.Description)
+		i = encodeVarintAggregate(dAtA, i, uint64(len(m.Description)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.Title) > 0 {
+		i -= len(m.Title)
+		copy(dAtA[i:], m.Title)
+		i = encodeVarintAggregate(dAtA, i, uint64(len(m.Title)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *DisableTimeBasedSupplyLimitProposal) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *DisableTimeBasedSupplyLimitProposal) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *DisableTimeBasedSupplyLimitProposal) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.ERC20Address) > 0 {
+		i -= len(m.ERC20Address)
+		copy(dAtA[i:], m.ERC20Address)
+		i = encodeVarintAggregate(dAtA, i, uint64(len(m.ERC20Address)))
+		i--
+		dAtA[i] = 0x1a
+	}
+	if len(m.Description) > 0 {
+		i -= len(m.Description)
+		copy(dAtA[i:], m.Description)
+		i = encodeVarintAggregate(dAtA, i, uint64(len(m.Description)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.Title) > 0 {
+		i -= len(m.Title)
+		copy(dAtA[i:], m.Title)
+		i = encodeVarintAggregate(dAtA, i, uint64(len(m.Title)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
 func encodeVarintAggregate(dAtA []byte, offset int, v uint64) int {
 	offset -= sovAggregate(v)
 	base := offset
@@ -1253,6 +1543,64 @@ func (m *RegisterERC20TraceProposal) Size() (n int) {
 	}
 	if m.Scale != 0 {
 		n += 1 + sovAggregate(uint64(m.Scale))
+	}
+	return n
+}
+
+func (m *EnableTimeBasedSupplyLimitProposal) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Title)
+	if l > 0 {
+		n += 1 + l + sovAggregate(uint64(l))
+	}
+	l = len(m.Description)
+	if l > 0 {
+		n += 1 + l + sovAggregate(uint64(l))
+	}
+	l = len(m.ERC20Address)
+	if l > 0 {
+		n += 1 + l + sovAggregate(uint64(l))
+	}
+	l = len(m.TimePeriod)
+	if l > 0 {
+		n += 1 + l + sovAggregate(uint64(l))
+	}
+	l = len(m.TimeBasedLimit)
+	if l > 0 {
+		n += 1 + l + sovAggregate(uint64(l))
+	}
+	l = len(m.MaxAmount)
+	if l > 0 {
+		n += 1 + l + sovAggregate(uint64(l))
+	}
+	l = len(m.MinAmount)
+	if l > 0 {
+		n += 1 + l + sovAggregate(uint64(l))
+	}
+	return n
+}
+
+func (m *DisableTimeBasedSupplyLimitProposal) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.Title)
+	if l > 0 {
+		n += 1 + l + sovAggregate(uint64(l))
+	}
+	l = len(m.Description)
+	if l > 0 {
+		n += 1 + l + sovAggregate(uint64(l))
+	}
+	l = len(m.ERC20Address)
+	if l > 0 {
+		n += 1 + l + sovAggregate(uint64(l))
 	}
 	return n
 }
@@ -2420,6 +2768,426 @@ func (m *RegisterERC20TraceProposal) Unmarshal(dAtA []byte) error {
 					break
 				}
 			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipAggregate(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthAggregate
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *EnableTimeBasedSupplyLimitProposal) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowAggregate
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: EnableTimeBasedSupplyLimitProposal: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: EnableTimeBasedSupplyLimitProposal: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Title", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowAggregate
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthAggregate
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthAggregate
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Title = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Description", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowAggregate
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthAggregate
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthAggregate
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Description = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ERC20Address", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowAggregate
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthAggregate
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthAggregate
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.ERC20Address = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 4:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field TimePeriod", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowAggregate
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthAggregate
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthAggregate
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.TimePeriod = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 5:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field TimeBasedLimit", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowAggregate
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthAggregate
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthAggregate
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.TimeBasedLimit = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 6:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field MaxAmount", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowAggregate
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthAggregate
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthAggregate
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.MaxAmount = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 7:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field MinAmount", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowAggregate
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthAggregate
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthAggregate
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.MinAmount = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipAggregate(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthAggregate
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *DisableTimeBasedSupplyLimitProposal) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowAggregate
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: DisableTimeBasedSupplyLimitProposal: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: DisableTimeBasedSupplyLimitProposal: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Title", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowAggregate
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthAggregate
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthAggregate
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Title = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Description", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowAggregate
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthAggregate
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthAggregate
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Description = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ERC20Address", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowAggregate
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthAggregate
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthAggregate
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.ERC20Address = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
 			skippy, err := skipAggregate(dAtA[iNdEx:])

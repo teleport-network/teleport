@@ -597,3 +597,133 @@ func NewRegisterERC20TraceProposalCmd() *cobra.Command {
 	}
 	return cmd
 }
+
+// NewEnableTimeBasedSupplyLimitProposalCmd implements a command handler for enable time based supply limit
+func NewEnableTimeBasedSupplyLimitProposalCmd() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "enable-limit [ERC20-contract-address] [time-period] [time-based-limit] [max-amount] [min-amount] [flags]",
+		Args:  cobra.ExactArgs(5),
+		Short: "Enable time based supply limit proposal",
+		Long:  "Submit an enable time based supply limit proposal with an initial deposit.",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+
+			title, err := cmd.Flags().GetString(cli.FlagTitle)
+			if err != nil {
+				return err
+			}
+
+			description, err := cmd.Flags().GetString(cli.FlagDescription)
+			if err != nil {
+				return err
+			}
+
+			erc20Address := args[0]
+			if err := ethermint.ValidateAddress(erc20Address); err != nil {
+				return fmt.Errorf("invalid ERC20 contract address %w", err)
+			}
+
+			content := types.NewEnableTimeBasedSupplyLimitProposal(title, description, erc20Address, args[1], args[2], args[3], args[4])
+
+			from := clientCtx.GetFromAddress()
+
+			depositStr, err := cmd.Flags().GetString(cli.FlagDeposit)
+			if err != nil {
+				return err
+			}
+			deposit, err := sdk.ParseCoinsNormalized(depositStr)
+			if err != nil {
+				return err
+			}
+
+			msg, err := gov.NewMsgSubmitProposal(content, deposit, from)
+			if err != nil {
+				return err
+			}
+
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+		},
+	}
+
+	cmd.Flags().String(cli.FlagTitle, "", "title of proposal")
+	cmd.Flags().String(cli.FlagDescription, "", "description of proposal")
+	cmd.Flags().String(cli.FlagDeposit, "1atele", "deposit of proposal")
+	if err := cmd.MarkFlagRequired(cli.FlagTitle); err != nil {
+		panic(err)
+	}
+	if err := cmd.MarkFlagRequired(cli.FlagDescription); err != nil {
+		panic(err)
+	}
+	if err := cmd.MarkFlagRequired(cli.FlagDeposit); err != nil {
+		panic(err)
+	}
+	return cmd
+}
+
+// NewDisableTimeBasedSupplyLimitProposalCmd implements a command handler for disabling time based supply limit
+func NewDisableTimeBasedSupplyLimitProposalCmd() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "disable-limit [ERC20-contract-address]",
+		Args:  cobra.ExactArgs(1),
+		Short: "Disable time based supply limit proposal",
+		Long:  "Submit a disable time based supply limit proposal with an initial deposit.",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			clientCtx, err := client.GetClientTxContext(cmd)
+			if err != nil {
+				return err
+			}
+
+			title, err := cmd.Flags().GetString(cli.FlagTitle)
+			if err != nil {
+				return err
+			}
+
+			description, err := cmd.Flags().GetString(cli.FlagDescription)
+			if err != nil {
+				return err
+			}
+
+			erc20Address := args[0]
+			if err := ethermint.ValidateAddress(erc20Address); err != nil {
+				return fmt.Errorf("invalid ERC20 contract address %w", err)
+			}
+
+			content := types.NewDisableTimeBasedSupplyLimitProposal(title, description, erc20Address)
+
+			from := clientCtx.GetFromAddress()
+
+			depositStr, err := cmd.Flags().GetString(cli.FlagDeposit)
+			if err != nil {
+				return err
+			}
+			deposit, err := sdk.ParseCoinsNormalized(depositStr)
+			if err != nil {
+				return err
+			}
+
+			msg, err := gov.NewMsgSubmitProposal(content, deposit, from)
+			if err != nil {
+				return err
+			}
+
+			return tx.GenerateOrBroadcastTxCLI(clientCtx, cmd.Flags(), msg)
+		},
+	}
+
+	cmd.Flags().String(cli.FlagTitle, "", "title of proposal")
+	cmd.Flags().String(cli.FlagDescription, "", "description of proposal")
+	cmd.Flags().String(cli.FlagDeposit, "1atele", "deposit of proposal")
+	if err := cmd.MarkFlagRequired(cli.FlagTitle); err != nil {
+		panic(err)
+	}
+	if err := cmd.MarkFlagRequired(cli.FlagDescription); err != nil {
+		panic(err)
+	}
+	if err := cmd.MarkFlagRequired(cli.FlagDeposit); err != nil {
+		panic(err)
+	}
+	return cmd
+}

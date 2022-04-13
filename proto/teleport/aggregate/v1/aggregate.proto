@@ -109,3 +109,35 @@ message RegisterERC20TraceProposal {
   // scale: real_amount = packet_amount * (10 ** scale)
   uint64 scale = 6;
 }
+
+// EnableTimeBasedSupplyLimitProposal is a gov Content type to enable time based
+// supply limit of an ERC20
+message EnableTimeBasedSupplyLimitProposal {
+  option (gogoproto.equal) = false;
+  // title of the proposal
+  string title = 1;
+  // proposal description
+  string description = 2;
+  // contract address of ERC20 token
+  string erc20_address = 3 [ (gogoproto.customname) = "ERC20Address" ];
+  // time peroid in seconds
+  string time_period = 4;
+  // time based limit
+  string time_based_limit = 5;
+  // max amount single transfer
+  string max_amount = 6;
+  // min amount single transfer
+  string min_amount = 7;
+}
+
+// DisableTimeBasedSupplyLimitProposal is a gov Content type to disable time
+// based supply limit of an ERC20
+message DisableTimeBasedSupplyLimitProposal {
+  option (gogoproto.equal) = false;
+  // title of the proposal
+  string title = 1;
+  // proposal description
+  string description = 2;
+  // contract address of ERC20 token
+  string erc20_address = 3 [ (gogoproto.customname) = "ERC20Address" ];
+}

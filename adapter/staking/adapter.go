@@ -15,11 +15,14 @@ import (
 
 	ethermint "github.com/tharsis/ethermint/types"
 	evmkeeper "github.com/tharsis/ethermint/x/evm/keeper"
+	evmtypes "github.com/tharsis/ethermint/x/evm/types"
 
 	adcommon "github.com/teleport-network/teleport/adapter/common"
 	"github.com/teleport-network/teleport/syscontracts"
 	stakingcontract "github.com/teleport-network/teleport/syscontracts/staking"
 )
+
+var _ evmtypes.EvmHooks = &HookAdapter{}
 
 type HookAdapter struct {
 	accountKeeper   *authkeeper.AccountKeeper

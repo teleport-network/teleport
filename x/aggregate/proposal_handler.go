@@ -1,6 +1,8 @@
 package aggregate
 
 import (
+	"math/big"
+
 	"github.com/ethereum/go-ethereum/common"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -28,6 +30,10 @@ func NewAggregateProposalHandler(k *keeper.Keeper) govtypes.Handler {
 			return handleUpdateTokenPairERC20Proposal(ctx, k, c)
 		case *types.RegisterERC20TraceProposal:
 			return handleRegisterERC20TraceProposal(ctx, k, c)
+		case *types.EnableTimeBasedSupplyLimitProposal:
+			return handleEnableTimeBasedSupplyLimitProposal(ctx, k, c)
+		case *types.DisableTimeBasedSupplyLimitProposal:
+			return handleDisableTimeBasedSupplyLimitProposal(ctx, k, c)
 
 		default:
 			return sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest, "unrecognized %s proposal content type: %T", types.ModuleName, c)
@@ -114,6 +120,50 @@ func handleRegisterERC20TraceProposal(ctx sdk.Context, k *keeper.Keeper, p *type
 			sdk.NewAttribute(types.AttributeKeyOriginToken, p.OriginToken),
 			sdk.NewAttribute(types.AttributeKeyOriginChain, p.OriginChain),
 		),
+	)
+
+	return nil
+}
+
+func handleEnableTimeBasedSupplyLimitProposal(ctx sdk.Context, k *keeper.Keeper, p *types.EnableTimeBasedSupplyLimitProposal) error {
+	timePeriod, _ := new(big.Int).SetString(p.TimePeriod, 10)
+	timeBasedLimit, _ := new(big.Int).SetString(p.TimeBasedLimit, 10)
+	maxAmount, _ := new(big.Int).SetString(p.MaxAmount, 10)
+	minAmount, _ := new(big.Int).SetString(p.MinAmount, 10)
+
+	if err := k.EnableTimeBasedSupplyLimit(
+		ctx,
+		common.HexToAddress(p.ERC20Address),
+		timePeriod,
+		timeBasedLimit,
+		maxAmount,
+		minAmount,
+	); err != nil {
+		return err
+	}
+
+	_ = ctx.EventManager().EmitTypedEvent(
+		&types.EnableTimeBasedSupplyLimitProposal{
+			ERC20Address:   p.ERC20Address,
+			TimePeriod:     p.TimePeriod,
+			TimeBasedLimit: p.TimeBasedLimit,
+			MaxAmount:      p.MaxAmount,
+			MinAmount:      p.MinAmount,
+		},
+	)
+
+	return nil
+}
+
+func handleDisableTimeBasedSupplyLimitProposal(ctx sdk.Context, k *keeper.Keeper, p *types.DisableTimeBasedSupplyLimitProposal) error {
+	if err := k.DisableTimeBasedSupplyLimit(ctx, common.HexToAddress(p.ERC20Address)); err != nil {
+		return err
+	}
+
+	_ = ctx.EventManager().EmitTypedEvent(
+		&types.DisableTimeBasedSupplyLimitProposal{
+			ERC20Address: p.ERC20Address,
+		},
 	)
 
 	return nil
