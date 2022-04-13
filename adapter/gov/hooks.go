@@ -14,18 +14,16 @@ func (h *HookAdapter) PostTxProcessing(
 	msg core.Message,
 	receipt *ethtypes.Receipt,
 ) error {
-	if len(receipt.Logs) != 1 { // gov hook only handles one event to prevent invocation abuse
-		return nil
+	for _, log := range receipt.Logs {
+		if bytes.Equal(log.Address.Bytes(), h.govContract.Bytes()) { // only care the logs from gov contract
+			handler, ok := h.handlers[receipt.Logs[0].Topics[0]]
+			if !ok {
+				continue
+			}
+			if err := handler(ctx, log); err != nil {
+				return err
+			}
+		}
 	}
-	if len(receipt.Logs[0].Topics) == 0 {
-		return nil
-	}
-	if !bytes.Equal(receipt.Logs[0].Address.Bytes(), h.govContract.Bytes()) {
-		return nil
-	}
-	handler, ok := h.handlers[receipt.Logs[0].Topics[0]]
-	if !ok {
-		return nil // return if no related handler found
-	}
-	return handler(ctx, receipt.Logs[0])
+	return nil
 }
