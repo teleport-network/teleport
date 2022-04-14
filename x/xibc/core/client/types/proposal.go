@@ -285,11 +285,5 @@ func (rrp *RegisterRelayerProposal) ValidateBasic() error {
 		}
 	}
 
-	for _, addr := range rrp.Addresses {
-		if _, err := sdk.AccAddressFromBech32(addr); err != nil {
-			return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "string could not be parsed as address: %v", err)
-		}
-	}
-
 	return nil
 }
