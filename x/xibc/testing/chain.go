@@ -33,6 +33,7 @@ import (
 	evm "github.com/tharsis/ethermint/x/evm/types"
 
 	"github.com/teleport-network/teleport/app"
+	teletypes "github.com/teleport-network/teleport/types"
 	xibctmtypes "github.com/teleport-network/teleport/x/xibc/clients/light-clients/tendermint/types"
 	clienttypes "github.com/teleport-network/teleport/x/xibc/core/client/types"
 	commitmenttypes "github.com/teleport-network/teleport/x/xibc/core/commitment/types"
@@ -101,6 +102,10 @@ type TestChain struct {
 // Time management is handled by the Coordinator in order to ensure synchrony between chains.
 // Each update of any chain increments the block header time for all chains by 5 seconds.
 func NewTestChain(t *testing.T, coord *Coordinator, chainID string) *TestChain {
+
+	// set DefaultPowerReduction to the teleport PowerReduction
+	sdk.DefaultPowerReduction = teletypes.PowerReduction
+
 	// generate validator private/public key
 	privVal := mock.NewPV()
 	pubKey, err := privVal.GetPubKey()

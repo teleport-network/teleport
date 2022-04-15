@@ -30,7 +30,8 @@ const (
 )
 
 // PowerReduction defines the default power reduction value for staking
-var PowerReduction = sdk.NewIntFromBigInt(new(big.Int).Exp(big.NewInt(10), big.NewInt(BaseDenomUnit), nil))
+// (BaseDenomUnit - 2) indicates that staking tokens:power = 1:100, which means we consider 0.01 BaseDenom as 1 power
+var PowerReduction = sdk.NewIntFromBigInt(new(big.Int).Exp(big.NewInt(10), big.NewInt(BaseDenomUnit-2), nil))
 
 // NewTeleCoin is a utility function that returns an "atele" coin with the given sdk.Int amount.
 // The function will panic if the provided amount is negative.

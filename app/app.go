@@ -125,6 +125,7 @@ import (
 	packetcontract "github.com/teleport-network/teleport/syscontracts/xibc_packet"
 	rcccontract "github.com/teleport-network/teleport/syscontracts/xibc_rcc"
 	transfercontract "github.com/teleport-network/teleport/syscontracts/xibc_transfer"
+	teletypes "github.com/teleport-network/teleport/types"
 	"github.com/teleport-network/teleport/x/aggregate"
 	aggregateclient "github.com/teleport-network/teleport/x/aggregate/client"
 	aggregatekeeper "github.com/teleport-network/teleport/x/aggregate/keeper"
@@ -159,6 +160,8 @@ func init() {
 	}
 
 	DefaultNodeHome = filepath.Join(userHomeDir, ".teleport")
+
+	sdk.DefaultPowerReduction = teletypes.PowerReduction
 }
 
 // Name defines the application binary name
