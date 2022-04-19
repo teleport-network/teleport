@@ -1,6 +1,8 @@
 package keeper
 
 import (
+	"strings"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	"github.com/teleport-network/teleport/x/xibc/core/client/types"
@@ -76,7 +78,7 @@ func (k Keeper) GetRelayerAddressOnOtherChain(ctx sdk.Context, chainName string,
 func (k Keeper) GetRelayerAddressOnTeleport(ctx sdk.Context, chainName string, address string) (string, bool) {
 	for _, ir := range k.GetAllRelayers(ctx) {
 		for i, chain := range ir.Chains {
-			if chain == chainName && ir.Addresses[i] == address {
+			if chain == chainName && strings.EqualFold(ir.Addresses[i], address) {
 				return ir.Address, true
 			}
 		}
