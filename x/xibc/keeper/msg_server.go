@@ -161,13 +161,18 @@ func (k Keeper) Acknowledgement(goCtx context.Context, msg *packettypes.MsgAckno
 		return nil, sdkerrors.Wrapf(packettypes.ErrRelayerNotFound, "relayer on source chain not found")
 	}
 
+	relayerAddr, err := sdk.AccAddressFromBech32(relayer)
+	if err != nil {
+		return nil, sdkerrors.Wrapf(packettypes.ErrInvalidRelayer, "convert relayer address error")
+	}
+
 	if _, err := k.PacketKeeper.CallPacket(
 		ctx,
 		"sendPacketFeeToRelayer",
 		msg.Packet.GetSourceChain(),
 		msg.Packet.GetDestChain(),
 		msg.Packet.Sequence,
-		common.HexToAddress(relayer),
+		common.BytesToAddress(relayerAddr),
 	); err != nil {
 		return nil, err
 	}
