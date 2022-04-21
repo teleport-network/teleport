@@ -15,6 +15,10 @@ func BeginBlocker(ctx sdk.Context, k keeper.Keeper) {
 
 	params := k.GetParams(ctx)
 
+	if !params.EnableVesting {
+		return
+	}
+
 	vestedCoins := sdk.NewCoins()
 	for _, reward := range params.PerBlockReward {
 		remainingCoin := k.GetRemainingCoin(ctx, reward.GetDenom())
