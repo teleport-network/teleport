@@ -125,7 +125,7 @@ func verifyCascadingFields(
 
 	parent := clientState.Header
 	if parent.Height.RevisionHeight != height-1 || parent.Hash() != common.BytesToHash(header.ParentHash) {
-		return sdkerrors.Wrap(ErrUnknownAncestor, "")
+		return sdkerrors.Wrapf(ErrUnknownAncestor, "parent height %d, parent hash %s", parent.Height.RevisionHeight, parent.Hash().String())
 	}
 
 	// Verify that the gas limit is <= 2^63-1
