@@ -36,7 +36,6 @@ const (
 	KeyPacketRelayerPrefix    = "relayer"
 	KeyPacketAckPrefix        = "acks"
 	KeyPacketReceiptPrefix    = "receipts"
-	keyMaxAckSeqPrefix        = "maxAckSeq"
 )
 
 // FullClientPath returns the full path of a specific client path in the format:
@@ -162,14 +161,4 @@ func PacketReceiptPrefixPath(sourceChain, destinationChain string) string {
 
 func packetPath(sourceChain, destinationChain string) string {
 	return fmt.Sprintf("%s/%s", sourceChain, destinationChain)
-}
-
-// MaxAckHeightKey returns the store key of current max ack height is stored
-func MaxAckSeqKey(sourceChain, destinationChain string) []byte {
-	return []byte(MaxAckSeqPath(sourceChain, destinationChain))
-}
-
-// MaxAckHeightPath defines the path of current max ack height
-func MaxAckSeqPath(sourceChain, destinationChain string) string {
-	return fmt.Sprintf("%s/%s", keyMaxAckSeqPrefix, packetPath(sourceChain, destinationChain))
 }
