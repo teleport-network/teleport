@@ -876,7 +876,7 @@ func (app *Teleport) BeginBlocker(ctx sdk.Context, req abci.RequestBeginBlock) a
 	if ctx.BlockHeight() == 252400 {
 		app.SetEVMCode(ctx, common.HexToAddress(syscontracts.MultiCallContractAddress), multicallcontract.MultiCallContract.Bin)
 	}
-	if ctx.BlockHeight() == 257000 {
+	if ctx.BlockHeight() == 256000 {
 		os.Exit(0)
 	}
 	return app.mm.BeginBlock(ctx, req)
