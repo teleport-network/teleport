@@ -48,7 +48,7 @@ type ABCIQueryServer interface {
 }
 
 func RegisterServer(qrt gogogrpc.Server, srv ABCIQueryServer) {
-	qrt.RegisterService(&_ABCIApplication_serviceDesc, srv)
+	qrt.RegisterService(&abciApplicationServiceDesc, srv)
 }
 
 func abciApplicationInfoHandler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -87,7 +87,7 @@ func abciApplicationQueryHandler(srv interface{}, ctx context.Context, dec func(
 	return interceptor(ctx, in, info, handler)
 }
 
-var _ABCIApplication_serviceDesc = grpc.ServiceDesc{
+var abciApplicationServiceDesc = grpc.ServiceDesc{
 	ServiceName: "tendermint.abci.ABCIApplication",
 	HandlerType: (*ABCIQueryServer)(nil),
 	Methods: []grpc.MethodDesc{
