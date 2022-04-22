@@ -26,7 +26,7 @@ var _ evmtypes.EvmHooks = &HookAdapter{}
 
 type HookAdapter struct {
 	accountKeeper   *authkeeper.AccountKeeper
-	stakingkeeper   *stakingkeeper.Keeper
+	stakingKeeper   *stakingkeeper.Keeper
 	evmKeeper       *evmkeeper.Keeper
 	router          *baseapp.MsgServiceRouter
 	abi             *ethabi.ABI
@@ -65,7 +65,7 @@ func NewHookAdapter(
 
 	hook := &HookAdapter{
 		accountKeeper:   accountKeeper,
-		stakingkeeper:   stakingKeeper,
+		stakingKeeper:   stakingKeeper,
 		evmKeeper:       evmKeeper,
 		router:          router,
 		handlers:        handlers,

@@ -11,12 +11,12 @@ import (
 
 func (h *HookAdapter) PostTxProcessing(
 	ctx sdk.Context,
-	msg core.Message,
+	_ core.Message,
 	receipt *ethtypes.Receipt,
 ) error {
 	for _, log := range receipt.Logs {
 		if bytes.Equal(log.Address.Bytes(), h.stakingContract.Bytes()) { // only care the logs from staking contract
-			handler, ok := h.handlers[receipt.Logs[0].Topics[0]]
+			handler, ok := h.handlers[log.Topics[0]]
 			if !ok {
 				continue
 			}
