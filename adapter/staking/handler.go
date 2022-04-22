@@ -23,7 +23,7 @@ func (h *HookAdapter) HandleDelegated(ctx sdk.Context, log *ethtypes.Log) error 
 	if err != nil {
 		return err
 	}
-	bondDenom := h.stakingkeeper.BondDenom(ctx)
+	bondDenom := h.stakingKeeper.BondDenom(ctx)
 	msg := &types.MsgDelegate{
 		DelegatorAddress: delegator,
 		ValidatorAddress: event.Validator,
@@ -42,7 +42,7 @@ func (h *HookAdapter) HandleUndelegated(ctx sdk.Context, log *ethtypes.Log) erro
 	if err != nil {
 		return err
 	}
-	bondDenom := h.stakingkeeper.BondDenom(ctx)
+	bondDenom := h.stakingKeeper.BondDenom(ctx)
 	msg := &types.MsgUndelegate{
 		DelegatorAddress: delegator,
 		ValidatorAddress: event.Validator,
@@ -61,7 +61,7 @@ func (h *HookAdapter) HandleRedelegated(ctx sdk.Context, log *ethtypes.Log) erro
 	if err != nil {
 		return err
 	}
-	bondDenom := h.stakingkeeper.BondDenom(ctx)
+	bondDenom := h.stakingKeeper.BondDenom(ctx)
 	msg := &types.MsgBeginRedelegate{
 		DelegatorAddress:    delegator,
 		ValidatorSrcAddress: event.ValidatorSrc,
