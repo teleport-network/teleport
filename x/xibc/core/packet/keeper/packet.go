@@ -210,7 +210,6 @@ func (k Keeper) WriteAcknowledgement(
 		packet.GetSequence(),
 		types.CommitAcknowledgement(acknowledgement),
 	)
-	k.SetMaxAckSequence(ctx, packet.GetSourceChain(), packet.GetDestChain(), packet.GetSequence())
 
 	// log that a packet acknowledgement has been written
 	k.Logger(ctx).Info("acknowledged written", "packet", fmt.Sprintf("%v", packet))
@@ -296,7 +295,6 @@ func (k Keeper) AcknowledgePacket(
 
 	// Delete packet commitment, since the packet has been acknowledged, the commitement is no longer necessary
 	k.deletePacketCommitment(ctx, packet.GetSourceChain(), packet.GetDestChain(), packet.GetSequence())
-	k.SetMaxAckSequence(ctx, packet.GetSourceChain(), packet.GetDestChain(), packet.GetSequence())
 
 	// log that a packet has been acknowledged
 	k.Logger(ctx).Info("packet acknowledged", "packet", fmt.Sprintf("%v", packet))

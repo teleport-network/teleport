@@ -18,4 +18,8 @@ var (
 	ErrScChainEqualToDestChain  = sdkerrors.Register(moduleName, 7, "source chain equals to destination chain")
 	ErrRelayerNotFound          = sdkerrors.Register(moduleName, 8, "relayer not found")
 	ErrInvalidRelayer           = sdkerrors.Register(moduleName, 9, "invalid relayer")
+	ErrInvalidSequence          = sdkerrors.Register(moduleName, 10, "invalid sequence")
+	ErrInvalidSrcChain          = sdkerrors.Register(moduleName, 11, "invalid source chain")
+	ErrInvalidDestChain         = sdkerrors.Register(moduleName, 12, "invalid destination chain")
+	ErrInvalidRelayChain        = sdkerrors.Register(moduleName, 13, "invalid relay chain")
 )

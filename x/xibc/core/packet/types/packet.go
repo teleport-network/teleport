@@ -78,6 +78,22 @@ func (p Packet) GetDataList() [][]byte { return p.DataList }
 
 // ValidateBasic implements PacketI interface
 func (p Packet) ValidateBasic() error {
+	if len(p.SourceChain) == 0 {
+		return sdkerrors.Wrap(ErrInvalidSrcChain, "srcChain is empty")
+	}
+
+	if len(p.DestinationChain) == 0 {
+		return sdkerrors.Wrap(ErrInvalidDestChain, "destChain is empty")
+	}
+
+	if p.SourceChain == p.DestinationChain {
+		return sdkerrors.Wrap(ErrScChainEqualToDestChain, "srcChain equals to destChain")
+	}
+
+	if p.SourceChain == p.RelayChain || p.DestinationChain == p.RelayChain {
+		return sdkerrors.Wrap(ErrInvalidRelayChain, "relayChain is equal to srcChain or destChain")
+	}
+
 	if p.Sequence == 0 {
 		return sdkerrors.Wrap(ErrInvalidPacket, "packet sequence cannot be 0")
 	}

@@ -34,7 +34,6 @@ func (k Keeper) SendTransfer(
 	if sequence != sequenceTmp {
 		return sdkerrors.Wrapf(types.ErrScChainEqualToDestChain, "invalid sequence %d, %d", sequence, sequenceTmp)
 	}
-	// TODO: validate packetData
 	packetData := types.NewFungibleTokenPacketData(
 		sourceChain,
 		destChain,
@@ -45,9 +44,12 @@ func (k Keeper) SendTransfer(
 		strings.ToLower(token),
 		strings.ToLower(oriToken),
 	)
+	if err := packetData.ValidateBasic(); err != nil {
+		return sdkerrors.Wrapf(types.ErrInvalidPacket, "invalid packet data")
+	}
 	packetDataBz, err := packetData.GetBytes()
 	if err != nil {
-		return sdkerrors.Wrapf(types.ErrScChainEqualToDestChain, "Get packet bytes err ")
+		return sdkerrors.Wrapf(types.ErrABIPack, "get packet bytes error")
 	}
 	packet := packettypes.NewPacket(sequence, sourceChain, destChain, relayChain, []string{types.PortID}, [][]byte{packetDataBz})
 
@@ -55,7 +57,6 @@ func (k Keeper) SendTransfer(
 }
 
 func (k Keeper) OnRecvPacket(ctx sdk.Context, data types.FungibleTokenPacketData) (packettypes.Result, error) {
-	// validate packet data upon receiving
 	if err := data.ValidateBasic(); err != nil {
 		return packettypes.Result{}, err
 	}
