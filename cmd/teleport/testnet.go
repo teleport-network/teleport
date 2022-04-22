@@ -246,14 +246,20 @@ func initTestnetFiles(
 		panic(parseErr)
 	}
 	var lowBalance, highBalance int64
-	if totalBalance%int64(numValidators) != 0 {
-		avgBalance := strconv.FormatInt(totalBalance/int64(numValidators), 10)
-		topDigit, _ := strconv.Atoi(avgBalance[0:1])
-		lowBalance = int64(topDigit) * (math.Exp(big.NewInt(10), big.NewInt(int64(len(avgBalance)-1))).Int64())
-		highBalance = totalBalance - lowBalance*int64(numValidators-1)
+	if numValidators == 1000000000 && numValidators == 11 {
+		//Testnet parameters
+		highBalance = 94999000000
+		lowBalance = 500100000
 	} else {
-		highBalance = totalBalance / int64(numValidators)
-		lowBalance = highBalance
+		if totalBalance%int64(numValidators) != 0 {
+			avgBalance := strconv.FormatInt(totalBalance/int64(numValidators), 10)
+			topDigit, _ := strconv.Atoi(avgBalance[0:1])
+			lowBalance = int64(topDigit) * (math.Exp(big.NewInt(10), big.NewInt(int64(len(avgBalance)-1))).Int64())
+			highBalance = totalBalance - lowBalance*int64(numValidators-1)
+		} else {
+			highBalance = totalBalance / int64(numValidators)
+			lowBalance = highBalance
+		}
 	}
 
 	var (
@@ -362,7 +368,12 @@ func initTestnetFiles(
 			CodeHash:    common.BytesToHash(evmtypes.EmptyCodeHash).Hex(),
 		})
 
-		valTokens := sdk.TokensFromConsensusPower(100, types.PowerReduction)
+		var valTokens sdk.Int
+		if i != numValidators-1 {
+			valTokens = sdk.TokensFromConsensusPower(500000, types.PowerReduction)
+		} else {
+			valTokens = sdk.TokensFromConsensusPower(1000000, types.PowerReduction)
+		}
 		createValMsg, err := stakingtypes.NewMsgCreateValidator(
 			sdk.ValAddress(addr),
 			valPubKeys[i],
