@@ -71,7 +71,7 @@ func (k Keeper) SendMultiCall(ctx sdk.Context, sender common.Address, calldata t
 			if err != nil {
 				return err
 			}
-			transferBz, err := transfertypes.NewFungibleTokenPacketData(
+			transferPacketData := transfertypes.NewFungibleTokenPacketData(
 				sourceChain,
 				calldata.DestChain,
 				sequence,
@@ -80,14 +80,15 @@ func (k Keeper) SendMultiCall(ctx sdk.Context, sender common.Address, calldata t
 				transferData.Amount.Bytes(),
 				strings.ToLower(transferData.TokenAddress.String()),
 				oriToken,
-			).GetBytes()
-			if err != nil {
-				return err
-			}
-			dataList = append(
-				dataList,
-				transferBz,
 			)
+			if err := transferPacketData.ValidateBasic(); err != nil {
+				return sdkerrors.Wrapf(transfertypes.ErrInvalidPacket, "invalid packet data")
+			}
+			transferPacketDataBz, err := transferPacketData.GetBytes()
+			if err != nil {
+				return sdkerrors.Wrapf(transfertypes.ErrABIPack, "get packet bytes error")
+			}
+			dataList = append(dataList, transferPacketDataBz)
 		case types.RemoteCall:
 			data, err := abi.Arguments{{Type: TupleRCCData}}.Unpack(calldata.Data[i])
 			if err != nil {
@@ -102,15 +103,18 @@ func (k Keeper) SendMultiCall(ctx sdk.Context, sender common.Address, calldata t
 				return sdkerrors.Wrapf(types.ErrInvalidMultiCallEvent, "unpack failed, function ID %d", fid)
 			}
 			ports = append(ports, rcctypes.PortID)
-			rccPacketDataBz, err := rcctypes.NewRCCPacketData(
+			rccPacketData := rcctypes.NewRCCPacketData(
 				sourceChain,
 				calldata.DestChain,
 				sequence,
 				strings.ToLower(sender.String()),
 				strings.ToLower(rccData.ContractAddress),
 				rccData.Data,
-			).GetBytes()
-
+			)
+			if err := rccPacketData.ValidateBasic(); err != nil {
+				return sdkerrors.Wrapf(rcctypes.ErrInvalidPacket, "invalid packet data")
+			}
+			rccPacketDataBz, err := rccPacketData.GetBytes()
 			if err != nil {
 				return sdkerrors.Wrapf(types.ErrInvalidMultiCallEvent, "unpack failed, function ID %d", fid)
 			}

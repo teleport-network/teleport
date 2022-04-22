@@ -30,7 +30,7 @@ func (k Keeper) SendRemoteContractCall(
 	if sequence != sequenceTmp {
 		return sdkerrors.Wrapf(types.ErrScChainEqualToDestChain, "invalid sequence %d equals to %d", sequence, sequenceTmp)
 	}
-	// TODO: validate packetData
+
 	packetData := types.NewRCCPacketData(
 		sourceChain,
 		destChain,
@@ -39,9 +39,12 @@ func (k Keeper) SendRemoteContractCall(
 		contractAddress,
 		data,
 	)
+	if err := packetData.ValidateBasic(); err != nil {
+		return sdkerrors.Wrapf(types.ErrInvalidPacket, "invalid packet data")
+	}
 	packetBz, err := packetData.GetBytes()
 	if err != nil {
-		return err
+		return sdkerrors.Wrapf(types.ErrABIPack, "get packet bytes error")
 	}
 	packet := packettypes.NewPacket(sequence, sourceChain, destChain, relayChain, []string{types.PortID}, [][]byte{packetBz})
 
