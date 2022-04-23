@@ -246,7 +246,7 @@ func initTestnetFiles(
 		panic(parseErr)
 	}
 	var lowBalance, highBalance int64
-	if numValidators == 1000000000 && numValidators == 11 {
+	if totalBalance == 1000000000 && numValidators == 11 {
 		//Testnet parameters
 		highBalance = 94999000000
 		lowBalance = 500100000
@@ -370,9 +370,9 @@ func initTestnetFiles(
 
 		var valTokens sdk.Int
 		if i != numValidators-1 {
-			valTokens = sdk.TokensFromConsensusPower(500000, types.PowerReduction)
+			valTokens = sdk.TokensFromConsensusPower(500000000, types.PowerReduction)
 		} else {
-			valTokens = sdk.TokensFromConsensusPower(1000000, types.PowerReduction)
+			valTokens = sdk.TokensFromConsensusPower(1000000000, types.PowerReduction)
 		}
 		createValMsg, err := stakingtypes.NewMsgCreateValidator(
 			sdk.ValAddress(addr),
