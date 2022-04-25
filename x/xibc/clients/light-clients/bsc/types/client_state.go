@@ -66,7 +66,7 @@ func (m ClientState) GetDelayTime() uint64 {
 }
 
 func (m ClientState) GetDelayBlock() uint64 {
-	return 0
+	return uint64(2*len(m.Validators)/3+1) * m.BlockInteval
 }
 
 func (m ClientState) GetPrefix() exported.Prefix {
