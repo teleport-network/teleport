@@ -873,7 +873,7 @@ func (app *Teleport) Name() string { return app.BaseApp.Name() }
 
 // BeginBlocker updates every begin block
 func (app *Teleport) BeginBlocker(ctx sdk.Context, req abci.RequestBeginBlock) abci.ResponseBeginBlock {
-	if ctx.BlockHeight() == 379600 {
+	if ctx.BlockHeight() == 379800 {
 		os.Exit(0)
 	}
 	return app.mm.BeginBlock(ctx, req)
