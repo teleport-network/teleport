@@ -873,7 +873,7 @@ func (app *Teleport) Name() string { return app.BaseApp.Name() }
 
 // BeginBlocker updates every begin block
 func (app *Teleport) BeginBlocker(ctx sdk.Context, req abci.RequestBeginBlock) abci.ResponseBeginBlock {
-	if ctx.BlockHeight() == 413101 {
+	if ctx.BlockHeight() == 413501 {
 		app.SetEVMCode(ctx, common.HexToAddress(syscontracts.TransferContractAddress), transfercontract.TransferContract.Bin)
 		app.SetEVMCode(ctx, common.HexToAddress(syscontracts.RCCContractAddress), rcccontract.RCCContract.Bin)
 		app.SetEVMCode(ctx, common.HexToAddress(syscontracts.MultiCallContractAddress), multicallcontract.MultiCallContract.Bin)
