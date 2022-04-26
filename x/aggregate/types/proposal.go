@@ -31,6 +31,7 @@ const (
 // Implements Proposal Interface
 var (
 	_ govtypes.Content = &RegisterCoinProposal{}
+	_ govtypes.Content = &AddCoinProposal{}
 	_ govtypes.Content = &RegisterERC20Proposal{}
 	_ govtypes.Content = &ToggleTokenRelayProposal{}
 	_ govtypes.Content = &UpdateTokenPairERC20Proposal{}
@@ -47,6 +48,7 @@ func init() {
 	govtypes.RegisterProposalType(ProposalTypeUpdateTokenPairERC20)
 	govtypes.RegisterProposalType(ProposalTypeRegisterERC20Trace)
 	govtypes.RegisterProposalTypeCodec(&RegisterCoinProposal{}, "aggregate/RegisterCoinProposal")
+	govtypes.RegisterProposalTypeCodec(&AddCoinProposal{}, "aggregate/AddCoinProposal")
 	govtypes.RegisterProposalTypeCodec(&RegisterERC20Proposal{}, "aggregate/RegisterERC20Proposal")
 	govtypes.RegisterProposalTypeCodec(&ToggleTokenRelayProposal{}, "aggregate/ToggleTokenRelayProposal")
 	govtypes.RegisterProposalTypeCodec(&UpdateTokenPairERC20Proposal{}, "aggregate/UpdateTokenPairERC20Proposal")

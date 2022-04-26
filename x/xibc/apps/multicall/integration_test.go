@@ -725,7 +725,7 @@ func (suite *MultiCallTestSuite) OutTokens(fromChain *xibctesting.TestChain, tok
 }
 
 func (suite *MultiCallTestSuite) Approve(fromChain *xibctesting.TestChain, erc20Address common.Address, amount *big.Int) {
-	transferData, err := erc20contracts.ERC20MinterBurnerDecimalsContract.ABI.Pack("approve", transfercontract.TransferContractAddress, amount)
+	transferData, err := erc20contracts.ERC20MinterBurnerDecimalsContract.ABI.Pack("approve", multicallcontract.MultiCallContractAddress, amount)
 	suite.Require().NoError(err)
 
 	_ = suite.SendTx(fromChain, erc20Address, big.NewInt(0), transferData)
