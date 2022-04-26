@@ -110,7 +110,7 @@ func NewConvertERC20Cmd() *cobra.Command {
 			from := common.BytesToAddress(cliCtx.GetFromAddress().Bytes())
 
 			receiver := cliCtx.GetFromAddress()
-			if len(args) == 3 {
+			if len(args) == 4 {
 				receiver, err = sdk.AccAddressFromBech32(args[3])
 				if err != nil {
 					return err
