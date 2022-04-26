@@ -34,8 +34,8 @@ func (suite *KeeperTestSuite) SetupTest() {
 	suite.coordinator.CommitNBlocks(suite.chainA, 2)
 	suite.coordinator.CommitNBlocks(suite.chainB, 2)
 
-	suite.chainA.RegisterRelayer([]string{suite.chainB.ChainID}, []string{string(suite.chainB.SenderAcc)})
-	suite.chainB.RegisterRelayer([]string{suite.chainA.ChainID}, []string{string(suite.chainB.SenderAcc)})
+	suite.chainA.RegisterRelayer([]string{suite.chainB.ChainID}, []string{suite.chainB.SenderAcc.String()})
+	suite.chainB.RegisterRelayer([]string{suite.chainA.ChainID}, []string{suite.chainB.SenderAcc.String()})
 }
 
 // TestGetAllSequences sets all packet sequences

@@ -175,7 +175,7 @@ func (suite *TransferTestSuite) TestTransferBaseBack() {
 	suite.Require().Equal(amount.String(), recvBalance.String())
 
 	// Approve erc20 to transfer
-	suite.Approve(suite.chainB, erc20Address, amount)
+	suite.Approve(suite.chainB, erc20Address, transfercontract.TransferContractAddress, amount)
 
 	suite.SendTransfer(
 		suite.chainB,
@@ -259,7 +259,7 @@ func (suite *TransferTestSuite) TestTransferERC20() {
 	suite.Require().Equal(amount.String(), recvBalance.String())
 
 	// Approve erc20 to transfer
-	suite.Approve(suite.chainA, chainAERC20Address, out)
+	suite.Approve(suite.chainA, chainAERC20Address, transfercontract.TransferContractAddress, out)
 
 	// deploy ERC20 on chainB
 	chainBERC20Address := suite.DeployERC20(suite.chainB, transfercontract.TransferContractAddress, uint8(18))
@@ -380,7 +380,7 @@ func (suite *TransferTestSuite) TestTransferERC20Back() {
 	suite.Require().Equal(amount.String(), recvBalance.String())
 
 	// Approve erc20 to transfer
-	suite.Approve(suite.chainB, chainBERC20Address, amount)
+	suite.Approve(suite.chainB, chainBERC20Address, transfercontract.TransferContractAddress, amount)
 
 	suite.SendTransfer(
 		suite.chainB,
@@ -459,7 +459,7 @@ func (suite *TransferTestSuite) TestTransferScaledERC20() {
 	suite.Require().Equal(amount.String(), recvBalance.String())
 
 	// Approve erc20 to transfer
-	suite.Approve(suite.chainA, chainAERC20Address, out)
+	suite.Approve(suite.chainA, chainAERC20Address, transfercontract.TransferContractAddress, out)
 
 	// deploy ERC20 on chainB
 	chainBERC20Address := suite.DeployERC20(suite.chainB, transfercontract.TransferContractAddress, uint8(18))
@@ -580,7 +580,7 @@ func (suite *TransferTestSuite) TestTransferScaledERC20Back() {
 	suite.Require().Equal(new(big.Int).Mul(amount, scale.BigInt()).String(), recvBalance.String())
 
 	// Approve erc20 to transfer
-	suite.Approve(suite.chainB, chainBERC20Address, new(big.Int).Mul(amount, scale.BigInt()))
+	suite.Approve(suite.chainB, chainBERC20Address, transfercontract.TransferContractAddress, new(big.Int).Mul(amount, scale.BigInt()))
 
 	suite.SendTransfer(
 		suite.chainB,
@@ -654,7 +654,7 @@ func (suite *TransferTestSuite) TestTransferWTele() {
 	suite.Require().Equal(amount.String(), recvBalance.String())
 
 	// Approve erc20 to transfer
-	suite.Approve(suite.chainA, wtelecontract.WTELEContractAddress, out)
+	suite.Approve(suite.chainA, wtelecontract.WTELEContractAddress, transfercontract.TransferContractAddress, out)
 
 	// deploy ERC20 on chainB
 	chainBERC20Address := suite.DeployERC20(suite.chainB, transfercontract.TransferContractAddress, uint8(18))
@@ -774,7 +774,7 @@ func (suite *TransferTestSuite) TestTransferWTeleBack() {
 	suite.Require().Equal(amount.String(), recvBalance.String())
 
 	// Approve erc20 to transfer
-	suite.Approve(suite.chainB, chainBERC20Address, amount)
+	suite.Approve(suite.chainB, chainBERC20Address, transfercontract.TransferContractAddress, amount)
 
 	suite.SendTransfer(
 		suite.chainB,
@@ -1028,8 +1028,8 @@ func (suite *TransferTestSuite) MintERC20Token(fromChain *xibctesting.TestChain,
 	_ = suite.SendTx(fromChain, erc20Address, big.NewInt(0), ctorArgs)
 }
 
-func (suite *TransferTestSuite) Approve(fromChain *xibctesting.TestChain, erc20Address common.Address, amount *big.Int) {
-	transferData, err := erc20contracts.ERC20MinterBurnerDecimalsContract.ABI.Pack("approve", transfercontract.TransferContractAddress, amount)
+func (suite *TransferTestSuite) Approve(fromChain *xibctesting.TestChain, erc20Address common.Address, spender common.Address, amount *big.Int) {
+	transferData, err := erc20contracts.ERC20MinterBurnerDecimalsContract.ABI.Pack("approve", amount)
 	suite.Require().NoError(err)
 
 	_ = suite.SendTx(fromChain, erc20Address, big.NewInt(0), transferData)

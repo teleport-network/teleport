@@ -145,10 +145,7 @@ func (ack *Acknowledgement) DecodeBytes(bz []byte) error {
 	if err != nil {
 		return err
 	}
-	if err := json.Unmarshal(bzTmp, &ack); err != nil {
-		return err
-	}
-	return nil
+	return json.Unmarshal(bzTmp, &ack)
 }
 
 // Result is the execution result of packet data
