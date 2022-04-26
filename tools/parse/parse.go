@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/base64"
 	"encoding/hex"
+	"flag"
 	"fmt"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/bech32"
@@ -11,18 +12,24 @@ import (
 )
 
 func main() {
-	testKey := "021493354845030274cd4bf1686abd60ab28ec52e1a76174656c65"
-	keyResult, teleAddress := parseAddress(testKey)
-	testValue := "0a056174656c6512173431333632343936353930323030303030303030303030"
-	valueResult := parseBalance(testValue)
 
-	testBase64 := "MTA1MDA5MDAwMDAwMDAwMGF0ZWxl"
-	base64Result := base64ToHex(testBase64)
+	parseAddr := flag.Bool("isParseAddress", false, "whether to parse address")
+	parseBala := flag.Bool("isParseBalances", false, "whether to parse balances")
+	parsebase64 := flag.Bool("isParseBase64", false, "whether to parse base64")
+	inputData := flag.String("input", "", "input data waiting to parse")
+	flag.Parse() // 解析参数
 
-	fmt.Println(keyResult)
-	fmt.Println(teleAddress)
-	fmt.Println(valueResult)
-	fmt.Println(base64Result)
+	if *parseAddr {
+		keyResult, teleAddress := parseAddress(*inputData)
+		fmt.Printf("eth address: %s\n", keyResult)
+		fmt.Printf("tele address: %s\n", teleAddress)
+	} else if *parseBala {
+		valueResult := parseBalance(*inputData)
+		fmt.Println(valueResult)
+	} else if *parsebase64 {
+		base64Result := base64ToHex(*inputData)
+		fmt.Println(base64Result)
+	}
 }
 
 func parseAddress(key string) (string, string) {
