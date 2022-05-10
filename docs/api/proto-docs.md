@@ -47,6 +47,12 @@
   
     - [Msg](#teleport.aggregate.v1.Msg)
   
+- [teleport/base/tendermint/v1beta1/query.proto](#teleport/base/tendermint/v1beta1/query.proto)
+    - [GetBlockResultsRequest](#teleport.base.tendermint.v1beta1.GetBlockResultsRequest)
+    - [GetBlockResultsResponse](#teleport.base.tendermint.v1beta1.GetBlockResultsResponse)
+  
+    - [Service](#teleport.base.tendermint.v1beta1.Service)
+  
 - [teleport/rvesting/v1/genesis.proto](#teleport/rvesting/v1/genesis.proto)
     - [GenesisState](#teleport.rvesting.v1.GenesisState)
     - [Params](#teleport.rvesting.v1.Params)
@@ -713,6 +719,68 @@ Msg defines the aggregate Msg service.
 | ----------- | ------------ | ------------- | ------------| ------- | -------- |
 | `ConvertCoin` | [MsgConvertCoin](#teleport.aggregate.v1.MsgConvertCoin) | [MsgConvertCoinResponse](#teleport.aggregate.v1.MsgConvertCoinResponse) | ConvertCoin mints a ERC20 representation of the SDK Coin denom that is registered on the token mapping. | GET|/teleport/aggregate/v1/tx/convert_coin|
 | `ConvertERC20` | [MsgConvertERC20](#teleport.aggregate.v1.MsgConvertERC20) | [MsgConvertERC20Response](#teleport.aggregate.v1.MsgConvertERC20Response) | ConvertERC20 mints a Cosmos coin representation of the ERC20 token contract that is registered on the token mapping. | GET|/teleport/aggregate/v1/tx/convert_erc20|
+
+ <!-- end services -->
+
+
+
+<a name="teleport/base/tendermint/v1beta1/query.proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## teleport/base/tendermint/v1beta1/query.proto
+
+
+
+<a name="teleport.base.tendermint.v1beta1.GetBlockResultsRequest"></a>
+
+### GetBlockResultsRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `height` | [int64](#int64) |  | height is the height of the block to query. |
+
+
+
+
+
+
+<a name="teleport.base.tendermint.v1beta1.GetBlockResultsResponse"></a>
+
+### GetBlockResultsResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `height` | [int64](#int64) |  |  |
+| `txs_results` | [tendermint.abci.ResponseDeliverTx](#tendermint.abci.ResponseDeliverTx) | repeated |  |
+| `begin_block_events` | [tendermint.abci.Event](#tendermint.abci.Event) | repeated |  |
+| `end_block_events` | [tendermint.abci.Event](#tendermint.abci.Event) | repeated |  |
+| `validator_updates` | [tendermint.abci.ValidatorUpdate](#tendermint.abci.ValidatorUpdate) | repeated |  |
+| `consensus_param_updates` | [tendermint.abci.ConsensusParams](#tendermint.abci.ConsensusParams) |  |  |
+
+
+
+
+
+ <!-- end messages -->
+
+ <!-- end enums -->
+
+ <!-- end HasExtensions -->
+
+
+<a name="teleport.base.tendermint.v1beta1.Service"></a>
+
+### Service
+Service defines the gRPC querier service for tendermint queries.
+It is an extension of cosmos base tmservice defined in `third_party/proto/cosmos/base/tendermint/v1beta1/query.proto`
+
+| Method Name | Request Type | Response Type | Description | HTTP Verb | Endpoint |
+| ----------- | ------------ | ------------- | ------------| ------- | -------- |
+| `GetBlockResults` | [GetBlockResultsRequest](#teleport.base.tendermint.v1beta1.GetBlockResultsRequest) | [GetBlockResultsResponse](#teleport.base.tendermint.v1beta1.GetBlockResultsResponse) | GetBlockResults | GET|/teleport/base/tendermint/v1beta1/blockresults/{height}|
 
  <!-- end services -->
 

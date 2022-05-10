@@ -1,0 +1,34 @@
+syntax = "proto3";
+package teleport.base.tendermint.v1beta1;
+
+import "gogoproto/gogo.proto";
+import "google/protobuf/any.proto";
+import "google/api/annotations.proto";
+import "tendermint/abci/types.proto";
+
+option go_package = "github.com/teleport-network/teleport/client/grpc/tmservice";
+
+// Service defines the gRPC querier service for tendermint queries.
+// It is an extension of cosmos base tmservice defined in `third_party/proto/cosmos/base/tendermint/v1beta1/query.proto`
+service Service {
+  // GetBlockResults
+  rpc GetBlockResults(GetBlockResultsRequest)
+      returns (GetBlockResultsResponse) {
+    option (google.api.http).get =
+        "/teleport/base/tendermint/v1beta1/blockresults/{height}";
+  }
+}
+
+message GetBlockResultsRequest {
+  // height is the height of the block to query.
+  int64 height = 1;
+}
+
+message GetBlockResultsResponse {
+  int64 height = 1;
+  repeated .tendermint.abci.ResponseDeliverTx txs_results = 2;
+  repeated .tendermint.abci.Event begin_block_events = 3;
+  repeated .tendermint.abci.Event end_block_events = 4;
+  repeated .tendermint.abci.ValidatorUpdate validator_updates = 5;
+  .tendermint.abci.ConsensusParams consensus_param_updates = 6;
+}

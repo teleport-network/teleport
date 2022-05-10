@@ -117,8 +117,9 @@ import (
 	adgov "github.com/teleport-network/teleport/adapter/gov"
 	adstaking "github.com/teleport-network/teleport/adapter/staking"
 	_ "github.com/teleport-network/teleport/client/docs/statik"
-	gabci "github.com/teleport-network/teleport/grpc_abci"
-	syscontracts "github.com/teleport-network/teleport/syscontracts"
+	gabci "github.com/teleport-network/teleport/client/grpc/abci"
+	teletmservice "github.com/teleport-network/teleport/client/grpc/tmservice"
+	"github.com/teleport-network/teleport/syscontracts"
 	agentcontract "github.com/teleport-network/teleport/syscontracts/agent"
 	wtelecontract "github.com/teleport-network/teleport/syscontracts/wtele"
 	multicallcontract "github.com/teleport-network/teleport/syscontracts/xibc_multicall"
@@ -1007,6 +1008,8 @@ func (app *Teleport) RegisterAPIRoutes(apiSvr *api.Server, apiConfig config.APIC
 	authtx.RegisterGRPCGatewayRoutes(clientCtx, apiSvr.GRPCGatewayRouter)
 	// Register new tendermint queries routes from grpc-gateway.
 	tmservice.RegisterGRPCGatewayRoutes(clientCtx, apiSvr.GRPCGatewayRouter)
+	// Register extended tendermint queries routes from grpc-gateway.
+	teletmservice.RegisterGRPCGatewayRoutes(clientCtx, apiSvr.GRPCGatewayRouter)
 
 	// Register legacy and grpc-gateway routes for all modules.
 	ModuleBasics.RegisterRESTRoutes(clientCtx, apiSvr.Router)
@@ -1024,6 +1027,9 @@ func (app *Teleport) RegisterTxService(clientCtx client.Context) {
 
 func (app *Teleport) RegisterTendermintService(clientCtx client.Context) {
 	tmservice.RegisterTendermintService(app.BaseApp.GRPCQueryRouter(), clientCtx, app.interfaceRegistry)
+	// register the tendermint service extended from cosmos base tmservice
+	teletmservice.RegisterTendermintService(app.BaseApp.GRPCQueryRouter(), clientCtx, app.interfaceRegistry)
+
 	gabci.RegisterGRPCABCIQuery(app.BaseApp.GRPCQueryRouter(), app)
 }
 

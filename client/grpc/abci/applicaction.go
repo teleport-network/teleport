@@ -1,10 +1,9 @@
-package gabci
+package abci
 
 import (
 	"context"
+	"github.com/teleport-network/teleport/client/grpc/abci/types"
 	"strings"
-
-	"github.com/teleport-network/teleport/grpc_abci/types"
 
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	gogogrpc "github.com/gogo/protobuf/grpc"
