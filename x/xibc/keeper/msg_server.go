@@ -72,7 +72,14 @@ func (k Keeper) RecvPacket(goCtx context.Context, msg *packettypes.MsgRecvPacket
 			// Perform application logic callback
 			_, result, err := cbs.OnRecvPacket(cctx, msg.Packet.GetDataList()[i])
 			if err != nil {
-				return nil, sdkerrors.Wrap(err, "receive packet callback failed")
+				errAckBz, err := packettypes.NewErrorAcknowledgement("receive packet callback failed", relayer).GetBytes()
+				if err != nil {
+					return nil, sdkerrors.Wrapf(packettypes.ErrInvalidAcknowledgement, "pack ack failed")
+				}
+				if err := k.PacketKeeper.WriteAcknowledgement(ctx, msg.Packet, errAckBz); err != nil {
+					return nil, err
+				}
+				return &packettypes.MsgRecvPacketResponse{}, nil
 			}
 
 			if len(result.Result) == 0 {
@@ -80,14 +87,9 @@ func (k Keeper) RecvPacket(goCtx context.Context, msg *packettypes.MsgRecvPacket
 				if err != nil {
 					return nil, sdkerrors.Wrapf(packettypes.ErrInvalidAcknowledgement, "pack ack failed")
 				}
-				if err := k.PacketKeeper.WriteAcknowledgement(
-					ctx,
-					msg.Packet,
-					errAckBz,
-				); err != nil {
+				if err := k.PacketKeeper.WriteAcknowledgement(ctx, msg.Packet, errAckBz); err != nil {
 					return nil, err
 				}
-
 				return &packettypes.MsgRecvPacketResponse{}, nil
 			}
 
