@@ -175,7 +175,12 @@ func (suite *TransferTestSuite) TestTransferBaseBack() {
 	suite.Require().Equal(amount.String(), recvBalance.String())
 
 	// Approve erc20 to transfer
-	suite.Approve(suite.chainB, erc20Address, transfercontract.TransferContractAddress, amount)
+	suite.Approve(
+		suite.chainB,
+		erc20Address,
+		transfercontract.TransferContractAddress,
+		amount,
+	)
 
 	suite.SendTransfer(
 		suite.chainB,
@@ -842,7 +847,12 @@ func (suite *TransferTestSuite) TestTransferWTeleBack() {
 // ================================================================================================================
 // Functions for step
 // ================================================================================================================
-func (suite *TransferTestSuite) Refund(fromChain *xibctesting.TestChain, srcChain, destChain, sequence string) bool {
+func (suite *TransferTestSuite) Refund(
+	fromChain *xibctesting.TestChain,
+	srcChain string,
+	destChain string,
+	sequence string,
+) bool {
 	cus := agentcontract.AgentContract.ABI
 	res, err := fromChain.App.XIBCTransferKeeper.CallEVM(
 		fromChain.GetContext(),
@@ -861,7 +871,12 @@ func (suite *TransferTestSuite) Refund(fromChain *xibctesting.TestChain, srcChai
 	return refunded
 }
 
-func (suite *TransferTestSuite) AckStatus(fromChain *xibctesting.TestChain, srcChain, destChain string, sequence uint64) uint8 {
+func (suite *TransferTestSuite) AckStatus(
+	fromChain *xibctesting.TestChain,
+	srcChain string,
+	destChain string,
+	sequence uint64,
+) uint8 {
 	cus := packetcontract.PacketContract.ABI
 	res, err := fromChain.App.XIBCTransferKeeper.CallEVM(
 		fromChain.GetContext(),
@@ -882,7 +897,11 @@ func (suite *TransferTestSuite) AckStatus(fromChain *xibctesting.TestChain, srcC
 	return status
 }
 
-func (suite *TransferTestSuite) GetNextSequenceSend(fromChain *xibctesting.TestChain, srcChain, destChain string) uint64 {
+func (suite *TransferTestSuite) GetNextSequenceSend(
+	fromChain *xibctesting.TestChain,
+	srcChain string,
+	destChain string,
+) uint64 {
 	cus := packetcontract.PacketContract.ABI
 	res, err := fromChain.App.XIBCTransferKeeper.CallEVM(
 		fromChain.GetContext(),
@@ -902,7 +921,12 @@ func (suite *TransferTestSuite) GetNextSequenceSend(fromChain *xibctesting.TestC
 	return seq
 }
 
-func (suite *TransferTestSuite) GetAgentPacketExist(fromChain *xibctesting.TestChain, srcChain, destChain, sequences string) bool {
+func (suite *TransferTestSuite) GetAgentPacketExist(
+	fromChain *xibctesting.TestChain,
+	srcChain string,
+	destChain string,
+	sequences string,
+) bool {
 	cus := agentcontract.AgentContract.ABI
 	res, err := fromChain.App.XIBCTransferKeeper.CallEVM(
 		fromChain.GetContext(),
@@ -926,7 +950,11 @@ func (suite *TransferTestSuite) GetAgentPacketExist(fromChain *xibctesting.TestC
 	return exist.Sent
 }
 
-func (suite *TransferTestSuite) AgentRefund(fromChain *xibctesting.TestChain, srcChain, destChain string, sequence uint64) {
+func (suite *TransferTestSuite) AgentRefund(
+	fromChain *xibctesting.TestChain,
+	srcChain, destChain string,
+	sequence uint64,
+) {
 	agentData, err := agentcontract.AgentContract.ABI.Pack("refund", srcChain, destChain, sequence)
 	suite.Require().NoError(err)
 
@@ -934,7 +962,12 @@ func (suite *TransferTestSuite) AgentRefund(fromChain *xibctesting.TestChain, sr
 	suite.coordinator.CommitBlock(suite.chainA, suite.chainB, suite.chainC)
 }
 
-func (suite *TransferTestSuite) SendMultiCall(fromChain *xibctesting.TestChain, amount *big.Int, data multicalltypes.MultiCallData, fee types.Fee) {
+func (suite *TransferTestSuite) SendMultiCall(
+	fromChain *xibctesting.TestChain,
+	amount *big.Int,
+	data multicalltypes.MultiCallData,
+	fee types.Fee,
+) {
 	multiCallData, err := multicallcontract.MultiCallContract.ABI.Pack("multiCall", data, fee)
 	suite.Require().NoError(err)
 
@@ -966,7 +999,11 @@ func (suite *TransferTestSuite) RCCAcks(fromChain *xibctesting.TestChain, hash [
 	return ack.Value
 }
 
-func (suite *TransferTestSuite) DeployERC20(fromChain *xibctesting.TestChain, deployer common.Address, scale uint8) common.Address {
+func (suite *TransferTestSuite) DeployERC20(
+	fromChain *xibctesting.TestChain,
+	deployer common.Address,
+	scale uint8,
+) common.Address {
 	ctorArgs, err := erc20contracts.ERC20MinterBurnerDecimalsContract.ABI.Pack("", "name", "symbol", scale)
 	suite.Require().NoError(err)
 
@@ -984,7 +1021,11 @@ func (suite *TransferTestSuite) DeployERC20(fromChain *xibctesting.TestChain, de
 	return contractAddr
 }
 
-func (suite *TransferTestSuite) BalanceOf(fromChain *xibctesting.TestChain, contract common.Address, account common.Address) *big.Int {
+func (suite *TransferTestSuite) BalanceOf(
+	fromChain *xibctesting.TestChain,
+	contract common.Address,
+	account common.Address,
+) *big.Int {
 	erc20 := erc20contracts.ERC20MinterBurnerDecimalsContract.ABI
 
 	res, err := fromChain.App.XIBCTransferKeeper.CallEVM(
@@ -1004,7 +1045,11 @@ func (suite *TransferTestSuite) BalanceOf(fromChain *xibctesting.TestChain, cont
 	return balance.Value
 }
 
-func (suite *TransferTestSuite) SendTransfer(fromChain *xibctesting.TestChain, data types.TransferData, fee types.Fee) {
+func (suite *TransferTestSuite) SendTransfer(
+	fromChain *xibctesting.TestChain,
+	data types.TransferData,
+	fee types.Fee,
+) {
 	transferData, err := transfercontract.TransferContract.ABI.Pack("sendTransfer", data, fee)
 	suite.Require().NoError(err)
 
@@ -1021,22 +1066,36 @@ func (suite *TransferTestSuite) SendTransfer(fromChain *xibctesting.TestChain, d
 	suite.coordinator.CommitBlock(suite.chainA, suite.chainB)
 }
 
-func (suite *TransferTestSuite) MintERC20Token(fromChain *xibctesting.TestChain, to, erc20Address common.Address, amount *big.Int) {
+func (suite *TransferTestSuite) MintERC20Token(
+	fromChain *xibctesting.TestChain,
+	to,
+	erc20Address common.Address,
+	amount *big.Int,
+) {
 	ctorArgs, err := erc20contracts.ERC20MinterBurnerDecimalsContract.ABI.Pack("mint", to, amount)
 	suite.Require().NoError(err)
 
 	_ = suite.SendTx(fromChain, erc20Address, big.NewInt(0), ctorArgs)
 }
 
-func (suite *TransferTestSuite) Approve(fromChain *xibctesting.TestChain, erc20Address common.Address, spender common.Address, amount *big.Int) {
-	transferData, err := erc20contracts.ERC20MinterBurnerDecimalsContract.ABI.Pack("approve", amount)
+func (suite *TransferTestSuite) Approve(
+	fromChain *xibctesting.TestChain,
+	erc20Address common.Address,
+	spender common.Address,
+	amount *big.Int,
+) {
+	transferData, err := erc20contracts.ERC20MinterBurnerDecimalsContract.ABI.Pack("approve", spender, amount)
 	suite.Require().NoError(err)
 
 	_ = suite.SendTx(fromChain, erc20Address, big.NewInt(0), transferData)
 	suite.coordinator.CommitBlock(suite.chainA, suite.chainB)
 }
 
-func (suite *TransferTestSuite) OutTokens(fromChain *xibctesting.TestChain, tokenAddress common.Address, destChain string) *big.Int {
+func (suite *TransferTestSuite) OutTokens(
+	fromChain *xibctesting.TestChain,
+	tokenAddress common.Address,
+	destChain string,
+) *big.Int {
 	res, err := fromChain.App.XIBCTransferKeeper.CallEVM(
 		fromChain.GetContext(),
 		transfercontract.TransferContract.ABI,
@@ -1067,7 +1126,12 @@ func (suite *TransferTestSuite) DepositWTeleToken(fromChain *xibctesting.TestCha
 // EVM transaction (return events)
 // ================================================================================================================
 
-func (suite *TransferTestSuite) SendTx(fromChain *xibctesting.TestChain, contractAddr common.Address, amount *big.Int, transferData []byte) *evm.MsgEthereumTx {
+func (suite *TransferTestSuite) SendTx(
+	fromChain *xibctesting.TestChain,
+	contractAddr common.Address,
+	amount *big.Int,
+	transferData []byte,
+) *evm.MsgEthereumTx {
 	ctx := sdk.WrapSDKContext(fromChain.GetContext())
 	chainID := fromChain.App.EvmKeeper.ChainID()
 	signer := tests.NewSigner(fromChain.SenderPrivKey)
