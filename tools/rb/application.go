@@ -44,7 +44,7 @@ func deleteVersionsFrom(version int64, latestVersion int64, db *dbm.PrefixDB) er
 	}
 
 	batch := db.NewBatch()
-	if latestRoot != nil && len(latestRoot) > 0 {
+	if len(latestRoot) > 0 {
 		// First, delete all active nodes in the current (latest) version whose node version is after
 		// the given version.
 		if err := deleteNodesFrom(db, batch, version, common.NodeKeyFormat.Key(latestRoot)); err != nil {

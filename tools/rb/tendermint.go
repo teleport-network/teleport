@@ -79,7 +79,15 @@ func restoreStateFromBlock(blockStoreDB dbm.DB, stateDB dbm.DB, rollbackHeight i
 	}
 
 	lastValidatorSet, err := ss.LoadValidators(rollbackHeight)
+	if err != nil {
+		return -1, nil, err
+	}
+
 	validatorSet, err := ss.LoadValidators(rollbackHeight + 1)
+	if err != nil {
+		return -1, nil, err
+	}
+
 	nextValidatorSet, err := ss.LoadValidators(rollbackHeight + 2)
 
 	if err != nil {

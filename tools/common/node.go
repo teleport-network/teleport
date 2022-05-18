@@ -17,10 +17,7 @@ type Node struct {
 	RightHash []byte
 	Version   int64
 	size      int64
-	leftNode  *Node
-	rightNode *Node
 	height    int8
-	persisted bool
 }
 
 // NewNode returns a new node from a key, value and version.
