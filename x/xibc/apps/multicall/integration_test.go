@@ -20,6 +20,7 @@ import (
 	evm "github.com/tharsis/ethermint/x/evm/types"
 
 	erc20contracts "github.com/teleport-network/teleport/syscontracts/erc20"
+	wtelecontract "github.com/teleport-network/teleport/syscontracts/wtele"
 	multicallcontract "github.com/teleport-network/teleport/syscontracts/xibc_multicall"
 	rcccontract "github.com/teleport-network/teleport/syscontracts/xibc_rcc"
 	transfercontract "github.com/teleport-network/teleport/syscontracts/xibc_transfer"
@@ -35,6 +36,7 @@ type MultiCallTestSuite struct {
 	coordinator *xibctesting.Coordinator
 	chainA      *xibctesting.TestChain
 	chainB      *xibctesting.TestChain
+	chainC      *xibctesting.TestChain
 }
 
 func TestMultiCallTestSuite(t *testing.T) {
@@ -42,9 +44,10 @@ func TestMultiCallTestSuite(t *testing.T) {
 }
 
 func (suite *MultiCallTestSuite) SetupTest() {
-	suite.coordinator = xibctesting.NewCoordinator(suite.T(), 2)
+	suite.coordinator = xibctesting.NewCoordinator(suite.T(), 3)
 	suite.chainA = suite.coordinator.GetChain(xibctesting.GetChainID(0))
 	suite.chainB = suite.coordinator.GetChain(xibctesting.GetChainID(1))
+	suite.chainC = suite.coordinator.GetChain(xibctesting.GetChainID(2))
 }
 
 func (suite *MultiCallTestSuite) TestTransferBaseCall() common.Address {
@@ -182,7 +185,7 @@ func (suite *MultiCallTestSuite) TestTransferBaseBackCall() {
 	suite.Require().Equal(amount.String(), recvBalance.String())
 
 	// Approve erc20 to transfer
-	suite.Approve(suite.chainB, erc20Address, amount)
+	suite.Approve(suite.chainB, erc20Address, multicallcontract.MultiCallContractAddress, amount)
 
 	// send multi call
 	transferBaseBackDataBytes, err := abi.Arguments{{Type: types.TupleTransferData}}.Pack(
@@ -666,7 +669,7 @@ func (suite *MultiCallTestSuite) Allowance(
 }
 
 func (suite *MultiCallTestSuite) RCCAcks(fromChain *xibctesting.TestChain, hash [32]byte) []byte {
-	rcc := multicallcontract.MultiCallContract.ABI
+	rcc := rcccontract.RCCContract.ABI
 
 	res, err := fromChain.App.XIBCTransferKeeper.CallEVM(
 		fromChain.GetContext(),
@@ -724,11 +727,19 @@ func (suite *MultiCallTestSuite) OutTokens(fromChain *xibctesting.TestChain, tok
 	return amount.Value
 }
 
-func (suite *MultiCallTestSuite) Approve(fromChain *xibctesting.TestChain, erc20Address common.Address, amount *big.Int) {
-	transferData, err := erc20contracts.ERC20MinterBurnerDecimalsContract.ABI.Pack("approve", multicallcontract.MultiCallContractAddress, amount)
+func (suite *MultiCallTestSuite) Approve(fromChain *xibctesting.TestChain, erc20Address common.Address, spender common.Address, amount *big.Int) {
+	transferData, err := erc20contracts.ERC20MinterBurnerDecimalsContract.ABI.Pack("approve", spender, amount)
 	suite.Require().NoError(err)
 
 	_ = suite.SendTx(fromChain, erc20Address, big.NewInt(0), transferData)
+	suite.coordinator.CommitBlock(suite.chainA, suite.chainB)
+}
+
+func (suite *MultiCallTestSuite) DepositWTeleToken(fromChain *xibctesting.TestChain, amount *big.Int) {
+	transferData, err := wtelecontract.WTELEContract.ABI.Pack("deposit")
+	suite.Require().NoError(err)
+
+	_ = suite.SendTx(fromChain, wtelecontract.WTELEContractAddress, amount, transferData)
 	suite.coordinator.CommitBlock(suite.chainA, suite.chainB)
 }
 
