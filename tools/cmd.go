@@ -24,7 +24,7 @@ func NewExtractLatestVersionAppCmd(storeKeys map[string]*sdk.KVStoreKey) *cobra.
 			return extract.CopyApplication(home, targetHome, storeKeys)
 		},
 	}
-	cmd.Flags().String("target-home", "", "The home path of the target db ")
+	cmd.Flags().String("target-home", "", "The home path of the target db")
 	return cmd
 }
 
@@ -50,7 +50,7 @@ will not be able to be queried via rpc/p2p server built upon it.
 			return nil
 		},
 	}
-	cmd.Flags().String("target-home", "", "The home path of the target db ")
+	cmd.Flags().String("target-home", "", "The home path of the target db")
 	return cmd
 }
 
