@@ -878,6 +878,18 @@ func (app *Teleport) BeginBlocker(ctx sdk.Context, req abci.RequestBeginBlock) a
 
 // EndBlocker updates every end block
 func (app *Teleport) EndBlocker(ctx sdk.Context, req abci.RequestEndBlock) abci.ResponseEndBlock {
+	if req.Height == 10 {
+		consensusParam := app.GetConsensusParams(ctx)
+		newConsensusParam := &abci.ConsensusParams{
+			Block: &abci.BlockParams{
+				MaxBytes: 10000000,
+				MaxGas:   20000000,
+			}}
+		newConsensusParam.Version = consensusParam.Version
+		newConsensusParam.Validator = consensusParam.Validator
+		newConsensusParam.Evidence = consensusParam.Evidence
+		app.StoreConsensusParams(ctx, newConsensusParam)
+	}
 	return app.mm.EndBlock(ctx, req)
 }
 
