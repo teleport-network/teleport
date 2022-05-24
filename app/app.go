@@ -121,10 +121,7 @@ import (
 	syscontracts "github.com/teleport-network/teleport/syscontracts"
 	agentcontract "github.com/teleport-network/teleport/syscontracts/agent"
 	wtelecontract "github.com/teleport-network/teleport/syscontracts/wtele"
-	multicallcontract "github.com/teleport-network/teleport/syscontracts/xibc_multicall"
 	packetcontract "github.com/teleport-network/teleport/syscontracts/xibc_packet"
-	rcccontract "github.com/teleport-network/teleport/syscontracts/xibc_rcc"
-	transfercontract "github.com/teleport-network/teleport/syscontracts/xibc_transfer"
 	teletypes "github.com/teleport-network/teleport/types"
 	"github.com/teleport-network/teleport/x/aggregate"
 	aggregateclient "github.com/teleport-network/teleport/x/aggregate/client"
@@ -134,15 +131,15 @@ import (
 	rvestingkeeper "github.com/teleport-network/teleport/x/rvesting/keeper"
 	rvestingmodule "github.com/teleport-network/teleport/x/rvesting/module"
 	rvestingtypes "github.com/teleport-network/teleport/x/rvesting/types"
-	xibcmulticallkeeper "github.com/teleport-network/teleport/x/xibc/apps/multicall/keeper"
-	xibcmulticall "github.com/teleport-network/teleport/x/xibc/apps/multicall/module"
-	xibcmulticalltypes "github.com/teleport-network/teleport/x/xibc/apps/multicall/types"
-	xibcrcckeeper "github.com/teleport-network/teleport/x/xibc/apps/rcc/keeper"
-	xibcrcc "github.com/teleport-network/teleport/x/xibc/apps/rcc/module"
-	xibcrcctypes "github.com/teleport-network/teleport/x/xibc/apps/rcc/types"
-	xibctransferkeeper "github.com/teleport-network/teleport/x/xibc/apps/transfer/keeper"
-	xibctransfer "github.com/teleport-network/teleport/x/xibc/apps/transfer/module"
-	xibctransfertypes "github.com/teleport-network/teleport/x/xibc/apps/transfer/types"
+	//xibcmulticallkeeper "github.com/teleport-network/teleport/x/xibc/apps/multicall/keeper"
+	//xibcmulticall "github.com/teleport-network/teleport/x/xibc/apps/multicall/module"
+	//xibcmulticalltypes "github.com/teleport-network/teleport/x/xibc/apps/multicall/types"
+	//xibcrcckeeper "github.com/teleport-network/teleport/x/xibc/apps/rcc/keeper"
+	//xibcrcc "github.com/teleport-network/teleport/x/xibc/apps/rcc/module"
+	//xibcrcctypes "github.com/teleport-network/teleport/x/xibc/apps/rcc/types"
+	//xibctransferkeeper "github.com/teleport-network/teleport/x/xibc/apps/transfer/keeper"
+	//xibctransfer "github.com/teleport-network/teleport/x/xibc/apps/transfer/module"
+	//xibctransfertypes "github.com/teleport-network/teleport/x/xibc/apps/transfer/types"
 	xibcclient "github.com/teleport-network/teleport/x/xibc/core/client"
 	xibcclientcli "github.com/teleport-network/teleport/x/xibc/core/client/client"
 	xibcclienttypes "github.com/teleport-network/teleport/x/xibc/core/client/types"
@@ -219,9 +216,9 @@ var (
 		evm.AppModuleBasic{},
 		aggregatemodule.AppModuleBasic{},
 		xibcmodule.AppModuleBasic{},
-		xibctransfer.AppModuleBasic{},
-		xibcrcc.AppModuleBasic{},
-		xibcmulticall.AppModuleBasic{},
+		//xibctransfer.AppModuleBasic{},
+		//xibcrcc.AppModuleBasic{},
+		//xibcmulticall.AppModuleBasic{},
 		rvestingmodule.AppModuleBasic{},
 	)
 
@@ -235,8 +232,8 @@ var (
 		ibctransfertypes.ModuleName:    {authtypes.Minter, authtypes.Burner},
 		evmtypes.ModuleName:            {authtypes.Minter, authtypes.Burner}, // used for secure addition and subtraction of balance using module account
 		xibcpackettypes.SubModuleName:  nil,
-		xibctransfertypes.ModuleName:   nil,
-		xibcrcctypes.ModuleName:        nil,
+		//xibctransfertypes.ModuleName:   nil,
+		//xibcrcctypes.ModuleName:        nil,
 		aggregatetypes.ModuleName:      {authtypes.Minter, authtypes.Burner},
 		icatypes.ModuleName:            nil,
 		rvestingtypes.ModuleName:       nil,
@@ -289,9 +286,9 @@ type Teleport struct {
 	IBCKeeper           *ibckeeper.Keeper // IBC Keeper must be a pointer in the app, so we can SetRouter on it correctly
 	IBCTransferKeeper   ibctransferkeeper.Keeper
 	XIBCKeeper          *xibckeeper.Keeper // XIBC Keeper must be a pointer in the app, so we can SetRouter on it correctly
-	XIBCTransferKeeper  xibctransferkeeper.Keeper
-	XIBCRCCKeeper       xibcrcckeeper.Keeper
-	XIBCMultiCallKeeper xibcmulticallkeeper.Keeper
+	//XIBCTransferKeeper  xibctransferkeeper.Keeper
+	//XIBCRCCKeeper       xibcrcckeeper.Keeper
+	//XIBCMultiCallKeeper xibcmulticallkeeper.Keeper
 	EvidenceKeeper      evidencekeeper.Keeper
 	ICAControllerKeeper icacontrollerkeeper.Keeper
 	ICAHostKeeper       icahostkeeper.Keeper
@@ -413,9 +410,9 @@ func NewTeleport(
 	scopedICAHostKeeper := app.CapabilityKeeper.ScopeToModule(icahosttypes.SubModuleName)
 
 	scopedXIBCKeeper := app.CapabilityKeeper.ScopeToModule(xibchost.ModuleName)
-	scopedXIBCTransferKeeper := app.CapabilityKeeper.ScopeToModule(xibctransfertypes.ModuleName)
-	scopedXIBCRCCKeeper := app.CapabilityKeeper.ScopeToModule(xibcrcctypes.ModuleName)
-	scopedXIBCMultiCallKeeper := app.CapabilityKeeper.ScopeToModule(xibcmulticalltypes.ModuleName)
+	//scopedXIBCTransferKeeper := app.CapabilityKeeper.ScopeToModule(xibctransfertypes.ModuleName)
+	//scopedXIBCRCCKeeper := app.CapabilityKeeper.ScopeToModule(xibcrcctypes.ModuleName)
+	//scopedXIBCMultiCallKeeper := app.CapabilityKeeper.ScopeToModule(xibcmulticalltypes.ModuleName)
 
 	// Applications that wish to enforce statically created ScopedKeepers should call `Seal` after creating
 	// their scoped modules in `NewApp` with `ScopeToModule`
@@ -579,36 +576,36 @@ func NewTeleport(
 	app.IBCKeeper.SetRouter(ibcRouter)
 
 	// Create XIBC Transfer Keeper
-	app.XIBCTransferKeeper = xibctransferkeeper.NewKeeper(
-		appCodec,
-		app.AccountKeeper,
-		app.XIBCKeeper.PacketKeeper,
-		app.XIBCKeeper.ClientKeeper,
-		app.EvmKeeper,
-	)
-	xibcTransferModule := xibctransfer.NewAppModule(app.XIBCTransferKeeper, app.AccountKeeper)
+	//app.XIBCTransferKeeper = xibctransferkeeper.NewKeeper(
+	//	appCodec,
+	//	app.AccountKeeper,
+	//	app.XIBCKeeper.PacketKeeper,
+	//	app.XIBCKeeper.ClientKeeper,
+	//	app.EvmKeeper,
+	//)
+	//xibcTransferModule := xibctransfer.NewAppModule(app.XIBCTransferKeeper, app.AccountKeeper)
 
 	// Create XIBC RCC Keeper
-	app.XIBCRCCKeeper = xibcrcckeeper.NewKeeper(
-		appCodec,
-		app.AccountKeeper,
-		app.XIBCKeeper.PacketKeeper,
-		app.XIBCKeeper.ClientKeeper,
-		app.EvmKeeper,
-	)
-	xibcRCCModule := xibcrcc.NewAppModule(app.XIBCRCCKeeper, app.AccountKeeper)
-
-	// Create XIBC MultiCall Keeper
-	app.XIBCMultiCallKeeper = xibcmulticallkeeper.NewKeeper(
-		app.XIBCKeeper.PacketKeeper,
-		app.XIBCKeeper.ClientKeeper,
-		app.AggregateKeeper,
-	)
-	xibcMultiCallModule := xibcmulticall.NewAppModule(app.XIBCMultiCallKeeper)
+	//app.XIBCRCCKeeper = xibcrcckeeper.NewKeeper(
+	//	appCodec,
+	//	app.AccountKeeper,
+	//	app.XIBCKeeper.PacketKeeper,
+	//	app.XIBCKeeper.ClientKeeper,
+	//	app.EvmKeeper,
+	//)
+	//xibcRCCModule := xibcrcc.NewAppModule(app.XIBCRCCKeeper, app.AccountKeeper)
+	//
+	//// Create XIBC MultiCall Keeper
+	//app.XIBCMultiCallKeeper = xibcmulticallkeeper.NewKeeper(
+	//	app.XIBCKeeper.PacketKeeper,
+	//	app.XIBCKeeper.ClientKeeper,
+	//	app.AggregateKeeper,
+	//)
+	//xibcMultiCallModule := xibcmulticall.NewAppModule(app.XIBCMultiCallKeeper)
 
 	xibcRouter := xibcroutingtypes.NewRouter()
-	xibcRouter.AddRoute(xibctransfertypes.PortID, xibcTransferModule)
-	xibcRouter.AddRoute(xibcrcctypes.PortID, xibcRCCModule)
+	//xibcRouter.AddRoute(xibctransfertypes.PortID, xibcTransferModule)
+	//xibcRouter.AddRoute(xibcrcctypes.PortID, xibcRCCModule)
 	app.XIBCKeeper.SetRouter(xibcRouter)
 
 	// create evidence keeper with router
@@ -652,9 +649,9 @@ func NewTeleport(
 		icaModule,
 		// xibc modules
 		xibcmodule.NewAppModule(app.XIBCKeeper),
-		xibcTransferModule,
-		xibcRCCModule,
-		xibcMultiCallModule,
+		//xibcTransferModule,
+		//xibcRCCModule,
+		//xibcMultiCallModule,
 		// Ethermint app modules
 		evm.NewAppModule(app.EvmKeeper, app.AccountKeeper),
 		feemarket.NewAppModule(app.FeeMarketKeeper),
@@ -694,9 +691,9 @@ func NewTeleport(
 		paramstypes.ModuleName,
 		vestingtypes.ModuleName,
 		aggregatetypes.ModuleName,
-		xibctransfertypes.ModuleName,
-		xibcrcctypes.ModuleName,
-		xibcmulticalltypes.ModuleName,
+		//xibctransfertypes.ModuleName,
+		//xibcrcctypes.ModuleName,
+		//xibcmulticalltypes.ModuleName,
 	)
 
 	// NOTE: fee market module must go last in order to retrieve the block gas used.
@@ -724,9 +721,9 @@ func NewTeleport(
 		upgradetypes.ModuleName,
 		vestingtypes.ModuleName,
 		aggregatetypes.ModuleName,
-		xibctransfertypes.ModuleName,
-		xibcrcctypes.ModuleName,
-		xibcmulticalltypes.ModuleName,
+		//xibctransfertypes.ModuleName,
+		//xibcrcctypes.ModuleName,
+		//xibcmulticalltypes.ModuleName,
 		rvestingtypes.ModuleName,
 	)
 
@@ -760,9 +757,9 @@ func NewTeleport(
 		// teleport modules
 		aggregatetypes.ModuleName,
 		xibchost.ModuleName,
-		xibctransfertypes.ModuleName,
-		xibcrcctypes.ModuleName,
-		xibcmulticalltypes.ModuleName,
+		//xibctransfertypes.ModuleName,
+		//xibcrcctypes.ModuleName,
+		//xibcmulticalltypes.ModuleName,
 		rvestingtypes.ModuleName,
 		// NOTE: crisis module must go at the end to check for invariants on each module
 		crisistypes.ModuleName,
@@ -800,9 +797,9 @@ func NewTeleport(
 		ibc.NewAppModule(app.IBCKeeper),
 		ibcTransferModule,
 		xibcmodule.NewAppModule(app.XIBCKeeper),
-		xibcTransferModule,
-		xibcRCCModule,
-		xibcMultiCallModule,
+		//xibcTransferModule,
+		//xibcRCCModule,
+		//xibcMultiCallModule,
 		evm.NewAppModule(app.EvmKeeper, app.AccountKeeper),
 		feemarket.NewAppModule(app.FeeMarketKeeper),
 		//rvesting.NewAppModule(app.RVestingKeeper), todo to be implemented
@@ -851,18 +848,18 @@ func NewTeleport(
 	app.ScopedICAHostKeeper = scopedICAHostKeeper
 
 	app.ScopedXIBCKeeper = scopedXIBCKeeper
-	app.ScopedXIBCTransferKeeper = scopedXIBCTransferKeeper
-	app.ScopedXIBCRCCKeeper = scopedXIBCRCCKeeper
-	app.ScopedXIBCMultiCallKeeper = scopedXIBCMultiCallKeeper
+	//app.ScopedXIBCTransferKeeper = scopedXIBCTransferKeeper
+	//app.ScopedXIBCRCCKeeper = scopedXIBCRCCKeeper
+	//app.ScopedXIBCMultiCallKeeper = scopedXIBCMultiCallKeeper
 
 	app.EvmKeeper.SetHooks(
 		evmkeeper.NewMultiEvmHooks(
 			stakingHook,
 			govHook,
 			app.AggregateKeeper.Hooks(),
-			app.XIBCTransferKeeper.Hooks(),
-			app.XIBCRCCKeeper.Hooks(),
-			app.XIBCMultiCallKeeper.Hooks(),
+			//app.XIBCTransferKeeper.Hooks(),
+			//app.XIBCRCCKeeper.Hooks(),
+			//app.XIBCMultiCallKeeper.Hooks(),
 		),
 	)
 	return app
@@ -892,10 +889,10 @@ func (app *Teleport) InitChainer(ctx sdk.Context, req abci.RequestInitChain) abc
 	if err := app.am.InitGenesis(ctx); err != nil {
 		panic(err)
 	}
-
-	app.SetEVMCode(ctx, common.HexToAddress(syscontracts.TransferContractAddress), transfercontract.TransferContract.Bin)
-	app.SetEVMCode(ctx, common.HexToAddress(syscontracts.RCCContractAddress), rcccontract.RCCContract.Bin)
-	app.SetEVMCode(ctx, common.HexToAddress(syscontracts.MultiCallContractAddress), multicallcontract.MultiCallContract.Bin)
+	//
+	//app.SetEVMCode(ctx, common.HexToAddress(syscontracts.TransferContractAddress), transfercontract.TransferContract.Bin)
+	//app.SetEVMCode(ctx, common.HexToAddress(syscontracts.RCCContractAddress), rcccontract.RCCContract.Bin)
+	//app.SetEVMCode(ctx, common.HexToAddress(syscontracts.MultiCallContractAddress), multicallcontract.MultiCallContract.Bin)
 	app.SetEVMCode(ctx, common.HexToAddress(syscontracts.WTELEContractAddress), wtelecontract.WTELEContract.Bin)
 	app.SetEVMCode(ctx, common.HexToAddress(syscontracts.AgentContractAddress), agentcontract.AgentContract.Bin)
 	app.SetEVMCode(ctx, common.HexToAddress(syscontracts.PacketContractAddress), packetcontract.PacketContract.Bin)
