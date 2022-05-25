@@ -16,7 +16,6 @@ type testCase = struct {
 }
 
 var (
-	validPacketData  = []byte("VALID PACKET DATA")
 	mockTransferData = []byte("mock Transfer data")
 	mockCallData     = []byte("mock Call data")
 	relayChain       = ""

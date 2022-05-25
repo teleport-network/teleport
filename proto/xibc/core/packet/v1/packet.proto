@@ -12,7 +12,7 @@ message Packet {
   // identifies the chain id of the sending chain.
   string source_chain = 1 [ (gogoproto.moretags) = "yaml:\"source_chain\"" ];
   // identifies the chain id of the receiving chain.
-  string destination_chain = 2
+  string destination_port = 2
       [ (gogoproto.moretags) = "yaml:\"destination_port\"" ];
   string relay_chain = 3 [ (gogoproto.moretags) = "yaml:\"relay_chain\"" ];
 

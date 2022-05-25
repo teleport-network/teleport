@@ -25,17 +25,14 @@ const (
 	sourceChain = "source-chain"
 	destChain   = "dest-chain"
 	relayChain  = ""
-	port        = "mock"
 )
 
 // define variables used for testing
 var (
-	height            = clienttypes.NewHeight(0, 1)
-	validPacketData   = []byte("testdata")
-	unknownPacketData = []byte("unknown")
-	mockTransferData  = []byte("transfer")
-	mockCallData      = []byte("call")
-	mockAck           = []byte("ack")
+	height           = clienttypes.NewHeight(0, 1)
+	mockTransferData = []byte("transfer")
+	mockCallData     = []byte("call")
+	mockAck          = []byte("ack")
 
 	packet               = types.NewPacket(sourceChain, destChain, relayChain, 1, mockTransferData, mockCallData, "", 0)
 	invalidPacket        = types.NewPacket(sourceChain, destChain, relayChain, 1, []byte(""), []byte(""), "", 0)

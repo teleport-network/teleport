@@ -37,7 +37,7 @@ func initPacketData() {
 		"tuple", "",
 		[]abi.ArgumentMarshaling{
 			{Name: "source_chain", Type: "string"},
-			{Name: "destination_chain", Type: "string"},
+			{Name: "destination_port", Type: "string"},
 			{Name: "relay_chain", Type: "string"},
 			{Name: "sequence", Type: "uint64"},
 			{Name: "sender", Type: "string"},

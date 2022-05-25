@@ -48,14 +48,14 @@ func NewPacket(
 	feeOption uint64,
 ) *Packet {
 	return &Packet{
-		SourceChain:      sourceChain,
-		DestinationChain: destinationChain,
-		RelayChain:       relayChain,
-		Sequence:         sequence,
-		TransferData:     transferData,
-		CallData:         callData,
-		CallbackAddress:  callbackAddress,
-		FeeOption:        feeOption,
+		SourceChain:     sourceChain,
+		DestinationPort: destinationChain,
+		RelayChain:      relayChain,
+		Sequence:        sequence,
+		TransferData:    transferData,
+		CallData:        callData,
+		CallbackAddress: callbackAddress,
+		FeeOption:       feeOption,
 	}
 }
 
@@ -66,7 +66,7 @@ func (p Packet) GetSequence() uint64 { return p.Sequence }
 func (p Packet) GetSourceChain() string { return p.SourceChain }
 
 // GetDestChain implements PacketI interface
-func (p Packet) GetDestChain() string { return p.DestinationChain }
+func (p Packet) GetDestChain() string { return p.DestinationPort }
 
 // GetRelayChain implements PacketI interface
 func (p Packet) GetRelayChain() string { return p.RelayChain }
@@ -114,15 +114,15 @@ func (p Packet) ValidateBasic() error {
 		return sdkerrors.Wrap(ErrInvalidSrcChain, "srcChain is empty")
 	}
 
-	if len(p.DestinationChain) == 0 {
+	if len(p.DestinationPort) == 0 {
 		return sdkerrors.Wrap(ErrInvalidDestChain, "destChain is empty")
 	}
 
-	if p.SourceChain == p.DestinationChain {
+	if p.SourceChain == p.DestinationPort {
 		return sdkerrors.Wrap(ErrScChainEqualToDestChain, "srcChain equals to destChain")
 	}
 
-	if p.SourceChain == p.RelayChain || p.DestinationChain == p.RelayChain {
+	if p.SourceChain == p.RelayChain || p.DestinationPort == p.RelayChain {
 		return sdkerrors.Wrap(ErrInvalidRelayChain, "relayChain is equal to srcChain or destChain")
 	}
 
@@ -229,7 +229,7 @@ type WPacket struct {
 func (p Packet) ToWPacket() WPacket {
 	return WPacket{
 		p.SourceChain,
-		p.DestinationChain,
+		p.DestinationPort,
 		p.RelayChain,
 		p.Sequence,
 		p.Sender,
