@@ -49,7 +49,10 @@ func (path *Path) RegisterRelayers() {
 // if EndpointA does not contain a packet commitment for that packet. An error is returned
 // if a relay step fails or the packet commitment does not exist on either endpoint.
 func (path *Path) RelayPacket(packet packettypes.Packet, ack []byte) error {
-	packetCommit := packettypes.CommitPacket(packet)
+	packetCommit, err := packettypes.CommitPacket(&packet)
+	if err != nil {
+		return err
+	}
 	packetCommitA := path.EndpointA.Chain.App.XIBCKeeper.PacketKeeper.GetPacketCommitment(
 		path.EndpointA.Chain.GetContext(),
 		packet.GetSourceChain(),
@@ -95,11 +98,14 @@ func (path *Path) RelayPacket(packet packettypes.Packet, ack []byte) error {
 	return fmt.Errorf("packet commitment does not exist on either endpoint for provided packet")
 }
 
-// RelayPacketWithotAck attempts to relay the packet first on EndpointA and then on EndpointB
+// RelayPacketWithoutAck attempts to relay the packet first on EndpointA and then on EndpointB
 // if EndpointA does not contain a packet commitment for that packet. An error is returned
 // if a relay step fails or the packet commitment does not exist on either endpoint.
 func (path *Path) RelayPacketWithoutAck(packet packettypes.Packet) error {
-	packetCommit := packettypes.CommitPacket(packet)
+	packetCommit, err := packettypes.CommitPacket(&packet)
+	if err != nil {
+		return err
+	}
 	packetCommitA := path.EndpointA.Chain.App.XIBCKeeper.PacketKeeper.GetPacketCommitment(
 		path.EndpointA.Chain.GetContext(),
 		packet.GetSourceChain(),

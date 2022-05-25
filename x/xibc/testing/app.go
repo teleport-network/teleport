@@ -26,10 +26,6 @@ import (
 	feemarkettypes "github.com/tharsis/ethermint/x/feemarket/types"
 
 	"github.com/teleport-network/teleport/app"
-	xibcrcctypes "github.com/teleport-network/teleport/x/xibc/apps/rcc/types"
-	xibctransfertypes "github.com/teleport-network/teleport/x/xibc/apps/transfer/types"
-	xibcroutingtypes "github.com/teleport-network/teleport/x/xibc/core/routing/types"
-	xibcmock "github.com/teleport-network/teleport/x/xibc/testing/mock"
 )
 
 var DefaultTestingAppInit func() (*app.Teleport, map[string]json.RawMessage) = SetupTestingApp
@@ -39,18 +35,6 @@ func SetupTestingApp() (*app.Teleport, map[string]json.RawMessage) {
 
 	encCdc := encoding.MakeConfig(app.ModuleBasics)
 	teleport := app.NewTeleport(log.NewNopLogger(), db, nil, true, map[int64]bool{}, app.DefaultNodeHome, 5, encCdc, simapp.EmptyAppOptions{})
-
-	xibcTransferModule, _ := teleport.XIBCKeeper.RoutingKeeper.Router.GetRoute(xibctransfertypes.PortID)
-	xibcRCCModule, _ := teleport.XIBCKeeper.RoutingKeeper.Router.GetRoute(xibcrcctypes.PortID)
-
-	mockModule := xibcmock.NewAppModule()
-
-	xibcRouter := xibcroutingtypes.NewRouter()
-	xibcRouter.AddRoute(xibcmock.ModuleName, mockModule)
-	xibcRouter.AddRoute(xibctransfertypes.PortID, xibcTransferModule)
-	xibcRouter.AddRoute(xibcrcctypes.PortID, xibcRCCModule)
-	teleport.XIBCKeeper.RoutingKeeper.Router = xibcRouter
-	teleport.XIBCKeeper.RoutingKeeper.Router.Seal()
 
 	return teleport, app.NewDefaultGenesisState()
 }

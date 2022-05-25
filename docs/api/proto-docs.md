@@ -59,21 +59,6 @@
   
     - [Query](#teleport.rvesting.v1.Query)
   
-- [xibc/apps/multicall/v1/multicall.proto](#xibc/apps/multicall/v1/multicall.proto)
-- [xibc/apps/rcc/v1/event.proto](#xibc/apps/rcc/v1/event.proto)
-    - [EventAckPacket](#xibc.apps.rcc.v1.EventAckPacket)
-    - [EventRecvPacket](#xibc.apps.rcc.v1.EventRecvPacket)
-  
-- [xibc/apps/rcc/v1/rcc.proto](#xibc/apps/rcc/v1/rcc.proto)
-    - [RCCPacketData](#xibc.apps.rcc.v1.RCCPacketData)
-  
-- [xibc/apps/transfer/v1/event.proto](#xibc/apps/transfer/v1/event.proto)
-    - [EventAckPacket](#xibc.apps.transfer.v1.EventAckPacket)
-    - [EventRecvPacket](#xibc.apps.transfer.v1.EventRecvPacket)
-  
-- [xibc/apps/transfer/v1/transfer.proto](#xibc/apps/transfer/v1/transfer.proto)
-    - [FungibleTokenPacketData](#xibc.apps.transfer.v1.FungibleTokenPacketData)
-  
 - [xibc/clients/tssclient/v1/tssclient.proto](#xibc/clients/tssclient/v1/tssclient.proto)
     - [ClientState](#xibc.clients.tssclient.v1.ClientState)
     - [ConsensusState](#xibc.clients.tssclient.v1.ConsensusState)
@@ -135,8 +120,10 @@
   
 - [xibc/core/packet/v1/packet.proto](#xibc/core/packet/v1/packet.proto)
     - [Acknowledgement](#xibc.core.packet.v1.Acknowledgement)
+    - [CallData](#xibc.core.packet.v1.CallData)
     - [Packet](#xibc.core.packet.v1.Packet)
     - [PacketState](#xibc.core.packet.v1.PacketState)
+    - [TransferData](#xibc.core.packet.v1.TransferData)
   
 - [xibc/core/packet/v1/genesis.proto](#xibc/core/packet/v1/genesis.proto)
     - [GenesisState](#xibc.core.packet.v1.GenesisState)
@@ -840,212 +827,6 @@ QueryParamsResponse is the response type for the Query/Params RPC method.
 | ----------- | ------------ | ------------- | ------------| ------- | -------- |
 | `Params` | [QueryParamsRequest](#teleport.rvesting.v1.QueryParamsRequest) | [QueryParamsResponse](#teleport.rvesting.v1.QueryParamsResponse) | Params returns the total set of parameters. | GET|/teleport/rvesting/v1/params|
 | `Remaining` | [QueryRemainingRequest](#teleport.rvesting.v1.QueryRemainingRequest) | [QueryRemainingResponse](#teleport.rvesting.v1.QueryRemainingResponse) |  | GET|/teleport/rvesting/v1/remaining|
-
- <!-- end services -->
-
-
-
-<a name="xibc/apps/multicall/v1/multicall.proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## xibc/apps/multicall/v1/multicall.proto
-
-
- <!-- end messages -->
-
- <!-- end enums -->
-
- <!-- end HasExtensions -->
-
- <!-- end services -->
-
-
-
-<a name="xibc/apps/rcc/v1/event.proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## xibc/apps/rcc/v1/event.proto
-
-
-
-<a name="xibc.apps.rcc.v1.EventAckPacket"></a>
-
-### EventAckPacket
-EventAckPacket is emitted on acknowledgement packet
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `src_chain` | [string](#string) |  |  |
-| `dest_chain` | [string](#string) |  |  |
-| `sender` | [string](#string) |  |  |
-| `contract_address` | [string](#string) |  |  |
-| `data` | [bytes](#bytes) |  |  |
-| `result` | [bytes](#bytes) |  |  |
-
-
-
-
-
-
-<a name="xibc.apps.rcc.v1.EventRecvPacket"></a>
-
-### EventRecvPacket
-EventRecvPacket is emitted on receive packet
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `src_chain` | [string](#string) |  |  |
-| `dest_chain` | [string](#string) |  |  |
-| `sender` | [string](#string) |  |  |
-| `contract_address` | [string](#string) |  |  |
-| `data` | [bytes](#bytes) |  |  |
-| `result` | [bytes](#bytes) |  |  |
-| `message` | [string](#string) |  |  |
-
-
-
-
-
- <!-- end messages -->
-
- <!-- end enums -->
-
- <!-- end HasExtensions -->
-
- <!-- end services -->
-
-
-
-<a name="xibc/apps/rcc/v1/rcc.proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## xibc/apps/rcc/v1/rcc.proto
-
-
-
-<a name="xibc.apps.rcc.v1.RCCPacketData"></a>
-
-### RCCPacketData
-RCCPacketData defines a struct for the packet payload
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `src_chain` | [string](#string) |  |  |
-| `dest_chain` | [string](#string) |  |  |
-| `sequence` | [uint64](#uint64) |  |  |
-| `sender` | [string](#string) |  |  |
-| `contract_address` | [string](#string) |  |  |
-| `data` | [bytes](#bytes) |  |  |
-
-
-
-
-
- <!-- end messages -->
-
- <!-- end enums -->
-
- <!-- end HasExtensions -->
-
- <!-- end services -->
-
-
-
-<a name="xibc/apps/transfer/v1/event.proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## xibc/apps/transfer/v1/event.proto
-
-
-
-<a name="xibc.apps.transfer.v1.EventAckPacket"></a>
-
-### EventAckPacket
-EventAckPacket is emitted on acknowledgement packet
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `src_chain` | [string](#string) |  |  |
-| `dest_chain` | [string](#string) |  |  |
-| `sender` | [string](#string) |  |  |
-| `receiver` | [string](#string) |  |  |
-| `token` | [string](#string) |  |  |
-| `amount` | [bytes](#bytes) |  |  |
-| `result` | [bytes](#bytes) |  |  |
-
-
-
-
-
-
-<a name="xibc.apps.transfer.v1.EventRecvPacket"></a>
-
-### EventRecvPacket
-EventRecvPacket is emitted on receive packet
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `src_chain` | [string](#string) |  |  |
-| `dest_chain` | [string](#string) |  |  |
-| `sender` | [string](#string) |  |  |
-| `receiver` | [string](#string) |  |  |
-| `token` | [string](#string) |  |  |
-| `amount` | [bytes](#bytes) |  |  |
-| `result` | [bytes](#bytes) |  |  |
-| `message` | [string](#string) |  |  |
-
-
-
-
-
- <!-- end messages -->
-
- <!-- end enums -->
-
- <!-- end HasExtensions -->
-
- <!-- end services -->
-
-
-
-<a name="xibc/apps/transfer/v1/transfer.proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## xibc/apps/transfer/v1/transfer.proto
-
-
-
-<a name="xibc.apps.transfer.v1.FungibleTokenPacketData"></a>
-
-### FungibleTokenPacketData
-FungibleTokenPacketData defines a struct for the packet payload
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `src_chain` | [string](#string) |  |  |
-| `dest_chain` | [string](#string) |  |  |
-| `sequence` | [uint64](#uint64) |  |  |
-| `sender` | [string](#string) |  |  |
-| `receiver` | [string](#string) |  |  |
-| `amount` | [bytes](#bytes) |  |  |
-| `token` | [string](#string) |  |  |
-| `ori_token` | [string](#string) |  |  |
-
-
-
-
-
- <!-- end messages -->
-
- <!-- end enums -->
-
- <!-- end HasExtensions -->
 
  <!-- end services -->
 
@@ -1799,12 +1580,7 @@ EventAcknowledgePacket is emitted on acknowledgement packet
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `sequence` | [string](#string) |  |  |
-| `src_chain` | [string](#string) |  |  |
-| `dst_chain` | [string](#string) |  |  |
-| `relay_chain` | [string](#string) |  |  |
-| `ports` | [string](#string) | repeated |  |
-| `data_list` | [bytes](#bytes) | repeated |  |
+| `packet` | [bytes](#bytes) |  |  |
 | `ack` | [bytes](#bytes) |  |  |
 
 
@@ -1820,12 +1596,7 @@ EventRecvPacket is emitted on receive packet
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `sequence` | [string](#string) |  |  |
-| `src_chain` | [string](#string) |  |  |
-| `dst_chain` | [string](#string) |  |  |
-| `relay_chain` | [string](#string) |  |  |
-| `ports` | [string](#string) | repeated |  |
-| `data_list` | [bytes](#bytes) | repeated |  |
+| `packet` | [bytes](#bytes) |  |  |
 
 
 
@@ -1840,12 +1611,7 @@ EventSendPacket is emitted on send packet
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `sequence` | [string](#string) |  |  |
-| `src_chain` | [string](#string) |  |  |
-| `dst_chain` | [string](#string) |  |  |
-| `relay_chain` | [string](#string) |  |  |
-| `ports` | [string](#string) | repeated |  |
-| `data_list` | [bytes](#bytes) | repeated |  |
+| `packet` | [bytes](#bytes) |  |  |
 
 
 
@@ -1860,12 +1626,7 @@ EventWriteAck is emitted on receive packet
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `sequence` | [string](#string) |  |  |
-| `src_chain` | [string](#string) |  |  |
-| `dst_chain` | [string](#string) |  |  |
-| `relay_chain` | [string](#string) |  |  |
-| `ports` | [string](#string) | repeated |  |
-| `data_list` | [bytes](#bytes) | repeated |  |
+| `packet` | [bytes](#bytes) |  |  |
 | `ack` | [bytes](#bytes) |  |  |
 
 
@@ -1898,9 +1659,27 @@ app-specific protocols.
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `results` | [bytes](#bytes) | repeated | the execution results of the packet data list |
-| `message` | [string](#string) |  | error message |
-| `relayer` | [string](#string) |  | relayer address |
+| `code` | [uint64](#uint64) |  | 0: success; 1: system failed; 2: transfer failed; 3: call failed; 4: undefined |
+| `result` | [bytes](#bytes) |  |  |
+| `message` | [string](#string) |  |  |
+| `relayer` | [string](#string) |  |  |
+| `fee_option` | [uint64](#uint64) |  |  |
+
+
+
+
+
+
+<a name="xibc.core.packet.v1.CallData"></a>
+
+### CallData
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `contractAddress` | [string](#string) |  | identifies the contract address on dest chain |
+| `callData` | [bytes](#bytes) |  | identifies the data which used to call the contract |
 
 
 
@@ -1915,12 +1694,15 @@ Packet defines a type that carries data across different chains through XIBC
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `sequence` | [uint64](#uint64) |  | number corresponds to the order of sends and receives, where a Packet with an earlier sequence number must be sent and received before a Packet with a later sequence number. |
 | `source_chain` | [string](#string) |  | identifies the chain id of the sending chain. |
 | `destination_chain` | [string](#string) |  | identifies the chain id of the receiving chain. |
-| `relay_chain` | [string](#string) |  | identifies the chain id of the relay chain. |
-| `ports` | [string](#string) | repeated | identifies the ports on the sending chain and destination chain |
-| `data_list` | [bytes](#bytes) | repeated | actual opaque bytes transferred directly to the application module |
+| `relay_chain` | [string](#string) |  |  |
+| `sequence` | [uint64](#uint64) |  | number corresponds to the order of sends and receives, where a Packet with an earlier sequence number must be sent and received before a Packet with a later sequence number. |
+| `sender` | [string](#string) |  |  |
+| `transfer_data` | [bytes](#bytes) |  | transfer data. keep empty if not used. |
+| `call_data` | [bytes](#bytes) |  | call data. keep empty if not used |
+| `callback_address` | [string](#string) |  |  |
+| `fee_option` | [uint64](#uint64) |  |  |
 
 
 
@@ -1942,6 +1724,24 @@ state as a commitment, acknowledgement, or a receipt.
 | `destination_chain` | [string](#string) |  | the receiving chain identifier. |
 | `sequence` | [uint64](#uint64) |  | packet sequence. |
 | `data` | [bytes](#bytes) |  | embedded data that represents packet state. |
+
+
+
+
+
+
+<a name="xibc.core.packet.v1.TransferData"></a>
+
+### TransferData
+TransferData defines packet transfer_data struct
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| `receiver` | [string](#string) |  | identifies the token receiver on dest chain |
+| `amount` | [bytes](#bytes) |  |  |
+| `token` | [string](#string) |  | identifies the token address on src chain |
+| `oriToken` | [string](#string) |  | identifies the ori token address on dest chain if exist |
 
 
 
@@ -2310,7 +2110,7 @@ MsgAcknowledgement receives incoming XIBC acknowledgement
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `packet` | [Packet](#xibc.core.packet.v1.Packet) |  |  |
+| `packet` | [bytes](#bytes) |  |  |
 | `acknowledgement` | [bytes](#bytes) |  |  |
 | `proof_acked` | [bytes](#bytes) |  |  |
 | `proof_height` | [xibc.core.client.v1.Height](#xibc.core.client.v1.Height) |  |  |
@@ -2339,7 +2139,7 @@ MsgRecvPacket receives incoming XIBC packet
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `packet` | [Packet](#xibc.core.packet.v1.Packet) |  |  |
+| `packet` | [bytes](#bytes) |  |  |
 | `proof_commitment` | [bytes](#bytes) |  |  |
 | `proof_height` | [xibc.core.client.v1.Height](#xibc.core.client.v1.Height) |  |  |
 | `signer` | [string](#string) |  |  |

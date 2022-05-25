@@ -22,4 +22,6 @@ var (
 	ErrInvalidSrcChain          = sdkerrors.Register(moduleName, 11, "invalid source chain")
 	ErrInvalidDestChain         = sdkerrors.Register(moduleName, 12, "invalid destination chain")
 	ErrInvalidRelayChain        = sdkerrors.Register(moduleName, 13, "invalid relay chain")
+	ErrAbiPack                  = sdkerrors.Register(moduleName, 14, "err pack to bytes")
+	ErrDecodeAbi                = sdkerrors.Register(moduleName, 15, "err decode abi ")
 )

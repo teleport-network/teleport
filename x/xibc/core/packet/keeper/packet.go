@@ -40,8 +40,10 @@ func (k Keeper) SendPacket(ctx sdk.Context, packet exported.PacketI) error {
 		)
 	}
 
-	commitment := types.CommitPacket(packet)
-
+	commitment, err := types.CommitPacket(packet)
+	if err != nil {
+		return sdkerrors.Wrapf(types.ErrAbiPack, "SendPacket error ,err : %s", err)
+	}
 	nextSequenceSend++
 	k.SetNextSequenceSend(ctx, packet.GetSourceChain(), packet.GetDestChain(), nextSequenceSend)
 
@@ -52,14 +54,13 @@ func (k Keeper) SendPacket(ctx sdk.Context, packet exported.PacketI) error {
 
 	k.SetPacketCommitment(ctx, packet.GetSourceChain(), packet.GetDestChain(), packet.GetSequence(), commitment)
 
+	packetData, err := packet.AbiPack()
+	if err != nil {
+		return sdkerrors.Wrapf(types.ErrAbiPack, "SendPacket error , err: %s", err)
+	}
 	_ = ctx.EventManager().EmitTypedEvent(
 		&types.EventSendPacket{
-			Sequence:   fmt.Sprintf("%d", packet.GetSequence()),
-			SrcChain:   packet.GetSourceChain(),
-			DstChain:   packet.GetDestChain(),
-			RelayChain: packet.GetRelayChain(),
-			Ports:      packet.GetPorts(),
-			DataList:   packet.GetDataList(),
+			Packet: packetData,
 		},
 	)
 
@@ -70,8 +71,13 @@ func (k Keeper) SendPacket(ctx sdk.Context, packet exported.PacketI) error {
 // RecvPacket is called by a module to receive & process an XIBC packet
 // sent on the corresponding port on the counterparty chain.
 func (k Keeper) RecvPacket(ctx sdk.Context, msg *types.MsgRecvPacket) error {
-	packet := msg.Packet
-	if err := k.ValidatePacket(ctx, packet); err != nil {
+	var packet types.Packet
+	err := packet.DecodeAbiBytes(msg.Packet)
+	if err != nil && packet.Sequence == 0 {
+		return sdkerrors.Wrap(err, "packet failed basic validation")
+	}
+
+	if err := k.ValidatePacket(ctx, &packet); err != nil {
 		return sdkerrors.Wrap(err, "packet failed basic validation")
 	}
 	// check if the packet receipt has been received already
@@ -92,8 +98,10 @@ func (k Keeper) RecvPacket(ctx sdk.Context, msg *types.MsgRecvPacket) error {
 		return sdkerrors.Wrap(clienttypes.ErrClientNotFound, fromChain)
 	}
 
-	commitment := types.CommitPacket(packet)
-
+	commitment, err := types.CommitPacket(&packet)
+	if err != nil {
+		return sdkerrors.Wrapf(types.ErrAbiPack, "SendPacket error ,err : %s", err)
+	}
 	// use signer as tss client proof
 	proof := msg.ProofCommitment
 	if targetClient.ClientType() == exported.TSS {
@@ -122,12 +130,7 @@ func (k Keeper) RecvPacket(ctx sdk.Context, msg *types.MsgRecvPacket) error {
 
 	_ = ctx.EventManager().EmitTypedEvent(
 		&types.EventRecvPacket{
-			Sequence:   fmt.Sprintf("%d", packet.GetSequence()),
-			SrcChain:   packet.GetSourceChain(),
-			DstChain:   packet.GetDestChain(),
-			RelayChain: packet.GetRelayChain(),
-			Ports:      packet.GetPorts(),
-			DataList:   packet.GetDataList(),
+			Packet: msg.Packet,
 		},
 	)
 
@@ -137,22 +140,17 @@ func (k Keeper) RecvPacket(ctx sdk.Context, msg *types.MsgRecvPacket) error {
 
 		_ = ctx.EventManager().EmitTypedEvent(
 			&types.EventSendPacket{
-				Sequence:   fmt.Sprintf("%d", packet.GetSequence()),
-				SrcChain:   packet.GetSourceChain(),
-				DstChain:   packet.GetDestChain(),
-				RelayChain: packet.GetRelayChain(),
-				Ports:      packet.GetPorts(),
-				DataList:   packet.GetDataList(),
+				Packet: msg.Packet,
 			},
 		)
 
 		// if destChain not exist, return error ack to source chain
-		if _, found := k.clientKeeper.GetClientState(ctx, msg.Packet.GetDestChain()); !found {
-			errAckBz, err := types.NewErrorAcknowledgement("invalid destChain", msg.Signer).GetBytes()
+		if _, found := k.clientKeeper.GetClientState(ctx, packet.GetDestChain()); !found {
+			errAckBz, err := types.NewErrorAcknowledgement(1, []byte(""), "invalid destChain", msg.Signer).AbiPack()
 			if err != nil {
 				return sdkerrors.Wrapf(types.ErrInvalidAcknowledgement, "pack ack failed")
 			}
-			if err := k.WriteAcknowledgement(ctx, msg.Packet, errAckBz); err != nil {
+			if err := k.WriteAcknowledgement(ctx, &packet, errAckBz); err != nil {
 				return err
 			}
 		}
@@ -214,15 +212,14 @@ func (k Keeper) WriteAcknowledgement(
 	// log that a packet acknowledgement has been written
 	k.Logger(ctx).Info("acknowledged written", "packet", fmt.Sprintf("%v", packet))
 
+	packetData, err := packet.AbiPack()
+	if err != nil {
+		return sdkerrors.Wrapf(types.ErrAbiPack, "SendPacket error , err: %s", err)
+	}
 	_ = ctx.EventManager().EmitTypedEvent(
 		&types.EventWriteAck{
-			Sequence:   fmt.Sprintf("%d", packet.GetSequence()),
-			SrcChain:   packet.GetSourceChain(),
-			DstChain:   packet.GetDestChain(),
-			RelayChain: packet.GetRelayChain(),
-			Ports:      packet.GetPorts(),
-			DataList:   packet.GetDataList(),
-			Ack:        acknowledgement,
+			Packet: packetData,
+			Ack:    acknowledgement,
 		},
 	)
 
@@ -238,8 +235,12 @@ func (k Keeper) AcknowledgePacket(
 	ctx sdk.Context,
 	msg *types.MsgAcknowledgement,
 ) error {
-	packet := msg.Packet
-	if err := k.ValidatePacket(ctx, packet); err != nil {
+	var packet types.Packet
+	err := packet.DecodeAbiBytes(msg.Packet)
+	if err != nil {
+		return sdkerrors.Wrapf(types.ErrDecodeAbi, "AcknowledgePacket failed ,err %s", err)
+	}
+	if err := k.ValidatePacket(ctx, &packet); err != nil {
 		return sdkerrors.Wrap(err, "AcknowledgePacket failed basic validation")
 	}
 	commitment := k.GetPacketCommitment(
@@ -249,8 +250,10 @@ func (k Keeper) AcknowledgePacket(
 		packet.GetSequence(),
 	)
 
-	packetCommitment := types.CommitPacket(packet)
-
+	packetCommitment, err := types.CommitPacket(&packet)
+	if err != nil {
+		return sdkerrors.Wrapf(types.ErrAbiPack, "AcknowledgePacket failed ,err %s", err)
+	}
 	// verify we sent the packet and haven't cleared it out yet
 	if !bytes.Equal(commitment, packetCommitment) {
 		return sdkerrors.Wrapf(
@@ -301,13 +304,8 @@ func (k Keeper) AcknowledgePacket(
 
 	_ = ctx.EventManager().EmitTypedEvent(
 		&types.EventAcknowledgePacket{
-			Sequence:   fmt.Sprintf("%d", packet.GetSequence()),
-			SrcChain:   packet.GetSourceChain(),
-			DstChain:   packet.GetDestChain(),
-			RelayChain: packet.GetRelayChain(),
-			Ports:      packet.GetPorts(),
-			DataList:   packet.GetDataList(),
-			Ack:        msg.Acknowledgement,
+			Packet: msg.Packet,
+			Ack:    msg.Acknowledgement,
 		},
 	)
 
@@ -325,7 +323,7 @@ func (k Keeper) AcknowledgePacket(
 		)
 
 		var ack types.Acknowledgement
-		if err := ack.DecodeBytes(msg.Acknowledgement); err != nil {
+		if err := ack.DecodeAbiBytes(msg.Acknowledgement); err != nil {
 			return sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest, "decode acknowledgement bytes failed: %v", err)
 		}
 
@@ -342,7 +340,7 @@ func (k Keeper) AcknowledgePacket(
 		}
 
 		ack.Relayer = relayer
-		ackBz, err := ack.GetBytes()
+		ackBz, err := ack.AbiPack()
 		if err != nil {
 			return sdkerrors.Wrapf(types.ErrInvalidAcknowledgement, "pack ack failed")
 		}
@@ -355,13 +353,8 @@ func (k Keeper) AcknowledgePacket(
 
 		_ = ctx.EventManager().EmitTypedEvent(
 			&types.EventWriteAck{
-				Sequence:   fmt.Sprintf("%d", packet.GetSequence()),
-				SrcChain:   packet.GetSourceChain(),
-				DstChain:   packet.GetDestChain(),
-				RelayChain: packet.GetRelayChain(),
-				Ports:      packet.GetPorts(),
-				DataList:   packet.GetDataList(),
-				Ack:        ackBz,
+				Packet: msg.Packet,
+				Ack:    ackBz,
 			},
 		)
 	}

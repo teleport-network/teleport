@@ -6,7 +6,12 @@ type PacketI interface {
 	GetSourceChain() string
 	GetDestChain() string
 	GetRelayChain() string
-	GetDataList() [][]byte
-	GetPorts() []string
+	GetSender() string
+	GetTransferData() []byte
+	GetCallData() []byte
+	GetCallbackAddress() string
+	GetFeeOption() uint64
+	AbiPack() ([]byte, error)
+	DecodeAbiBytes(bz []byte) error
 	ValidateBasic() error
 }

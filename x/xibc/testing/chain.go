@@ -51,7 +51,6 @@ const (
 	DefaultDelayPeriod uint64        = 0
 
 	InvalidID = "InvalidID"
-	MockPort  = mock.ModuleName
 
 	// used for testing UpdateClientProposal
 	Title       = "title"

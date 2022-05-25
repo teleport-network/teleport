@@ -8,7 +8,7 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	evmtypes "github.com/tharsis/ethermint/x/evm/types"
 
-	transfer "github.com/teleport-network/teleport/syscontracts/xibc_transfer"
+	crosschain "github.com/teleport-network/teleport/syscontracts/cross_chain"
 	"github.com/teleport-network/teleport/x/aggregate/types"
 )
 
@@ -22,12 +22,12 @@ func (k Keeper) AddERC20TraceToTransferContract(
 	*evmtypes.MsgEthereumTxResponse,
 	error,
 ) {
-	payload, err := transfer.TransferContract.ABI.Pack("bindToken", contract, originToken, originChain, scale)
+	payload, err := crosschain.CrossChainContract.ABI.Pack("bindToken", contract, originToken, originChain, scale)
 	if err != nil {
 		return nil, err
 	}
 
-	return k.CallEVMWithData(ctx, types.ModuleAddress, &transfer.TransferContractAddress, payload)
+	return k.CallEVMWithData(ctx, types.ModuleAddress, &crosschain.CrossChainAddress, payload)
 }
 
 func (k Keeper) EnableTimeBasedSupplyLimitInTransferContract(
@@ -41,7 +41,7 @@ func (k Keeper) EnableTimeBasedSupplyLimitInTransferContract(
 	*evmtypes.MsgEthereumTxResponse,
 	error,
 ) {
-	payload, err := transfer.TransferContract.ABI.Pack(
+	payload, err := crosschain.CrossChainContract.ABI.Pack(
 		"enableTimeBasedSupplyLimit",
 		erc20Address,
 		timePeriod,
@@ -53,7 +53,7 @@ func (k Keeper) EnableTimeBasedSupplyLimitInTransferContract(
 		return nil, err
 	}
 
-	return k.CallEVMWithData(ctx, types.ModuleAddress, &transfer.TransferContractAddress, payload)
+	return k.CallEVMWithData(ctx, types.ModuleAddress, &crosschain.CrossChainAddress, payload)
 }
 
 func (k Keeper) DisableTimeBasedSupplyLimitInTransferContract(
@@ -63,10 +63,10 @@ func (k Keeper) DisableTimeBasedSupplyLimitInTransferContract(
 	*evmtypes.MsgEthereumTxResponse,
 	error,
 ) {
-	payload, err := transfer.TransferContract.ABI.Pack("disableTimeBasedSupplyLimit", erc20Address)
+	payload, err := crosschain.CrossChainContract.ABI.Pack("disableTimeBasedSupplyLimit", erc20Address)
 	if err != nil {
 		return nil, err
 	}
 
-	return k.CallEVMWithData(ctx, types.ModuleAddress, &transfer.TransferContractAddress, payload)
+	return k.CallEVMWithData(ctx, types.ModuleAddress, &crosschain.CrossChainAddress, payload)
 }

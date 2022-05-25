@@ -149,7 +149,7 @@ func (suite *TendermintTestSuite) TestVerifyPacketCommitment() {
 			suite.Require().Equal(path.EndpointB.Chain.SenderAcc.String(), relayerB[0].Address, "relayer does not match")
 
 			// setup testing conditions
-			packet := packettypes.NewPacket(1, path.EndpointA.ChainName, path.EndpointB.ChainName, "", []string{xibctesting.MockPort}, [][]byte{xibctesting.TestHash})
+			packet := packettypes.NewPacket(path.EndpointA.ChainName, path.EndpointB.ChainName, "", 1, []byte("mock transfer"), []byte("mock rcc"), "", 0)
 
 			err := path.EndpointA.SendPacket(packet)
 			suite.Require().NoError(err)
@@ -167,7 +167,9 @@ func (suite *TendermintTestSuite) TestVerifyPacketCommitment() {
 
 			store := path.EndpointB.ClientStore()
 
-			commitment := packettypes.CommitPacket(packet)
+			commitment, err := packettypes.CommitPacket(packet)
+			suite.Require().NoError(err)
+
 			err = clientState.VerifyPacketCommitment(
 				suite.chainB.GetContext(), store, suite.chainB.Codec,
 				proofHeight, proof, packet.GetSourceChain(),
@@ -228,12 +230,14 @@ func (suite *TendermintTestSuite) TestVerifyPacketAcknowledgement() {
 			suite.coordinator.SetupClients(path)
 
 			packet := packettypes.NewPacket(
-				1,
 				path.EndpointA.ChainName,
 				path.EndpointB.ChainName,
 				"",
-				[]string{xibctesting.MockPort},
-				[][]byte{xibctesting.TestHash},
+				1,
+				[]byte("mock transfer"),
+				[]byte("mock rcc"),
+				"",
+				0,
 			)
 
 			// send packet
@@ -241,7 +245,7 @@ func (suite *TendermintTestSuite) TestVerifyPacketAcknowledgement() {
 			suite.Require().NoError(err)
 
 			// write receipt and ack
-			err = path.EndpointB.RecvPacket(packet)
+			err = path.EndpointB.RecvPacket(*packet)
 			suite.Require().NoError(err)
 
 			var ok bool
@@ -262,9 +266,11 @@ func (suite *TendermintTestSuite) TestVerifyPacketAcknowledgement() {
 			store := path.EndpointA.ClientStore()
 
 			ack, err := packettypes.NewResultAcknowledgement(
-				[][]byte{[]byte("mock result")},
+				0,
+				[]byte(""),
+				"",
 				suite.chainB.SenderAcc.String(),
-			).GetBytes()
+			).AbiPack()
 			suite.Require().NoError(err)
 
 			err = clientState.VerifyPacketAcknowledgement(

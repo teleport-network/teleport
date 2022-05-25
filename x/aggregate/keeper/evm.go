@@ -15,8 +15,8 @@ import (
 	"github.com/tharsis/ethermint/server/config"
 	evmtypes "github.com/tharsis/ethermint/x/evm/types"
 
+	crosschaincontract "github.com/teleport-network/teleport/syscontracts/cross_chain"
 	erc20contracts "github.com/teleport-network/teleport/syscontracts/erc20"
-	transfercontract "github.com/teleport-network/teleport/syscontracts/xibc_transfer"
 	"github.com/teleport-network/teleport/x/aggregate/types"
 )
 
@@ -73,9 +73,9 @@ func (k Keeper) QueryERC20Trace(
 ) {
 	res, err := k.CallEVM(
 		ctx,
-		transfercontract.TransferContract.ABI,
+		crosschaincontract.CrossChainContract.ABI,
 		types.ModuleAddress,
-		transfercontract.TransferContractAddress,
+		crosschaincontract.CrossChainAddress,
 		"bindings",
 		fmt.Sprintf("%s/%s", strings.ToLower(erc20Address.String()), originChain),
 	)
@@ -84,7 +84,7 @@ func (k Keeper) QueryERC20Trace(
 	}
 
 	var binding types.BindingsResponse
-	if err := transfercontract.TransferContract.ABI.UnpackIntoInterface(&binding, "bindings", res.Ret); err != nil {
+	if err := crosschaincontract.CrossChainContract.ABI.UnpackIntoInterface(&binding, "bindings", res.Ret); err != nil {
 		return "", nil, false, sdkerrors.Wrapf(types.ErrABIUnpack, "failed to unpack findbinding: %s", err.Error())
 	}
 
