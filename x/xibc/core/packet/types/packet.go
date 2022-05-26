@@ -48,14 +48,14 @@ func NewPacket(
 	feeOption uint64,
 ) *Packet {
 	return &Packet{
-		SourceChain:     sourceChain,
-		DestinationPort: destinationChain,
-		RelayChain:      relayChain,
-		Sequence:        sequence,
-		TransferData:    transferData,
-		CallData:        callData,
-		CallbackAddress: callbackAddress,
-		FeeOption:       feeOption,
+		SourceChain:      sourceChain,
+		DestinationChain: destinationChain,
+		RelayChain:       relayChain,
+		Sequence:         sequence,
+		TransferData:     transferData,
+		CallData:         callData,
+		CallbackAddress:  callbackAddress,
+		FeeOption:        feeOption,
 	}
 }
 
@@ -66,7 +66,7 @@ func (p Packet) GetSequence() uint64 { return p.Sequence }
 func (p Packet) GetSourceChain() string { return p.SourceChain }
 
 // GetDestChain implements PacketI interface
-func (p Packet) GetDestChain() string { return p.DestinationPort }
+func (p Packet) GetDestChain() string { return p.DestinationChain }
 
 // GetRelayChain implements PacketI interface
 func (p Packet) GetRelayChain() string { return p.RelayChain }
@@ -114,15 +114,15 @@ func (p Packet) ValidateBasic() error {
 		return sdkerrors.Wrap(ErrInvalidSrcChain, "srcChain is empty")
 	}
 
-	if len(p.DestinationPort) == 0 {
+	if len(p.DestinationChain) == 0 {
 		return sdkerrors.Wrap(ErrInvalidDestChain, "destChain is empty")
 	}
 
-	if p.SourceChain == p.DestinationPort {
+	if p.SourceChain == p.DestinationChain {
 		return sdkerrors.Wrap(ErrScChainEqualToDestChain, "srcChain equals to destChain")
 	}
 
-	if p.SourceChain == p.RelayChain || p.DestinationPort == p.RelayChain {
+	if p.SourceChain == p.RelayChain || p.DestinationChain == p.RelayChain {
 		return sdkerrors.Wrap(ErrInvalidRelayChain, "relayChain is equal to srcChain or destChain")
 	}
 
@@ -133,6 +133,9 @@ func (p Packet) ValidateBasic() error {
 	if len(p.CallData) == 0 && len(p.TransferData) == 0 {
 		return sdkerrors.Wrap(ErrInvalidPacket, "packet has no data")
 	}
+	//if len(p.CallData) != 0{
+	//	p.GetCallData()
+	//}
 	return nil
 }
 
@@ -226,7 +229,7 @@ type WPacket struct {
 func (p Packet) ToWPacket() WPacket {
 	return WPacket{
 		p.SourceChain,
-		p.DestinationPort,
+		p.DestinationChain,
 		p.RelayChain,
 		p.Sequence,
 		p.Sender,

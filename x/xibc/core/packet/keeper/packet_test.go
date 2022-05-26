@@ -238,7 +238,32 @@ func (suite *KeeperTestSuite) TestAcknowledgePacket() {
 				suite.Require().NoError(err)
 
 				// create packet receipt and acknowledgement
-				err = path.EndpointB.RecvPacket(*packet)
+				// get proof of packet commitment from chainA
+				packetKey := host.PacketCommitmentKey(packet.GetSourceChain(), packet.GetDestChain(), packet.GetSequence())
+				proof, proofHeight := suite.chainA.QueryProof(packetKey)
+				packetData, err := packet.AbiPack()
+				suite.Require().NoError(err)
+				msg := &types.MsgRecvPacket{
+					Packet:          packetData,
+					ProofCommitment: proof,
+					ProofHeight:     proofHeight,
+				}
+				err = suite.chainB.App.XIBCKeeper.PacketKeeper.RecvPacket(suite.chainB.GetContext(), msg)
+				suite.Require().NoError(err)
+
+				ack, err := types.NewResultAcknowledgement(
+					0,
+					[]byte(""),
+					"",
+					suite.chainB.SenderAcc.String(),
+				).AbiPack()
+				suite.Require().NoError(err)
+				err = suite.chainB.App.XIBCKeeper.PacketKeeper.WriteAcknowledgement(suite.chainB.GetContext(), packet, ack)
+				suite.Require().NoError(err)
+
+				err = path.EndpointB.UpdateClient()
+				suite.Require().NoError(err)
+				err = path.EndpointA.UpdateClient()
 				suite.Require().NoError(err)
 			},
 			true,
