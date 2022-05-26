@@ -143,18 +143,15 @@ func NewResultAcknowledgement(code uint64, results []byte, message, relayer stri
 		Result:  results,
 		Message: message,
 		Relayer: relayer,
-		//FeeOption: feeOption,
 	}
 }
 
 // NewErrorAcknowledgement returns a new instance of Acknowledgement using an Acknowledgement_Error type in the Response field.
-func NewErrorAcknowledgement(code uint64, results []byte, message, relayer string) Acknowledgement {
+func NewErrorAcknowledgement(code uint64, message, relayer string) Acknowledgement {
 	return Acknowledgement{
 		Code:    code,
-		Result:  results,
 		Message: message,
 		Relayer: relayer,
-		//FeeOption: feeOption,
 	}
 }
 
@@ -238,4 +235,33 @@ func (p Packet) ToWPacket() WPacket {
 		p.CallbackAddress,
 		p.FeeOption,
 	}
+}
+
+func (e *EventSendPacket) DecodeAbiBytes(bz []byte) error {
+	dataBz, err := abi.Arguments{{Type: TuplePacketSendData}}.Unpack(bz)
+	if err != nil {
+		return err
+	}
+	bzTmp, err := json.Marshal(dataBz[0])
+	if err != nil {
+		return err
+	}
+	return json.Unmarshal(bzTmp, &e)
+}
+
+func (e *EventSendPacket) DecodeInterface(bz interface{}) error {
+	bzTmp, err := json.Marshal(bz)
+	if err != nil {
+		return err
+	}
+	return json.Unmarshal(bzTmp, &e)
+}
+
+// AbiPack is a helper for serialising Result
+func (e *EventSendPacket) AbiPack() ([]byte, error) {
+	pack, err := abi.Arguments{{Type: TuplePacketSendData}}.Pack(e)
+	if err != nil {
+		return nil, err
+	}
+	return pack, nil
 }

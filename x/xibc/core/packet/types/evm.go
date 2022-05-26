@@ -2,16 +2,20 @@ package types
 
 import "github.com/ethereum/go-ethereum/accounts/abi"
 
+const PacketSendEvent = "PacketSent"
+
 var (
 	TupleRecvPacketResultData abi.Type
 	TuplePacketData           abi.Type
 	TupleAckData              abi.Type
+	TuplePacketSendData       abi.Type
 )
 
 func init() {
 	initTupleAckData()
 	initRecvPacketResultData()
 	initPacketData()
+	initTuplePacketSendData()
 }
 
 func initRecvPacketResultData() {
@@ -74,4 +78,20 @@ func initTupleAckData() {
 		panic("New TupleAckData type err")
 	}
 	TupleAckData = tupleAckData
+}
+
+func initTuplePacketSendData() {
+	tuplePacketSendData, err := abi.NewType(
+		"tuple", "",
+		[]abi.ArgumentMarshaling{
+			{Name: "packet", Type: "bytes"},
+		},
+	)
+	if err != nil {
+		panic(err)
+	}
+	if tuplePacketSendData.T != abi.TupleTy {
+		panic("New TupleAckData type err")
+	}
+	TuplePacketSendData = tuplePacketSendData
 }

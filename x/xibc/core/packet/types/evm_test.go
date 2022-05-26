@@ -6,7 +6,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestPacketAbiEncode(t *testing.T) {
+func TestPacketAbi(t *testing.T) {
 	packet := NewPacket(
 		"srcChain",
 		"destChain",
@@ -25,7 +25,7 @@ func TestPacketAbiEncode(t *testing.T) {
 	require.NoError(t, err)
 }
 
-func TestAckAbiEncode(t *testing.T) {
+func TestAckAbi(t *testing.T) {
 	ack := NewResultAcknowledgement(
 		0,
 		[]byte("nodata"),

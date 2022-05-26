@@ -68,7 +68,7 @@ func (k Keeper) RecvPacket(goCtx context.Context, msg *packettypes.MsgRecvPacket
 	// call packet to onRecvPacket
 	if err != nil {
 		// Write ErrAck
-		errAckBz, err := packettypes.NewErrorAcknowledgement(1, []byte(""), "receive packet callback failed", relayer).AbiPack()
+		errAckBz, err := packettypes.NewErrorAcknowledgement(1, "receive packet callback failed", relayer).AbiPack()
 		if err != nil {
 			return nil, sdkerrors.Wrapf(packettypes.ErrInvalidAcknowledgement, "pack ack failed")
 		}

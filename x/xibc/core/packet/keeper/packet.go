@@ -146,7 +146,7 @@ func (k Keeper) RecvPacket(ctx sdk.Context, msg *types.MsgRecvPacket) error {
 
 		// if destChain not exist, return error ack to source chain
 		if _, found := k.clientKeeper.GetClientState(ctx, packet.GetDestChain()); !found {
-			errAckBz, err := types.NewErrorAcknowledgement(1, []byte(""), "invalid destChain", msg.Signer).AbiPack()
+			errAckBz, err := types.NewErrorAcknowledgement(1, "invalid destChain", msg.Signer).AbiPack()
 			if err != nil {
 				return sdkerrors.Wrapf(types.ErrInvalidAcknowledgement, "pack ack failed")
 			}
