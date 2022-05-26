@@ -18,9 +18,9 @@ var _ types.QueryServer = (*Keeper)(nil)
 type Keeper struct {
 	// implements gRPC QueryServer interface
 	types.QueryServer
-	cdc           codec.BinaryCodec
-	ClientKeeper  clientkeeper.Keeper
-	PacketKeeper  packetkeeper.Keeper
+	cdc          codec.BinaryCodec
+	ClientKeeper clientkeeper.Keeper
+	PacketKeeper packetkeeper.Keeper
 }
 
 // NewKeeper creates a new xibc Keeper
@@ -36,9 +36,9 @@ func NewKeeper(
 	packetkeeper := packetkeeper.NewKeeper(cdc, key, clientKeeper, accountKeeper, evmKeeper)
 
 	return &Keeper{
-		cdc:           cdc,
-		ClientKeeper:  clientKeeper,
-		PacketKeeper:  packetkeeper,
+		cdc:          cdc,
+		ClientKeeper: clientKeeper,
+		PacketKeeper: packetkeeper,
 	}
 }
 

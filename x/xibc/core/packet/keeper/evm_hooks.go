@@ -2,6 +2,7 @@ package keeper
 
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
+
 	packetcontract "github.com/teleport-network/teleport/syscontracts/xibc_packet"
 	"github.com/teleport-network/teleport/x/xibc/core/packet/types"
 
@@ -10,7 +11,7 @@ import (
 	evmtypes "github.com/tharsis/ethermint/x/evm/types"
 )
 
-// Hooks wrapper struct for erc20 keeper
+// Hooks wrapper struct for packet keeper
 type Hooks struct {
 	k Keeper
 }
@@ -21,9 +22,6 @@ var _ evmtypes.EvmHooks = Hooks{}
 func (k Keeper) Hooks() Hooks {
 	return Hooks{k}
 }
-
-// TODO: Make sure that if ConvertERC20 is called, that the Hook doesn't trigger
-// if it does, delete minting from ConvertErc20
 
 // PostTxProcessing implements EvmHooks.PostTxProcessing
 func (h Hooks) PostTxProcessing(
