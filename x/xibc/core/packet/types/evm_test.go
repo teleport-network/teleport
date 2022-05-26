@@ -1,13 +1,15 @@
-package types
+package types_test
 
 import (
 	"testing"
+
+	packettypes "github.com/teleport-network/teleport/x/xibc/core/packet/types"
 
 	"github.com/stretchr/testify/require"
 )
 
 func TestPacketAbi(t *testing.T) {
-	packet := NewPacket(
+	packet := packettypes.NewPacket(
 		"srcChain",
 		"destChain",
 		"relayChain",
@@ -20,13 +22,13 @@ func TestPacketAbi(t *testing.T) {
 	packData, err := packet.AbiPack()
 	require.NoError(t, err)
 	require.NotNil(t, packData)
-	var p Packet
+	var p packettypes.Packet
 	err = p.DecodeAbiBytes(packData)
 	require.NoError(t, err)
 }
 
 func TestAckAbi(t *testing.T) {
-	ack := NewResultAcknowledgement(
+	ack := packettypes.NewResultAcknowledgement(
 		0,
 		[]byte("nodata"),
 		"",
@@ -35,7 +37,7 @@ func TestAckAbi(t *testing.T) {
 	ackData, err := ack.AbiPack()
 	require.NoError(t, err)
 	require.NotNil(t, ackData)
-	var p Acknowledgement
+	var p packettypes.Acknowledgement
 	err = p.DecodeAbiBytes(ackData)
 	require.NoError(t, err)
 }
