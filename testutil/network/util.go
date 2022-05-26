@@ -25,7 +25,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/genutil"
 	genutiltypes "github.com/cosmos/cosmos-sdk/x/genutil/types"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
-	mintypes "github.com/cosmos/cosmos-sdk/x/mint/types"
+	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 
 	"github.com/tharsis/ethermint/server"
@@ -204,17 +204,17 @@ func initGenFiles(cfg Config, genAccounts []authtypes.GenesisAccount, genBalance
 	stakingGenState.Params.BondDenom = cfg.BondDenom
 	cfg.GenesisState[stakingtypes.ModuleName] = cfg.Codec.MustMarshalJSON(&stakingGenState)
 
+	var slashingGenState slashingtypes.GenesisState
+	cfg.Codec.MustUnmarshalJSON(cfg.GenesisState[slashingtypes.ModuleName], &slashingGenState)
+
+	slashingGenState.Params.SignedBlocksWindow = int64(cfg.SignedBlocksWindow)
+	cfg.GenesisState[slashingtypes.ModuleName] = cfg.Codec.MustMarshalJSON(&slashingGenState)
+
 	var govGenState govtypes.GenesisState
 	cfg.Codec.MustUnmarshalJSON(cfg.GenesisState[govtypes.ModuleName], &govGenState)
 
 	govGenState.DepositParams.MinDeposit[0].Denom = cfg.BondDenom
 	cfg.GenesisState[govtypes.ModuleName] = cfg.Codec.MustMarshalJSON(&govGenState)
-
-	var mintGenState mintypes.GenesisState
-	cfg.Codec.MustUnmarshalJSON(cfg.GenesisState[mintypes.ModuleName], &mintGenState)
-
-	mintGenState.Params.MintDenom = cfg.BondDenom
-	cfg.GenesisState[mintypes.ModuleName] = cfg.Codec.MustMarshalJSON(&mintGenState)
 
 	var crisisGenState crisistypes.GenesisState
 	cfg.Codec.MustUnmarshalJSON(cfg.GenesisState[crisistypes.ModuleName], &crisisGenState)
