@@ -75,6 +75,20 @@ func (h Hooks) PostTxProcessing(
 			h.k.Logger(ctx).Error("failed to decode packet", "error", err.Error())
 			return err
 		}
+		// todo ? add data validate?
+		//var transferData types.TransferData
+		//if err = transferData.DecodeAbiBytes(packet.GetTransferData()); err != nil {
+		//	h.k.Logger(ctx).Error("failed to decode packet", "error", err.Error())
+		//	return err
+		//}
+		//
+		//fmt.Println("hooks : callData : ", hex.EncodeToString(packet.GetCallData()))
+		//var callData types.CallData
+		//if err = callData.DecodeAbiBytes(packet.GetCallData()); err != nil {
+		//	h.k.Logger(ctx).Error("failed to decode packet", "error", err.Error())
+		//	return err
+		//}
+
 		// send cross chain contract packet
 		if err = h.k.SendPacket(
 			ctx,

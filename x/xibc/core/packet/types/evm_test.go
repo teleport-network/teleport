@@ -9,21 +9,30 @@ import (
 )
 
 func TestPacketAbi(t *testing.T) {
-	packet := packettypes.NewPacket(
+	crossChainPacket := packettypes.NewPacket(
 		"srcChain",
 		"destChain",
 		1,
+		"sender",
 		[]byte("mock Transfer Data"),
 		[]byte("mock Call Data"),
-		"",
+		"callback_address",
 		0,
 	)
-	packData, err := packet.AbiPack()
+	packetAbi, err := crossChainPacket.AbiPack()
 	require.NoError(t, err)
-	require.NotNil(t, packData)
+	require.NotNil(t, packetAbi)
 	var p packettypes.Packet
-	err = p.DecodeAbiBytes(packData)
+	err = p.DecodeAbiBytes(packetAbi)
 	require.NoError(t, err)
+	require.Equal(t, p.SourceChain, crossChainPacket.SourceChain)
+	require.Equal(t, p.DestinationChain, crossChainPacket.DestinationChain)
+	require.Equal(t, p.Sequence, crossChainPacket.Sequence)
+	require.Equal(t, p.Sender, crossChainPacket.Sender)
+	require.Equal(t, p.TransferData, crossChainPacket.TransferData)
+	require.Equal(t, p.CallData, crossChainPacket.CallData)
+	require.Equal(t, p.CallbackAddress, crossChainPacket.CallbackAddress)
+	require.Equal(t, p.FeeOption, crossChainPacket.FeeOption)
 }
 
 func TestAckAbi(t *testing.T) {
@@ -38,5 +47,40 @@ func TestAckAbi(t *testing.T) {
 	require.NotNil(t, ackData)
 	var p packettypes.Acknowledgement
 	err = p.DecodeAbiBytes(ackData)
+	require.NotNil(t, p)
 	require.NoError(t, err)
+}
+
+func TestTransferDataAbi(t *testing.T) {
+	transferData := packettypes.TransferData{
+		Receiver: "receiver",
+		Amount:   []byte("Amount"),
+		Token:    "token",
+		OriToken: "ori_token",
+	}
+	data, err := transferData.AbiPack()
+	require.NoError(t, err)
+	require.NotNil(t, data)
+	var p packettypes.TransferData
+	err = p.DecodeAbiBytes(data)
+	require.NoError(t, err)
+	require.Equal(t, p.Receiver, transferData.Receiver)
+	require.Equal(t, p.Amount, transferData.Amount)
+	require.Equal(t, p.Token, transferData.Token)
+	require.Equal(t, p.OriToken, transferData.OriToken)
+}
+
+func TestCallDataAbi(t *testing.T) {
+	callData := packettypes.CallData{
+		ContractAddress: "contract_address",
+		CallData:        []byte(""),
+	}
+	data, err := callData.AbiPack()
+	require.NoError(t, err)
+	require.NotNil(t, data)
+	var p packettypes.CallData
+	err = p.DecodeAbiBytes(data)
+	require.NoError(t, err)
+	require.Equal(t, p.ContractAddress, callData.ContractAddress)
+	require.Equal(t, p.CallData, callData.CallData)
 }

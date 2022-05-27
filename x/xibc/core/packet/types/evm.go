@@ -112,7 +112,7 @@ func initTupleAckData() {
 			{Name: "result", Type: "bytes"},
 			{Name: "message", Type: "string"},
 			{Name: "relayer", Type: "string"},
-			{Name: "fee_option", Type: "uint64"},
+			{Name: "feeOption", Type: "uint64"},
 		},
 	)
 	if err != nil {
@@ -147,7 +147,7 @@ func initTupleTransferData() {
 			{Name: "receiver", Type: "string"},
 			{Name: "amount", Type: "bytes"},
 			{Name: "token", Type: "string"},
-			{Name: "ori_token", Type: "string"},
+			{Name: "oriToken", Type: "string"},
 		},
 	)
 	if err != nil {
@@ -163,8 +163,8 @@ func initTupleCallData() {
 	tupleCallData, err := abi.NewType(
 		"tuple", "",
 		[]abi.ArgumentMarshaling{
-			{Name: "contract_address", Type: "string"},
-			{Name: "call_data", Type: "bytes"},
+			{Name: "contractAddress", Type: "string"},
+			{Name: "callData", Type: "bytes"},
 		},
 	)
 	if err != nil {

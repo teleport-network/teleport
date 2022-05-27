@@ -33,8 +33,8 @@ var (
 	mockCallData     = []byte("call")
 	mockAck          = []byte("ack")
 
-	packet               = types.NewPacket(sourceChain, destChain, 1, mockTransferData, mockCallData, "", 0)
-	invalidPacket        = types.NewPacket(sourceChain, destChain, 1, []byte(""), []byte(""), "", 0)
+	packet               = types.NewPacket(sourceChain, destChain, 1, "sender", mockTransferData, mockCallData, "", 0)
+	invalidPacket        = types.NewPacket(sourceChain, destChain, 1, "sender", []byte(""), []byte(""), "", 0)
 	packetData, _        = packet.AbiPack()
 	invalidPacketData, _ = invalidPacket.AbiPack()
 

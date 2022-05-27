@@ -85,7 +85,6 @@ func (k Keeper) RecvPacket(goCtx context.Context, msg *packettypes.MsgRecvPacket
 	if errDecodeResult != nil {
 		return nil, sdkerrors.Wrapf(packettypes.ErrAbiPack, "RecvPacket failed,decode result err : %s", errDecodeResult)
 	}
-
 	ackBz, err := packettypes.NewResultAcknowledgement(result.Code, result.Result, result.Message, relayer).AbiPack()
 	if err != nil {
 		return nil, sdkerrors.Wrapf(packettypes.ErrInvalidAcknowledgement, "pack ack failed")

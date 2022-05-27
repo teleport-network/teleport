@@ -2,9 +2,14 @@ package xibc_test
 
 import (
 	"encoding/hex"
+	"fmt"
 	"math/big"
 	"strconv"
 	"strings"
+
+	"github.com/teleport-network/teleport/syscontracts/agent"
+
+	"github.com/teleport-network/teleport/syscontracts"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
@@ -371,6 +376,152 @@ func (suite *XIBCTestSuite) TestCrossChainTransferBaseAndTransferBack() {
 	suite.Require().Equal(balances.String(), "0stake")
 	outToken = suite.OutTokens(suite.chainA, chainABase, suite.chainB.ChainID)
 	suite.Require().Equal(int64(0), outToken.Int64())
+}
+
+func (suite *XIBCTestSuite) TestCrossChainCallAgent() {
+	suite.SetupTest()
+
+	// setup testing conditions
+	pathAToB := xibctesting.NewPath(suite.chainA, suite.chainB)
+	pathBToC := xibctesting.NewPath(suite.chainA, suite.chainB)
+
+	suite.coordinator.SetupClients(pathAToB)
+	suite.coordinator.SetupClients(pathBToC)
+
+	// deploy ERC20
+	chainAERC20 := suite.DeployERC20ByCrossChain(suite.chainA)
+	chainBERC20 := suite.DeployERC20ByCrossChain(suite.chainB)
+	chainCERC20 := suite.DeployERC20ByCrossChain(suite.chainC)
+
+	suite.GrantERC20MintRoleByCrossChain(suite.chainA, chainAERC20, suite.chainA.SenderAddress)
+	suite.MintERC20Token(suite.chainA, suite.chainA.SenderAddress, chainAERC20, big.NewInt(10000))
+	balance := suite.ERC20Balance(suite.chainA, chainAERC20, suite.chainA.SenderAddress)
+	suite.Equal(balance.Int64(), int64(10000))
+
+	// register erc20 trace A -> B
+	err := suite.chainB.App.AggregateKeeper.RegisterERC20Trace(
+		suite.chainB.GetContext(),
+		chainBERC20,
+		strings.ToLower(chainAERC20.String()),
+		suite.chainA.ChainID,
+		uint8(0),
+	)
+	suite.Require().NoError(err)
+	// check ERC20 trace
+	token, amount, exist, err := suite.chainB.App.AggregateKeeper.QueryERC20Trace(
+		suite.chainB.GetContext(),
+		chainBERC20,
+		suite.chainA.ChainID,
+	)
+	suite.Require().NoError(err)
+	suite.Require().True(exist)
+	suite.Equal(token, strings.ToLower(chainAERC20.String()))
+	suite.Equal(amount.Int64(), int64(0))
+
+	// register erc20 trace B -> C
+	err = suite.chainC.App.AggregateKeeper.RegisterERC20Trace(
+		suite.chainC.GetContext(),
+		chainCERC20,
+		strings.ToLower(chainBERC20.String()),
+		suite.chainB.ChainID,
+		uint8(0),
+	)
+	suite.Require().NoError(err)
+	// check ERC20 trace
+	token, amount, exist, err = suite.chainC.App.AggregateKeeper.QueryERC20Trace(
+		suite.chainC.GetContext(),
+		chainCERC20,
+		suite.chainB.ChainID,
+	)
+	suite.Require().NoError(err)
+	suite.Require().True(exist)
+	suite.Equal(token, strings.ToLower(chainBERC20.String()))
+	suite.Equal(amount.Int64(), int64(0))
+
+	callData, err := agent.AgentContract.ABI.Pack(
+		"send",
+		chainBERC20,
+		suite.chainA.SenderAddress,
+		strings.ToLower(suite.chainA.SenderAddress.String()),
+		suite.chainC.ChainID,
+		big.NewInt(1000),
+	)
+	suite.Require().NoError(err)
+
+	crossChainData := packettypes.CrossChainData{
+		DestChain:       suite.chainB.ChainID,
+		TokenAddress:    chainAERC20,
+		Receiver:        strings.ToLower(agent.AgentContractAddress.String()),
+		Amount:          big.NewInt(2000),
+		ContractAddress: syscontracts.AgentContractAddress,
+		CallData:        callData,
+		CallbackAddress: common.BigToAddress(big.NewInt(0)),
+		FeeOption:       0,
+	}
+	fee := packettypes.Fee{
+		TokenAddress: chainAERC20,
+		Amount:       big.NewInt(0),
+	}
+
+	// send CrossChainCall Tx
+	suite.Approve(suite.chainA, chainAERC20, crosschaincontract.CrossChainAddress, big.NewInt(2000))
+	suite.CrossChainCall(suite.chainA, crossChainData, fee)
+	balance = suite.ERC20Balance(suite.chainA, chainAERC20, suite.chainA.SenderAddress)
+	suite.Equal(balance.Int64(), int64(8000))
+	balance = suite.ERC20Balance(suite.chainA, chainAERC20, crosschaincontract.CrossChainAddress)
+	suite.Equal(balance.Int64(), int64(2000))
+	balance = suite.ERC20Balance(suite.chainA, chainAERC20, packetcontract.PacketContractAddress)
+	suite.Equal(balance.Int64(), int64(0))
+	outToken := suite.OutTokens(suite.chainA, chainAERC20, suite.chainB.ChainID)
+	suite.Require().Equal(int64(2000), outToken.Int64())
+
+	// check packet fees
+	fees := suite.GetPacketFees(suite.chainA, suite.chainA.ChainID, suite.chainB.ChainID, 1)
+	suite.Require().Equal(chainAERC20, fees.TokenAddress)
+	suite.Require().Equal(big.NewInt(0).Int64(), fees.Amount.Int64())
+
+	// packet and ack
+	hexAmount, err := hex.DecodeString("00000000000000000000000000000000000000000000000000000000000007d0")
+	suite.Require().NoError(err)
+	transferData := packettypes.TransferData{
+		Receiver: strings.ToLower(crossChainData.Receiver),
+		Amount:   hexAmount,
+		Token:    strings.ToLower(crossChainData.TokenAddress.String()),
+		OriToken: "",
+	}
+	transferDataAbi, err := transferData.AbiPack()
+	suite.Require().NoError(err)
+
+	packetCallData := &packettypes.CallData{
+		ContractAddress: syscontracts.AgentContractAddress,
+		CallData:        callData,
+	}
+	callDataAbi, err := packetCallData.AbiPack()
+	suite.Require().NoError(err)
+
+	packet := packettypes.Packet{
+		SourceChain:      suite.chainA.ChainID,
+		DestinationChain: suite.chainB.ChainID,
+		Sequence:         1,
+		Sender:           strings.ToLower(suite.chainA.SenderAddress.String()),
+		TransferData:     transferDataAbi,
+		CallData:         callDataAbi,
+		CallbackAddress:  common.BigToAddress(big.NewInt(0)).String(),
+		FeeOption:        0,
+	}
+	ack := packettypes.NewResultAcknowledgement(
+		0,
+		[]byte(""),
+		"",
+		strings.ToLower(suite.chainB.SenderAcc.String()),
+	)
+	fmt.Println(strings.ToLower(suite.chainB.SenderAcc.String()))
+	ackData, err := ack.AbiPack()
+	suite.Require().NoError(err)
+
+	// relay
+	err = pathAToB.RelayPacket(packet, ackData)
+	suite.Require().NoError(err)
 }
 
 // ================================================================================================================
