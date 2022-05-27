@@ -6,6 +6,9 @@ import (
 	"testing"
 	"time"
 
+	packetcontract "github.com/teleport-network/teleport/syscontracts/xibc_packet"
+	packettypes "github.com/teleport-network/teleport/x/xibc/core/packet/types"
+
 	"github.com/stretchr/testify/require"
 
 	abci "github.com/tendermint/tendermint/abci/types"
@@ -159,9 +162,9 @@ func NewTestChain(t *testing.T, coord *Coordinator, chainID string) *TestChain {
 		SenderAcc:      acc.GetAddress(),
 		SenderAddress:  senderAddress,
 	}
-
+	chain.App.XIBCKeeper.ClientKeeper.SetChainName(chain.GetContext(), chainID)
+	chain.InitPacketChainName()
 	coord.CommitBlock(chain)
-
 	return chain
 }
 
@@ -599,4 +602,18 @@ func (chain *TestChain) RegisterRelayer(chains []string, addresses []string) {
 		chains,
 		addresses,
 	)
+}
+
+func (chain *TestChain) InitPacketChainName() {
+	packetContractAbi := packetcontract.PacketContract.ABI
+	if _, err := chain.App.XIBCKeeper.PacketKeeper.CallEVM(
+		chain.GetContext(),
+		packetContractAbi,
+		packettypes.ModuleAddress,
+		packetcontract.PacketContractAddress,
+		"initChainName",
+		chain.App.XIBCKeeper.ClientKeeper.GetChainName(chain.GetContext()),
+	); err != nil {
+		panic(err)
+	}
 }

@@ -5,6 +5,8 @@ import (
 
 	"github.com/ethereum/go-ethereum/common"
 
+	packetcontract "github.com/teleport-network/teleport/syscontracts/xibc_packet"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 
@@ -79,7 +81,7 @@ func (k Keeper) RecvPacket(goCtx context.Context, msg *packettypes.MsgRecvPacket
 	}
 
 	var result packettypes.Result
-	errDecodeResult := result.DecodeAbiBytes(res.Ret)
+	errDecodeResult := packetcontract.PacketContract.ABI.UnpackIntoInterface(&result, "onRecvPacket", res.Ret)
 	if errDecodeResult != nil {
 		return nil, sdkerrors.Wrapf(packettypes.ErrAbiPack, "RecvPacket failed,decode result err : %s", errDecodeResult)
 	}
@@ -110,10 +112,6 @@ func (k Keeper) Acknowledgement(goCtx context.Context, msg *packettypes.MsgAckno
 	err := packet.DecodeAbiBytes(msg.Packet)
 	if err != nil {
 		return nil, sdkerrors.Wrapf(packettypes.ErrDecodeAbi, "Acknowledgement failed,decode packet err : %v", err)
-	}
-	chainName := k.ClientKeeper.GetChainName(ctx)
-	if packet.GetRelayChain() == chainName {
-		return &packettypes.MsgAcknowledgementResponse{}, nil
 	}
 
 	var ack packettypes.Acknowledgement
@@ -178,8 +176,8 @@ func (k Keeper) Acknowledgement(goCtx context.Context, msg *packettypes.MsgAckno
 	if _, err := k.PacketKeeper.CallPacket(
 		ctx,
 		"OnAcknowledgePacket",
-		msg.Packet,
-		msg.Acknowledgement,
+		packet.ToWPacket(),
+		ack,
 	); err != nil {
 		return nil, err
 	}

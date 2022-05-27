@@ -12,7 +12,6 @@ func TestPacketAbi(t *testing.T) {
 	packet := packettypes.NewPacket(
 		"srcChain",
 		"destChain",
-		"relayChain",
 		1,
 		[]byte("mock Transfer Data"),
 		[]byte("mock Call Data"),

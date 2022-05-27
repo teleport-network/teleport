@@ -783,6 +783,7 @@ func NewTeleport(
 			stakingHook,
 			govHook,
 			app.AggregateKeeper.Hooks(),
+			app.XIBCKeeper.PacketKeeper.Hooks(),
 		),
 	)
 	return app

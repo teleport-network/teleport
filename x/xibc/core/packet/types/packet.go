@@ -40,7 +40,6 @@ var ModuleCdc = codec.NewProtoCodec(codectypes.NewInterfaceRegistry())
 func NewPacket(
 	sourceChain string,
 	destinationChain string,
-	relayChain string,
 	sequence uint64,
 	transferData []byte,
 	callData []byte,
@@ -50,7 +49,6 @@ func NewPacket(
 	return &Packet{
 		SourceChain:      sourceChain,
 		DestinationChain: destinationChain,
-		RelayChain:       relayChain,
 		Sequence:         sequence,
 		TransferData:     transferData,
 		CallData:         callData,
@@ -67,9 +65,6 @@ func (p Packet) GetSourceChain() string { return p.SourceChain }
 
 // GetDestChain implements PacketI interface
 func (p Packet) GetDestChain() string { return p.DestinationChain }
-
-// GetRelayChain implements PacketI interface
-func (p Packet) GetRelayChain() string { return p.RelayChain }
 
 // GetRelayChain implements PacketI interface
 func (p Packet) GetSender() string { return p.Sender }
@@ -122,10 +117,6 @@ func (p Packet) ValidateBasic() error {
 		return sdkerrors.Wrap(ErrScChainEqualToDestChain, "srcChain equals to destChain")
 	}
 
-	if p.SourceChain == p.RelayChain || p.DestinationChain == p.RelayChain {
-		return sdkerrors.Wrap(ErrInvalidRelayChain, "relayChain is equal to srcChain or destChain")
-	}
-
 	if p.Sequence == 0 {
 		return sdkerrors.Wrap(ErrInvalidPacket, "packet sequence cannot be 0")
 	}
@@ -133,9 +124,6 @@ func (p Packet) ValidateBasic() error {
 	if len(p.CallData) == 0 && len(p.TransferData) == 0 {
 		return sdkerrors.Wrap(ErrInvalidPacket, "packet has no data")
 	}
-	//if len(p.CallData) != 0{
-	//	p.GetCallData()
-	//}
 	return nil
 }
 
@@ -197,6 +185,14 @@ func (result Result) AbiPack() ([]byte, error) {
 	return pack, nil
 }
 
+func (result *Result) DecodeInterface(bz interface{}) error {
+	bzTmp, err := json.Marshal(bz)
+	if err != nil {
+		return err
+	}
+	return json.Unmarshal(bzTmp, &result)
+}
+
 func (result *Result) DecodeAbiBytes(bz []byte) error {
 	dataBz, err := abi.Arguments{{Type: TupleRecvPacketResultData}}.Unpack(bz)
 	if err != nil {
@@ -210,12 +206,11 @@ func (result *Result) DecodeAbiBytes(bz []byte) error {
 }
 
 type WPacket struct {
+	SrcChain string
 	// packet base data
-	SrcChain   string
-	DestChain  string
-	RelayChain string
-	Sequence   uint64
-	Sender     string
+	DestChain string
+	Sequence  uint64
+	Sender    string
 	// transfer data. keep empty if not used.
 	TransferData []byte
 	// call data. keep empty if not used
@@ -230,7 +225,6 @@ func (p Packet) ToWPacket() WPacket {
 	return WPacket{
 		p.SourceChain,
 		p.DestinationChain,
-		p.RelayChain,
 		p.Sequence,
 		p.Sender,
 		p.TransferData,
@@ -267,4 +261,46 @@ func (e *EventSendPacket) AbiPack() ([]byte, error) {
 		return nil, err
 	}
 	return pack, nil
+}
+
+// AbiPack is a helper for serialising Result
+func (e *TransferData) AbiPack() ([]byte, error) {
+	pack, err := abi.Arguments{{Type: TupleTransferData}}.Pack(e)
+	if err != nil {
+		return nil, err
+	}
+	return pack, nil
+}
+
+func (e *TransferData) DecodeAbiBytes(bz []byte) error {
+	dataBz, err := abi.Arguments{{Type: TupleTransferData}}.Unpack(bz)
+	if err != nil {
+		return err
+	}
+	bzTmp, err := json.Marshal(dataBz[0])
+	if err != nil {
+		return err
+	}
+	return json.Unmarshal(bzTmp, &e)
+}
+
+// AbiPack is a helper for serialising Result
+func (e *CallData) AbiPack() ([]byte, error) {
+	pack, err := abi.Arguments{{Type: TupleCallData}}.Pack(e)
+	if err != nil {
+		return nil, err
+	}
+	return pack, nil
+}
+
+func (e *CallData) DecodeAbiBytes(bz []byte) error {
+	dataBz, err := abi.Arguments{{Type: TupleCallData}}.Unpack(bz)
+	if err != nil {
+		return err
+	}
+	bzTmp, err := json.Marshal(dataBz[0])
+	if err != nil {
+		return err
+	}
+	return json.Unmarshal(bzTmp, &e)
 }

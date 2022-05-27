@@ -14,10 +14,10 @@ var (
 	//go:embed cross_chain.json
 	CrossChainJSON []byte // nolint: golint
 
-	// AgentContract is the compiled agent contract
+	// CrossChainContract is the compiled agent contract
 	CrossChainContract evmtypes.CompiledContract
 
-	// AgentContractAddress is the deployed agent contract address
+	// CrossChainAddress is the deployed agent contract address
 	CrossChainAddress common.Address
 )
 

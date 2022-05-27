@@ -1696,7 +1696,6 @@ Packet defines a type that carries data across different chains through XIBC
 | ----- | ---- | ----- | ----------- |
 | `source_chain` | [string](#string) |  | identifies the chain id of the sending chain. |
 | `destination_chain` | [string](#string) |  | identifies the chain id of the receiving chain. |
-| `relay_chain` | [string](#string) |  |  |
 | `sequence` | [uint64](#uint64) |  | number corresponds to the order of sends and receives, where a Packet with an earlier sequence number must be sent and received before a Packet with a later sequence number. |
 | `sender` | [string](#string) |  |  |
 | `transfer_data` | [bytes](#bytes) |  | transfer data. keep empty if not used. |

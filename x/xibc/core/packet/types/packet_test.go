@@ -12,7 +12,7 @@ import (
 )
 
 func TestCommitPacket(t *testing.T) {
-	packet := types.NewPacket(sourceChain, destChain, relayChain, 1, mockTransferData, mockCallData, "", 0)
+	packet := types.NewPacket(sourceChain, destChain, 1, mockTransferData, mockCallData, "", 0)
 
 	registry := codectypes.NewInterfaceRegistry()
 	clienttypes.RegisterInterfaces(registry)
@@ -29,9 +29,9 @@ func TestPacketValidateBasic(t *testing.T) {
 		expPass bool
 		errMsg  string
 	}{
-		{types.NewPacket(sourceChain, destChain, relayChain, 1, mockTransferData, mockCallData, "", 0), true, ""},
-		{types.NewPacket(sourceChain, destChain, relayChain, 0, mockTransferData, mockCallData, "", 0), false, "invalid sequence"},
-		{types.NewPacket(sourceChain, destChain, relayChain, 1, []byte(""), mockCallData, "", 0), true, ""},
+		{types.NewPacket(sourceChain, destChain, 1, mockTransferData, mockCallData, "", 0), true, ""},
+		{types.NewPacket(sourceChain, destChain, 0, mockTransferData, mockCallData, "", 0), false, "invalid sequence"},
+		{types.NewPacket(sourceChain, destChain, 1, []byte(""), mockCallData, "", 0), true, ""},
 	}
 
 	for i, tc := range testCases {

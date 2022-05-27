@@ -33,14 +33,17 @@ type XIBCTestSuite struct {
 
 	chainA *xibctesting.TestChain
 	chainB *xibctesting.TestChain
+	chainC *xibctesting.TestChain
 }
 
 // SetupTest creates a coordinator with 2 test chains.
 func (suite *XIBCTestSuite) SetupTest() {
-	suite.coordinator = xibctesting.NewCoordinator(suite.T(), 2)
+	suite.coordinator = xibctesting.NewCoordinator(suite.T(), 3)
 
 	suite.chainA = suite.coordinator.GetChain(xibctesting.GetChainID(0))
 	suite.chainB = suite.coordinator.GetChain(xibctesting.GetChainID(1))
+	suite.chainC = suite.coordinator.GetChain(xibctesting.GetChainID(2))
+
 }
 
 func TestXIBCTestSuite(t *testing.T) {

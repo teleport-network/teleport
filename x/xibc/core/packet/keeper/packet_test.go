@@ -18,7 +18,6 @@ type testCase = struct {
 var (
 	mockTransferData = []byte("mock Transfer data")
 	mockCallData     = []byte("mock Call data")
-	relayChain       = ""
 )
 
 // TestSendPacket tests SendPacket from chainA to chainB
@@ -31,7 +30,7 @@ func (suite *KeeperTestSuite) TestSendPacket() {
 			path := xibctesting.NewPath(suite.chainA, suite.chainB)
 			suite.coordinator.SetupClients(path)
 
-			packet = types.NewPacket(path.EndpointA.ChainName, path.EndpointB.ChainName, relayChain, 1, mockTransferData, mockCallData, "", 0)
+			packet = types.NewPacket(path.EndpointA.ChainName, path.EndpointB.ChainName, 1, mockTransferData, mockCallData, "", 0)
 		},
 		true,
 	}, {
@@ -39,7 +38,7 @@ func (suite *KeeperTestSuite) TestSendPacket() {
 		func() {
 			path := xibctesting.NewPath(suite.chainA, suite.chainB)
 			suite.coordinator.SetupClients(path)
-			packet = types.NewPacket(path.EndpointA.ChainName, path.EndpointB.ChainName, relayChain, 5, mockTransferData, mockCallData, "", 0)
+			packet = types.NewPacket(path.EndpointA.ChainName, path.EndpointB.ChainName, 5, mockTransferData, mockCallData, "", 0)
 		},
 		false,
 	}, {
@@ -47,7 +46,7 @@ func (suite *KeeperTestSuite) TestSendPacket() {
 		func() {
 			path := xibctesting.NewPath(suite.chainA, suite.chainB)
 			suite.coordinator.SetupClients(path)
-			packet = types.NewPacket(path.EndpointA.ChainName, xibctesting.InvalidID, relayChain, 1, mockTransferData, mockCallData, "", 0)
+			packet = types.NewPacket(path.EndpointA.ChainName, xibctesting.InvalidID, 1, mockTransferData, mockCallData, "", 0)
 		},
 		false,
 	}, {
@@ -55,7 +54,7 @@ func (suite *KeeperTestSuite) TestSendPacket() {
 		func() {
 			path := xibctesting.NewPath(suite.chainA, suite.chainB)
 			suite.coordinator.SetupClients(path)
-			packet = types.NewPacket(path.EndpointA.ChainName, path.EndpointB.ChainName, relayChain, 1, mockTransferData, mockCallData, "", 0)
+			packet = types.NewPacket(path.EndpointA.ChainName, path.EndpointB.ChainName, 1, mockTransferData, mockCallData, "", 0)
 			suite.chainA.App.XIBCKeeper.PacketKeeper.SetNextSequenceSend(suite.chainA.GetContext(), path.EndpointA.ChainName, path.EndpointB.ChainName, 5)
 		},
 		false,
@@ -91,7 +90,7 @@ func (suite *KeeperTestSuite) TestRecvPacket() {
 			path := xibctesting.NewPath(suite.chainA, suite.chainB)
 			suite.coordinator.SetupClients(path)
 
-			packet = types.NewPacket(path.EndpointA.ChainName, path.EndpointB.ChainName, relayChain, 1, mockTransferData, mockCallData, "", 0)
+			packet = types.NewPacket(path.EndpointA.ChainName, path.EndpointB.ChainName, 1, mockTransferData, mockCallData, "", 0)
 			err := path.EndpointA.SendPacket(packet)
 			suite.Require().NoError(err)
 		},
@@ -101,14 +100,14 @@ func (suite *KeeperTestSuite) TestRecvPacket() {
 		func() {
 			path := xibctesting.NewPath(suite.chainA, suite.chainB)
 			suite.coordinator.SetupClients(path)
-			packet = types.NewPacket(path.EndpointA.ChainName, path.EndpointB.ChainName, relayChain, 1, mockTransferData, mockCallData, "", 0)
+			packet = types.NewPacket(path.EndpointA.ChainName, path.EndpointB.ChainName, 1, mockTransferData, mockCallData, "", 0)
 
 			// send 2 packets
 			err := path.EndpointA.SendPacket(packet)
 			suite.Require().NoError(err)
 
 			// set sequence to 2
-			packet = types.NewPacket(path.EndpointA.ChainName, path.EndpointB.ChainName, relayChain, 2, mockTransferData, mockCallData, "", 0)
+			packet = types.NewPacket(path.EndpointA.ChainName, path.EndpointB.ChainName, 2, mockTransferData, mockCallData, "", 0)
 			err = path.EndpointA.SendPacket(packet)
 			suite.Require().NoError(err)
 		},
@@ -120,7 +119,7 @@ func (suite *KeeperTestSuite) TestRecvPacket() {
 				path := xibctesting.NewPath(suite.chainA, suite.chainB)
 				suite.coordinator.SetupClients(path)
 
-				packet = types.NewPacket(path.EndpointA.ChainName, path.EndpointB.ChainName, relayChain, 1, mockTransferData, mockCallData, "", 0)
+				packet = types.NewPacket(path.EndpointA.ChainName, path.EndpointB.ChainName, 1, mockTransferData, mockCallData, "", 0)
 				err := path.EndpointA.SendPacket(packet)
 				suite.Require().NoError(err)
 				suite.chainB.App.XIBCKeeper.PacketKeeper.SetPacketReceipt(suite.chainB.GetContext(), path.EndpointA.ChainName, path.EndpointB.ChainName, 1)
@@ -132,7 +131,7 @@ func (suite *KeeperTestSuite) TestRecvPacket() {
 				// packet commitment not set resulting in invalid proof
 				path := xibctesting.NewPath(suite.chainA, suite.chainB)
 				suite.coordinator.SetupClients(path)
-				packet = types.NewPacket(path.EndpointA.ChainName, path.EndpointB.ChainName, relayChain, 1, []byte(""), []byte(""), "", 0)
+				packet = types.NewPacket(path.EndpointA.ChainName, path.EndpointB.ChainName, 1, []byte(""), []byte(""), "", 0)
 			},
 			false,
 		}}
@@ -182,7 +181,7 @@ func (suite *KeeperTestSuite) TestWriteAcknowledgement() {
 		func() {
 			path := xibctesting.NewPath(suite.chainA, suite.chainB)
 			suite.coordinator.SetupClients(path)
-			packet = types.NewPacket(path.EndpointA.ChainName, path.EndpointB.ChainName, relayChain, 1, mockTransferData, mockCallData, "", 0)
+			packet = types.NewPacket(path.EndpointA.ChainName, path.EndpointB.ChainName, 1, mockTransferData, mockCallData, "", 0)
 			ack = xibctesting.TestHash
 		},
 		true,
@@ -191,7 +190,7 @@ func (suite *KeeperTestSuite) TestWriteAcknowledgement() {
 		func() {
 			path := xibctesting.NewPath(suite.chainA, suite.chainB)
 			suite.coordinator.SetupClients(path)
-			packet = types.NewPacket(path.EndpointA.ChainName, path.EndpointB.ChainName, relayChain, 1, mockTransferData, mockCallData, "", 0)
+			packet = types.NewPacket(path.EndpointA.ChainName, path.EndpointB.ChainName, 1, mockTransferData, mockCallData, "", 0)
 			ack = xibctesting.TestHash
 			suite.chainB.App.XIBCKeeper.PacketKeeper.SetPacketAcknowledgement(suite.chainB.GetContext(), packet.GetSourceChain(), packet.GetDestChain(), packet.GetSequence(), ack)
 		},
@@ -201,7 +200,7 @@ func (suite *KeeperTestSuite) TestWriteAcknowledgement() {
 		func() {
 			path := xibctesting.NewPath(suite.chainA, suite.chainB)
 			suite.coordinator.SetupClients(path)
-			packet = types.NewPacket(path.EndpointA.ChainName, path.EndpointB.ChainName, relayChain, 1, mockTransferData, mockCallData, "", 0)
+			packet = types.NewPacket(path.EndpointA.ChainName, path.EndpointB.ChainName, 1, mockTransferData, mockCallData, "", 0)
 			ack = nil
 		},
 		false,
@@ -232,7 +231,7 @@ func (suite *KeeperTestSuite) TestAcknowledgePacket() {
 				// setup
 				path := xibctesting.NewPath(suite.chainA, suite.chainB)
 				suite.coordinator.SetupClients(path)
-				packet = types.NewPacket(path.EndpointA.ChainName, path.EndpointB.ChainName, relayChain, 1, mockTransferData, mockCallData, "", 0)
+				packet = types.NewPacket(path.EndpointA.ChainName, path.EndpointB.ChainName, 1, mockTransferData, mockCallData, "", 0)
 				// create packet commitment
 				err := path.EndpointA.SendPacket(packet)
 				suite.Require().NoError(err)
@@ -274,7 +273,7 @@ func (suite *KeeperTestSuite) TestAcknowledgePacket() {
 				// packet commitment never written
 				path := xibctesting.NewPath(suite.chainA, suite.chainB)
 				suite.coordinator.SetupClients(path)
-				packet = types.NewPacket(path.EndpointA.ChainName, path.EndpointB.ChainName, relayChain, 1, mockTransferData, mockCallData, "", 0)
+				packet = types.NewPacket(path.EndpointA.ChainName, path.EndpointB.ChainName, 1, mockTransferData, mockCallData, "", 0)
 			},
 			false,
 		},

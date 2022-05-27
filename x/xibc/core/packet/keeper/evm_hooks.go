@@ -1,6 +1,9 @@
 package keeper
 
 import (
+	"encoding/json"
+	"fmt"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	packetcontract "github.com/teleport-network/teleport/syscontracts/xibc_packet"
@@ -53,17 +56,25 @@ func (h Hooks) PostTxProcessing(
 			h.k.Logger(ctx).Error("failed to unpack send packet event", "error", err.Error())
 			return err
 		}
-		var packetSendEvent types.EventSendPacket
-		if err = packetSendEvent.DecodeInterface(sendEvent[0]); err != nil {
-			h.k.Logger(ctx).Error("failed to decode event", "error", err.Error())
+		var packetBytes []byte
+		bzTmp, err := json.Marshal(sendEvent[0])
+		if err != nil {
+			fmt.Println(err.Error())
+			h.k.Logger(ctx).Error("failed to decode interface to event", "error", err.Error())
 			return err
 		}
-		var packet types.Packet
-		if err = packet.DecodeAbiBytes(packetSendEvent.GetPacket()); err != nil {
-			h.k.Logger(ctx).Error("failed to decode packet", "error", err.Error())
+		err = json.Unmarshal(bzTmp, &packetBytes)
+		if err != nil {
+			fmt.Println(err.Error())
+			h.k.Logger(ctx).Error("failed to decode interface to event", "error", err.Error())
 			return err
 		}
 
+		var packet types.Packet
+		if err = packet.DecodeAbiBytes(packetBytes); err != nil {
+			h.k.Logger(ctx).Error("failed to decode packet", "error", err.Error())
+			return err
+		}
 		// send cross chain contract packet
 		if err = h.k.SendPacket(
 			ctx,
