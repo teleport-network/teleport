@@ -9,6 +9,13 @@ import (
 
 const PacketSendEvent = "PacketSent"
 
+type InToken struct {
+	OriToken string
+	Amount   *big.Int
+	Scale    uint8
+	Bound    bool
+}
+
 type CrossChainData struct {
 	// path data
 	DestChain string

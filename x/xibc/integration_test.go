@@ -19,6 +19,7 @@ import (
 	crosschaincontract "github.com/teleport-network/teleport/syscontracts/cross_chain"
 	erc20contracts "github.com/teleport-network/teleport/syscontracts/erc20"
 	packetcontract "github.com/teleport-network/teleport/syscontracts/xibc_packet"
+	aggregatetypes "github.com/teleport-network/teleport/x/aggregate/types"
 	packettypes "github.com/teleport-network/teleport/x/xibc/core/packet/types"
 	xibctesting "github.com/teleport-network/teleport/x/xibc/testing"
 )
@@ -98,17 +99,19 @@ func (suite *XIBCTestSuite) TestCrossChainTransferERC20() {
 		Amount:       big.NewInt(1000),
 	}
 
-	// send CrossChainCAll Tx
+	// send CrossChainCall Tx
 	suite.Approve(suite.chainA, chainAERC20, crosschaincontract.CrossChainAddress, big.NewInt(2000))
-	suite.CrossChainCAll(suite.chainA, crossChainData, fee)
+	suite.CrossChainCall(suite.chainA, crossChainData, fee)
 	balance = suite.ERC20Balance(suite.chainA, chainAERC20, suite.chainA.SenderAddress)
 	suite.Equal(balance.Int64(), int64(8000))
 	balance = suite.ERC20Balance(suite.chainA, chainAERC20, crosschaincontract.CrossChainAddress)
 	suite.Equal(balance.Int64(), int64(1000))
 	balance = suite.ERC20Balance(suite.chainA, chainAERC20, packetcontract.PacketContractAddress)
 	suite.Equal(balance.Int64(), int64(1000))
-	// check packet fees
+	outToken := suite.OutTokens(suite.chainA, chainAERC20, suite.chainB.ChainID)
+	suite.Require().Equal(int64(1000), outToken.Int64())
 
+	// check packet fees
 	fees := suite.GetPacketFees(suite.chainA, suite.chainA.ChainID, suite.chainB.ChainID, 1)
 	suite.Require().Equal(chainAERC20, fees.TokenAddress)
 	suite.Require().Equal(big.NewInt(1000).Int64(), fees.Amount.Int64())
@@ -153,6 +156,11 @@ func (suite *XIBCTestSuite) TestCrossChainTransferERC20() {
 	suite.Equal(balance.Int64(), int64(0))
 	balance = suite.ERC20Balance(suite.chainA, chainAERC20, suite.chainA.SenderAddress)
 	suite.Equal(balance.Int64(), int64(9000))
+	bindings := suite.Bindings(suite.chainB, chainBERC20, suite.chainA.ChainID)
+	suite.Equal(bindings.OriToken, strings.ToLower(chainAERC20.String()))
+	suite.Equal(bindings.Amount.Int64(), int64(1000))
+	suite.Equal(bindings.Bound, true)
+	suite.Equal(bindings.Scale, uint8(0))
 
 	status := suite.GetAckStatus(suite.chainA, suite.chainA.ChainID, suite.chainB.ChainID, 1)
 	suite.Require().Equal(status, uint8(1))
@@ -163,10 +171,212 @@ func (suite *XIBCTestSuite) TestCrossChainTransferERC20() {
 	suite.Require().Equal(suite.chainB.SenderAcc.String(), ack.Relayer)
 }
 
+func (suite *XIBCTestSuite) TestCrossChainTransferBaseAndTransferBack() {
+	suite.SetupTest()
+
+	// setup testing conditions
+	pathAToB := xibctesting.NewPath(suite.chainA, suite.chainB)
+	suite.coordinator.SetupClients(pathAToB)
+
+	// deploy ERC20
+	chainABase := common.HexToAddress("0x0000000000000000000000000000000000000000")
+	chainBERC20 := suite.DeployERC20ByCrossChain(suite.chainB)
+
+	// add erc20 trace
+	err := suite.chainB.App.AggregateKeeper.RegisterERC20Trace(
+		suite.chainB.GetContext(),
+		chainBERC20,
+		strings.ToLower(chainABase.String()),
+		suite.chainA.ChainID,
+		uint8(0),
+	)
+	suite.Require().NoError(err)
+	// check ERC20 trace
+	token, amount, exist, err := suite.chainB.App.AggregateKeeper.QueryERC20Trace(
+		suite.chainB.GetContext(),
+		chainBERC20,
+		suite.chainA.ChainID,
+	)
+	suite.Require().NoError(err)
+	suite.Require().True(exist)
+	suite.Equal(token, strings.ToLower(chainABase.String()))
+	suite.Equal(amount.Int64(), int64(0))
+
+	crossChainData := packettypes.CrossChainData{
+		DestChain:       suite.chainB.ChainID,
+		TokenAddress:    chainABase,
+		Receiver:        strings.ToLower(suite.chainB.SenderAddress.String()),
+		Amount:          big.NewInt(100),
+		ContractAddress: "",
+		CallData:        []byte(""),
+		CallbackAddress: common.BigToAddress(big.NewInt(0)),
+		FeeOption:       0,
+	}
+	fee := packettypes.Fee{
+		TokenAddress: chainABase,
+		Amount:       big.NewInt(100),
+	}
+
+	balances := suite.chainA.App.BankKeeper.GetBalance(suite.chainA.GetContext(), suite.chainA.SenderAcc, "stake")
+	suite.Require().Equal(balances.String(), "100000000000000stake")
+	suite.CrossChainCall(suite.chainA, crossChainData, fee)
+	balances = suite.chainA.App.BankKeeper.GetBalance(suite.chainA.GetContext(), suite.chainA.SenderAcc, "stake")
+	suite.Require().Equal(balances.String(), "99999999999800stake")
+
+	crossChainAddr, err := sdk.AccAddressFromHex(hex.EncodeToString(crosschaincontract.CrossChainAddress.Bytes()))
+	suite.Require().NoError(err)
+	packetAddr, err := sdk.AccAddressFromHex(hex.EncodeToString(packetcontract.PacketContractAddress.Bytes()))
+	suite.Require().NoError(err)
+
+	balances = suite.chainA.App.BankKeeper.GetBalance(suite.chainA.GetContext(), crossChainAddr, "stake")
+	suite.Require().Equal(balances.String(), "100stake")
+	balances = suite.chainA.App.BankKeeper.GetBalance(suite.chainA.GetContext(), packetAddr, "stake")
+	suite.Require().Equal(balances.String(), "100stake")
+	outToken := suite.OutTokens(suite.chainA, chainABase, suite.chainB.ChainID)
+	suite.Require().Equal(int64(100), outToken.Int64())
+
+	// check packet fees
+	fees := suite.GetPacketFees(suite.chainA, suite.chainA.ChainID, suite.chainB.ChainID, 1)
+	suite.Require().Equal(chainABase, fees.TokenAddress)
+	suite.Require().Equal(big.NewInt(100).Int64(), fees.Amount.Int64())
+
+	// packet and ack
+	decodeString, err := hex.DecodeString("0000000000000000000000000000000000000000000000000000000000000064")
+	suite.Require().NoError(err)
+	transferData := packettypes.TransferData{
+		Receiver: strings.ToLower(crossChainData.Receiver),
+		Amount:   decodeString,
+		Token:    strings.ToLower(crossChainData.TokenAddress.String()),
+		OriToken: "",
+	}
+	transferDataAbi, err := transferData.AbiPack()
+	suite.Require().NoError(err)
+
+	packet := packettypes.Packet{
+		SourceChain:      suite.chainA.ChainID,
+		DestinationChain: suite.chainB.ChainID,
+		Sequence:         1,
+		Sender:           strings.ToLower(suite.chainA.SenderAddress.String()),
+		TransferData:     transferDataAbi,
+		CallData:         []byte(""),
+		CallbackAddress:  common.BigToAddress(big.NewInt(0)).String(),
+		FeeOption:        0,
+	}
+	ack := packettypes.NewResultAcknowledgement(
+		0,
+		[]byte(""),
+		"",
+		strings.ToLower(suite.chainB.SenderAcc.String()),
+	)
+	ackData, err := ack.AbiPack()
+	suite.Require().NoError(err)
+
+	// relay
+	err = pathAToB.RelayPacket(packet, ackData)
+	suite.Require().NoError(err)
+
+	// check balance
+	balance := suite.ERC20Balance(suite.chainB, chainBERC20, suite.chainB.SenderAddress)
+	suite.Require().Equal(int64(100), balance.Int64())
+	balances = suite.chainA.App.BankKeeper.GetBalance(suite.chainA.GetContext(), packetAddr, "stake")
+	suite.Require().Equal(balances.String(), "0stake")
+	balances = suite.chainA.App.BankKeeper.GetBalance(suite.chainA.GetContext(), suite.chainA.SenderAcc, "stake")
+	suite.Require().Equal(balances.String(), "99999999999900stake")
+
+	// check bindings
+	bindings := suite.Bindings(suite.chainB, chainBERC20, suite.chainA.ChainID)
+	suite.Equal(bindings.OriToken, strings.ToLower(chainABase.String()))
+	suite.Equal(bindings.Amount.Int64(), int64(100))
+	suite.Equal(bindings.Bound, true)
+	suite.Equal(bindings.Scale, uint8(0))
+
+	// check ack
+	status := suite.GetAckStatus(suite.chainA, suite.chainA.ChainID, suite.chainB.ChainID, 1)
+	suite.Require().Equal(status, uint8(1))
+	ack = suite.GetAck(suite.chainA, suite.chainA.ChainID, suite.chainB.ChainID, 1)
+	suite.Require().Equal(uint64(0), ack.Code)
+	suite.Require().Equal([]byte(""), ack.Result)
+	suite.Require().Equal("", ack.Message)
+	suite.Require().Equal(suite.chainB.SenderAcc.String(), ack.Relayer)
+
+	crossChainData = packettypes.CrossChainData{
+		DestChain:       suite.chainA.ChainID,
+		TokenAddress:    chainBERC20,
+		Receiver:        strings.ToLower(suite.chainA.SenderAddress.String()),
+		Amount:          big.NewInt(100),
+		ContractAddress: "",
+		CallData:        []byte(""),
+		CallbackAddress: common.BigToAddress(big.NewInt(0)),
+		FeeOption:       0,
+	}
+	fee = packettypes.Fee{
+		TokenAddress: chainBERC20,
+		Amount:       big.NewInt(0),
+	}
+	suite.Approve(suite.chainB, chainBERC20, crosschaincontract.CrossChainAddress, big.NewInt(100))
+	suite.CrossChainCall(suite.chainB, crossChainData, fee)
+	balance = suite.ERC20Balance(suite.chainB, chainBERC20, suite.chainB.SenderAddress)
+	suite.Require().Equal(int64(0), balance.Int64())
+
+	// check bindings
+	bindings = suite.Bindings(suite.chainB, chainBERC20, suite.chainA.ChainID)
+	suite.Equal(bindings.OriToken, strings.ToLower(chainABase.String()))
+	suite.Equal(bindings.Amount.Int64(), int64(0))
+	suite.Equal(bindings.Bound, true)
+	suite.Equal(bindings.Scale, uint8(0))
+
+	// check packet fees
+	fees = suite.GetPacketFees(suite.chainB, suite.chainB.ChainID, suite.chainA.ChainID, 1)
+	suite.Require().Equal(chainBERC20, fees.TokenAddress)
+	suite.Require().Equal(big.NewInt(0).Int64(), fees.Amount.Int64())
+
+	// packet and ack
+	decodeString, err = hex.DecodeString("0000000000000000000000000000000000000000000000000000000000000064")
+	suite.Require().NoError(err)
+	transferData = packettypes.TransferData{
+		Receiver: strings.ToLower(crossChainData.Receiver),
+		Amount:   decodeString,
+		Token:    strings.ToLower(crossChainData.TokenAddress.String()),
+		OriToken: strings.ToLower(chainABase.String()),
+	}
+	transferDataAbi, err = transferData.AbiPack()
+	suite.Require().NoError(err)
+
+	packet = packettypes.Packet{
+		SourceChain:      suite.chainB.ChainID,
+		DestinationChain: suite.chainA.ChainID,
+		Sequence:         1,
+		Sender:           strings.ToLower(suite.chainB.SenderAddress.String()),
+		TransferData:     transferDataAbi,
+		CallData:         []byte(""),
+		CallbackAddress:  common.BigToAddress(big.NewInt(0)).String(),
+		FeeOption:        0,
+	}
+	ack = packettypes.NewResultAcknowledgement(
+		0,
+		[]byte(""),
+		"",
+		strings.ToLower(suite.chainB.SenderAcc.String()),
+	)
+	ackData, err = ack.AbiPack()
+	suite.Require().NoError(err)
+
+	// relay
+	err = pathAToB.RelayPacket(packet, ackData)
+	suite.Require().NoError(err)
+	balances = suite.chainA.App.BankKeeper.GetBalance(suite.chainA.GetContext(), suite.chainA.SenderAcc, "stake")
+	suite.Require().Equal(balances.String(), "100000000000000stake")
+
+	balances = suite.chainA.App.BankKeeper.GetBalance(suite.chainA.GetContext(), crossChainAddr, "stake")
+	suite.Require().Equal(balances.String(), "0stake")
+	outToken = suite.OutTokens(suite.chainA, chainABase, suite.chainB.ChainID)
+	suite.Require().Equal(int64(0), outToken.Int64())
+}
+
 // ================================================================================================================
 // CrossChain functions
 // ================================================================================================================
-func (suite *XIBCTestSuite) CrossChainCAll(fromChain *xibctesting.TestChain, data packettypes.CrossChainData, fee packettypes.Fee) {
+func (suite *XIBCTestSuite) CrossChainCall(fromChain *xibctesting.TestChain, data packettypes.CrossChainData, fee packettypes.Fee) {
 	crossChainCallData, err := crosschaincontract.CrossChainContract.ABI.Pack("crossChainCall", data, fee)
 	suite.Require().NoError(err)
 	amount := big.NewInt(0)
@@ -180,6 +390,54 @@ func (suite *XIBCTestSuite) CrossChainCAll(fromChain *xibctesting.TestChain, dat
 
 	_ = suite.SendTx(fromChain, crosschaincontract.CrossChainAddress, amount, crossChainCallData)
 	suite.coordinator.CommitBlock(suite.chainA, suite.chainB)
+}
+
+func (suite *XIBCTestSuite) OutTokens(
+	fromChain *xibctesting.TestChain,
+	tokenAddress common.Address,
+	destChain string,
+) *big.Int {
+	res, err := fromChain.App.XIBCKeeper.PacketKeeper.CallEVM(
+		fromChain.GetContext(),
+		crosschaincontract.CrossChainContract.ABI,
+		aggregatetypes.ModuleAddress,
+		crosschaincontract.CrossChainAddress,
+		"outTokens",
+		tokenAddress,
+		destChain,
+	)
+	suite.Require().NoError(err)
+
+	type Amount struct {
+		Value *big.Int
+	}
+	var amount Amount
+	err = crosschaincontract.CrossChainContract.ABI.UnpackIntoInterface(&amount, "outTokens", res.Ret)
+	suite.Require().NoError(err)
+
+	return amount.Value
+}
+
+func (suite *XIBCTestSuite) Bindings(
+	fromChain *xibctesting.TestChain,
+	tokenAddress common.Address,
+	oriChain string,
+) packettypes.InToken {
+	res, err := fromChain.App.XIBCKeeper.PacketKeeper.CallEVM(
+		fromChain.GetContext(),
+		crosschaincontract.CrossChainContract.ABI,
+		aggregatetypes.ModuleAddress,
+		crosschaincontract.CrossChainAddress,
+		"bindings",
+		strings.ToLower(tokenAddress.String())+"/"+oriChain,
+	)
+	suite.Require().NoError(err)
+
+	var bind packettypes.InToken
+	err = crosschaincontract.CrossChainContract.ABI.UnpackIntoInterface(&bind, "bindings", res.Ret)
+	suite.Require().NoError(err)
+
+	return bind
 }
 
 // ================================================================================================================

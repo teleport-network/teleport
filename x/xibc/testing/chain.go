@@ -163,8 +163,9 @@ func NewTestChain(t *testing.T, coord *Coordinator, chainID string) *TestChain {
 		SenderAddress:  senderAddress,
 	}
 	chain.App.XIBCKeeper.ClientKeeper.SetChainName(chain.GetContext(), chainID)
-	chain.InitPacketChainName()
 	coord.CommitBlock(chain)
+
+	chain.SetPacketChainName()
 	return chain
 }
 
@@ -604,14 +605,14 @@ func (chain *TestChain) RegisterRelayer(chains []string, addresses []string) {
 	)
 }
 
-func (chain *TestChain) InitPacketChainName() {
+func (chain *TestChain) SetPacketChainName() {
 	packetContractAbi := packetcontract.PacketContract.ABI
 	if _, err := chain.App.XIBCKeeper.PacketKeeper.CallEVM(
 		chain.GetContext(),
 		packetContractAbi,
 		packettypes.ModuleAddress,
 		packetcontract.PacketContractAddress,
-		"initChainName",
+		"setChainName",
 		chain.App.XIBCKeeper.ClientKeeper.GetChainName(chain.GetContext()),
 	); err != nil {
 		panic(err)
