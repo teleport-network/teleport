@@ -128,6 +128,7 @@ func (k Keeper) SetPacketRelayer(ctx sdk.Context, sourceChain, destChain string,
 	store.Set(host.PacketRelayerKey(sourceChain, destChain, sequence), []byte(relayer))
 }
 
+// deletePacketRelayer delete the packet relayer
 func (k Keeper) deletePacketRelayer(ctx sdk.Context, sourceChain, destChain string, sequence uint64) {
 	store := ctx.KVStore(k.storeKey)
 	store.Delete(host.PacketRelayerKey(sourceChain, destChain, sequence))
