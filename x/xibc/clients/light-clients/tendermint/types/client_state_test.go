@@ -149,7 +149,7 @@ func (suite *TendermintTestSuite) TestVerifyPacketCommitment() {
 			suite.Require().Equal(path.EndpointB.Chain.SenderAcc.String(), relayerB[0].Address, "relayer does not match")
 
 			// setup testing conditions
-			packet := packettypes.NewPacket(path.EndpointA.ChainName, path.EndpointB.ChainName, 1, []byte("mock transfer"), []byte("mock rcc"), "", 0)
+			packet := packettypes.NewPacket(path.EndpointA.ChainName, path.EndpointB.ChainName, 1, "sender", []byte("mock transfer"), []byte("mock rcc"), "", 0)
 
 			err := path.EndpointA.SendPacket(packet)
 			suite.Require().NoError(err)
@@ -233,6 +233,7 @@ func (suite *TendermintTestSuite) TestVerifyPacketAcknowledgement() {
 				path.EndpointA.ChainName,
 				path.EndpointB.ChainName,
 				1,
+				"sender",
 				[]byte("mock transfer"),
 				[]byte("mock rcc"),
 				"",
