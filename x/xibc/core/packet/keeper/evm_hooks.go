@@ -81,7 +81,6 @@ func (h Hooks) PostTxProcessing(
 		//	h.k.Logger(ctx).Error("failed to decode packet", "error", err.Error())
 		//	return err
 		//}
-		//
 		//fmt.Println("hooks : callData : ", hex.EncodeToString(packet.GetCallData()))
 		//var callData types.CallData
 		//if err = callData.ABIDecode(packet.GetCallData()); err != nil {

@@ -134,6 +134,7 @@ func (k Keeper) RecvPacket(ctx sdk.Context, msg *types.MsgRecvPacket) error {
 		},
 	)
 
+	// todo relayChain
 	return nil
 }
 
@@ -285,6 +286,7 @@ func (k Keeper) AcknowledgePacket(
 			Ack:      msg.Acknowledgement,
 		},
 	)
+	// todo relayChain
 
 	return nil
 }

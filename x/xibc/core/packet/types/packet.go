@@ -129,6 +129,36 @@ func (p Packet) ValidateBasic() error {
 	return nil
 }
 
+type WPacket struct {
+	// packet base data
+	SrcChain  string
+	DestChain string
+	Sequence  uint64
+	Sender    string
+	// transfer data. keep empty if not used.
+	TransferData []byte
+	// call data. keep empty if not used
+	CallData []byte
+	// callback data
+	CallbackAddress string
+	// fee option
+	FeeOption uint64
+}
+
+// ABIDecode implements PacketI interface
+func (p *Packet) ToWPacket() WPacket {
+	return WPacket{
+		p.SourceChain,
+		p.DestinationChain,
+		p.Sequence,
+		p.Sender,
+		p.TransferData,
+		p.CallData,
+		p.CallbackAddress,
+		p.FeeOption,
+	}
+}
+
 // NewResultAcknowledgement returns a new instance of Acknowledgement using an Acknowledgement_Result type in the Response field.
 func NewAcknowledgement(code uint64, results []byte, message, relayer string, feeOption uint64) Acknowledgement {
 	return Acknowledgement{

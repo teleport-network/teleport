@@ -144,10 +144,10 @@ func initTupleTransferData() {
 	tupleTransferData, err := abi.NewType(
 		"tuple", "",
 		[]abi.ArgumentMarshaling{
-			{Name: "receiver", Type: "string"},
-			{Name: "amount", Type: "bytes"},
 			{Name: "token", Type: "string"},
 			{Name: "oriToken", Type: "string"},
+			{Name: "amount", Type: "bytes"},
+			{Name: "receiver", Type: "string"},
 		},
 	)
 	if err != nil {

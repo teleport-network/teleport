@@ -55,6 +55,7 @@ func (k Keeper) RecvPacket(goCtx context.Context, msg *packettypes.MsgRecvPacket
 	}
 
 	cctx, write := ctx.CacheContext()
+	// todo relay chain check
 	var packet packettypes.Packet
 	err := packet.ABIDecode(msg.Packet)
 	if err != nil {
@@ -66,7 +67,7 @@ func (k Keeper) RecvPacket(goCtx context.Context, msg *packettypes.MsgRecvPacket
 		return nil, sdkerrors.Wrapf(packettypes.ErrRelayerNotFound, "relayer on source chain not found")
 	}
 
-	res, err := k.PacketKeeper.CallPacket(ctx, "onRecvPacket", packet)
+	res, err := k.PacketKeeper.CallPacket(ctx, "onRecvPacket", packet.ToWPacket())
 	// call packet to onRecvPacket
 	if err != nil {
 		// Write ErrAck
@@ -129,7 +130,6 @@ func (k Keeper) Acknowledgement(goCtx context.Context, msg *packettypes.MsgAckno
 		if _, err := k.PacketKeeper.CallPacket(
 			ctx,
 			"setAckStatus",
-			packet.GetSrcChain(),
 			packet.GetDestChain(),
 			packet.Sequence,
 			uint8(1),
@@ -141,7 +141,6 @@ func (k Keeper) Acknowledgement(goCtx context.Context, msg *packettypes.MsgAckno
 		if _, err := k.PacketKeeper.CallPacket(
 			ctx,
 			"setAckStatus",
-			packet.GetSrcChain(),
 			packet.GetDestChain(),
 			packet.Sequence,
 			uint8(2),
@@ -163,7 +162,6 @@ func (k Keeper) Acknowledgement(goCtx context.Context, msg *packettypes.MsgAckno
 	if _, err := k.PacketKeeper.CallPacket(
 		ctx,
 		"sendPacketFeeToRelayer",
-		packet.GetSrcChain(),
 		packet.GetDestChain(),
 		packet.Sequence,
 		common.BytesToAddress(relayerAddr),
@@ -175,7 +173,7 @@ func (k Keeper) Acknowledgement(goCtx context.Context, msg *packettypes.MsgAckno
 	if _, err := k.PacketKeeper.CallPacket(
 		ctx,
 		"OnAcknowledgePacket",
-		packet,
+		packet.ToWPacket(),
 		ack,
 	); err != nil {
 		return nil, err
