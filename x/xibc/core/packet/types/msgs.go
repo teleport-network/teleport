@@ -35,7 +35,7 @@ func (msg MsgRecvPacket) ValidateBasic() error {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "string could not be parsed as address: %v", err)
 	}
 	var packet Packet
-	err := packet.DecodeAbiBytes(msg.Packet)
+	err := packet.ABIDecode(msg.Packet)
 	if err != nil {
 		return sdkerrors.Wrapf(ErrDecodeAbi, "string could not be parsed as address: %v", err)
 	}
@@ -81,7 +81,7 @@ func (msg MsgAcknowledgement) ValidateBasic() error {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "string could not be parsed as address: %v", err)
 	}
 	var packet Packet
-	err := packet.DecodeAbiBytes(msg.Packet)
+	err := packet.ABIDecode(msg.Packet)
 	if err != nil {
 		return sdkerrors.Wrapf(ErrDecodeAbi, "string could not be parsed as address: %v", err)
 	}

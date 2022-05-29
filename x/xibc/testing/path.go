@@ -55,7 +55,7 @@ func (path *Path) RelayPacket(packet packettypes.Packet, ack []byte) error {
 	}
 	packetCommitA := path.EndpointA.Chain.App.XIBCKeeper.PacketKeeper.GetPacketCommitment(
 		path.EndpointA.Chain.GetContext(),
-		packet.GetSourceChain(),
+		packet.GetSrcChain(),
 		packet.GetDestChain(),
 		packet.GetSequence(),
 	)
@@ -76,7 +76,7 @@ func (path *Path) RelayPacket(packet packettypes.Packet, ack []byte) error {
 
 	packetCommitB := path.EndpointB.Chain.App.XIBCKeeper.PacketKeeper.GetPacketCommitment(
 		path.EndpointB.Chain.GetContext(),
-		packet.GetSourceChain(),
+		packet.GetSrcChain(),
 		packet.GetDestChain(),
 		packet.GetSequence(),
 	)
@@ -108,7 +108,7 @@ func (path *Path) RelayPacketWithoutAck(packet packettypes.Packet) error {
 	}
 	packetCommitA := path.EndpointA.Chain.App.XIBCKeeper.PacketKeeper.GetPacketCommitment(
 		path.EndpointA.Chain.GetContext(),
-		packet.GetSourceChain(),
+		packet.GetSrcChain(),
 		packet.GetDestChain(),
 		packet.GetSequence(),
 	)
@@ -129,7 +129,7 @@ func (path *Path) RelayPacketWithoutAck(packet packettypes.Packet) error {
 
 	packetCommitB := path.EndpointB.Chain.App.XIBCKeeper.PacketKeeper.GetPacketCommitment(
 		path.EndpointB.Chain.GetContext(),
-		packet.GetSourceChain(),
+		packet.GetSrcChain(),
 		packet.GetDestChain(),
 		packet.GetSequence(),
 	)

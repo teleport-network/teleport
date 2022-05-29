@@ -71,20 +71,20 @@ func (h Hooks) PostTxProcessing(
 		}
 
 		var packet types.Packet
-		if err = packet.DecodeAbiBytes(packetBytes); err != nil {
+		if err = packet.ABIDecode(packetBytes); err != nil {
 			h.k.Logger(ctx).Error("failed to decode packet", "error", err.Error())
 			return err
 		}
 		// todo ? add data validate?
 		//var transferData types.TransferData
-		//if err = transferData.DecodeAbiBytes(packet.GetTransferData()); err != nil {
+		//if err = transferData.ABIDecode(packet.GetTransferData()); err != nil {
 		//	h.k.Logger(ctx).Error("failed to decode packet", "error", err.Error())
 		//	return err
 		//}
 		//
 		//fmt.Println("hooks : callData : ", hex.EncodeToString(packet.GetCallData()))
 		//var callData types.CallData
-		//if err = callData.DecodeAbiBytes(packet.GetCallData()); err != nil {
+		//if err = callData.ABIDecode(packet.GetCallData()); err != nil {
 		//	h.k.Logger(ctx).Error("failed to decode packet", "error", err.Error())
 		//	return err
 		//}

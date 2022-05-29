@@ -15,7 +15,7 @@ service Query {
   rpc PacketCommitment(QueryPacketCommitmentRequest)
       returns (QueryPacketCommitmentResponse) {
     option (google.api.http).get =
-        "/xibc/core/packet/v1beta1/source_chains/{source_chain}/dest_chains/"
+        "/xibc/core/packet/v1beta1/src_chains/{src_chain}/dest_chains/"
         "{dest_chain}/packet_commitments/{sequence}";
   }
 
@@ -23,7 +23,7 @@ service Query {
   rpc PacketCommitments(QueryPacketCommitmentsRequest)
       returns (QueryPacketCommitmentsResponse) {
     option (google.api.http).get =
-        "/xibc/core/packet/v1beta1/source_chains/{source_chain}/dest_chains/"
+        "/xibc/core/packet/v1beta1/src_chains/{src_chain}/dest_chains/"
         "{dest_chain}/packet_commitments";
   }
 
@@ -32,7 +32,7 @@ service Query {
   rpc PacketReceipt(QueryPacketReceiptRequest)
       returns (QueryPacketReceiptResponse) {
     option (google.api.http).get =
-        "/xibc/core/packet/v1beta1/source_chains/{source_chain}/dest_chains/"
+        "/xibc/core/packet/v1beta1/src_chains/{src_chain}/dest_chains/"
         "{dest_chain}/packet_receipts/{sequence}";
   }
 
@@ -40,7 +40,7 @@ service Query {
   rpc PacketAcknowledgement(QueryPacketAcknowledgementRequest)
       returns (QueryPacketAcknowledgementResponse) {
     option (google.api.http).get =
-        "/xibc/core/packet/v1beta1/source_chains/{source_chain}/dest_chains/"
+        "/xibc/core/packet/v1beta1/src_chains/{src_chain}/dest_chains/"
         "{dest_chain}/packet_acks/{sequence}";
   }
 
@@ -48,7 +48,7 @@ service Query {
   rpc PacketAcknowledgements(QueryPacketAcknowledgementsRequest)
       returns (QueryPacketAcknowledgementsResponse) {
     option (google.api.http).get =
-        "/xibc/core/packet/v1beta1/source_chains/{source_chain}/dest_chains/"
+        "/xibc/core/packet/v1beta1/src_chains/{src_chain}/dest_chains/"
         "{dest_chain}/packet_acknowledgements";
   }
 
@@ -57,7 +57,7 @@ service Query {
   rpc UnreceivedPackets(QueryUnreceivedPacketsRequest)
       returns (QueryUnreceivedPacketsResponse) {
     option (google.api.http).get =
-        "/xibc/core/packet/v1beta1/source_chains/{source_chain}/dest_chains/"
+        "/xibc/core/packet/v1beta1/src_chains/{src_chain}/dest_chains/"
         "{dest_chain}/packet_commitments/{packet_commitment_sequences}/"
         "unreceived_packets";
   }
@@ -67,7 +67,7 @@ service Query {
   rpc UnreceivedAcks(QueryUnreceivedAcksRequest)
       returns (QueryUnreceivedAcksResponse) {
     option (google.api.http).get =
-        "/xibc/core/packet/v1beta1/source_chains/{source_chain}/dest_chains/"
+        "/xibc/core/packet/v1beta1/src_chains/{src_chain}/dest_chains/"
         "{dest_chain}/packet_commitments/{packet_ack_sequences}/"
         "unreceived_acks";
   }
@@ -79,7 +79,7 @@ message QueryPacketCommitmentRequest {
   // dest chain name
   string dest_chain = 1;
   // source chain name
-  string source_chain = 2;
+  string src_chain = 2;
   // packet sequence
   uint64 sequence = 3;
 }
@@ -101,7 +101,7 @@ message QueryPacketCommitmentsRequest {
   // dest chain name
   string dest_chain = 1;
   // source chain name
-  string source_chain = 2;
+  string src_chain = 2;
   // pagination request
   cosmos.base.query.v1beta1.PageRequest pagination = 3;
 }
@@ -122,7 +122,7 @@ message QueryPacketReceiptRequest {
   // dest chain name
   string dest_chain = 1;
   // source chain name
-  string source_chain = 2;
+  string src_chain = 2;
   // packet sequence
   uint64 sequence = 3;
 }
@@ -145,7 +145,7 @@ message QueryPacketAcknowledgementRequest {
   // dest chain name
   string dest_chain = 1;
   // source chain name
-  string source_chain = 2;
+  string src_chain = 2;
   // packet sequence
   uint64 sequence = 3;
 }
@@ -168,7 +168,7 @@ message QueryPacketAcknowledgementsRequest {
   // dest chain name
   string dest_chain = 1;
   // source chain name
-  string source_chain = 2;
+  string src_chain = 2;
   // pagination request
   cosmos.base.query.v1beta1.PageRequest pagination = 3;
 }
@@ -189,7 +189,7 @@ message QueryUnreceivedPacketsRequest {
   // dest chain name
   string dest_chain = 1;
   // source chain name
-  string source_chain = 2;
+  string src_chain = 2;
   // list of packet sequences
   repeated uint64 packet_commitment_sequences = 3;
 }
@@ -209,7 +209,7 @@ message QueryUnreceivedAcksRequest {
   // dest chain name
   string dest_chain = 1;
   // source chain name
-  string source_chain = 2;
+  string src_chain = 2;
   // list of acknowledgement sequences
   repeated uint64 packet_ack_sequences = 3;
 }

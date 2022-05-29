@@ -19,11 +19,11 @@ func TestPacketAbi(t *testing.T) {
 		"callback_address",
 		0,
 	)
-	packetAbi, err := crossChainPacket.AbiPack()
+	packetAbi, err := crossChainPacket.ABIPack()
 	require.NoError(t, err)
 	require.NotNil(t, packetAbi)
 	var p packettypes.Packet
-	err = p.DecodeAbiBytes(packetAbi)
+	err = p.ABIDecode(packetAbi)
 	require.NoError(t, err)
 	require.Equal(t, p.SourceChain, crossChainPacket.SourceChain)
 	require.Equal(t, p.DestinationChain, crossChainPacket.DestinationChain)
@@ -42,11 +42,11 @@ func TestAckAbi(t *testing.T) {
 		"",
 		"address",
 	)
-	ackData, err := ack.AbiPack()
+	ackData, err := ack.ABIPack()
 	require.NoError(t, err)
 	require.NotNil(t, ackData)
 	var p packettypes.Acknowledgement
-	err = p.DecodeAbiBytes(ackData)
+	err = p.ABIDecode(ackData)
 	require.NotNil(t, p)
 	require.NoError(t, err)
 }
@@ -58,11 +58,11 @@ func TestTransferDataAbi(t *testing.T) {
 		Token:    "token",
 		OriToken: "ori_token",
 	}
-	data, err := transferData.AbiPack()
+	data, err := transferData.ABIPack()
 	require.NoError(t, err)
 	require.NotNil(t, data)
 	var p packettypes.TransferData
-	err = p.DecodeAbiBytes(data)
+	err = p.ABIDecode(data)
 	require.NoError(t, err)
 	require.Equal(t, p.Receiver, transferData.Receiver)
 	require.Equal(t, p.Amount, transferData.Amount)
@@ -75,11 +75,11 @@ func TestCallDataAbi(t *testing.T) {
 		ContractAddress: "contract_address",
 		CallData:        []byte(""),
 	}
-	data, err := callData.AbiPack()
+	data, err := callData.ABIPack()
 	require.NoError(t, err)
 	require.NotNil(t, data)
 	var p packettypes.CallData
-	err = p.DecodeAbiBytes(data)
+	err = p.ABIDecode(data)
 	require.NoError(t, err)
 	require.Equal(t, p.ContractAddress, callData.ContractAddress)
 	require.Equal(t, p.CallData, callData.CallData)

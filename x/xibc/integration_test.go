@@ -130,7 +130,7 @@ func (suite *XIBCTestSuite) TestCrossChainTransferERC20() {
 		Token:    strings.ToLower(crossChainData.TokenAddress.String()),
 		OriToken: "",
 	}
-	transferDataAbi, err := transferData.AbiPack()
+	transferDataAbi, err := transferData.ABIPack()
 	suite.Require().NoError(err)
 
 	packet := packettypes.Packet{
@@ -149,7 +149,7 @@ func (suite *XIBCTestSuite) TestCrossChainTransferERC20() {
 		"",
 		strings.ToLower(suite.chainB.SenderAcc.String()),
 	)
-	ackData, err := ack.AbiPack()
+	ackData, err := ack.ABIPack()
 	suite.Require().NoError(err)
 
 	// relay
@@ -254,7 +254,7 @@ func (suite *XIBCTestSuite) TestCrossChainTransferBaseAndTransferBack() {
 		Token:    strings.ToLower(crossChainData.TokenAddress.String()),
 		OriToken: "",
 	}
-	transferDataAbi, err := transferData.AbiPack()
+	transferDataAbi, err := transferData.ABIPack()
 	suite.Require().NoError(err)
 
 	packet := packettypes.Packet{
@@ -273,7 +273,7 @@ func (suite *XIBCTestSuite) TestCrossChainTransferBaseAndTransferBack() {
 		"",
 		strings.ToLower(suite.chainB.SenderAcc.String()),
 	)
-	ackData, err := ack.AbiPack()
+	ackData, err := ack.ABIPack()
 	suite.Require().NoError(err)
 
 	// relay
@@ -344,7 +344,7 @@ func (suite *XIBCTestSuite) TestCrossChainTransferBaseAndTransferBack() {
 		Token:    strings.ToLower(crossChainData.TokenAddress.String()),
 		OriToken: strings.ToLower(chainABase.String()),
 	}
-	transferDataAbi, err = transferData.AbiPack()
+	transferDataAbi, err = transferData.ABIPack()
 	suite.Require().NoError(err)
 
 	packet = packettypes.Packet{
@@ -363,7 +363,7 @@ func (suite *XIBCTestSuite) TestCrossChainTransferBaseAndTransferBack() {
 		"",
 		strings.ToLower(suite.chainB.SenderAcc.String()),
 	)
-	ackData, err = ack.AbiPack()
+	ackData, err = ack.ABIPack()
 	suite.Require().NoError(err)
 
 	// relay
@@ -489,14 +489,14 @@ func (suite *XIBCTestSuite) TestCrossChainCallAgent() {
 		Token:    strings.ToLower(crossChainData.TokenAddress.String()),
 		OriToken: "",
 	}
-	transferDataAbi, err := transferData.AbiPack()
+	transferDataAbi, err := transferData.ABIPack()
 	suite.Require().NoError(err)
 
 	packetCallData := &packettypes.CallData{
 		ContractAddress: syscontracts.AgentContractAddress,
 		CallData:        callData,
 	}
-	callDataAbi, err := packetCallData.AbiPack()
+	callDataAbi, err := packetCallData.ABIPack()
 	suite.Require().NoError(err)
 
 	packet := packettypes.Packet{
@@ -516,7 +516,7 @@ func (suite *XIBCTestSuite) TestCrossChainCallAgent() {
 		strings.ToLower(suite.chainB.SenderAcc.String()),
 	)
 	fmt.Println(strings.ToLower(suite.chainB.SenderAcc.String()))
-	ackData, err := ack.AbiPack()
+	ackData, err := ack.ABIPack()
 	suite.Require().NoError(err)
 	suite.Require().NotNil(ackData)
 	suite.Require().NotNil(packet)

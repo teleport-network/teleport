@@ -306,7 +306,7 @@ func (k Keeper) ValidatePacket(ctx sdk.Context, packet exported.PacketI) error {
 		return err
 	}
 	chainName := k.clientKeeper.GetChainName(ctx)
-	if packet.GetDestChain() != chainName && packet.GetSourceChain() != chainName {
+	if packet.GetDestChain() != chainName && packet.GetSrcChain() != chainName {
 		return sdkerrors.Wrap(types.ErrInvalidPacket, "packet/ack illegal!")
 	}
 	return nil

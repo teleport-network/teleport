@@ -160,7 +160,7 @@ func (suite *TendermintTestSuite) TestVerifyPacketCommitment() {
 			suite.Require().True(ok)
 
 			// make packet commitment proof
-			packetKey := host.PacketCommitmentKey(packet.GetSourceChain(), packet.GetDestChain(), packet.GetSequence())
+			packetKey := host.PacketCommitmentKey(packet.GetSrcChain(), packet.GetDestChain(), packet.GetSequence())
 			proof, proofHeight = suite.chainA.QueryProof(packetKey)
 
 			tc.malleate() // make changes as necessary
@@ -172,7 +172,7 @@ func (suite *TendermintTestSuite) TestVerifyPacketCommitment() {
 
 			err = clientState.VerifyPacketCommitment(
 				suite.chainB.GetContext(), store, suite.chainB.Codec,
-				proofHeight, proof, packet.GetSourceChain(),
+				proofHeight, proof, packet.GetSrcChain(),
 				packet.GetDestChain(), packet.GetSequence(), commitment,
 			)
 
@@ -246,12 +246,12 @@ func (suite *TendermintTestSuite) TestVerifyPacketAcknowledgement() {
 
 			// write receipt and ack
 			// get proof of packet commitment from chainA
-			packetKey := host.PacketCommitmentKey(packet.GetSourceChain(), packet.GetDestChain(), packet.GetSequence())
+			packetKey := host.PacketCommitmentKey(packet.GetSrcChain(), packet.GetDestChain(), packet.GetSequence())
 			proof1, pHeight := suite.chainA.QueryProof(packetKey)
-			packetData, err := packet.AbiPack()
+			packetBytes, err := packet.ABIPack()
 			suite.Require().NoError(err)
 			msg := &packettypes.MsgRecvPacket{
-				Packet:          packetData,
+				Packet:          packetBytes,
 				ProofCommitment: proof1,
 				ProofHeight:     pHeight,
 			}
@@ -263,7 +263,7 @@ func (suite *TendermintTestSuite) TestVerifyPacketAcknowledgement() {
 				[]byte(""),
 				"",
 				suite.chainB.SenderAcc.String(),
-			).AbiPack()
+			).ABIPack()
 			suite.Require().NoError(err)
 			err = suite.chainB.App.XIBCKeeper.PacketKeeper.WriteAcknowledgement(suite.chainB.GetContext(), packet, ack)
 			suite.Require().NoError(err)
@@ -281,7 +281,7 @@ func (suite *TendermintTestSuite) TestVerifyPacketAcknowledgement() {
 			prefix = suite.chainB.GetPrefix()
 
 			// make packet acknowledgement proof
-			acknowledgementKey := host.PacketAcknowledgementKey(packet.GetSourceChain(), packet.GetDestChain(), packet.GetSequence())
+			acknowledgementKey := host.PacketAcknowledgementKey(packet.GetSrcChain(), packet.GetDestChain(), packet.GetSequence())
 			proof, proofHeight = suite.chainB.QueryProof(acknowledgementKey)
 
 			// reset time and block delays to 0, malleate may change to a specific non-zero value.
@@ -295,7 +295,7 @@ func (suite *TendermintTestSuite) TestVerifyPacketAcknowledgement() {
 				[]byte(""),
 				"",
 				suite.chainB.SenderAcc.String(),
-			).AbiPack()
+			).ABIPack()
 			suite.Require().NoError(err)
 
 			err = clientState.VerifyPacketAcknowledgement(
@@ -304,7 +304,7 @@ func (suite *TendermintTestSuite) TestVerifyPacketAcknowledgement() {
 				suite.chainA.Codec,
 				proofHeight,
 				proof,
-				packet.GetSourceChain(),
+				packet.GetSrcChain(),
 				packet.GetDestChain(),
 				packet.GetSequence(),
 				packettypes.CommitAcknowledgement(ack),

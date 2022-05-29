@@ -75,7 +75,7 @@ func (m *Packet) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_Packet proto.InternalMessageInfo
 
-//TransferData defines packet transfer_data struct
+// TransferData defines packet transfer_data struct
 type TransferData struct {
 	// identifies the token receiver on dest chain
 	Receiver string `protobuf:"bytes,1,opt,name=receiver,proto3" json:"receiver,omitempty"`
@@ -252,7 +252,8 @@ var xxx_messageInfo_PacketState proto.InternalMessageInfo
 // Acknowledgement is the recommended acknowledgement format to be used by
 // app-specific protocols.
 type Acknowledgement struct {
-	Code      uint64 `protobuf:"varint,1,opt,name=code,proto3" json:"code,omitempty"`
+	Code uint64 `protobuf:"varint,1,opt,name=code,proto3" json:"code,omitempty"`
+	// failed; 4: undefined
 	Result    []byte `protobuf:"bytes,2,opt,name=result,proto3" json:"result,omitempty"`
 	Message   string `protobuf:"bytes,3,opt,name=message,proto3" json:"message,omitempty"`
 	Relayer   string `protobuf:"bytes,4,opt,name=relayer,proto3" json:"relayer,omitempty"`

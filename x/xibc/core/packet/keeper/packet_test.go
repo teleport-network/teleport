@@ -142,12 +142,12 @@ func (suite *KeeperTestSuite) TestRecvPacket() {
 			tc.malleate()
 
 			// get proof of packet commitment from chainA
-			packetKey := host.PacketCommitmentKey(packet.GetSourceChain(), packet.GetDestChain(), packet.GetSequence())
+			packetKey := host.PacketCommitmentKey(packet.GetSrcChain(), packet.GetDestChain(), packet.GetSequence())
 			proof, proofHeight := suite.chainA.QueryProof(packetKey)
-			packetData, err := packet.AbiPack()
+			packetBytes, err := packet.ABIPack()
 			suite.Require().NoError(err)
 			msg := &types.MsgRecvPacket{
-				Packet:          packetData,
+				Packet:          packetBytes,
 				ProofCommitment: proof,
 				ProofHeight:     proofHeight,
 			}
@@ -157,7 +157,7 @@ func (suite *KeeperTestSuite) TestRecvPacket() {
 				suite.Require().NoError(err)
 
 				receipt, receiptStored := suite.chainB.App.XIBCKeeper.PacketKeeper.GetPacketReceipt(
-					suite.chainB.GetContext(), packet.GetSourceChain(), packet.GetDestChain(), packet.GetSequence(),
+					suite.chainB.GetContext(), packet.GetSrcChain(), packet.GetDestChain(), packet.GetSequence(),
 				)
 
 				suite.Require().True(receiptStored, "packet receipt not stored after RecvPacket")
@@ -192,7 +192,7 @@ func (suite *KeeperTestSuite) TestWriteAcknowledgement() {
 			suite.coordinator.SetupClients(path)
 			packet = types.NewPacket(path.EndpointA.ChainName, path.EndpointB.ChainName, 1, "sender", mockTransferData, mockCallData, "", 0)
 			ack = xibctesting.TestHash
-			suite.chainB.App.XIBCKeeper.PacketKeeper.SetPacketAcknowledgement(suite.chainB.GetContext(), packet.GetSourceChain(), packet.GetDestChain(), packet.GetSequence(), ack)
+			suite.chainB.App.XIBCKeeper.PacketKeeper.SetPacketAcknowledgement(suite.chainB.GetContext(), packet.GetSrcChain(), packet.GetDestChain(), packet.GetSequence(), ack)
 		},
 		false,
 	}, {
@@ -238,12 +238,12 @@ func (suite *KeeperTestSuite) TestAcknowledgePacket() {
 
 				// create packet receipt and acknowledgement
 				// get proof of packet commitment from chainA
-				packetKey := host.PacketCommitmentKey(packet.GetSourceChain(), packet.GetDestChain(), packet.GetSequence())
+				packetKey := host.PacketCommitmentKey(packet.GetSrcChain(), packet.GetDestChain(), packet.GetSequence())
 				proof, proofHeight := suite.chainA.QueryProof(packetKey)
-				packetData, err := packet.AbiPack()
+				packetBytes, err := packet.ABIPack()
 				suite.Require().NoError(err)
 				msg := &types.MsgRecvPacket{
-					Packet:          packetData,
+					Packet:          packetBytes,
 					ProofCommitment: proof,
 					ProofHeight:     proofHeight,
 				}
@@ -255,7 +255,7 @@ func (suite *KeeperTestSuite) TestAcknowledgePacket() {
 					[]byte(""),
 					"",
 					suite.chainB.SenderAcc.String(),
-				).AbiPack()
+				).ABIPack()
 				suite.Require().NoError(err)
 				err = suite.chainB.App.XIBCKeeper.PacketKeeper.WriteAcknowledgement(suite.chainB.GetContext(), packet, ack)
 				suite.Require().NoError(err)
@@ -285,7 +285,7 @@ func (suite *KeeperTestSuite) TestAcknowledgePacket() {
 			tc.malleate()
 
 			packetKey := host.PacketAcknowledgementKey(
-				packet.GetSourceChain(),
+				packet.GetSrcChain(),
 				packet.GetDestChain(),
 				packet.GetSequence(),
 			)
@@ -296,13 +296,13 @@ func (suite *KeeperTestSuite) TestAcknowledgePacket() {
 				[]byte(""),
 				"",
 				suite.chainB.SenderAcc.String(),
-			).AbiPack()
+			).ABIPack()
 			suite.Require().NoError(err)
 
-			packetData, err := packet.AbiPack()
+			packetBytes, err := packet.ABIPack()
 			suite.Require().NoError(err)
 			msg := &types.MsgAcknowledgement{
-				Packet:          packetData,
+				Packet:          packetBytes,
 				Acknowledgement: ack,
 				ProofAcked:      proof,
 				ProofHeight:     proofHeight,
@@ -311,7 +311,7 @@ func (suite *KeeperTestSuite) TestAcknowledgePacket() {
 			err = suite.chainA.App.XIBCKeeper.PacketKeeper.AcknowledgePacket(suite.chainA.GetContext(), msg)
 			pc := suite.chainA.App.XIBCKeeper.PacketKeeper.GetPacketCommitment(
 				suite.chainA.GetContext(),
-				packet.GetSourceChain(),
+				packet.GetSrcChain(),
 				packet.GetDestChain(),
 				packet.GetSequence(),
 			)

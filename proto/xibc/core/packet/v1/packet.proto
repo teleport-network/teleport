@@ -21,15 +21,15 @@ message Packet {
   uint64 sequence = 3;
   string sender = 4;
   // transfer data. keep empty if not used.
-  bytes transfer_data  = 5;
+  bytes transfer_data = 5;
   // call data. keep empty if not used
-  bytes call_data  = 6;
+  bytes call_data = 6;
   string callback_address = 7;
   uint64 fee_option = 8;
 }
 
-//TransferData defines packet transfer_data struct
-message TransferData{
+// TransferData defines packet transfer_data struct
+message TransferData {
   // identifies the token receiver on dest chain
   string receiver = 1;
   bytes amount = 2;
@@ -67,7 +67,8 @@ message PacketState {
 // Acknowledgement is the recommended acknowledgement format to be used by
 // app-specific protocols.
 message Acknowledgement {
-  uint64 code = 1; // 0: success; 1: system failed; 2: transfer failed; 3: call failed; 4: undefined
+  uint64 code = 1; // 0: success; 1: system failed; 2: transfer failed; 3: call
+                   // failed; 4: undefined
   bytes result = 2;
   string message = 3;
   string relayer = 4;

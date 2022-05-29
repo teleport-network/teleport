@@ -56,7 +56,7 @@ func (k Keeper) RecvPacket(goCtx context.Context, msg *packettypes.MsgRecvPacket
 
 	cctx, write := ctx.CacheContext()
 	var packet packettypes.Packet
-	err := packet.DecodeAbiBytes(msg.Packet)
+	err := packet.ABIDecode(msg.Packet)
 	if err != nil {
 		return nil, sdkerrors.Wrapf(packettypes.ErrAbiPack, "RecvPacket failed,decode packet err : %s", err)
 	}
@@ -70,7 +70,7 @@ func (k Keeper) RecvPacket(goCtx context.Context, msg *packettypes.MsgRecvPacket
 	// call packet to onRecvPacket
 	if err != nil {
 		// Write ErrAck
-		errAckBz, err := packettypes.NewErrorAcknowledgement(1, "receive packet callback failed", relayer).AbiPack()
+		errAckBz, err := packettypes.NewErrorAcknowledgement(1, "receive packet callback failed", relayer).ABIPack()
 		if err != nil {
 			return nil, sdkerrors.Wrapf(packettypes.ErrInvalidAcknowledgement, "pack ack failed")
 		}
@@ -85,7 +85,7 @@ func (k Keeper) RecvPacket(goCtx context.Context, msg *packettypes.MsgRecvPacket
 	if errDecodeResult != nil {
 		return nil, sdkerrors.Wrapf(packettypes.ErrAbiPack, "RecvPacket failed,decode result err : %s", errDecodeResult)
 	}
-	ackBz, err := packettypes.NewResultAcknowledgement(result.Code, result.Result, result.Message, relayer).AbiPack()
+	ackBz, err := packettypes.NewResultAcknowledgement(result.Code, result.Result, result.Message, relayer).ABIPack()
 	if err != nil {
 		return nil, sdkerrors.Wrapf(packettypes.ErrInvalidAcknowledgement, "pack ack failed")
 	}
@@ -108,13 +108,13 @@ func (k Keeper) Acknowledgement(goCtx context.Context, msg *packettypes.MsgAckno
 	}
 
 	var packet packettypes.Packet
-	err := packet.DecodeAbiBytes(msg.Packet)
+	err := packet.ABIDecode(msg.Packet)
 	if err != nil {
 		return nil, sdkerrors.Wrapf(packettypes.ErrDecodeAbi, "Acknowledgement failed,decode packet err : %v", err)
 	}
 
 	var ack packettypes.Acknowledgement
-	if err := ack.DecodeAbiBytes(msg.Acknowledgement); err != nil {
+	if err := ack.ABIDecode(msg.Acknowledgement); err != nil {
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest, "decode acknowledgement bytes failed: %v", err)
 	}
 	if len(ack.String()) == 0 {
@@ -129,7 +129,7 @@ func (k Keeper) Acknowledgement(goCtx context.Context, msg *packettypes.MsgAckno
 		if _, err := k.PacketKeeper.CallPacket(
 			ctx,
 			"setAckStatus",
-			packet.GetSourceChain(),
+			packet.GetSrcChain(),
 			packet.GetDestChain(),
 			packet.Sequence,
 			uint8(1),
@@ -141,7 +141,7 @@ func (k Keeper) Acknowledgement(goCtx context.Context, msg *packettypes.MsgAckno
 		if _, err := k.PacketKeeper.CallPacket(
 			ctx,
 			"setAckStatus",
-			packet.GetSourceChain(),
+			packet.GetSrcChain(),
 			packet.GetDestChain(),
 			packet.Sequence,
 			uint8(2),
@@ -163,7 +163,7 @@ func (k Keeper) Acknowledgement(goCtx context.Context, msg *packettypes.MsgAckno
 	if _, err := k.PacketKeeper.CallPacket(
 		ctx,
 		"sendPacketFeeToRelayer",
-		packet.GetSourceChain(),
+		packet.GetSrcChain(),
 		packet.GetDestChain(),
 		packet.Sequence,
 		common.BytesToAddress(relayerAddr),

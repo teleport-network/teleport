@@ -8,22 +8,34 @@ option go_package = "github.com/teleport-network/teleport/x/xibc/core/packet/typ
 
 // EventSendPacket is emitted on send packet
 message EventSendPacket {
-  bytes packet = 1;
+  string src_chain = 1;
+  string dst_chain = 2;
+  string sequence = 3;
+  bytes packet = 4;
 }
 
 // EventRecvPacket is emitted on receive packet
 message EventRecvPacket {
-  bytes packet = 1;
+  string src_chain = 1;
+  string dst_chain = 2;
+  string sequence = 3;
+  bytes packet = 4;
 }
 
 // EventWriteAck is emitted on receive packet
 message EventWriteAck {
-  bytes packet = 1;
-  bytes ack = 2;
+  string src_chain = 1;
+  string dst_chain = 2;
+  string sequence = 3;
+  bytes packet = 4;
+  bytes ack = 5;
 }
 
 // EventAcknowledgePacket is emitted on acknowledgement packet
 message EventAcknowledgePacket {
-  bytes packet = 1;
-  bytes ack = 2;
+  string src_chain = 1;
+  string dst_chain = 2;
+  string sequence = 3;
+  bytes packet = 4;
+  bytes ack = 5;
 }

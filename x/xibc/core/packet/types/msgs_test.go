@@ -35,8 +35,8 @@ var (
 
 	packet               = types.NewPacket(sourceChain, destChain, 1, "sender", mockTransferData, mockCallData, "", 0)
 	invalidPacket        = types.NewPacket(sourceChain, destChain, 1, "sender", []byte(""), []byte(""), "", 0)
-	packetData, _        = packet.AbiPack()
-	invalidPacketData, _ = invalidPacket.AbiPack()
+	packetData, _        = packet.ABIPack()
+	invalidPacketData, _ = invalidPacket.ABIPack()
 
 	addr      = sdk.AccAddress("testaddr111111111111")
 	emptyAddr sdk.AccAddress

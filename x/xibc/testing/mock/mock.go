@@ -25,7 +25,7 @@ const (
 
 var (
 	MockResult             = []byte("mock result")
-	MockAcknowledgement, _ = packettypes.NewResultAcknowledgement(0, MockResult, "", "").AbiPack()
+	MockAcknowledgement, _ = packettypes.NewResultAcknowledgement(0, MockResult, "", "").ABIPack()
 )
 
 // AppModuleBasic is the mock AppModuleBasic.

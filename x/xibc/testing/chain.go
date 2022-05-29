@@ -354,7 +354,7 @@ func (chain *TestChain) GetValsAtHeight(height int64) (*tmtypes.ValidatorSet, bo
 func (chain *TestChain) GetAcknowledgement(packet exported.PacketI) []byte {
 	ack, found := chain.App.XIBCKeeper.PacketKeeper.GetPacketAcknowledgement(
 		chain.GetContext(),
-		packet.GetSourceChain(),
+		packet.GetSrcChain(),
 		packet.GetDestChain(),
 		packet.GetSequence(),
 	)

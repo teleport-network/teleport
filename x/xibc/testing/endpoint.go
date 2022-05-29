@@ -151,14 +151,14 @@ func (endpoint *Endpoint) SendPacket(packet exported.PacketI) error {
 // The counterparty client is updated.
 func (endpoint *Endpoint) RecvPacket(packet packettypes.Packet) error {
 	// get proof of packet commitment on source
-	packetKey := host.PacketCommitmentKey(packet.GetSourceChain(), packet.GetDestChain(), packet.GetSequence())
+	packetKey := host.PacketCommitmentKey(packet.GetSrcChain(), packet.GetDestChain(), packet.GetSequence())
 	proof, proofHeight := endpoint.Counterparty.Chain.QueryProof(packetKey)
 
-	packetData, err := packet.AbiPack()
+	packetBytes, err := packet.ABIPack()
 	if err != nil {
 		return err
 	}
-	recvMsg := packettypes.NewMsgRecvPacket(packetData, proof, proofHeight, endpoint.Chain.SenderAcc)
+	recvMsg := packettypes.NewMsgRecvPacket(packetBytes, proof, proofHeight, endpoint.Chain.SenderAcc)
 
 	// receive on counterparty and update source client
 	if err := endpoint.Chain.sendMsgs(recvMsg); err != nil {
@@ -189,13 +189,13 @@ func (endpoint *Endpoint) WriteAcknowledgement(acknowledgement []byte, packet ex
 // AcknowledgePacket sends a MsgAcknowledgement
 func (endpoint *Endpoint) AcknowledgePacket(packet packettypes.Packet, ack []byte) error {
 	// get proof of acknowledgement on counterparty
-	packetKey := host.PacketAcknowledgementKey(packet.GetSourceChain(), packet.GetDestChain(), packet.GetSequence())
+	packetKey := host.PacketAcknowledgementKey(packet.GetSrcChain(), packet.GetDestChain(), packet.GetSequence())
 	proof, proofHeight := endpoint.Counterparty.QueryProof(packetKey)
-	packetData, err := packet.AbiPack()
+	packetBytes, err := packet.ABIPack()
 	if err != nil {
 		return err
 	}
-	ackMsg := packettypes.NewMsgAcknowledgement(packetData, ack, proof, proofHeight, endpoint.Chain.SenderAcc)
+	ackMsg := packettypes.NewMsgAcknowledgement(packetBytes, ack, proof, proofHeight, endpoint.Chain.SenderAcc)
 
 	return endpoint.Chain.sendMsgs(ackMsg)
 }
