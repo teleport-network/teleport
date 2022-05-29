@@ -66,11 +66,11 @@ func (k Keeper) RecvPacket(goCtx context.Context, msg *packettypes.MsgRecvPacket
 		return nil, sdkerrors.Wrapf(packettypes.ErrRelayerNotFound, "relayer on source chain not found")
 	}
 
-	res, err := k.PacketKeeper.CallPacket(ctx, "onRecvPacket", packet.ToWPacket())
+	res, err := k.PacketKeeper.CallPacket(ctx, "onRecvPacket", packet)
 	// call packet to onRecvPacket
 	if err != nil {
 		// Write ErrAck
-		errAckBz, err := packettypes.NewErrorAcknowledgement(1, "receive packet callback failed", relayer).ABIPack()
+		errAckBz, err := packettypes.NewAcknowledgement(1, []byte{}, "receive packet callback failed", relayer, packet.FeeOption).ABIPack()
 		if err != nil {
 			return nil, sdkerrors.Wrapf(packettypes.ErrInvalidAcknowledgement, "pack ack failed")
 		}
@@ -85,7 +85,7 @@ func (k Keeper) RecvPacket(goCtx context.Context, msg *packettypes.MsgRecvPacket
 	if errDecodeResult != nil {
 		return nil, sdkerrors.Wrapf(packettypes.ErrAbiPack, "RecvPacket failed,decode result err : %s", errDecodeResult)
 	}
-	ackBz, err := packettypes.NewResultAcknowledgement(result.Code, result.Result, result.Message, relayer).ABIPack()
+	ackBz, err := packettypes.NewAcknowledgement(result.Code, result.Result, result.Message, relayer, packet.FeeOption).ABIPack()
 	if err != nil {
 		return nil, sdkerrors.Wrapf(packettypes.ErrInvalidAcknowledgement, "pack ack failed")
 	}
@@ -175,7 +175,7 @@ func (k Keeper) Acknowledgement(goCtx context.Context, msg *packettypes.MsgAckno
 	if _, err := k.PacketKeeper.CallPacket(
 		ctx,
 		"OnAcknowledgePacket",
-		packet.ToWPacket(),
+		packet,
 		ack,
 	); err != nil {
 		return nil, err

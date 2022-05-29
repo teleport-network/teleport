@@ -250,11 +250,12 @@ func (suite *KeeperTestSuite) TestAcknowledgePacket() {
 				err = suite.chainB.App.XIBCKeeper.PacketKeeper.RecvPacket(suite.chainB.GetContext(), msg)
 				suite.Require().NoError(err)
 
-				ack, err := types.NewResultAcknowledgement(
+				ack, err := types.NewAcknowledgement(
 					0,
 					[]byte(""),
 					"",
 					suite.chainB.SenderAcc.String(),
+					0,
 				).ABIPack()
 				suite.Require().NoError(err)
 				err = suite.chainB.App.XIBCKeeper.PacketKeeper.WriteAcknowledgement(suite.chainB.GetContext(), packet, ack)
@@ -291,11 +292,12 @@ func (suite *KeeperTestSuite) TestAcknowledgePacket() {
 			)
 			proof, proofHeight := suite.chainB.QueryProof(packetKey)
 
-			ack, err := types.NewResultAcknowledgement(
+			ack, err := types.NewAcknowledgement(
 				0,
 				[]byte(""),
 				"",
 				suite.chainB.SenderAcc.String(),
+				0,
 			).ABIPack()
 			suite.Require().NoError(err)
 

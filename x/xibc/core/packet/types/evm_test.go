@@ -36,11 +36,12 @@ func TestPacketAbi(t *testing.T) {
 }
 
 func TestAckAbi(t *testing.T) {
-	ack := packettypes.NewResultAcknowledgement(
+	ack := packettypes.NewAcknowledgement(
 		0,
 		[]byte("nodata"),
 		"",
 		"address",
+		0,
 	)
 	ackData, err := ack.ABIPack()
 	require.NoError(t, err)
