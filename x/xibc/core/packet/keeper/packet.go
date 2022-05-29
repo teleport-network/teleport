@@ -46,7 +46,7 @@ func (k Keeper) SendPacket(ctx sdk.Context, packet exported.PacketI) error {
 	k.SetNextSequenceSend(ctx, packet.GetSrcChain(), packet.GetDestChain(), nextSequenceSend)
 
 	// set sequence in packet contract
-	if _, err := k.CallPacket(ctx, "setSequence", packet.GetSrcChain(), packet.GetDestChain(), nextSequenceSend); err != nil {
+	if _, err := k.CallPacket(ctx, "setSequence", packet.GetDestChain(), nextSequenceSend); err != nil {
 		return err
 	}
 
