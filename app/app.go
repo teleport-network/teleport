@@ -21,7 +21,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/client/grpc/tmservice"
 	"github.com/cosmos/cosmos-sdk/client/rpc"
 	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/cosmos/cosmos-sdk/codec/types"
+	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	"github.com/cosmos/cosmos-sdk/server/api"
 	"github.com/cosmos/cosmos-sdk/server/config"
 	servertypes "github.com/cosmos/cosmos-sdk/server/types"
@@ -120,10 +120,10 @@ import (
 	gabci "github.com/teleport-network/teleport/grpc_abci"
 	syscontracts "github.com/teleport-network/teleport/syscontracts"
 	agentcontract "github.com/teleport-network/teleport/syscontracts/agent"
-	crosschain "github.com/teleport-network/teleport/syscontracts/cross_chain"
 	wtelecontract "github.com/teleport-network/teleport/syscontracts/wtele"
+	crosschaincontract "github.com/teleport-network/teleport/syscontracts/xibc_crosschain"
 	packetcontract "github.com/teleport-network/teleport/syscontracts/xibc_packet"
-	teletypes "github.com/teleport-network/teleport/types"
+	"github.com/teleport-network/teleport/types"
 	"github.com/teleport-network/teleport/x/aggregate"
 	aggregateclient "github.com/teleport-network/teleport/x/aggregate/client"
 	aggregatekeeper "github.com/teleport-network/teleport/x/aggregate/keeper"
@@ -149,7 +149,7 @@ func init() {
 
 	DefaultNodeHome = filepath.Join(userHomeDir, ".teleport")
 
-	sdk.DefaultPowerReduction = teletypes.PowerReduction
+	sdk.DefaultPowerReduction = types.PowerReduction
 }
 
 // Name defines the application binary name
@@ -247,7 +247,7 @@ type Teleport struct {
 
 	// encoding
 	appCodec          codec.Codec
-	interfaceRegistry types.InterfaceRegistry
+	interfaceRegistry codectypes.InterfaceRegistry
 
 	invCheckPeriod uint
 
@@ -814,10 +814,11 @@ func (app *Teleport) InitChainer(ctx sdk.Context, req abci.RequestInitChain) abc
 		panic(err)
 	}
 
-	app.SetEVMCode(ctx, common.HexToAddress(syscontracts.CrossChainAddress), crosschain.CrossChainContract.Bin)
 	app.SetEVMCode(ctx, common.HexToAddress(syscontracts.WTELEContractAddress), wtelecontract.WTELEContract.Bin)
 	app.SetEVMCode(ctx, common.HexToAddress(syscontracts.AgentContractAddress), agentcontract.AgentContract.Bin)
 	app.SetEVMCode(ctx, common.HexToAddress(syscontracts.PacketContractAddress), packetcontract.PacketContract.Bin)
+	app.SetEVMCode(ctx, common.HexToAddress(syscontracts.CrossChainContractAddress), crosschaincontract.CrossChainContract.Bin)
+	app.SetEVMCode(ctx, common.HexToAddress(syscontracts.ExecuteContractAddress), crosschaincontract.ExecuteContract.Bin)
 
 	return res
 }
@@ -876,7 +877,7 @@ func (app *Teleport) AppCodec() codec.Codec {
 }
 
 // InterfaceRegistry returns Teleport's InterfaceRegistry
-func (app *Teleport) InterfaceRegistry() types.InterfaceRegistry {
+func (app *Teleport) InterfaceRegistry() codectypes.InterfaceRegistry {
 	return app.interfaceRegistry
 }
 

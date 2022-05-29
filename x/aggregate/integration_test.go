@@ -9,8 +9,8 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/crypto"
 
-	crosschaincontract "github.com/teleport-network/teleport/syscontracts/cross_chain"
 	erc20contracts "github.com/teleport-network/teleport/syscontracts/erc20"
+	crosschaincontract "github.com/teleport-network/teleport/syscontracts/xibc_crosschain"
 	xibctesting "github.com/teleport-network/teleport/x/xibc/testing"
 )
 
@@ -85,10 +85,10 @@ func (suite *AggregateTestSuite) DeployERC20(fromChain *xibctesting.TestChain) c
 	copy(data[:len(erc20contracts.ERC20MinterBurnerDecimalsContract.Bin)], erc20contracts.ERC20MinterBurnerDecimalsContract.Bin)
 	copy(data[len(erc20contracts.ERC20MinterBurnerDecimalsContract.Bin):], ctorArgs)
 
-	nonce := fromChain.App.EvmKeeper.GetNonce(fromChain.GetContext(), crosschaincontract.CrossChainAddress)
-	contractAddr := crypto.CreateAddress(crosschaincontract.CrossChainAddress, nonce)
+	nonce := fromChain.App.EvmKeeper.GetNonce(fromChain.GetContext(), crosschaincontract.CrossChainContractAddress)
+	contractAddr := crypto.CreateAddress(crosschaincontract.CrossChainContractAddress, nonce)
 
-	res, err := fromChain.App.AggregateKeeper.CallEVMWithData(fromChain.GetContext(), crosschaincontract.CrossChainAddress, nil, data)
+	res, err := fromChain.App.AggregateKeeper.CallEVMWithData(fromChain.GetContext(), crosschaincontract.CrossChainContractAddress, nil, data)
 	suite.Require().NoError(err)
 	suite.Require().False(res.Failed(), res.VmError)
 

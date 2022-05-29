@@ -21,8 +21,8 @@ import (
 	ethtypes "github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/crypto"
 
-	crosschaincontract "github.com/teleport-network/teleport/syscontracts/cross_chain"
 	erc20contracts "github.com/teleport-network/teleport/syscontracts/erc20"
+	crosschaincontract "github.com/teleport-network/teleport/syscontracts/xibc_crosschain"
 	packetcontract "github.com/teleport-network/teleport/syscontracts/xibc_packet"
 	aggregatetypes "github.com/teleport-network/teleport/x/aggregate/types"
 	packettypes "github.com/teleport-network/teleport/x/xibc/core/packet/types"
@@ -105,11 +105,11 @@ func (suite *XIBCTestSuite) TestCrossChainTransferERC20() {
 	}
 
 	// send CrossChainCall Tx
-	suite.Approve(suite.chainA, chainAERC20, crosschaincontract.CrossChainAddress, big.NewInt(2000))
+	suite.Approve(suite.chainA, chainAERC20, crosschaincontract.CrossChainContractAddress, big.NewInt(2000))
 	suite.CrossChainCall(suite.chainA, crossChainData, fee)
 	balance = suite.ERC20Balance(suite.chainA, chainAERC20, suite.chainA.SenderAddress)
 	suite.Equal(balance.Int64(), int64(8000))
-	balance = suite.ERC20Balance(suite.chainA, chainAERC20, crosschaincontract.CrossChainAddress)
+	balance = suite.ERC20Balance(suite.chainA, chainAERC20, crosschaincontract.CrossChainContractAddress)
 	suite.Equal(balance.Int64(), int64(1000))
 	balance = suite.ERC20Balance(suite.chainA, chainAERC20, packetcontract.PacketContractAddress)
 	suite.Equal(balance.Int64(), int64(1000))
@@ -228,7 +228,7 @@ func (suite *XIBCTestSuite) TestCrossChainTransferBaseAndTransferBack() {
 	balances = suite.chainA.App.BankKeeper.GetBalance(suite.chainA.GetContext(), suite.chainA.SenderAcc, "stake")
 	suite.Require().Equal(balances.String(), "99999999999800stake")
 
-	crossChainAddr, err := sdk.AccAddressFromHex(hex.EncodeToString(crosschaincontract.CrossChainAddress.Bytes()))
+	crossChainAddr, err := sdk.AccAddressFromHex(hex.EncodeToString(crosschaincontract.CrossChainContractAddress.Bytes()))
 	suite.Require().NoError(err)
 	packetAddr, err := sdk.AccAddressFromHex(hex.EncodeToString(packetcontract.PacketContractAddress.Bytes()))
 	suite.Require().NoError(err)
@@ -318,7 +318,7 @@ func (suite *XIBCTestSuite) TestCrossChainTransferBaseAndTransferBack() {
 		TokenAddress: chainBERC20,
 		Amount:       big.NewInt(0),
 	}
-	suite.Approve(suite.chainB, chainBERC20, crosschaincontract.CrossChainAddress, big.NewInt(100))
+	suite.Approve(suite.chainB, chainBERC20, crosschaincontract.CrossChainContractAddress, big.NewInt(100))
 	suite.CrossChainCall(suite.chainB, crossChainData, fee)
 	balance = suite.ERC20Balance(suite.chainB, chainBERC20, suite.chainB.SenderAddress)
 	suite.Require().Equal(int64(0), balance.Int64())
@@ -464,11 +464,11 @@ func (suite *XIBCTestSuite) TestCrossChainCallAgent() {
 	}
 
 	// send CrossChainCall Tx
-	suite.Approve(suite.chainA, chainAERC20, crosschaincontract.CrossChainAddress, big.NewInt(2000))
+	suite.Approve(suite.chainA, chainAERC20, crosschaincontract.CrossChainContractAddress, big.NewInt(2000))
 	suite.CrossChainCall(suite.chainA, crossChainData, fee)
 	balance = suite.ERC20Balance(suite.chainA, chainAERC20, suite.chainA.SenderAddress)
 	suite.Equal(balance.Int64(), int64(8000))
-	balance = suite.ERC20Balance(suite.chainA, chainAERC20, crosschaincontract.CrossChainAddress)
+	balance = suite.ERC20Balance(suite.chainA, chainAERC20, crosschaincontract.CrossChainContractAddress)
 	suite.Equal(balance.Int64(), int64(2000))
 	balance = suite.ERC20Balance(suite.chainA, chainAERC20, packetcontract.PacketContractAddress)
 	suite.Equal(balance.Int64(), int64(0))
@@ -541,7 +541,7 @@ func (suite *XIBCTestSuite) CrossChainCall(fromChain *xibctesting.TestChain, dat
 		amount = amount.Add(amount, fee.Amount)
 	}
 
-	_ = suite.SendTx(fromChain, crosschaincontract.CrossChainAddress, amount, crossChainCallData)
+	_ = suite.SendTx(fromChain, crosschaincontract.CrossChainContractAddress, amount, crossChainCallData)
 	suite.coordinator.CommitBlock(suite.chainA, suite.chainB)
 }
 
@@ -554,7 +554,7 @@ func (suite *XIBCTestSuite) OutTokens(
 		fromChain.GetContext(),
 		crosschaincontract.CrossChainContract.ABI,
 		aggregatetypes.ModuleAddress,
-		crosschaincontract.CrossChainAddress,
+		crosschaincontract.CrossChainContractAddress,
 		"outTokens",
 		tokenAddress,
 		destChain,
@@ -580,7 +580,7 @@ func (suite *XIBCTestSuite) Bindings(
 		fromChain.GetContext(),
 		crosschaincontract.CrossChainContract.ABI,
 		aggregatetypes.ModuleAddress,
-		crosschaincontract.CrossChainAddress,
+		crosschaincontract.CrossChainContractAddress,
 		"bindings",
 		strings.ToLower(tokenAddress.String())+"/"+oriChain,
 	)
@@ -669,10 +669,10 @@ func (suite *XIBCTestSuite) DeployERC20ByCrossChain(fromChain *xibctesting.TestC
 	copy(data[:len(erc20contracts.ERC20MinterBurnerDecimalsContract.Bin)], erc20contracts.ERC20MinterBurnerDecimalsContract.Bin)
 	copy(data[len(erc20contracts.ERC20MinterBurnerDecimalsContract.Bin):], ctorArgs)
 
-	nonce := fromChain.App.EvmKeeper.GetNonce(fromChain.GetContext(), crosschaincontract.CrossChainAddress)
-	contractAddr := crypto.CreateAddress(crosschaincontract.CrossChainAddress, nonce)
+	nonce := fromChain.App.EvmKeeper.GetNonce(fromChain.GetContext(), crosschaincontract.CrossChainContractAddress)
+	contractAddr := crypto.CreateAddress(crosschaincontract.CrossChainContractAddress, nonce)
 
-	res, err := fromChain.App.AggregateKeeper.CallEVMWithData(fromChain.GetContext(), crosschaincontract.CrossChainAddress, nil, data)
+	res, err := fromChain.App.AggregateKeeper.CallEVMWithData(fromChain.GetContext(), crosschaincontract.CrossChainContractAddress, nil, data)
 	suite.Require().NoError(err)
 	suite.Require().False(res.Failed(), res.VmError)
 
@@ -683,7 +683,7 @@ func (suite *XIBCTestSuite) GrantERC20MintRoleByCrossChain(fromChain *xibctestin
 	ctorArgs, err := erc20contracts.ERC20MinterBurnerDecimalsContract.ABI.Pack("grantRole", common.BytesToHash(crypto.Keccak256([]byte("MINTER_ROLE"))), address)
 	suite.Require().NoError(err)
 
-	res, err := fromChain.App.AggregateKeeper.CallEVMWithData(fromChain.GetContext(), crosschaincontract.CrossChainAddress, &erc20, ctorArgs)
+	res, err := fromChain.App.AggregateKeeper.CallEVMWithData(fromChain.GetContext(), crosschaincontract.CrossChainContractAddress, &erc20, ctorArgs)
 	suite.Require().NoError(err)
 	suite.Require().False(res.Failed(), res.VmError)
 }

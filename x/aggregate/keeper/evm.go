@@ -15,8 +15,8 @@ import (
 	"github.com/tharsis/ethermint/server/config"
 	evmtypes "github.com/tharsis/ethermint/x/evm/types"
 
-	crosschaincontract "github.com/teleport-network/teleport/syscontracts/cross_chain"
 	erc20contracts "github.com/teleport-network/teleport/syscontracts/erc20"
+	crosschaincontract "github.com/teleport-network/teleport/syscontracts/xibc_crosschain"
 	"github.com/teleport-network/teleport/x/aggregate/types"
 )
 
@@ -75,7 +75,7 @@ func (k Keeper) QueryERC20Trace(
 		ctx,
 		crosschaincontract.CrossChainContract.ABI,
 		types.ModuleAddress,
-		crosschaincontract.CrossChainAddress,
+		crosschaincontract.CrossChainContractAddress,
 		"bindings",
 		fmt.Sprintf("%s/%s", strings.ToLower(erc20Address.String()), originChain),
 	)

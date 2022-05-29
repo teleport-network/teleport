@@ -1,4 +1,4 @@
-package crossChain
+package crosschain
 
 import (
 	_ "embed" // embed compiled smart contract
@@ -11,18 +11,18 @@ import (
 )
 
 var (
-	//go:embed cross_chain.json
+	//go:embed CrossChain.json
 	CrossChainJSON []byte // nolint: golint
 
-	// CrossChainContract is the compiled agent contract
+	// CrossChainContract is the compiled CrossChain contract
 	CrossChainContract evmtypes.CompiledContract
 
-	// CrossChainAddress is the deployed agent contract address
-	CrossChainAddress common.Address
+	// CrossChainContractAddress is the deployed CrossChain contract address
+	CrossChainContractAddress common.Address
 )
 
 func init() {
-	CrossChainAddress = common.HexToAddress(syscontracts.CrossChainAddress)
+	CrossChainContractAddress = common.HexToAddress(syscontracts.CrossChainContractAddress)
 
 	if err := json.Unmarshal(CrossChainJSON, &CrossChainContract); err != nil {
 		panic(err)
