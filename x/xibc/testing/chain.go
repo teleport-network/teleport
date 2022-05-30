@@ -169,6 +169,73 @@ func NewTestChain(t *testing.T, coord *Coordinator, chainID string) *TestChain {
 	return chain
 }
 
+// NewTestChain initializes a new TestChain instance with a single validator set using a
+// given private key. It also creates a sender account to be used for delivering transactions.
+func NewTestChainWithAccount(t *testing.T, coord *Coordinator, chainID string, senderPrivKey *ethsecp256k1.PrivKey) *TestChain {
+
+	// set DefaultPowerReduction to the teleport PowerReduction
+	sdk.DefaultPowerReduction = teletypes.PowerReduction
+
+	// generate validator private/public key
+	privVal := mock.NewPV()
+	pubKey, err := privVal.GetPubKey()
+	require.NoError(t, err)
+
+	// create validator set with single validator
+	validator := tmtypes.NewValidator(pubKey, 1)
+	valSet := tmtypes.NewValidatorSet([]*tmtypes.Validator{validator})
+	signers := []tmtypes.PrivValidator{privVal}
+
+	// generate genesis account
+	senderAddress := common.BytesToAddress(senderPrivKey.PubKey().Address().Bytes())
+	acc := authtypes.NewBaseAccount(senderPrivKey.PubKey().Address().Bytes(), senderPrivKey.PubKey(), 0, 0)
+	balance := banktypes.Balance{
+		Address: acc.GetAddress().String(),
+		Coins:   sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(100000000000000))),
+	}
+
+	teleport := SetupWithGenesisValSet(t, valSet, []authtypes.GenesisAccount{acc}, balance)
+
+	// create current header and call begin block
+	header := tmproto.Header{
+		Height:          1,
+		ChainID:         chainID,
+		Time:            coord.CurrentTime.UTC(),
+		ProposerAddress: valSet.Proposer.Address,
+	}
+
+	txConfig := encoding.MakeConfig(app.ModuleBasics).TxConfig
+
+	queryHelperEvm := baseapp.NewQueryServerTestHelper(
+		teleport.BaseApp.NewContext(false, header),
+		teleport.InterfaceRegistry(),
+	)
+	evm.RegisterQueryServer(queryHelperEvm, teleport.EvmKeeper)
+
+	// create an account to send transactions from
+	chain := &TestChain{
+		t:              t,
+		Coordinator:    coord,
+		ChainID:        chainID,
+		App:            teleport,
+		CurrentHeader:  header,
+		QueryServer:    teleport.XIBCKeeper,
+		QueryClientEvm: evm.NewQueryClient(queryHelperEvm),
+		TxConfig:       txConfig,
+		Codec:          teleport.AppCodec(),
+		Vals:           valSet,
+		Signers:        signers,
+		SenderPrivKey:  senderPrivKey,
+		SenderAcc:      acc.GetAddress(),
+		SenderAddress:  senderAddress,
+	}
+	chain.App.XIBCKeeper.ClientKeeper.SetChainName(chain.GetContext(), chainID)
+	coord.CommitBlock(chain)
+
+	chain.SetPacketChainName()
+	return chain
+}
+
 // GetContext returns the current context for the application.
 func (chain *TestChain) GetContext() sdk.Context {
 	return chain.App.BaseApp.NewContext(false, chain.CurrentHeader)
