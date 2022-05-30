@@ -8,9 +8,6 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/teleport-network/teleport/syscontracts"
-	agentcontract "github.com/teleport-network/teleport/syscontracts/agent"
-
 	"github.com/stretchr/testify/suite"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -23,6 +20,8 @@ import (
 	ethtypes "github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/crypto"
 
+	"github.com/teleport-network/teleport/syscontracts"
+	agentcontract "github.com/teleport-network/teleport/syscontracts/agent"
 	erc20contracts "github.com/teleport-network/teleport/syscontracts/erc20"
 	crosschaincontract "github.com/teleport-network/teleport/syscontracts/xibc_crosschain"
 	packetcontract "github.com/teleport-network/teleport/syscontracts/xibc_packet"
@@ -201,6 +200,15 @@ func (suite *XIBCTestSuite) TestCrossChainTransferERC20() {
 	suite.Equal(bindings.Amount.Int64(), int64(1000))
 	suite.Equal(bindings.Bound, true)
 	suite.Equal(bindings.Scale, uint8(0))
+	latestPacket := suite.GetLatestPacket(suite.chainB)
+	suite.Equal(latestPacket.DestChain, packet.DestinationChain)
+	suite.Equal(latestPacket.SrcChain, packet.SourceChain)
+	suite.Equal(latestPacket.Sequence, packet.Sequence)
+	suite.Equal(latestPacket.Sender, packet.Sender)
+	suite.Equal(latestPacket.TransferData, packet.TransferData)
+	suite.Equal(latestPacket.CallData, packet.CallData)
+	suite.Equal(latestPacket.FeeOption, packet.FeeOption)
+	suite.Equal(latestPacket.CallbackAddress, packet.CallbackAddress)
 
 	status := suite.GetAckStatus(suite.chainA, suite.chainB.ChainID, 1)
 	suite.Require().Equal(status, uint8(1))
@@ -672,6 +680,24 @@ func (suite *XIBCTestSuite) GetAck(fromChain *xibctesting.TestChain, destChain s
 	err = packet.UnpackIntoInterface(&ack, "acks", res.Ret)
 	suite.Require().NoError(err)
 	return ack
+}
+
+func (suite *XIBCTestSuite) GetLatestPacket(fromChain *xibctesting.TestChain) packettypes.WPacket {
+	packetABI := packetcontract.PacketContract.ABI
+
+	res, err := fromChain.App.AggregateKeeper.CallEVM(
+		fromChain.GetContext(),
+		packetABI,
+		packettypes.ModuleAddress,
+		packetcontract.PacketContractAddress,
+		"latestPacket",
+	)
+	suite.Require().NoError(err)
+
+	var packet packettypes.WPacket
+	err = packetABI.UnpackIntoInterface(&packet, "latestPacket", res.Ret)
+	suite.Require().NoError(err)
+	return packet
 }
 
 func (suite *XIBCTestSuite) GetAckStatus(fromChain *xibctesting.TestChain, destChain string, sequence uint64) uint8 {

@@ -65,7 +65,7 @@ func (k Keeper) SendPacket(ctx sdk.Context, packet exported.PacketI) error {
 		},
 	)
 
-	k.Logger(ctx).Info("packet sent", "packet", fmt.Sprintf("%v", packet))
+	k.Logger(ctx).Info("packet sent", "packet", fmt.Sprintf("%v : %v : %v", packet.GetSrcChain(), packet.GetDestChain(), packet.GetSequence()))
 	return nil
 }
 
@@ -90,7 +90,7 @@ func (k Keeper) RecvPacket(ctx sdk.Context, msg *types.MsgRecvPacket) error {
 	}
 	fromChain := packet.GetSrcChain()
 
-	targetClient, found := k.clientKeeper.GetClientState(ctx, fromChain)
+	clientState, found := k.clientKeeper.GetClientState(ctx, fromChain)
 	if !found {
 		return sdkerrors.Wrap(clienttypes.ErrClientNotFound, fromChain)
 	}
@@ -101,11 +101,11 @@ func (k Keeper) RecvPacket(ctx sdk.Context, msg *types.MsgRecvPacket) error {
 	}
 	// use signer as tss client proof
 	proof := msg.ProofCommitment
-	if targetClient.ClientType() == exported.TSS {
+	if clientState.ClientType() == exported.TSS {
 		proof = []byte(msg.Signer)
 	}
 	// verify that the counterparty did commit to sending this packet
-	if err := targetClient.VerifyPacketCommitment(
+	if err := clientState.VerifyPacketCommitment(
 		ctx,
 		k.clientKeeper.ClientStore(ctx, fromChain),
 		k.cdc,
@@ -134,7 +134,24 @@ func (k Keeper) RecvPacket(ctx sdk.Context, msg *types.MsgRecvPacket) error {
 		},
 	)
 
-	// todo relayChain
+	chainName := k.clientKeeper.GetChainName(ctx)
+
+	if packet.GetDestChain() != chainName {
+		if _, found = k.clientKeeper.GetClientState(ctx, packet.GetDestChain()); !found {
+			return sdkerrors.Wrap(clienttypes.ErrClientNotFound, fromChain)
+		}
+
+		k.SetPacketCommitment(ctx, packet.GetSrcChain(), packet.GetDestChain(), packet.GetSequence(), commitment)
+
+		_ = ctx.EventManager().EmitTypedEvent(&types.EventSendPacket{
+			Sequence: fmt.Sprintf("%d", packet.GetSequence()),
+			SrcChain: packet.GetSrcChain(),
+			DstChain: packet.GetDestChain(),
+			Packet:   msg.Packet,
+		})
+	}
+
+	k.Logger(ctx).Info("packet recv", "packet", fmt.Sprintf("%v : %v : %v", packet.GetSrcChain(), packet.GetDestChain(), packet.GetSequence()))
 	return nil
 }
 
@@ -286,7 +303,28 @@ func (k Keeper) AcknowledgePacket(
 			Ack:      msg.Acknowledgement,
 		},
 	)
-	// todo relayChain
 
+	chainName := k.clientKeeper.GetChainName(ctx)
+
+	if packet.GetSrcChain() != chainName {
+		if _, found = k.clientKeeper.GetClientState(ctx, packet.GetSrcChain()); !found {
+			return sdkerrors.Wrap(clienttypes.ErrClientNotFound, fromChain)
+		}
+		// set the acknowledgement so that it can be verified on the other side
+		k.SetPacketAcknowledgement(
+			ctx, packet.GetSrcChain(), packet.GetDestChain(), packet.GetSequence(),
+			ackCommitment,
+		)
+
+		_ = ctx.EventManager().EmitTypedEvent(&types.EventWriteAck{
+			Sequence: fmt.Sprintf("%d", packet.GetSequence()),
+			SrcChain: packet.GetSrcChain(),
+			DstChain: packet.GetDestChain(),
+			Packet:   msg.Packet,
+			Ack:      msg.Acknowledgement,
+		})
+	}
+
+	k.Logger(ctx).Info("acknowledge packet ", "packet", fmt.Sprintf("%v : %v : %v", packet.GetSrcChain(), packet.GetDestChain(), packet.GetSequence()))
 	return nil
 }
