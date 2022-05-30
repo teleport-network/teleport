@@ -136,11 +136,9 @@ func (k Keeper) RecvPacket(ctx sdk.Context, msg *types.MsgRecvPacket) error {
 
 	chainName := k.clientKeeper.GetChainName(ctx)
 
-	if packet.GetDestChain() != chainName {
-		if _, found = k.clientKeeper.GetClientState(ctx, packet.GetDestChain()); !found {
-			return sdkerrors.Wrap(clienttypes.ErrClientNotFound, fromChain)
-		}
-
+	// teleport is relayChain if found dest client then emit event to send packet
+	_, found = k.clientKeeper.GetClientState(ctx, packet.GetDestChain())
+	if packet.GetDestChain() != chainName && found {
 		k.SetPacketCommitment(ctx, packet.GetSrcChain(), packet.GetDestChain(), packet.GetSequence(), commitment)
 
 		_ = ctx.EventManager().EmitTypedEvent(&types.EventSendPacket{

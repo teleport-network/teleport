@@ -103,6 +103,22 @@ func (k Keeper) CallEVMWithData(
 	if err != nil {
 		return nil, err
 	}
+	logs := evmtypes.LogsToEthereum(res.Logs)
+	if !res.Failed() {
+		receipt := &ethtypes.Receipt{
+			Logs:   logs,
+			TxHash: common.HexToHash(res.Hash),
+		}
+		// Only call hooks if tx executed successfully.
+		if err = k.evmKeeper.PostTxProcessing(ctx, msg, receipt); err != nil {
+			// If hooks return error, revert the whole tx.
+			res.VmError = evmtypes.ErrPostTxProcessing.Error()
+			k.Logger(ctx).Error("tx post processing failed", "error", err)
+		}
+	}
+	if res.Failed() {
+		return nil, sdkerrors.Wrap(evmtypes.ErrVMExecution, res.VmError)
+	}
 
 	if res.Failed() {
 		return nil, sdkerrors.Wrap(evmtypes.ErrVMExecution, res.VmError)

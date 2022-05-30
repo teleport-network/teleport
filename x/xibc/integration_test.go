@@ -2,7 +2,6 @@ package xibc_test
 
 import (
 	"encoding/hex"
-	"fmt"
 	"math/big"
 	"strconv"
 	"strings"
@@ -428,10 +427,10 @@ func (suite *XIBCTestSuite) TestCrossChainCallAgent() {
 
 	// setup testing conditions
 	pathAToB := xibctesting.NewPath(suite.chainA, suite.chainB)
-	pathBToC := xibctesting.NewPath(suite.chainA, suite.chainB)
-
 	suite.coordinator.SetupClients(pathAToB)
-	suite.coordinator.SetupClients(pathBToC)
+
+	pathBToC := xibctesting.NewPath(suite.chainB, suite.chainC)
+	suite.coordinator.SetupClientsWithoutRelayer(pathBToC)
 
 	// deploy ERC20
 	chainAERC20 := suite.DeployERC20ByCrossChain(suite.chainA)
@@ -553,22 +552,104 @@ func (suite *XIBCTestSuite) TestCrossChainCallAgent() {
 		CallbackAddress:  common.BigToAddress(big.NewInt(0)).String(),
 		FeeOption:        0,
 	}
+	result, err := hex.DecodeString("0000000000000000000000000000000000000000000000000000000000000001")
+	suite.Require().NoError(err)
 	ack := packettypes.NewAcknowledgement(
 		0,
-		[]byte(""),
+		result,
 		"",
 		strings.ToLower(suite.chainB.SenderAcc.String()),
 		0,
 	)
-	fmt.Println(strings.ToLower(suite.chainB.SenderAcc.String()))
 	ackData, err := ack.ABIPack()
 	suite.Require().NoError(err)
-	suite.Require().NotNil(ackData)
-	suite.Require().NotNil(packet)
 
-	//relay
-	//err = pathAToB.RelayPacket(packet, ackData)
-	//suite.Require().NoError(err)
+	// relay packet
+	err = pathAToB.RelayPacket(packet, ackData)
+	suite.Require().NoError(err)
+	packetFees := suite.GetPacketFees(suite.chainB, suite.chainB.ChainID, suite.chainC.ChainID, 1)
+	suite.Equal(packetFees.TokenAddress, chainBERC20)
+	suite.Equal(packetFees.Amount.Int64(), int64(1000))
+	outTokens := suite.OutTokens(suite.chainB, chainBERC20, suite.chainC.ChainID)
+	suite.Equal(outTokens.Int64(), int64(1000))
+
+	balance = suite.ERC20Balance(suite.chainB, chainBERC20, agentcontract.AgentContractAddress)
+	suite.Require().Equal(int64(0), balance.Int64())
+	bindings := suite.Bindings(suite.chainB, chainBERC20, suite.chainA.ChainID)
+	suite.Equal(bindings.OriToken, strings.ToLower(chainAERC20.String()))
+	suite.Equal(bindings.Amount.Int64(), int64(2000))
+	suite.Equal(bindings.Bound, true)
+	suite.Equal(bindings.Scale, uint8(0))
+	latestPacket := suite.GetLatestPacket(suite.chainB)
+	suite.Equal(latestPacket.DestChain, packet.DestinationChain)
+	suite.Equal(latestPacket.SrcChain, packet.SourceChain)
+	suite.Equal(latestPacket.Sequence, packet.Sequence)
+	suite.Equal(latestPacket.Sender, packet.Sender)
+	suite.Equal(latestPacket.TransferData, packet.TransferData)
+	suite.Equal(latestPacket.CallData, packet.CallData)
+	suite.Equal(latestPacket.FeeOption, packet.FeeOption)
+	suite.Equal(latestPacket.CallbackAddress, packet.CallbackAddress)
+
+	status := suite.GetAckStatus(suite.chainA, suite.chainB.ChainID, 1)
+	suite.Require().Equal(status, uint8(1))
+	ackResult := suite.GetAck(suite.chainA, suite.chainB.ChainID, 1)
+	suite.Require().Equal(ackResult.Code, ack.Code)
+	suite.Require().Equal(ackResult.Result, ack.Result)
+	suite.Require().Equal(ackResult.Message, ack.Message)
+	suite.Require().Equal(ackResult.Relayer, ack.Relayer)
+
+	hexAmount, err = hex.DecodeString("00000000000000000000000000000000000000000000000000000000000003e8")
+	suite.Require().NoError(err)
+	transferData = packettypes.TransferData{
+		Receiver: strings.ToLower(suite.chainA.SenderAddress.String()),
+		Amount:   hexAmount,
+		Token:    strings.ToLower(chainBERC20.String()),
+		OriToken: "",
+	}
+	transferDataAbi, err = transferData.ABIPack()
+	suite.Require().NoError(err)
+
+	packet = packettypes.Packet{
+		SourceChain:      suite.chainB.ChainID,
+		DestinationChain: suite.chainC.ChainID,
+		Sequence:         1,
+		Sender:           strings.ToLower(agentcontract.AgentContractAddress.String()),
+		TransferData:     transferDataAbi,
+		CallData:         []byte(""),
+		CallbackAddress:  strings.ToLower(agentcontract.AgentContractAddress.String()),
+		FeeOption:        0,
+	}
+
+	ack = packettypes.NewAcknowledgement(
+		0,
+		[]byte(""),
+		"",
+		strings.ToLower(suite.chainC.SenderAcc.String()),
+		0,
+	)
+	ackData, err = ack.ABIPack()
+	suite.Require().NoError(err)
+
+	pathBToC.RegisterRelayers()
+	// relay packet
+	err = pathBToC.RelayPacket(packet, ackData)
+	suite.Require().NoError(err)
+	balance = suite.ERC20Balance(suite.chainC, chainCERC20, suite.chainA.SenderAddress)
+	suite.Require().Equal(balance.Int64(), int64(1000))
+	bindings = suite.Bindings(suite.chainC, chainCERC20, suite.chainB.ChainID)
+	suite.Equal(bindings.OriToken, strings.ToLower(chainBERC20.String()))
+	suite.Equal(bindings.Amount.Int64(), int64(1000))
+	suite.Equal(bindings.Bound, true)
+	suite.Equal(bindings.Scale, uint8(0))
+	latestPacket = suite.GetLatestPacket(suite.chainC)
+	suite.Equal(latestPacket.DestChain, packet.DestinationChain)
+	suite.Equal(latestPacket.SrcChain, packet.SourceChain)
+	suite.Equal(latestPacket.Sequence, packet.Sequence)
+	suite.Equal(latestPacket.Sender, packet.Sender)
+	suite.Equal(latestPacket.TransferData, packet.TransferData)
+	suite.Equal(latestPacket.CallData, packet.CallData)
+	suite.Equal(latestPacket.FeeOption, packet.FeeOption)
+	suite.Equal(latestPacket.CallbackAddress, packet.CallbackAddress)
 }
 
 // ================================================================================================================
