@@ -763,7 +763,7 @@ func (suite *XIBCTestSuite) GetAck(fromChain *xibctesting.TestChain, dstChain st
 	return ack
 }
 
-func (suite *XIBCTestSuite) GetLatestPacket(fromChain *xibctesting.TestChain) packettypes.WPacket {
+func (suite *XIBCTestSuite) GetLatestPacket(fromChain *xibctesting.TestChain) packettypes.Packet {
 	packetABI := packetcontract.PacketContract.ABI
 
 	res, err := fromChain.App.AggregateKeeper.CallEVM(
@@ -775,7 +775,7 @@ func (suite *XIBCTestSuite) GetLatestPacket(fromChain *xibctesting.TestChain) pa
 	)
 	suite.Require().NoError(err)
 
-	var packet packettypes.WPacket
+	var packet packettypes.Packet
 	err = packetABI.UnpackIntoInterface(&packet, "latestPacket", res.Ret)
 	suite.Require().NoError(err)
 	return packet

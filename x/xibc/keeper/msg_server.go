@@ -68,7 +68,7 @@ func (k Keeper) RecvPacket(goCtx context.Context, msg *packettypes.MsgRecvPacket
 
 	if packet.GetDstChain() == k.ClientKeeper.GetChainName(cctx) {
 		// call packet onRecvPacket
-		res, err := k.PacketKeeper.CallPacket(ctx, "onRecvPacket", packet.ToWPacket())
+		res, err := k.PacketKeeper.CallPacket(ctx, "onRecvPacket", packet)
 		if err != nil {
 			// Write ErrAck
 			errAckBz, err := packettypes.NewAcknowledgement(1, []byte{}, "receive packet callback failed", relayer, packet.FeeOption).ABIPack()
@@ -178,12 +178,7 @@ func (k Keeper) Acknowledgement(goCtx context.Context, msg *packettypes.MsgAckno
 		}
 
 		// OnAcknowledgementPacket
-		if _, err := k.PacketKeeper.CallPacket(
-			ctx,
-			"OnAcknowledgePacket",
-			packet.ToWPacket(),
-			ack,
-		); err != nil {
+		if _, err := k.PacketKeeper.CallPacket(ctx, "OnAcknowledgePacket", packet, ack); err != nil {
 			return nil, err
 		}
 	}
