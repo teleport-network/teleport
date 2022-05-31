@@ -142,7 +142,7 @@ func (suite *KeeperTestSuite) TestRecvPacket() {
 			tc.malleate()
 
 			// get proof of packet commitment from chainA
-			packetKey := host.PacketCommitmentKey(packet.GetSrcChain(), packet.GetDestChain(), packet.GetSequence())
+			packetKey := host.PacketCommitmentKey(packet.GetSrcChain(), packet.GetDstChain(), packet.GetSequence())
 			proof, proofHeight := suite.chainA.QueryProof(packetKey)
 			packetBytes, err := packet.ABIPack()
 			suite.Require().NoError(err)
@@ -157,7 +157,7 @@ func (suite *KeeperTestSuite) TestRecvPacket() {
 				suite.Require().NoError(err)
 
 				receipt, receiptStored := suite.chainB.App.XIBCKeeper.PacketKeeper.GetPacketReceipt(
-					suite.chainB.GetContext(), packet.GetSrcChain(), packet.GetDestChain(), packet.GetSequence(),
+					suite.chainB.GetContext(), packet.GetSrcChain(), packet.GetDstChain(), packet.GetSequence(),
 				)
 
 				suite.Require().True(receiptStored, "packet receipt not stored after RecvPacket")
@@ -192,7 +192,7 @@ func (suite *KeeperTestSuite) TestWriteAcknowledgement() {
 			suite.coordinator.SetupClients(path)
 			packet = types.NewPacket(path.EndpointA.ChainName, path.EndpointB.ChainName, 1, "sender", mockTransferData, mockCallData, "", 0)
 			ack = xibctesting.TestHash
-			suite.chainB.App.XIBCKeeper.PacketKeeper.SetPacketAcknowledgement(suite.chainB.GetContext(), packet.GetSrcChain(), packet.GetDestChain(), packet.GetSequence(), ack)
+			suite.chainB.App.XIBCKeeper.PacketKeeper.SetPacketAcknowledgement(suite.chainB.GetContext(), packet.GetSrcChain(), packet.GetDstChain(), packet.GetSequence(), ack)
 		},
 		false,
 	}, {
@@ -238,7 +238,7 @@ func (suite *KeeperTestSuite) TestAcknowledgePacket() {
 
 				// create packet receipt and acknowledgement
 				// get proof of packet commitment from chainA
-				packetKey := host.PacketCommitmentKey(packet.GetSrcChain(), packet.GetDestChain(), packet.GetSequence())
+				packetKey := host.PacketCommitmentKey(packet.GetSrcChain(), packet.GetDstChain(), packet.GetSequence())
 				proof, proofHeight := suite.chainA.QueryProof(packetKey)
 				packetBytes, err := packet.ABIPack()
 				suite.Require().NoError(err)
@@ -287,7 +287,7 @@ func (suite *KeeperTestSuite) TestAcknowledgePacket() {
 
 			packetKey := host.PacketAcknowledgementKey(
 				packet.GetSrcChain(),
-				packet.GetDestChain(),
+				packet.GetDstChain(),
 				packet.GetSequence(),
 			)
 			proof, proofHeight := suite.chainB.QueryProof(packetKey)
@@ -314,7 +314,7 @@ func (suite *KeeperTestSuite) TestAcknowledgePacket() {
 			pc := suite.chainA.App.XIBCKeeper.PacketKeeper.GetPacketCommitment(
 				suite.chainA.GetContext(),
 				packet.GetSrcChain(),
-				packet.GetDestChain(),
+				packet.GetDstChain(),
 				packet.GetSequence(),
 			)
 

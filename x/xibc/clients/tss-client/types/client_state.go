@@ -75,6 +75,7 @@ func (cs ClientState) UpgradeState(
 ) error {
 	return nil
 }
+
 func (cs ClientState) ExportMetadata(store sdk.KVStore) []exported.GenesisMetadata {
 	return nil
 }
@@ -85,7 +86,8 @@ func (cs ClientState) VerifyPacketCommitment(
 	cdc codec.BinaryCodec,
 	height exported.Height,
 	proof []byte,
-	sourceChain, destChain string,
+	srcChain string,
+	dstChain string,
 	sequence uint64,
 	commitment []byte,
 ) error {
@@ -105,7 +107,8 @@ func (m ClientState) VerifyPacketAcknowledgement(
 	cdc codec.BinaryCodec,
 	height exported.Height,
 	proof []byte,
-	sourceChain, destChain string,
+	srcChain string,
+	dstChain string,
 	sequence uint64,
 	ackBytes []byte,
 ) error {

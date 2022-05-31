@@ -11,7 +11,7 @@ import (
 func TestPacketAbi(t *testing.T) {
 	crossChainPacket := packettypes.NewPacket(
 		"srcChain",
-		"destChain",
+		"dstChain",
 		1,
 		"sender",
 		[]byte("mock Transfer Data"),
@@ -25,8 +25,8 @@ func TestPacketAbi(t *testing.T) {
 	var p packettypes.Packet
 	err = p.ABIDecode(packetAbi)
 	require.NoError(t, err)
-	require.Equal(t, p.SourceChain, crossChainPacket.SourceChain)
-	require.Equal(t, p.DestinationChain, crossChainPacket.DestinationChain)
+	require.Equal(t, p.SrcChain, crossChainPacket.SrcChain)
+	require.Equal(t, p.DstChain, crossChainPacket.DstChain)
 	require.Equal(t, p.Sequence, crossChainPacket.Sequence)
 	require.Equal(t, p.Sender, crossChainPacket.Sender)
 	require.Equal(t, p.TransferData, crossChainPacket.TransferData)

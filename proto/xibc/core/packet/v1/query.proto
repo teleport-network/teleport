@@ -15,16 +15,16 @@ service Query {
   rpc PacketCommitment(QueryPacketCommitmentRequest)
       returns (QueryPacketCommitmentResponse) {
     option (google.api.http).get =
-        "/xibc/core/packet/v1beta1/src_chains/{src_chain}/dest_chains/"
-        "{dest_chain}/packet_commitments/{sequence}";
+        "/xibc/core/packet/v1beta1/src_chains/{src_chain}/dst_chains/"
+        "{dst_chain}/packet_commitments/{sequence}";
   }
 
   // PacketCommitments returns all the packet commitments hashes associated
   rpc PacketCommitments(QueryPacketCommitmentsRequest)
       returns (QueryPacketCommitmentsResponse) {
     option (google.api.http).get =
-        "/xibc/core/packet/v1beta1/src_chains/{src_chain}/dest_chains/"
-        "{dest_chain}/packet_commitments";
+        "/xibc/core/packet/v1beta1/src_chains/{src_chain}/dst_chains/"
+        "{dst_chain}/packet_commitments";
   }
 
   // PacketReceipt queries if a given packet sequence has been received on the
@@ -32,24 +32,24 @@ service Query {
   rpc PacketReceipt(QueryPacketReceiptRequest)
       returns (QueryPacketReceiptResponse) {
     option (google.api.http).get =
-        "/xibc/core/packet/v1beta1/src_chains/{src_chain}/dest_chains/"
-        "{dest_chain}/packet_receipts/{sequence}";
+        "/xibc/core/packet/v1beta1/src_chains/{src_chain}/dst_chains/"
+        "{dst_chain}/packet_receipts/{sequence}";
   }
 
   // PacketAcknowledgement queries a stored packet acknowledgement hash.
   rpc PacketAcknowledgement(QueryPacketAcknowledgementRequest)
       returns (QueryPacketAcknowledgementResponse) {
     option (google.api.http).get =
-        "/xibc/core/packet/v1beta1/src_chains/{src_chain}/dest_chains/"
-        "{dest_chain}/packet_acks/{sequence}";
+        "/xibc/core/packet/v1beta1/src_chains/{src_chain}/dst_chains/"
+        "{dst_chain}/packet_acks/{sequence}";
   }
 
   // PacketAcknowledgements returns all the packet acknowledgements associated
   rpc PacketAcknowledgements(QueryPacketAcknowledgementsRequest)
       returns (QueryPacketAcknowledgementsResponse) {
     option (google.api.http).get =
-        "/xibc/core/packet/v1beta1/src_chains/{src_chain}/dest_chains/"
-        "{dest_chain}/packet_acknowledgements";
+        "/xibc/core/packet/v1beta1/src_chains/{src_chain}/dst_chains/"
+        "{dst_chain}/packet_acknowledgements";
   }
 
   // UnreceivedPackets returns all the unreceived XIBC packets associated with
@@ -57,8 +57,8 @@ service Query {
   rpc UnreceivedPackets(QueryUnreceivedPacketsRequest)
       returns (QueryUnreceivedPacketsResponse) {
     option (google.api.http).get =
-        "/xibc/core/packet/v1beta1/src_chains/{src_chain}/dest_chains/"
-        "{dest_chain}/packet_commitments/{packet_commitment_sequences}/"
+        "/xibc/core/packet/v1beta1/src_chains/{src_chain}/dst_chains/"
+        "{dst_chain}/packet_commitments/{packet_commitment_sequences}/"
         "unreceived_packets";
   }
 
@@ -67,8 +67,8 @@ service Query {
   rpc UnreceivedAcks(QueryUnreceivedAcksRequest)
       returns (QueryUnreceivedAcksResponse) {
     option (google.api.http).get =
-        "/xibc/core/packet/v1beta1/src_chains/{src_chain}/dest_chains/"
-        "{dest_chain}/packet_commitments/{packet_ack_sequences}/"
+        "/xibc/core/packet/v1beta1/src_chains/{src_chain}/dst_chains/"
+        "{dst_chain}/packet_commitments/{packet_ack_sequences}/"
         "unreceived_acks";
   }
 }
@@ -76,9 +76,9 @@ service Query {
 // QueryPacketCommitmentRequest is the request type for the
 // QueryPacketCommitment RPC method
 message QueryPacketCommitmentRequest {
-  // dest chain name
-  string dest_chain = 1;
-  // source chain name
+  // dst chain name
+  string dst_chain = 1;
+  // src chain name
   string src_chain = 2;
   // packet sequence
   uint64 sequence = 3;
@@ -98,9 +98,9 @@ message QueryPacketCommitmentResponse {
 // QueryPacketCommitmentsRequest is the request type for the
 // Query/QueryPacketCommitments RPC method
 message QueryPacketCommitmentsRequest {
-  // dest chain name
-  string dest_chain = 1;
-  // source chain name
+  // dst chain name
+  string dst_chain = 1;
+  // src chain name
   string src_chain = 2;
   // pagination request
   cosmos.base.query.v1beta1.PageRequest pagination = 3;
@@ -119,9 +119,9 @@ message QueryPacketCommitmentsResponse {
 // QueryPacketReceiptRequest is the request type for the Query/PacketReceipt RPC
 // method
 message QueryPacketReceiptRequest {
-  // dest chain name
-  string dest_chain = 1;
-  // source chain name
+  // dst chain name
+  string dst_chain = 1;
+  // src chain name
   string src_chain = 2;
   // packet sequence
   uint64 sequence = 3;
@@ -142,9 +142,9 @@ message QueryPacketReceiptResponse {
 // QueryPacketAcknowledgementRequest is the request type for the
 // Query/PacketAcknowledgement RPC method
 message QueryPacketAcknowledgementRequest {
-  // dest chain name
-  string dest_chain = 1;
-  // source chain name
+  // dst chain name
+  string dst_chain = 1;
+  // src chain name
   string src_chain = 2;
   // packet sequence
   uint64 sequence = 3;
@@ -165,9 +165,9 @@ message QueryPacketAcknowledgementResponse {
 // QueryPacketAcknowledgementsRequest is the request type for the
 // Query/QueryPacketCommitments RPC method
 message QueryPacketAcknowledgementsRequest {
-  // dest chain name
-  string dest_chain = 1;
-  // source chain name
+  // dst chain name
+  string dst_chain = 1;
+  // src chain name
   string src_chain = 2;
   // pagination request
   cosmos.base.query.v1beta1.PageRequest pagination = 3;
@@ -186,9 +186,9 @@ message QueryPacketAcknowledgementsResponse {
 // QueryUnreceivedPacketsRequest is the request type for the
 // Query/UnreceivedPackets RPC method
 message QueryUnreceivedPacketsRequest {
-  // dest chain name
-  string dest_chain = 1;
-  // source chain name
+  // dst chain name
+  string dst_chain = 1;
+  // src chain name
   string src_chain = 2;
   // list of packet sequences
   repeated uint64 packet_commitment_sequences = 3;
@@ -206,9 +206,9 @@ message QueryUnreceivedPacketsResponse {
 // QueryUnreceivedAcks is the request type for the Query/UnreceivedAcks RPC
 // method
 message QueryUnreceivedAcksRequest {
-  // dest chain name
-  string dest_chain = 1;
-  // source chain name
+  // dst chain name
+  string dst_chain = 1;
+  // src chain name
   string src_chain = 2;
   // list of acknowledgement sequences
   repeated uint64 packet_ack_sequences = 3;

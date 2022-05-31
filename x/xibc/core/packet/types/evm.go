@@ -18,7 +18,7 @@ type InToken struct {
 
 type CrossChainData struct {
 	// path data
-	DestChain string
+	DstChain string
 	// transfer token data
 	TokenAddress common.Address // zero address if base token
 	Receiver     string
@@ -85,8 +85,8 @@ func initPacketData() {
 	tuplePacketData, err := abi.NewType(
 		"tuple", "",
 		[]abi.ArgumentMarshaling{
-			{Name: "source_chain", Type: "string"},
-			{Name: "destination_chain", Type: "string"},
+			{Name: "src_chain", Type: "string"},
+			{Name: "dst_chain", Type: "string"},
 			{Name: "sequence", Type: "uint64"},
 			{Name: "sender", Type: "string"},
 			{Name: "transfer_data", Type: "bytes"},

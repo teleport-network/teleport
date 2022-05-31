@@ -22,8 +22,8 @@ import (
 
 const (
 	// valid constatns used for testing
-	sourceChain = "source-chain"
-	destChain   = "dest-chain"
+	srcChain = "src-chain"
+	dstChain = "dst-chain"
 )
 
 // define variables used for testing
@@ -33,8 +33,8 @@ var (
 	mockCallData     = []byte("call")
 	mockAck          = []byte("ack")
 
-	packet               = types.NewPacket(sourceChain, destChain, 1, "sender", mockTransferData, mockCallData, "", 0)
-	invalidPacket        = types.NewPacket(sourceChain, destChain, 1, "sender", []byte(""), []byte(""), "", 0)
+	packet               = types.NewPacket(srcChain, dstChain, 1, "sender", mockTransferData, mockCallData, "", 0)
+	invalidPacket        = types.NewPacket(srcChain, dstChain, 1, "sender", []byte(""), []byte(""), "", 0)
 	packetData, _        = packet.ABIPack()
 	invalidPacketData, _ = invalidPacket.ABIPack()
 

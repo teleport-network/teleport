@@ -38,8 +38,8 @@ var ModuleCdc = codec.NewProtoCodec(codectypes.NewInterfaceRegistry())
 
 // NewPacket creates a new Packet instance. It panics if the provided packet data interface is not registered.
 func NewPacket(
-	sourceChain string,
-	destinationChain string,
+	srcChain string,
+	dstChain string,
 	sequence uint64,
 	sender string,
 	transferData []byte,
@@ -48,14 +48,14 @@ func NewPacket(
 	feeOption uint64,
 ) *Packet {
 	return &Packet{
-		SourceChain:      sourceChain,
-		DestinationChain: destinationChain,
-		Sequence:         sequence,
-		Sender:           sender,
-		TransferData:     transferData,
-		CallData:         callData,
-		CallbackAddress:  callbackAddress,
-		FeeOption:        feeOption,
+		SrcChain:        srcChain,
+		DstChain:        dstChain,
+		Sequence:        sequence,
+		Sender:          sender,
+		TransferData:    transferData,
+		CallData:        callData,
+		CallbackAddress: callbackAddress,
+		FeeOption:       feeOption,
 	}
 }
 
@@ -63,10 +63,10 @@ func NewPacket(
 func (p Packet) GetSequence() uint64 { return p.Sequence }
 
 // GetSrcChain implements PacketI interface
-func (p Packet) GetSrcChain() string { return p.SourceChain }
+func (p Packet) GetSrcChain() string { return p.SrcChain }
 
-// GetDestChain implements PacketI interface
-func (p Packet) GetDestChain() string { return p.DestinationChain }
+// GetDstChain implements PacketI interface
+func (p Packet) GetDstChain() string { return p.DstChain }
 
 // GetRelayChain implements PacketI interface
 func (p Packet) GetSender() string { return p.Sender }
@@ -107,16 +107,16 @@ func (p *Packet) ABIDecode(bz []byte) error {
 
 // ValidateBasic implements PacketI interface
 func (p Packet) ValidateBasic() error {
-	if len(p.SourceChain) == 0 {
+	if len(p.SrcChain) == 0 {
 		return sdkerrors.Wrap(ErrInvalidSrcChain, "srcChain is empty")
 	}
 
-	if len(p.DestinationChain) == 0 {
-		return sdkerrors.Wrap(ErrInvalidDestChain, "destChain is empty")
+	if len(p.DstChain) == 0 {
+		return sdkerrors.Wrap(ErrInvalidDstChain, "dstChain is empty")
 	}
 
-	if p.SourceChain == p.DestinationChain {
-		return sdkerrors.Wrap(ErrScChainEqualToDestChain, "srcChain equals to destChain")
+	if p.SrcChain == p.DstChain {
+		return sdkerrors.Wrap(ErrScChainEqualToDstChain, "srcChain equals to dstChain")
 	}
 
 	if p.Sequence == 0 {
@@ -131,10 +131,10 @@ func (p Packet) ValidateBasic() error {
 
 type WPacket struct {
 	// packet base data
-	SrcChain  string
-	DestChain string
-	Sequence  uint64
-	Sender    string
+	SrcChain string
+	DstChain string
+	Sequence uint64
+	Sender   string
 	// transfer data. keep empty if not used.
 	TransferData []byte
 	// call data. keep empty if not used
@@ -148,8 +148,8 @@ type WPacket struct {
 // ABIDecode implements PacketI interface
 func (p *Packet) ToWPacket() WPacket {
 	return WPacket{
-		p.SourceChain,
-		p.DestinationChain,
+		p.SrcChain,
+		p.DstChain,
 		p.Sequence,
 		p.Sender,
 		p.TransferData,

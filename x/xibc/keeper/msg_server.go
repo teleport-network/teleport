@@ -35,6 +35,7 @@ func (k Keeper) UpdateClient(goCtx context.Context, msg *clienttypes.MsgUpdateCl
 	if !found {
 		return nil, sdkerrors.Wrapf(clienttypes.ErrClientNotFound, "client state not found %s", msg.ChainName)
 	}
+
 	if err = clientState.CheckMsg(msg); err != nil {
 		return nil, err
 	}
@@ -57,15 +58,15 @@ func (k Keeper) RecvPacket(goCtx context.Context, msg *packettypes.MsgRecvPacket
 	cctx, write := ctx.CacheContext()
 	var packet packettypes.Packet
 	if err := packet.ABIDecode(msg.Packet); err != nil {
-		return nil, sdkerrors.Wrapf(packettypes.ErrAbiPack, "RecvPacket failed,decode packet err : %s", err)
+		return nil, sdkerrors.Wrapf(packettypes.ErrABIPack, "RecvPacket failed,decode packet err: %s", err)
 	}
 
-	relayer, found := k.ClientKeeper.GetRelayerAddressOnOtherChain(ctx, packet.SourceChain, msg.Signer)
+	relayer, found := k.ClientKeeper.GetRelayerAddressOnOtherChain(ctx, packet.SrcChain, msg.Signer)
 	if !found {
 		return nil, sdkerrors.Wrapf(packettypes.ErrRelayerNotFound, "relayer on source chain not found")
 	}
 
-	if packet.GetDestChain() == k.ClientKeeper.GetChainName(cctx) {
+	if packet.GetDstChain() == k.ClientKeeper.GetChainName(cctx) {
 		// call packet onRecvPacket
 		res, err := k.PacketKeeper.CallPacket(ctx, "onRecvPacket", packet.ToWPacket())
 		if err != nil {
@@ -81,9 +82,8 @@ func (k Keeper) RecvPacket(goCtx context.Context, msg *packettypes.MsgRecvPacket
 		}
 		// call onRecvPacket end then get the result to write the ack
 		var result packettypes.Result
-		errDecodeResult := packetcontract.PacketContract.ABI.UnpackIntoInterface(&result, "onRecvPacket", res.Ret)
-		if errDecodeResult != nil {
-			return nil, sdkerrors.Wrapf(packettypes.ErrAbiPack, "RecvPacket failed,decode result err : %s", errDecodeResult)
+		if err := packetcontract.PacketContract.ABI.UnpackIntoInterface(&result, "onRecvPacket", res.Ret); err != nil {
+			return nil, sdkerrors.Wrapf(packettypes.ErrABIPack, "recv packet failed, decode result err: %s", err)
 		}
 		ackBz, err := packettypes.NewAcknowledgement(result.Code, result.Result, result.Message, relayer, packet.FeeOption).ABIPack()
 		if err != nil {
@@ -92,9 +92,9 @@ func (k Keeper) RecvPacket(goCtx context.Context, msg *packettypes.MsgRecvPacket
 		if err := k.PacketKeeper.WriteAcknowledgement(ctx, &packet, ackBz); err != nil {
 			return nil, err
 		}
-	} else if _, found := k.ClientKeeper.GetClientState(ctx, packet.GetDestChain()); !found {
+	} else if _, found := k.ClientKeeper.GetClientState(ctx, packet.GetDstChain()); !found {
 		// Write ErrAck
-		errAckBz, err := packettypes.NewAcknowledgement(1, []byte{}, "destChain not found", relayer, packet.FeeOption).ABIPack()
+		errAckBz, err := packettypes.NewAcknowledgement(1, []byte{}, "dstChain not found", relayer, packet.FeeOption).ABIPack()
 		if err != nil {
 			return nil, sdkerrors.Wrapf(packettypes.ErrInvalidAcknowledgement, "pack ack failed")
 		}
@@ -119,9 +119,8 @@ func (k Keeper) Acknowledgement(goCtx context.Context, msg *packettypes.MsgAckno
 	}
 
 	var packet packettypes.Packet
-	err := packet.ABIDecode(msg.Packet)
-	if err != nil {
-		return nil, sdkerrors.Wrapf(packettypes.ErrDecodeAbi, "Acknowledgement failed,decode packet err : %v", err)
+	if err := packet.ABIDecode(msg.Packet); err != nil {
+		return nil, sdkerrors.Wrapf(packettypes.ErrDecodeAbi, "decode packet bytes failed: %v", err)
 	}
 
 	var ack packettypes.Acknowledgement
@@ -132,8 +131,6 @@ func (k Keeper) Acknowledgement(goCtx context.Context, msg *packettypes.MsgAckno
 		return nil, sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest, "decode acknowledgement bytes failed")
 	}
 
-	// todo ?
-	//success := ack.Result != nil && len(ack.Result) > 0
 	if packet.GetSrcChain() == k.ClientKeeper.GetChainName(ctx) {
 		success := ack.Code == 0
 		if success {
@@ -141,7 +138,7 @@ func (k Keeper) Acknowledgement(goCtx context.Context, msg *packettypes.MsgAckno
 			if _, err := k.PacketKeeper.CallPacket(
 				ctx,
 				"setAckStatus",
-				packet.GetDestChain(),
+				packet.GetDstChain(),
 				packet.Sequence,
 				uint8(1),
 			); err != nil {
@@ -152,7 +149,7 @@ func (k Keeper) Acknowledgement(goCtx context.Context, msg *packettypes.MsgAckno
 			if _, err := k.PacketKeeper.CallPacket(
 				ctx,
 				"setAckStatus",
-				packet.GetDestChain(),
+				packet.GetDstChain(),
 				packet.Sequence,
 				uint8(2),
 			); err != nil {
@@ -160,7 +157,7 @@ func (k Keeper) Acknowledgement(goCtx context.Context, msg *packettypes.MsgAckno
 			}
 		}
 
-		relayer, found := k.ClientKeeper.GetRelayerAddressOnTeleport(ctx, packet.GetDestChain(), ack.Relayer)
+		relayer, found := k.ClientKeeper.GetRelayerAddressOnTeleport(ctx, packet.GetDstChain(), ack.Relayer)
 		if !found {
 			return nil, sdkerrors.Wrapf(packettypes.ErrRelayerNotFound, "relayer on source chain not found")
 		}
@@ -173,7 +170,7 @@ func (k Keeper) Acknowledgement(goCtx context.Context, msg *packettypes.MsgAckno
 		if _, err := k.PacketKeeper.CallPacket(
 			ctx,
 			"sendPacketFeeToRelayer",
-			packet.GetDestChain(),
+			packet.GetDstChain(),
 			packet.Sequence,
 			common.BytesToAddress(relayerAddr),
 		); err != nil {
@@ -189,7 +186,6 @@ func (k Keeper) Acknowledgement(goCtx context.Context, msg *packettypes.MsgAckno
 		); err != nil {
 			return nil, err
 		}
-
 	}
 
 	return &packettypes.MsgAcknowledgementResponse{}, nil

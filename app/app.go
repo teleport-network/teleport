@@ -119,9 +119,9 @@ import (
 	_ "github.com/teleport-network/teleport/client/docs/statik"
 	gabci "github.com/teleport-network/teleport/grpc_abci"
 	syscontracts "github.com/teleport-network/teleport/syscontracts"
-	agentcontract "github.com/teleport-network/teleport/syscontracts/agent"
 	wtelecontract "github.com/teleport-network/teleport/syscontracts/wtele"
-	crosschaincontract "github.com/teleport-network/teleport/syscontracts/xibc_crosschain"
+	agentcontract "github.com/teleport-network/teleport/syscontracts/xibc_agent"
+	endpointcontract "github.com/teleport-network/teleport/syscontracts/xibc_endpoint"
 	packetcontract "github.com/teleport-network/teleport/syscontracts/xibc_packet"
 	"github.com/teleport-network/teleport/types"
 	"github.com/teleport-network/teleport/x/aggregate"
@@ -817,8 +817,8 @@ func (app *Teleport) InitChainer(ctx sdk.Context, req abci.RequestInitChain) abc
 	app.SetEVMCode(ctx, common.HexToAddress(syscontracts.WTELEContractAddress), wtelecontract.WTELEContract.Bin)
 	app.SetEVMCode(ctx, common.HexToAddress(syscontracts.AgentContractAddress), agentcontract.AgentContract.Bin)
 	app.SetEVMCode(ctx, common.HexToAddress(syscontracts.PacketContractAddress), packetcontract.PacketContract.Bin)
-	app.SetEVMCode(ctx, common.HexToAddress(syscontracts.CrossChainContractAddress), crosschaincontract.CrossChainContract.Bin)
-	app.SetEVMCode(ctx, common.HexToAddress(syscontracts.ExecuteContractAddress), crosschaincontract.ExecuteContract.Bin)
+	app.SetEVMCode(ctx, common.HexToAddress(syscontracts.EndpointContractAddress), endpointcontract.EndpointContract.Bin)
+	app.SetEVMCode(ctx, common.HexToAddress(syscontracts.ExecuteContractAddress), endpointcontract.ExecuteContract.Bin)
 
 	return res
 }

@@ -87,78 +87,78 @@ func ConsensusStateKey(height exported.Height) (key []byte) {
 }
 
 // NextSequenceSendPath defines the next send sequence counter store path
-func NextSequenceSendPath(sourceChain, destChain string) string {
-	return fmt.Sprintf("%s/%s", KeyNextSeqSendPrefix, packetPath(sourceChain, destChain))
+func NextSequenceSendPath(srcChain, dstChain string) string {
+	return fmt.Sprintf("%s/%s", KeyNextSeqSendPrefix, packetPath(srcChain, dstChain))
 }
 
 // NextSequenceSendKey returns the store key for the send sequence
-func NextSequenceSendKey(sourceChain, destChain string) []byte {
-	return []byte(NextSequenceSendPath(sourceChain, destChain))
+func NextSequenceSendKey(srcChain, dstChain string) []byte {
+	return []byte(NextSequenceSendPath(srcChain, dstChain))
 }
 
 // PacketCommitmentPath defines the commitments to packet data fields store path
-func PacketCommitmentPath(sourceChain, destinationChain string, sequence uint64) string {
-	return fmt.Sprintf("%s/%d", PacketCommitmentPrefixPath(sourceChain, destinationChain), sequence)
+func PacketCommitmentPath(srcChain, dstChain string, sequence uint64) string {
+	return fmt.Sprintf("%s/%d", PacketCommitmentPrefixPath(srcChain, dstChain), sequence)
 }
 
 // PacketCommitmentKey returns the store key of under which a packet commitment is stored
-func PacketCommitmentKey(sourceChain, destinationChain string, sequence uint64) []byte {
-	return []byte(PacketCommitmentPath(sourceChain, destinationChain, sequence))
+func PacketCommitmentKey(srcChain, dstChain string, sequence uint64) []byte {
+	return []byte(PacketCommitmentPath(srcChain, dstChain, sequence))
 }
 
 // PacketCommitmentPrefixPath defines the prefix for commitments to packet data fields store path
-func PacketCommitmentPrefixPath(sourceChain, destinationChain string) string {
-	return fmt.Sprintf("%s/%s/%s", KeyPacketCommitmentPrefix, packetPath(sourceChain, destinationChain), KeySequencePrefix)
+func PacketCommitmentPrefixPath(srcChain, dstChain string) string {
+	return fmt.Sprintf("%s/%s/%s", KeyPacketCommitmentPrefix, packetPath(srcChain, dstChain), KeySequencePrefix)
 }
 
 // PacketRelayerPath defines the packet data fields store path
-func PacketRelayerPath(sourceChain, destinationChain string, sequence uint64) string {
-	return fmt.Sprintf("%s/%d", PacketRelayerPrefixPath(sourceChain, destinationChain), sequence)
+func PacketRelayerPath(srcChain, dstChain string, sequence uint64) string {
+	return fmt.Sprintf("%s/%d", PacketRelayerPrefixPath(srcChain, dstChain), sequence)
 }
 
 // PacketRelayerKey returns the store key of under which a packet relayer is stored
-func PacketRelayerKey(sourceChain, destinationChain string, sequence uint64) []byte {
-	return []byte(PacketRelayerPath(sourceChain, destinationChain, sequence))
+func PacketRelayerKey(srcChain, dstChain string, sequence uint64) []byte {
+	return []byte(PacketRelayerPath(srcChain, dstChain, sequence))
 }
 
 // PacketRelayerPrefixPath defines the prefix for relayer to packet data fields store path
-func PacketRelayerPrefixPath(sourceChain, destinationChain string) string {
-	return fmt.Sprintf("%s/%s/%s", KeyPacketRelayerPrefix, packetPath(sourceChain, destinationChain), KeySequencePrefix)
+func PacketRelayerPrefixPath(srcChain, dstChain string) string {
+	return fmt.Sprintf("%s/%s/%s", KeyPacketRelayerPrefix, packetPath(srcChain, dstChain), KeySequencePrefix)
 }
 
 // PacketAcknowledgementPath defines the packet acknowledgement store path
-func PacketAcknowledgementPath(sourceChain, destinationChain string, sequence uint64) string {
-	return fmt.Sprintf("%s/%d", PacketAcknowledgementPrefixPath(sourceChain, destinationChain), sequence)
+func PacketAcknowledgementPath(srcChain, dstChain string, sequence uint64) string {
+	return fmt.Sprintf("%s/%d", PacketAcknowledgementPrefixPath(srcChain, dstChain), sequence)
 }
 
 // PacketAcknowledgementKey returns the store key of under which a packet
 // acknowledgement is stored
-func PacketAcknowledgementKey(sourceChain, destinationChain string, sequence uint64) []byte {
-	return []byte(PacketAcknowledgementPath(sourceChain, destinationChain, sequence))
+func PacketAcknowledgementKey(srcChain, dstChain string, sequence uint64) []byte {
+	return []byte(PacketAcknowledgementPath(srcChain, dstChain, sequence))
 }
 
 // PacketAcknowledgementPrefixPath defines the prefix for commitments to packet data fields store path
-func PacketAcknowledgementPrefixPath(sourceChain, destinationChain string) string {
-	return fmt.Sprintf("%s/%s/%s", KeyPacketAckPrefix, packetPath(sourceChain, destinationChain), KeySequencePrefix)
+func PacketAcknowledgementPrefixPath(srcChain, dstChain string) string {
+	return fmt.Sprintf("%s/%s/%s", KeyPacketAckPrefix, packetPath(srcChain, dstChain), KeySequencePrefix)
 }
 
 // PacketReceiptPath defines the packet receipt store path
-func PacketReceiptPath(sourceChain, destinationChain string, sequence uint64) string {
-	return fmt.Sprintf("%s/%d", PacketReceiptPrefixPath(sourceChain, destinationChain), sequence)
+func PacketReceiptPath(srcChain, dstChain string, sequence uint64) string {
+	return fmt.Sprintf("%s/%d", PacketReceiptPrefixPath(srcChain, dstChain), sequence)
 }
 
 // PacketReceiptKey returns the store key of under which a packet
 // receipt is stored
-func PacketReceiptKey(sourceChain, destinationChain string, sequence uint64) []byte {
-	return []byte(PacketReceiptPath(sourceChain, destinationChain, sequence))
+func PacketReceiptKey(srcChain, dstChain string, sequence uint64) []byte {
+	return []byte(PacketReceiptPath(srcChain, dstChain, sequence))
 }
 
 // PacketReceiptKey returns the store key of under which a packet
 // receipt is stored
-func PacketReceiptPrefixPath(sourceChain, destinationChain string) string {
-	return fmt.Sprintf("%s/%s/%s", KeyPacketReceiptPrefix, packetPath(sourceChain, destinationChain), KeySequencePrefix)
+func PacketReceiptPrefixPath(srcChain, dstChain string) string {
+	return fmt.Sprintf("%s/%s/%s", KeyPacketReceiptPrefix, packetPath(srcChain, dstChain), KeySequencePrefix)
 }
 
-func packetPath(sourceChain, destinationChain string) string {
-	return fmt.Sprintf("%s/%s", sourceChain, destinationChain)
+func packetPath(srcChain, dstChain string) string {
+	return fmt.Sprintf("%s/%s", srcChain, dstChain)
 }

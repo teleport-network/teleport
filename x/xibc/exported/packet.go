@@ -4,7 +4,7 @@ package exported
 type PacketI interface {
 	GetSequence() uint64
 	GetSrcChain() string
-	GetDestChain() string
+	GetDstChain() string
 	GetSender() string
 	GetTransferData() []byte
 	GetCallData() []byte

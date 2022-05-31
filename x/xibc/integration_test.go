@@ -20,9 +20,9 @@ import (
 	"github.com/ethereum/go-ethereum/crypto"
 
 	"github.com/teleport-network/teleport/syscontracts"
-	agentcontract "github.com/teleport-network/teleport/syscontracts/agent"
 	erc20contracts "github.com/teleport-network/teleport/syscontracts/erc20"
-	crosschaincontract "github.com/teleport-network/teleport/syscontracts/xibc_crosschain"
+	agentcontract "github.com/teleport-network/teleport/syscontracts/xibc_agent"
+	endpointcontract "github.com/teleport-network/teleport/syscontracts/xibc_endpoint"
 	packetcontract "github.com/teleport-network/teleport/syscontracts/xibc_packet"
 	aggregatetypes "github.com/teleport-network/teleport/x/aggregate/types"
 	clienttypes "github.com/teleport-network/teleport/x/xibc/core/client/types"
@@ -122,7 +122,7 @@ func (suite *XIBCTestSuite) TestCrossChainTransferERC20() {
 	suite.Equal(amount.Int64(), int64(0))
 
 	crossChainData := packettypes.CrossChainData{
-		DestChain:       suite.chainB.ChainID,
+		DstChain:        suite.chainB.ChainID,
 		TokenAddress:    chainAERC20,
 		Receiver:        strings.ToLower(suite.chainB.SenderAddress.String()),
 		Amount:          big.NewInt(1000),
@@ -137,11 +137,11 @@ func (suite *XIBCTestSuite) TestCrossChainTransferERC20() {
 	}
 
 	// send CrossChainCall Tx
-	suite.Approve(suite.chainA, chainAERC20, crosschaincontract.CrossChainContractAddress, big.NewInt(2000))
+	suite.Approve(suite.chainA, chainAERC20, endpointcontract.EndpointContractAddress, big.NewInt(2000))
 	suite.CrossChainCall(suite.chainA, crossChainData, fee)
 	balance = suite.ERC20Balance(suite.chainA, chainAERC20, suite.chainA.SenderAddress)
 	suite.Equal(balance.Int64(), int64(8000))
-	balance = suite.ERC20Balance(suite.chainA, chainAERC20, crosschaincontract.CrossChainContractAddress)
+	balance = suite.ERC20Balance(suite.chainA, chainAERC20, endpointcontract.EndpointContractAddress)
 	suite.Equal(balance.Int64(), int64(1000))
 	balance = suite.ERC20Balance(suite.chainA, chainAERC20, packetcontract.PacketContractAddress)
 	suite.Equal(balance.Int64(), int64(1000))
@@ -166,14 +166,14 @@ func (suite *XIBCTestSuite) TestCrossChainTransferERC20() {
 	suite.Require().NoError(err)
 
 	packet := packettypes.Packet{
-		SourceChain:      suite.chainA.ChainID,
-		DestinationChain: suite.chainB.ChainID,
-		Sequence:         1,
-		Sender:           strings.ToLower(suite.chainA.SenderAddress.String()),
-		TransferData:     transferDataAbi,
-		CallData:         []byte(""),
-		CallbackAddress:  common.BigToAddress(big.NewInt(0)).String(),
-		FeeOption:        0,
+		SrcChain:        suite.chainA.ChainID,
+		DstChain:        suite.chainB.ChainID,
+		Sequence:        1,
+		Sender:          strings.ToLower(suite.chainA.SenderAddress.String()),
+		TransferData:    transferDataAbi,
+		CallData:        []byte(""),
+		CallbackAddress: common.BigToAddress(big.NewInt(0)).String(),
+		FeeOption:       0,
 	}
 	ack := packettypes.NewAcknowledgement(
 		0,
@@ -200,8 +200,8 @@ func (suite *XIBCTestSuite) TestCrossChainTransferERC20() {
 	suite.Equal(bindings.Bound, true)
 	suite.Equal(bindings.Scale, uint8(0))
 	latestPacket := suite.GetLatestPacket(suite.chainB)
-	suite.Equal(latestPacket.DestChain, packet.DestinationChain)
-	suite.Equal(latestPacket.SrcChain, packet.SourceChain)
+	suite.Equal(latestPacket.DstChain, packet.DstChain)
+	suite.Equal(latestPacket.SrcChain, packet.SrcChain)
 	suite.Equal(latestPacket.Sequence, packet.Sequence)
 	suite.Equal(latestPacket.Sender, packet.Sender)
 	suite.Equal(latestPacket.TransferData, packet.TransferData)
@@ -250,7 +250,7 @@ func (suite *XIBCTestSuite) TestCrossChainTransferBaseAndTransferBack() {
 	suite.Equal(amount.Int64(), int64(0))
 
 	crossChainData := packettypes.CrossChainData{
-		DestChain:       suite.chainB.ChainID,
+		DstChain:        suite.chainB.ChainID,
 		TokenAddress:    chainABase,
 		Receiver:        strings.ToLower(suite.chainB.SenderAddress.String()),
 		Amount:          big.NewInt(100),
@@ -270,7 +270,7 @@ func (suite *XIBCTestSuite) TestCrossChainTransferBaseAndTransferBack() {
 	balances = suite.chainA.App.BankKeeper.GetBalance(suite.chainA.GetContext(), suite.chainA.SenderAcc, "stake")
 	suite.Require().Equal(balances.String(), "99999999999800stake")
 
-	crossChainAddr, err := sdk.AccAddressFromHex(hex.EncodeToString(crosschaincontract.CrossChainContractAddress.Bytes()))
+	crossChainAddr, err := sdk.AccAddressFromHex(hex.EncodeToString(endpointcontract.EndpointContractAddress.Bytes()))
 	suite.Require().NoError(err)
 	packetAddr, err := sdk.AccAddressFromHex(hex.EncodeToString(packetcontract.PacketContractAddress.Bytes()))
 	suite.Require().NoError(err)
@@ -300,14 +300,14 @@ func (suite *XIBCTestSuite) TestCrossChainTransferBaseAndTransferBack() {
 	suite.Require().NoError(err)
 
 	packet := packettypes.Packet{
-		SourceChain:      suite.chainA.ChainID,
-		DestinationChain: suite.chainB.ChainID,
-		Sequence:         1,
-		Sender:           strings.ToLower(suite.chainA.SenderAddress.String()),
-		TransferData:     transferDataAbi,
-		CallData:         []byte(""),
-		CallbackAddress:  common.BigToAddress(big.NewInt(0)).String(),
-		FeeOption:        0,
+		SrcChain:        suite.chainA.ChainID,
+		DstChain:        suite.chainB.ChainID,
+		Sequence:        1,
+		Sender:          strings.ToLower(suite.chainA.SenderAddress.String()),
+		TransferData:    transferDataAbi,
+		CallData:        []byte(""),
+		CallbackAddress: common.BigToAddress(big.NewInt(0)).String(),
+		FeeOption:       0,
 	}
 	ack := packettypes.NewAcknowledgement(
 		0,
@@ -348,7 +348,7 @@ func (suite *XIBCTestSuite) TestCrossChainTransferBaseAndTransferBack() {
 	suite.Require().Equal(suite.chainB.SenderAcc.String(), ack.Relayer)
 
 	crossChainData = packettypes.CrossChainData{
-		DestChain:       suite.chainA.ChainID,
+		DstChain:        suite.chainA.ChainID,
 		TokenAddress:    chainBERC20,
 		Receiver:        strings.ToLower(suite.chainA.SenderAddress.String()),
 		Amount:          big.NewInt(100),
@@ -361,7 +361,7 @@ func (suite *XIBCTestSuite) TestCrossChainTransferBaseAndTransferBack() {
 		TokenAddress: chainBERC20,
 		Amount:       big.NewInt(0),
 	}
-	suite.Approve(suite.chainB, chainBERC20, crosschaincontract.CrossChainContractAddress, big.NewInt(100))
+	suite.Approve(suite.chainB, chainBERC20, endpointcontract.EndpointContractAddress, big.NewInt(100))
 	suite.CrossChainCall(suite.chainB, crossChainData, fee)
 	balance = suite.ERC20Balance(suite.chainB, chainBERC20, suite.chainB.SenderAddress)
 	suite.Require().Equal(int64(0), balance.Int64())
@@ -391,14 +391,14 @@ func (suite *XIBCTestSuite) TestCrossChainTransferBaseAndTransferBack() {
 	suite.Require().NoError(err)
 
 	packet = packettypes.Packet{
-		SourceChain:      suite.chainB.ChainID,
-		DestinationChain: suite.chainA.ChainID,
-		Sequence:         1,
-		Sender:           strings.ToLower(suite.chainB.SenderAddress.String()),
-		TransferData:     transferDataAbi,
-		CallData:         []byte(""),
-		CallbackAddress:  common.BigToAddress(big.NewInt(0)).String(),
-		FeeOption:        0,
+		SrcChain:        suite.chainB.ChainID,
+		DstChain:        suite.chainA.ChainID,
+		Sequence:        1,
+		Sender:          strings.ToLower(suite.chainB.SenderAddress.String()),
+		TransferData:    transferDataAbi,
+		CallData:        []byte(""),
+		CallbackAddress: common.BigToAddress(big.NewInt(0)).String(),
+		FeeOption:       0,
 	}
 	ack = packettypes.NewAcknowledgement(
 		0,
@@ -492,7 +492,7 @@ func (suite *XIBCTestSuite) TestCrossChainCallAgent() {
 	suite.Require().NoError(err)
 
 	crossChainData := packettypes.CrossChainData{
-		DestChain:       suite.chainB.ChainID,
+		DstChain:        suite.chainB.ChainID,
 		TokenAddress:    chainAERC20,
 		Receiver:        strings.ToLower(agentcontract.AgentContractAddress.String()),
 		Amount:          big.NewInt(2000),
@@ -507,11 +507,11 @@ func (suite *XIBCTestSuite) TestCrossChainCallAgent() {
 	}
 
 	// send CrossChainCall Tx
-	suite.Approve(suite.chainA, chainAERC20, crosschaincontract.CrossChainContractAddress, big.NewInt(2000))
+	suite.Approve(suite.chainA, chainAERC20, endpointcontract.EndpointContractAddress, big.NewInt(2000))
 	suite.CrossChainCall(suite.chainA, crossChainData, fee)
 	balance = suite.ERC20Balance(suite.chainA, chainAERC20, suite.chainA.SenderAddress)
 	suite.Equal(balance.Int64(), int64(8000))
-	balance = suite.ERC20Balance(suite.chainA, chainAERC20, crosschaincontract.CrossChainContractAddress)
+	balance = suite.ERC20Balance(suite.chainA, chainAERC20, endpointcontract.EndpointContractAddress)
 	suite.Equal(balance.Int64(), int64(2000))
 	balance = suite.ERC20Balance(suite.chainA, chainAERC20, packetcontract.PacketContractAddress)
 	suite.Equal(balance.Int64(), int64(0))
@@ -543,14 +543,14 @@ func (suite *XIBCTestSuite) TestCrossChainCallAgent() {
 	suite.Require().NoError(err)
 
 	packet := packettypes.Packet{
-		SourceChain:      suite.chainA.ChainID,
-		DestinationChain: suite.chainB.ChainID,
-		Sequence:         1,
-		Sender:           strings.ToLower(suite.chainA.SenderAddress.String()),
-		TransferData:     transferDataAbi,
-		CallData:         callDataAbi,
-		CallbackAddress:  common.BigToAddress(big.NewInt(0)).String(),
-		FeeOption:        0,
+		SrcChain:        suite.chainA.ChainID,
+		DstChain:        suite.chainB.ChainID,
+		Sequence:        1,
+		Sender:          strings.ToLower(suite.chainA.SenderAddress.String()),
+		TransferData:    transferDataAbi,
+		CallData:        callDataAbi,
+		CallbackAddress: common.BigToAddress(big.NewInt(0)).String(),
+		FeeOption:       0,
 	}
 	result, err := hex.DecodeString("0000000000000000000000000000000000000000000000000000000000000001")
 	suite.Require().NoError(err)
@@ -581,8 +581,8 @@ func (suite *XIBCTestSuite) TestCrossChainCallAgent() {
 	suite.Equal(bindings.Bound, true)
 	suite.Equal(bindings.Scale, uint8(0))
 	latestPacket := suite.GetLatestPacket(suite.chainB)
-	suite.Equal(latestPacket.DestChain, packet.DestinationChain)
-	suite.Equal(latestPacket.SrcChain, packet.SourceChain)
+	suite.Equal(latestPacket.DstChain, packet.DstChain)
+	suite.Equal(latestPacket.SrcChain, packet.SrcChain)
 	suite.Equal(latestPacket.Sequence, packet.Sequence)
 	suite.Equal(latestPacket.Sender, packet.Sender)
 	suite.Equal(latestPacket.TransferData, packet.TransferData)
@@ -610,14 +610,14 @@ func (suite *XIBCTestSuite) TestCrossChainCallAgent() {
 	suite.Require().NoError(err)
 
 	packet = packettypes.Packet{
-		SourceChain:      suite.chainB.ChainID,
-		DestinationChain: suite.chainC.ChainID,
-		Sequence:         1,
-		Sender:           strings.ToLower(agentcontract.AgentContractAddress.String()),
-		TransferData:     transferDataAbi,
-		CallData:         []byte(""),
-		CallbackAddress:  strings.ToLower(agentcontract.AgentContractAddress.String()),
-		FeeOption:        0,
+		SrcChain:        suite.chainB.ChainID,
+		DstChain:        suite.chainC.ChainID,
+		Sequence:        1,
+		Sender:          strings.ToLower(agentcontract.AgentContractAddress.String()),
+		TransferData:    transferDataAbi,
+		CallData:        []byte(""),
+		CallbackAddress: strings.ToLower(agentcontract.AgentContractAddress.String()),
+		FeeOption:       0,
 	}
 
 	ack = packettypes.NewAcknowledgement(
@@ -642,8 +642,8 @@ func (suite *XIBCTestSuite) TestCrossChainCallAgent() {
 	suite.Equal(bindings.Bound, true)
 	suite.Equal(bindings.Scale, uint8(0))
 	latestPacket = suite.GetLatestPacket(suite.chainC)
-	suite.Equal(latestPacket.DestChain, packet.DestinationChain)
-	suite.Equal(latestPacket.SrcChain, packet.SourceChain)
+	suite.Equal(latestPacket.DstChain, packet.DstChain)
+	suite.Equal(latestPacket.SrcChain, packet.SrcChain)
 	suite.Equal(latestPacket.Sequence, packet.Sequence)
 	suite.Equal(latestPacket.Sender, packet.Sender)
 	suite.Equal(latestPacket.TransferData, packet.TransferData)
@@ -656,7 +656,7 @@ func (suite *XIBCTestSuite) TestCrossChainCallAgent() {
 // CrossChain functions
 // ================================================================================================================
 func (suite *XIBCTestSuite) CrossChainCall(fromChain *xibctesting.TestChain, data packettypes.CrossChainData, fee packettypes.Fee) {
-	crossChainCallData, err := crosschaincontract.CrossChainContract.ABI.Pack("crossChainCall", data, fee)
+	crossChainCallData, err := endpointcontract.EndpointContract.ABI.Pack("crossChainCall", data, fee)
 	suite.Require().NoError(err)
 	amount := big.NewInt(0)
 	if data.TokenAddress == common.HexToAddress("0x0000000000000000000000000000000000000000") {
@@ -667,23 +667,23 @@ func (suite *XIBCTestSuite) CrossChainCall(fromChain *xibctesting.TestChain, dat
 		amount = amount.Add(amount, fee.Amount)
 	}
 
-	_ = suite.SendTx(fromChain, crosschaincontract.CrossChainContractAddress, amount, crossChainCallData)
+	_ = suite.SendTx(fromChain, endpointcontract.EndpointContractAddress, amount, crossChainCallData)
 	suite.coordinator.CommitBlock(suite.chainA, suite.chainB)
 }
 
 func (suite *XIBCTestSuite) OutTokens(
 	fromChain *xibctesting.TestChain,
 	tokenAddress common.Address,
-	destChain string,
+	dstChain string,
 ) *big.Int {
 	res, err := fromChain.App.XIBCKeeper.PacketKeeper.CallEVM(
 		fromChain.GetContext(),
-		crosschaincontract.CrossChainContract.ABI,
+		endpointcontract.EndpointContract.ABI,
 		aggregatetypes.ModuleAddress,
-		crosschaincontract.CrossChainContractAddress,
+		endpointcontract.EndpointContractAddress,
 		"outTokens",
 		tokenAddress,
-		destChain,
+		dstChain,
 	)
 	suite.Require().NoError(err)
 
@@ -691,7 +691,7 @@ func (suite *XIBCTestSuite) OutTokens(
 		Value *big.Int
 	}
 	var amount Amount
-	err = crosschaincontract.CrossChainContract.ABI.UnpackIntoInterface(&amount, "outTokens", res.Ret)
+	err = endpointcontract.EndpointContract.ABI.UnpackIntoInterface(&amount, "outTokens", res.Ret)
 	suite.Require().NoError(err)
 
 	return amount.Value
@@ -704,16 +704,16 @@ func (suite *XIBCTestSuite) Bindings(
 ) packettypes.InToken {
 	res, err := fromChain.App.XIBCKeeper.PacketKeeper.CallEVM(
 		fromChain.GetContext(),
-		crosschaincontract.CrossChainContract.ABI,
+		endpointcontract.EndpointContract.ABI,
 		aggregatetypes.ModuleAddress,
-		crosschaincontract.CrossChainContractAddress,
+		endpointcontract.EndpointContractAddress,
 		"bindings",
 		strings.ToLower(tokenAddress.String())+"/"+oriChain,
 	)
 	suite.Require().NoError(err)
 
 	var bind packettypes.InToken
-	err = crosschaincontract.CrossChainContract.ABI.UnpackIntoInterface(&bind, "bindings", res.Ret)
+	err = endpointcontract.EndpointContract.ABI.UnpackIntoInterface(&bind, "bindings", res.Ret)
 	suite.Require().NoError(err)
 
 	return bind
@@ -722,8 +722,8 @@ func (suite *XIBCTestSuite) Bindings(
 // ================================================================================================================
 // Packet functions
 // ================================================================================================================
-func (suite *XIBCTestSuite) GetPacketFees(fromChain *xibctesting.TestChain, srcChain, destChain string, sequence uint64) packettypes.Fee {
-	data := []byte(destChain + "/" + strconv.FormatUint(sequence, 10))
+func (suite *XIBCTestSuite) GetPacketFees(fromChain *xibctesting.TestChain, srcChain, dstChain string, sequence uint64) packettypes.Fee {
+	data := []byte(dstChain + "/" + strconv.FormatUint(sequence, 10))
 	packet := packetcontract.PacketContract.ABI
 
 	res, err := fromChain.App.AggregateKeeper.CallEVM(
@@ -743,8 +743,8 @@ func (suite *XIBCTestSuite) GetPacketFees(fromChain *xibctesting.TestChain, srcC
 	return fee
 }
 
-func (suite *XIBCTestSuite) GetAck(fromChain *xibctesting.TestChain, destChain string, sequence uint64) packettypes.Acknowledgement {
-	data := []byte(destChain + "/" + strconv.FormatUint(sequence, 10))
+func (suite *XIBCTestSuite) GetAck(fromChain *xibctesting.TestChain, dstChain string, sequence uint64) packettypes.Acknowledgement {
+	data := []byte(dstChain + "/" + strconv.FormatUint(sequence, 10))
 	packet := packetcontract.PacketContract.ABI
 
 	res, err := fromChain.App.AggregateKeeper.CallEVM(
@@ -781,7 +781,7 @@ func (suite *XIBCTestSuite) GetLatestPacket(fromChain *xibctesting.TestChain) pa
 	return packet
 }
 
-func (suite *XIBCTestSuite) GetAckStatus(fromChain *xibctesting.TestChain, destChain string, sequence uint64) uint8 {
+func (suite *XIBCTestSuite) GetAckStatus(fromChain *xibctesting.TestChain, dstChain string, sequence uint64) uint8 {
 	packet := packetcontract.PacketContract.ABI
 
 	res, err := fromChain.App.AggregateKeeper.CallEVM(
@@ -790,7 +790,7 @@ func (suite *XIBCTestSuite) GetAckStatus(fromChain *xibctesting.TestChain, destC
 		packettypes.ModuleAddress,
 		packetcontract.PacketContractAddress,
 		"getAckStatus",
-		destChain,
+		dstChain,
 		sequence,
 	)
 	suite.Require().NoError(err)
@@ -812,10 +812,10 @@ func (suite *XIBCTestSuite) DeployERC20ByCrossChain(fromChain *xibctesting.TestC
 	copy(data[:len(erc20contracts.ERC20MinterBurnerDecimalsContract.Bin)], erc20contracts.ERC20MinterBurnerDecimalsContract.Bin)
 	copy(data[len(erc20contracts.ERC20MinterBurnerDecimalsContract.Bin):], ctorArgs)
 
-	nonce := fromChain.App.EvmKeeper.GetNonce(fromChain.GetContext(), crosschaincontract.CrossChainContractAddress)
-	contractAddr := crypto.CreateAddress(crosschaincontract.CrossChainContractAddress, nonce)
+	nonce := fromChain.App.EvmKeeper.GetNonce(fromChain.GetContext(), endpointcontract.EndpointContractAddress)
+	contractAddr := crypto.CreateAddress(endpointcontract.EndpointContractAddress, nonce)
 
-	res, err := fromChain.App.AggregateKeeper.CallEVMWithData(fromChain.GetContext(), crosschaincontract.CrossChainContractAddress, nil, data)
+	res, err := fromChain.App.AggregateKeeper.CallEVMWithData(fromChain.GetContext(), endpointcontract.EndpointContractAddress, nil, data)
 	suite.Require().NoError(err)
 	suite.Require().False(res.Failed(), res.VmError)
 
@@ -826,7 +826,7 @@ func (suite *XIBCTestSuite) GrantERC20MintRoleByCrossChain(fromChain *xibctestin
 	ctorArgs, err := erc20contracts.ERC20MinterBurnerDecimalsContract.ABI.Pack("grantRole", common.BytesToHash(crypto.Keccak256([]byte("MINTER_ROLE"))), address)
 	suite.Require().NoError(err)
 
-	res, err := fromChain.App.AggregateKeeper.CallEVMWithData(fromChain.GetContext(), crosschaincontract.CrossChainContractAddress, &erc20, ctorArgs)
+	res, err := fromChain.App.AggregateKeeper.CallEVMWithData(fromChain.GetContext(), endpointcontract.EndpointContractAddress, &erc20, ctorArgs)
 	suite.Require().NoError(err)
 	suite.Require().False(res.Failed(), res.VmError)
 }

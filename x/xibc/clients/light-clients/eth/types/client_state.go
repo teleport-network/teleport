@@ -120,7 +120,8 @@ func (cs ClientState) VerifyPacketCommitment(
 	cdc codec.BinaryCodec,
 	height exported.Height,
 	proof []byte,
-	sourceChain, destChain string,
+	srcChain string,
+	dstChain string,
 	sequence uint64,
 	commitment []byte,
 ) error {
@@ -138,7 +139,7 @@ func (cs ClientState) VerifyPacketCommitment(
 			delayBlock, cs.GetDelayBlock(),
 		)
 	}
-	constructor := NewProofKeyConstructor(sourceChain, destChain, sequence)
+	constructor := NewProofKeyConstructor(srcChain, dstChain, sequence)
 	// verify that the provided commitment has been stored
 	return verifyMerkleProof(ethProof, consensusState, cs.ContractAddress, commitment, constructor.GetPacketCommitmentProofKey())
 }
@@ -149,7 +150,8 @@ func (cs ClientState) VerifyPacketAcknowledgement(
 	cdc codec.BinaryCodec,
 	height exported.Height,
 	proof []byte,
-	sourceChain, destChain string,
+	srcChain string,
+	dstChain string,
 	sequence uint64,
 	ackBytes []byte,
 ) error {
@@ -166,7 +168,7 @@ func (cs ClientState) VerifyPacketAcknowledgement(
 			delayBlock, cs.GetDelayBlock(),
 		)
 	}
-	constructor := NewProofKeyConstructor(sourceChain, destChain, sequence)
+	constructor := NewProofKeyConstructor(srcChain, dstChain, sequence)
 	return verifyMerkleProof(ethProof, consensusState, cs.ContractAddress, ackBytes, constructor.GetAckProofKey())
 }
 

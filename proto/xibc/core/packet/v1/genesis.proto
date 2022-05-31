@@ -28,8 +28,7 @@ message GenesisState {
 // PacketSequence defines the genesis type necessary to retrieve and store
 // next send and receive sequences.
 message PacketSequence {
-  string source_chain = 1 [ (gogoproto.moretags) = "yaml:\"source_chain\"" ];
-  string destination_chain = 2
-      [ (gogoproto.moretags) = "yaml:\"destination_chain\"" ];
+  string src_chain = 1 [ (gogoproto.moretags) = "yaml:\"src_chain\"" ];
+  string dst_chain = 2 [ (gogoproto.moretags) = "yaml:\"dst_chain\"" ];
   uint64 sequence = 3;
 }

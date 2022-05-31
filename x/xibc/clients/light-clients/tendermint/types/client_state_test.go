@@ -160,7 +160,7 @@ func (suite *TendermintTestSuite) TestVerifyPacketCommitment() {
 			suite.Require().True(ok)
 
 			// make packet commitment proof
-			packetKey := host.PacketCommitmentKey(packet.GetSrcChain(), packet.GetDestChain(), packet.GetSequence())
+			packetKey := host.PacketCommitmentKey(packet.GetSrcChain(), packet.GetDstChain(), packet.GetSequence())
 			proof, proofHeight = suite.chainA.QueryProof(packetKey)
 
 			tc.malleate() // make changes as necessary
@@ -173,7 +173,7 @@ func (suite *TendermintTestSuite) TestVerifyPacketCommitment() {
 			err = clientState.VerifyPacketCommitment(
 				suite.chainB.GetContext(), store, suite.chainB.Codec,
 				proofHeight, proof, packet.GetSrcChain(),
-				packet.GetDestChain(), packet.GetSequence(), commitment,
+				packet.GetDstChain(), packet.GetSequence(), commitment,
 			)
 
 			if tc.expPass {
@@ -246,7 +246,7 @@ func (suite *TendermintTestSuite) TestVerifyPacketAcknowledgement() {
 
 			// write receipt and ack
 			// get proof of packet commitment from chainA
-			packetKey := host.PacketCommitmentKey(packet.GetSrcChain(), packet.GetDestChain(), packet.GetSequence())
+			packetKey := host.PacketCommitmentKey(packet.GetSrcChain(), packet.GetDstChain(), packet.GetSequence())
 			proof1, pHeight := suite.chainA.QueryProof(packetKey)
 			packetBytes, err := packet.ABIPack()
 			suite.Require().NoError(err)
@@ -282,7 +282,7 @@ func (suite *TendermintTestSuite) TestVerifyPacketAcknowledgement() {
 			prefix = suite.chainB.GetPrefix()
 
 			// make packet acknowledgement proof
-			acknowledgementKey := host.PacketAcknowledgementKey(packet.GetSrcChain(), packet.GetDestChain(), packet.GetSequence())
+			acknowledgementKey := host.PacketAcknowledgementKey(packet.GetSrcChain(), packet.GetDstChain(), packet.GetSequence())
 			proof, proofHeight = suite.chainB.QueryProof(acknowledgementKey)
 
 			// reset time and block delays to 0, malleate may change to a specific non-zero value.
@@ -307,7 +307,7 @@ func (suite *TendermintTestSuite) TestVerifyPacketAcknowledgement() {
 				proofHeight,
 				proof,
 				packet.GetSrcChain(),
-				packet.GetDestChain(),
+				packet.GetDstChain(),
 				packet.GetSequence(),
 				packettypes.CommitAcknowledgement(ack),
 			)

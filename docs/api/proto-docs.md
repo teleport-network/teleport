@@ -1671,8 +1671,8 @@ app-specific protocols.
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `code` | [uint64](#uint64) |  | 0: success; 1: system failed; 2: transfer failed; 3: call |
-| `result` | [bytes](#bytes) |  | failed; 4: undefined |
+| `code` | [uint64](#uint64) |  | error code 0: success; 1: system failed; 2: transfer failed; 3: call failed; 4: undefined |
+| `result` | [bytes](#bytes) |  |  |
 | `message` | [string](#string) |  |  |
 | `relayer` | [string](#string) |  |  |
 | `fee_option` | [uint64](#uint64) |  |  |
@@ -1690,7 +1690,7 @@ app-specific protocols.
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `contractAddress` | [string](#string) |  | identifies the contract address on dest chain |
+| `contractAddress` | [string](#string) |  | identifies the contract address on dst chain |
 | `callData` | [bytes](#bytes) |  | identifies the data which used to call the contract |
 
 
@@ -1706,8 +1706,8 @@ Packet defines a type that carries data across different chains through XIBC
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `source_chain` | [string](#string) |  | identifies the chain id of the sending chain. |
-| `destination_chain` | [string](#string) |  | identifies the chain id of the receiving chain. |
+| `src_chain` | [string](#string) |  | identifies the chain id of the sending chain. |
+| `dst_chain` | [string](#string) |  | identifies the chain id of the receiving chain. |
 | `sequence` | [uint64](#uint64) |  | number corresponds to the order of sends and receives, where a Packet with an earlier sequence number must be sent and received before a Packet with a later sequence number. |
 | `sender` | [string](#string) |  |  |
 | `transfer_data` | [bytes](#bytes) |  | transfer data. keep empty if not used. |
@@ -1731,8 +1731,8 @@ state as a commitment, acknowledgement, or a receipt.
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `source_chain` | [string](#string) |  | the sending chain identifier. |
-| `destination_chain` | [string](#string) |  | the receiving chain identifier. |
+| `src_chain` | [string](#string) |  | the sending chain identifier. |
+| `dst_chain` | [string](#string) |  | the receiving chain identifier. |
 | `sequence` | [uint64](#uint64) |  | packet sequence. |
 | `data` | [bytes](#bytes) |  | embedded data that represents packet state. |
 
@@ -1749,10 +1749,10 @@ TransferData defines packet transfer_data struct
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `receiver` | [string](#string) |  | identifies the token receiver on dest chain |
+| `receiver` | [string](#string) |  | identifies the token receiver on est chain |
 | `amount` | [bytes](#bytes) |  |  |
 | `token` | [string](#string) |  | identifies the token address on src chain |
-| `oriToken` | [string](#string) |  | identifies the ori token address on dest chain if exist |
+| `oriToken` | [string](#string) |  | identifies the ori token address on dst chain if exist |
 
 
 
@@ -1804,8 +1804,8 @@ next send and receive sequences.
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `source_chain` | [string](#string) |  |  |
-| `destination_chain` | [string](#string) |  |  |
+| `src_chain` | [string](#string) |  |  |
+| `dst_chain` | [string](#string) |  |  |
 | `sequence` | [uint64](#uint64) |  |  |
 
 
@@ -1838,8 +1838,8 @@ Query/PacketAcknowledgement RPC method
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `dest_chain` | [string](#string) |  | dest chain name |
-| `src_chain` | [string](#string) |  | source chain name |
+| `dst_chain` | [string](#string) |  | dst chain name |
+| `src_chain` | [string](#string) |  | src chain name |
 | `sequence` | [uint64](#uint64) |  | packet sequence |
 
 
@@ -1875,8 +1875,8 @@ Query/QueryPacketCommitments RPC method
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `dest_chain` | [string](#string) |  | dest chain name |
-| `src_chain` | [string](#string) |  | source chain name |
+| `dst_chain` | [string](#string) |  | dst chain name |
+| `src_chain` | [string](#string) |  | src chain name |
 | `pagination` | [cosmos.base.query.v1beta1.PageRequest](#cosmos.base.query.v1beta1.PageRequest) |  | pagination request |
 
 
@@ -1911,8 +1911,8 @@ QueryPacketCommitment RPC method
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `dest_chain` | [string](#string) |  | dest chain name |
-| `src_chain` | [string](#string) |  | source chain name |
+| `dst_chain` | [string](#string) |  | dst chain name |
+| `src_chain` | [string](#string) |  | src chain name |
 | `sequence` | [uint64](#uint64) |  | packet sequence |
 
 
@@ -1947,8 +1947,8 @@ Query/QueryPacketCommitments RPC method
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `dest_chain` | [string](#string) |  | dest chain name |
-| `src_chain` | [string](#string) |  | source chain name |
+| `dst_chain` | [string](#string) |  | dst chain name |
+| `src_chain` | [string](#string) |  | src chain name |
 | `pagination` | [cosmos.base.query.v1beta1.PageRequest](#cosmos.base.query.v1beta1.PageRequest) |  | pagination request |
 
 
@@ -1983,8 +1983,8 @@ method
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `dest_chain` | [string](#string) |  | dest chain name |
-| `src_chain` | [string](#string) |  | source chain name |
+| `dst_chain` | [string](#string) |  | dst chain name |
+| `src_chain` | [string](#string) |  | src chain name |
 | `sequence` | [uint64](#uint64) |  | packet sequence |
 
 
@@ -2020,8 +2020,8 @@ method
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `dest_chain` | [string](#string) |  | dest chain name |
-| `src_chain` | [string](#string) |  | source chain name |
+| `dst_chain` | [string](#string) |  | dst chain name |
+| `src_chain` | [string](#string) |  | src chain name |
 | `packet_ack_sequences` | [uint64](#uint64) | repeated | list of acknowledgement sequences |
 
 
@@ -2055,8 +2055,8 @@ Query/UnreceivedPackets RPC method
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `dest_chain` | [string](#string) |  | dest chain name |
-| `src_chain` | [string](#string) |  | source chain name |
+| `dst_chain` | [string](#string) |  | dst chain name |
+| `src_chain` | [string](#string) |  | src chain name |
 | `packet_commitment_sequences` | [uint64](#uint64) | repeated | list of packet sequences |
 
 
@@ -2094,13 +2094,13 @@ Query provides defines the gRPC querier service
 
 | Method Name | Request Type | Response Type | Description | HTTP Verb | Endpoint |
 | ----------- | ------------ | ------------- | ------------| ------- | -------- |
-| `PacketCommitment` | [QueryPacketCommitmentRequest](#xibc.core.packet.v1.QueryPacketCommitmentRequest) | [QueryPacketCommitmentResponse](#xibc.core.packet.v1.QueryPacketCommitmentResponse) | PacketCommitment queries a stored packet commitment hash. | GET|/xibc/core/packet/v1beta1/src_chains/{src_chain}/dest_chains/{dest_chain}/packet_commitments/{sequence}|
-| `PacketCommitments` | [QueryPacketCommitmentsRequest](#xibc.core.packet.v1.QueryPacketCommitmentsRequest) | [QueryPacketCommitmentsResponse](#xibc.core.packet.v1.QueryPacketCommitmentsResponse) | PacketCommitments returns all the packet commitments hashes associated | GET|/xibc/core/packet/v1beta1/src_chains/{src_chain}/dest_chains/{dest_chain}/packet_commitments|
-| `PacketReceipt` | [QueryPacketReceiptRequest](#xibc.core.packet.v1.QueryPacketReceiptRequest) | [QueryPacketReceiptResponse](#xibc.core.packet.v1.QueryPacketReceiptResponse) | PacketReceipt queries if a given packet sequence has been received on the queried chain | GET|/xibc/core/packet/v1beta1/src_chains/{src_chain}/dest_chains/{dest_chain}/packet_receipts/{sequence}|
-| `PacketAcknowledgement` | [QueryPacketAcknowledgementRequest](#xibc.core.packet.v1.QueryPacketAcknowledgementRequest) | [QueryPacketAcknowledgementResponse](#xibc.core.packet.v1.QueryPacketAcknowledgementResponse) | PacketAcknowledgement queries a stored packet acknowledgement hash. | GET|/xibc/core/packet/v1beta1/src_chains/{src_chain}/dest_chains/{dest_chain}/packet_acks/{sequence}|
-| `PacketAcknowledgements` | [QueryPacketAcknowledgementsRequest](#xibc.core.packet.v1.QueryPacketAcknowledgementsRequest) | [QueryPacketAcknowledgementsResponse](#xibc.core.packet.v1.QueryPacketAcknowledgementsResponse) | PacketAcknowledgements returns all the packet acknowledgements associated | GET|/xibc/core/packet/v1beta1/src_chains/{src_chain}/dest_chains/{dest_chain}/packet_acknowledgements|
-| `UnreceivedPackets` | [QueryUnreceivedPacketsRequest](#xibc.core.packet.v1.QueryUnreceivedPacketsRequest) | [QueryUnreceivedPacketsResponse](#xibc.core.packet.v1.QueryUnreceivedPacketsResponse) | UnreceivedPackets returns all the unreceived XIBC packets associated with sequences. | GET|/xibc/core/packet/v1beta1/src_chains/{src_chain}/dest_chains/{dest_chain}/packet_commitments/{packet_commitment_sequences}/unreceived_packets|
-| `UnreceivedAcks` | [QueryUnreceivedAcksRequest](#xibc.core.packet.v1.QueryUnreceivedAcksRequest) | [QueryUnreceivedAcksResponse](#xibc.core.packet.v1.QueryUnreceivedAcksResponse) | UnreceivedAcks returns all the unreceived XIBC acknowledgements associated with sequences. | GET|/xibc/core/packet/v1beta1/src_chains/{src_chain}/dest_chains/{dest_chain}/packet_commitments/{packet_ack_sequences}/unreceived_acks|
+| `PacketCommitment` | [QueryPacketCommitmentRequest](#xibc.core.packet.v1.QueryPacketCommitmentRequest) | [QueryPacketCommitmentResponse](#xibc.core.packet.v1.QueryPacketCommitmentResponse) | PacketCommitment queries a stored packet commitment hash. | GET|/xibc/core/packet/v1beta1/src_chains/{src_chain}/dst_chains/{dst_chain}/packet_commitments/{sequence}|
+| `PacketCommitments` | [QueryPacketCommitmentsRequest](#xibc.core.packet.v1.QueryPacketCommitmentsRequest) | [QueryPacketCommitmentsResponse](#xibc.core.packet.v1.QueryPacketCommitmentsResponse) | PacketCommitments returns all the packet commitments hashes associated | GET|/xibc/core/packet/v1beta1/src_chains/{src_chain}/dst_chains/{dst_chain}/packet_commitments|
+| `PacketReceipt` | [QueryPacketReceiptRequest](#xibc.core.packet.v1.QueryPacketReceiptRequest) | [QueryPacketReceiptResponse](#xibc.core.packet.v1.QueryPacketReceiptResponse) | PacketReceipt queries if a given packet sequence has been received on the queried chain | GET|/xibc/core/packet/v1beta1/src_chains/{src_chain}/dst_chains/{dst_chain}/packet_receipts/{sequence}|
+| `PacketAcknowledgement` | [QueryPacketAcknowledgementRequest](#xibc.core.packet.v1.QueryPacketAcknowledgementRequest) | [QueryPacketAcknowledgementResponse](#xibc.core.packet.v1.QueryPacketAcknowledgementResponse) | PacketAcknowledgement queries a stored packet acknowledgement hash. | GET|/xibc/core/packet/v1beta1/src_chains/{src_chain}/dst_chains/{dst_chain}/packet_acks/{sequence}|
+| `PacketAcknowledgements` | [QueryPacketAcknowledgementsRequest](#xibc.core.packet.v1.QueryPacketAcknowledgementsRequest) | [QueryPacketAcknowledgementsResponse](#xibc.core.packet.v1.QueryPacketAcknowledgementsResponse) | PacketAcknowledgements returns all the packet acknowledgements associated | GET|/xibc/core/packet/v1beta1/src_chains/{src_chain}/dst_chains/{dst_chain}/packet_acknowledgements|
+| `UnreceivedPackets` | [QueryUnreceivedPacketsRequest](#xibc.core.packet.v1.QueryUnreceivedPacketsRequest) | [QueryUnreceivedPacketsResponse](#xibc.core.packet.v1.QueryUnreceivedPacketsResponse) | UnreceivedPackets returns all the unreceived XIBC packets associated with sequences. | GET|/xibc/core/packet/v1beta1/src_chains/{src_chain}/dst_chains/{dst_chain}/packet_commitments/{packet_commitment_sequences}/unreceived_packets|
+| `UnreceivedAcks` | [QueryUnreceivedAcksRequest](#xibc.core.packet.v1.QueryUnreceivedAcksRequest) | [QueryUnreceivedAcksResponse](#xibc.core.packet.v1.QueryUnreceivedAcksResponse) | UnreceivedAcks returns all the unreceived XIBC acknowledgements associated with sequences. | GET|/xibc/core/packet/v1beta1/src_chains/{src_chain}/dst_chains/{dst_chain}/packet_commitments/{packet_ack_sequences}/unreceived_acks|
 
  <!-- end services -->
 

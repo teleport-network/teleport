@@ -25,7 +25,7 @@ func (q Keeper) PacketCommitment(c context.Context, req *types.QueryPacketCommit
 		return nil, status.Error(codes.InvalidArgument, "empty request")
 	}
 
-	if err := validategRPCRequest(req.SrcChain, req.DestChain); err != nil {
+	if err := validategRPCRequest(req.SrcChain, req.DstChain); err != nil {
 		return nil, err
 	}
 
@@ -35,7 +35,7 @@ func (q Keeper) PacketCommitment(c context.Context, req *types.QueryPacketCommit
 
 	ctx := sdk.UnwrapSDKContext(c)
 
-	commitmentBz := q.GetPacketCommitment(ctx, req.SrcChain, req.DestChain, req.Sequence)
+	commitmentBz := q.GetPacketCommitment(ctx, req.SrcChain, req.DstChain, req.Sequence)
 	if len(commitmentBz) == 0 {
 		return nil, status.Error(codes.NotFound, "packet commitment hash not found")
 	}
@@ -50,14 +50,14 @@ func (q Keeper) PacketCommitments(c context.Context, req *types.QueryPacketCommi
 		return nil, status.Error(codes.InvalidArgument, "empty request")
 	}
 
-	if err := validategRPCRequest(req.SrcChain, req.DestChain); err != nil {
+	if err := validategRPCRequest(req.SrcChain, req.DstChain); err != nil {
 		return nil, err
 	}
 
 	ctx := sdk.UnwrapSDKContext(c)
 
 	commitments := []*types.PacketState{}
-	store := prefix.NewStore(ctx.KVStore(q.storeKey), []byte(host.PacketCommitmentPrefixPath(req.SrcChain, req.DestChain)))
+	store := prefix.NewStore(ctx.KVStore(q.storeKey), []byte(host.PacketCommitmentPrefixPath(req.SrcChain, req.DstChain)))
 
 	pageRes, err := query.Paginate(store, req.Pagination, func(key, value []byte) error {
 		keySplit := strings.Split(string(key), "/")
@@ -67,7 +67,7 @@ func (q Keeper) PacketCommitments(c context.Context, req *types.QueryPacketCommi
 			return err
 		}
 
-		commitment := types.NewPacketState(req.SrcChain, req.DestChain, sequence, value)
+		commitment := types.NewPacketState(req.SrcChain, req.DstChain, sequence, value)
 		commitments = append(commitments, &commitment)
 		return nil
 	})
@@ -90,7 +90,7 @@ func (q Keeper) PacketReceipt(c context.Context, req *types.QueryPacketReceiptRe
 		return nil, status.Error(codes.InvalidArgument, "empty request")
 	}
 
-	if err := validategRPCRequest(req.SrcChain, req.DestChain); err != nil {
+	if err := validategRPCRequest(req.SrcChain, req.DstChain); err != nil {
 		return nil, err
 	}
 
@@ -100,7 +100,7 @@ func (q Keeper) PacketReceipt(c context.Context, req *types.QueryPacketReceiptRe
 
 	ctx := sdk.UnwrapSDKContext(c)
 
-	_, recvd := q.GetPacketReceipt(ctx, req.SrcChain, req.DestChain, req.Sequence)
+	_, recvd := q.GetPacketReceipt(ctx, req.SrcChain, req.DstChain, req.Sequence)
 
 	selfHeight := clienttypes.GetSelfHeight(ctx)
 	return types.NewQueryPacketReceiptResponse(recvd, nil, selfHeight), nil
@@ -112,7 +112,7 @@ func (q Keeper) PacketAcknowledgement(c context.Context, req *types.QueryPacketA
 		return nil, status.Error(codes.InvalidArgument, "empty request")
 	}
 
-	if err := validategRPCRequest(req.SrcChain, req.DestChain); err != nil {
+	if err := validategRPCRequest(req.SrcChain, req.DstChain); err != nil {
 		return nil, err
 	}
 
@@ -122,7 +122,7 @@ func (q Keeper) PacketAcknowledgement(c context.Context, req *types.QueryPacketA
 
 	ctx := sdk.UnwrapSDKContext(c)
 
-	acknowledgementBz, found := q.GetPacketAcknowledgement(ctx, req.SrcChain, req.DestChain, req.Sequence)
+	acknowledgementBz, found := q.GetPacketAcknowledgement(ctx, req.SrcChain, req.DstChain, req.Sequence)
 	if !found || len(acknowledgementBz) == 0 {
 		return nil, status.Error(codes.NotFound, "packet acknowledgement hash not found")
 	}
@@ -137,14 +137,14 @@ func (q Keeper) PacketAcknowledgements(c context.Context, req *types.QueryPacket
 		return nil, status.Error(codes.InvalidArgument, "empty request")
 	}
 
-	if err := validategRPCRequest(req.SrcChain, req.DestChain); err != nil {
+	if err := validategRPCRequest(req.SrcChain, req.DstChain); err != nil {
 		return nil, err
 	}
 
 	ctx := sdk.UnwrapSDKContext(c)
 
 	acks := []*types.PacketState{}
-	store := prefix.NewStore(ctx.KVStore(q.storeKey), []byte(host.PacketAcknowledgementPrefixPath(req.SrcChain, req.DestChain)))
+	store := prefix.NewStore(ctx.KVStore(q.storeKey), []byte(host.PacketAcknowledgementPrefixPath(req.SrcChain, req.DstChain)))
 
 	pageRes, err := query.Paginate(store, req.Pagination, func(key, value []byte) error {
 		keySplit := strings.Split(string(key), "/")
@@ -154,7 +154,7 @@ func (q Keeper) PacketAcknowledgements(c context.Context, req *types.QueryPacket
 			return err
 		}
 
-		ack := types.NewPacketState(req.SrcChain, req.DestChain, sequence, value)
+		ack := types.NewPacketState(req.SrcChain, req.DstChain, sequence, value)
 		acks = append(acks, &ack)
 		return nil
 	})
@@ -192,7 +192,7 @@ func (q Keeper) UnreceivedPackets(c context.Context, req *types.QueryUnreceivedP
 		return nil, status.Error(codes.InvalidArgument, "empty request")
 	}
 
-	if err := validategRPCRequest(req.SrcChain, req.DestChain); err != nil {
+	if err := validategRPCRequest(req.SrcChain, req.DstChain); err != nil {
 		return nil, err
 	}
 
@@ -206,7 +206,7 @@ func (q Keeper) UnreceivedPackets(c context.Context, req *types.QueryUnreceivedP
 		}
 
 		// if packet receipt exists on the receiving chain, then packet has already been received
-		if _, found := q.GetPacketReceipt(ctx, req.SrcChain, req.DestChain, seq); !found {
+		if _, found := q.GetPacketReceipt(ctx, req.SrcChain, req.DstChain, seq); !found {
 			unreceivedSequences = append(unreceivedSequences, seq)
 		}
 
@@ -241,7 +241,7 @@ func (q Keeper) UnreceivedAcks(c context.Context, req *types.QueryUnreceivedAcks
 		return nil, status.Error(codes.InvalidArgument, "empty request")
 	}
 
-	if err := validategRPCRequest(req.SrcChain, req.DestChain); err != nil {
+	if err := validategRPCRequest(req.SrcChain, req.DstChain); err != nil {
 		return nil, err
 	}
 
@@ -256,7 +256,7 @@ func (q Keeper) UnreceivedAcks(c context.Context, req *types.QueryUnreceivedAcks
 
 		// if packet commitment still exists on the original sending chain, then packet ack has not been received
 		// since processing the ack will delete the packet commitment
-		if commitment := q.GetPacketCommitment(ctx, req.SrcChain, req.DestChain, seq); len(commitment) != 0 {
+		if commitment := q.GetPacketCommitment(ctx, req.SrcChain, req.DstChain, seq); len(commitment) != 0 {
 			unreceivedSequences = append(unreceivedSequences, seq)
 		}
 
@@ -269,14 +269,12 @@ func (q Keeper) UnreceivedAcks(c context.Context, req *types.QueryUnreceivedAcks
 	}, nil
 }
 
-func validategRPCRequest(sourceChain, destChain string) error {
-	if err := host.SourceChainValidator(sourceChain); err != nil {
+func validategRPCRequest(srcChain string, dstChain string) error {
+	if err := host.SrcChainValidator(srcChain); err != nil {
 		return status.Error(codes.InvalidArgument, err.Error())
 	}
-
-	if err := host.DestChainValidator(destChain); err != nil {
+	if err := host.DstChainValidator(dstChain); err != nil {
 		return status.Error(codes.InvalidArgument, err.Error())
 	}
-
 	return nil
 }

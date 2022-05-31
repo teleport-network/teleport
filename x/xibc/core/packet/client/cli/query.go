@@ -45,7 +45,7 @@ func GetCmdQueryPacketCommitments() *cobra.Command {
 
 			req := &types.QueryPacketCommitmentsRequest{
 				SrcChain:   args[0],
-				DestChain:  args[1],
+				DstChain:   args[1],
 				Pagination: pageReq,
 			}
 
@@ -80,8 +80,8 @@ func GetCmdQueryPacketCommitment() *cobra.Command {
 			if err != nil {
 				return err
 			}
-			sourceChain := args[0]
-			destChain := args[1]
+			srcChain := args[0]
+			dstChain := args[1]
 			prove, _ := cmd.Flags().GetBool(flags.FlagProve)
 
 			seq, err := strconv.ParseUint(args[2], 10, 64)
@@ -89,7 +89,7 @@ func GetCmdQueryPacketCommitment() *cobra.Command {
 				return err
 			}
 
-			res, err := utils.QueryPacketCommitment(clientCtx, sourceChain, destChain, seq, prove)
+			res, err := utils.QueryPacketCommitment(clientCtx, srcChain, dstChain, seq, prove)
 			if err != nil {
 				return err
 			}
@@ -120,8 +120,8 @@ func GetCmdQueryPacketReceipt() *cobra.Command {
 			if err != nil {
 				return err
 			}
-			sourceChain := args[0]
-			destChain := args[1]
+			srcChain := args[0]
+			dstChain := args[1]
 			prove, _ := cmd.Flags().GetBool(flags.FlagProve)
 
 			seq, err := strconv.ParseUint(args[2], 10, 64)
@@ -129,7 +129,7 @@ func GetCmdQueryPacketReceipt() *cobra.Command {
 				return err
 			}
 
-			res, err := utils.QueryPacketReceipt(clientCtx, sourceChain, destChain, seq, prove)
+			res, err := utils.QueryPacketReceipt(clientCtx, srcChain, dstChain, seq, prove)
 			if err != nil {
 				return err
 			}
@@ -160,8 +160,8 @@ func GetCmdQueryPacketAcknowledgement() *cobra.Command {
 			if err != nil {
 				return err
 			}
-			sourceChain := args[0]
-			destChain := args[1]
+			srcChain := args[0]
+			dstChain := args[1]
 			prove, _ := cmd.Flags().GetBool(flags.FlagProve)
 
 			seq, err := strconv.ParseUint(args[2], 10, 64)
@@ -169,7 +169,7 @@ func GetCmdQueryPacketAcknowledgement() *cobra.Command {
 				return err
 			}
 
-			res, err := utils.QueryPacketAcknowledgement(clientCtx, sourceChain, destChain, seq, prove)
+			res, err := utils.QueryPacketAcknowledgement(clientCtx, srcChain, dstChain, seq, prove)
 			if err != nil {
 				return err
 			}
@@ -219,7 +219,7 @@ The return value represents:
 
 			req := &types.QueryUnreceivedPacketsRequest{
 				SrcChain:                  args[0],
-				DestChain:                 args[1],
+				DstChain:                  args[1],
 				PacketCommitmentSequences: seqs,
 			}
 
@@ -272,7 +272,7 @@ The return value represents:
 
 			req := &types.QueryUnreceivedAcksRequest{
 				SrcChain:           args[0],
-				DestChain:          args[1],
+				DstChain:           args[1],
 				PacketAckSequences: seqs,
 			}
 

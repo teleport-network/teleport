@@ -422,7 +422,7 @@ func (chain *TestChain) GetAcknowledgement(packet exported.PacketI) []byte {
 	ack, found := chain.App.XIBCKeeper.PacketKeeper.GetPacketAcknowledgement(
 		chain.GetContext(),
 		packet.GetSrcChain(),
-		packet.GetDestChain(),
+		packet.GetDstChain(),
 		packet.GetSequence(),
 	)
 	require.True(chain.t, found)

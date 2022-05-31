@@ -151,7 +151,7 @@ func (endpoint *Endpoint) SendPacket(packet exported.PacketI) error {
 // The counterparty client is updated.
 func (endpoint *Endpoint) RecvPacket(packet packettypes.Packet) error {
 	// get proof of packet commitment on source
-	packetKey := host.PacketCommitmentKey(packet.GetSrcChain(), packet.GetDestChain(), packet.GetSequence())
+	packetKey := host.PacketCommitmentKey(packet.GetSrcChain(), packet.GetDstChain(), packet.GetSequence())
 	proof, proofHeight := endpoint.Counterparty.Chain.QueryProof(packetKey)
 
 	packetBytes, err := packet.ABIPack()
@@ -189,7 +189,7 @@ func (endpoint *Endpoint) WriteAcknowledgement(acknowledgement []byte, packet ex
 // AcknowledgePacket sends a MsgAcknowledgement
 func (endpoint *Endpoint) AcknowledgePacket(packet packettypes.Packet, ack []byte) error {
 	// get proof of acknowledgement on counterparty
-	packetKey := host.PacketAcknowledgementKey(packet.GetSrcChain(), packet.GetDestChain(), packet.GetSequence())
+	packetKey := host.PacketAcknowledgementKey(packet.GetSrcChain(), packet.GetDstChain(), packet.GetSequence())
 	proof, proofHeight := endpoint.Counterparty.QueryProof(packetKey)
 	packetBytes, err := packet.ABIPack()
 	if err != nil {

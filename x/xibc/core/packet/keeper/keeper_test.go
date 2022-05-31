@@ -165,8 +165,8 @@ func (suite *KeeperTestSuite) TestGetAllPacketCommitmentsByPath() {
 	// verify that all the packet commitments were stored
 	for _, packet := range commitments {
 		suite.Require().True(expectedSeqs[packet.Sequence])
-		suite.Require().Equal(path.EndpointA.ChainName, packet.SourceChain)
-		suite.Require().Equal(path.EndpointB.ChainName, packet.DestinationChain)
+		suite.Require().Equal(path.EndpointA.ChainName, packet.SrcChain)
+		suite.Require().Equal(path.EndpointB.ChainName, packet.DstChain)
 		suite.Require().Equal(hash, packet.Data)
 
 		// prevent duplicates from passing checks

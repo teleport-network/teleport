@@ -1,4 +1,4 @@
-package crosschain
+package endpoint
 
 import (
 	_ "embed" // embed compiled smart contract
