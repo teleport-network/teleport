@@ -229,6 +229,34 @@ var (
 	allowedReceivingModAcc = map[string]bool{
 		distrtypes.ModuleName: true,
 	}
+
+	keys = sdk.NewKVStoreKeys(
+		// SDK keys
+		authtypes.StoreKey,
+		banktypes.StoreKey,
+		stakingtypes.StoreKey,
+		distrtypes.StoreKey,
+		slashingtypes.StoreKey,
+		govtypes.StoreKey,
+		paramstypes.StoreKey,
+		upgradetypes.StoreKey,
+		evidencetypes.StoreKey,
+		capabilitytypes.StoreKey,
+		feegrant.StoreKey,
+		authzkeeper.StoreKey,
+		// ibc keys
+		ibchost.StoreKey,
+		ibctransfertypes.StoreKey,
+		icacontrollertypes.StoreKey,
+		icahosttypes.StoreKey,
+		// xibc keys
+		xibchost.StoreKey,
+		// ethermint keys
+		evmtypes.StoreKey,
+		feemarkettypes.StoreKey,
+		// teleport keys
+		aggregatetypes.StoreKey,
+	)
 )
 
 var (
@@ -334,34 +362,6 @@ func NewTeleport(
 	bApp.SetVersion(version.Version)
 	bApp.SetInterfaceRegistry(interfaceRegistry)
 
-	keys := sdk.NewKVStoreKeys(
-		// SDK keys
-		authtypes.StoreKey,
-		banktypes.StoreKey,
-		stakingtypes.StoreKey,
-		distrtypes.StoreKey,
-		slashingtypes.StoreKey,
-		govtypes.StoreKey,
-		paramstypes.StoreKey,
-		upgradetypes.StoreKey,
-		evidencetypes.StoreKey,
-		capabilitytypes.StoreKey,
-		feegrant.StoreKey,
-		authzkeeper.StoreKey,
-		// ibc keys
-		ibchost.StoreKey,
-		ibctransfertypes.StoreKey,
-		icacontrollertypes.StoreKey,
-		icahosttypes.StoreKey,
-		// xibc keys
-		xibchost.StoreKey,
-		// ethermint keys
-		evmtypes.StoreKey,
-		feemarkettypes.StoreKey,
-		// teleport keys
-		aggregatetypes.StoreKey,
-	)
-
 	// Add the EVM transient store key
 	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey, evmtypes.TransientKey)
 	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
@@ -409,8 +409,10 @@ func NewTeleport(
 		appCodec, keys[distrtypes.StoreKey], app.GetSubspace(distrtypes.ModuleName), app.AccountKeeper, app.BankKeeper,
 		&stakingKeeper, authtypes.FeeCollectorName, app.ModuleAccountAddrs(),
 	)
+
+	slashStakingKeeper := adstaking.NewSlashStakingKeeper(stakingKeeper, app.BankKeeper)
 	app.SlashingKeeper = slashingkeeper.NewKeeper(
-		appCodec, keys[slashingtypes.StoreKey], &stakingKeeper, app.GetSubspace(slashingtypes.ModuleName),
+		appCodec, keys[slashingtypes.StoreKey], &slashStakingKeeper, app.GetSubspace(slashingtypes.ModuleName),
 	)
 	app.CrisisKeeper = crisiskeeper.NewKeeper(
 		app.GetSubspace(crisistypes.ModuleName), invCheckPeriod, app.BankKeeper, authtypes.FeeCollectorName,
@@ -1019,4 +1021,13 @@ func initParamsKeeper(appCodec codec.BinaryCodec, legacyAmino *codec.LegacyAmino
 	paramsKeeper.Subspace(aggregatetypes.ModuleName)
 	paramsKeeper.Subspace(rvestingtypes.ModuleName)
 	return paramsKeeper
+}
+
+func GetStoreKeys() map[string]*sdk.KVStoreKey {
+	copyStoreKeys := make(map[string]*sdk.KVStoreKey)
+	for k,v := range keys {
+		storeKey := *v
+		copyStoreKeys[k] = &storeKey
+	}
+	return copyStoreKeys
 }

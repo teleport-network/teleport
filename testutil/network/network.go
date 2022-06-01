@@ -89,30 +89,31 @@ func NewAppConstructor(encodingCfg params.EncodingConfig) AppConstructor {
 // Config defines the necessary configuration used to bootstrap and start an
 // in-process local testing network.
 type Config struct {
-	KeyringOptions    []keyring.Option // keyring configuration options
-	Codec             codec.Codec
-	InterfaceRegistry codectypes.InterfaceRegistry
-	TxConfig          client.TxConfig
-	AccountRetriever  client.AccountRetriever
-	AppConstructor    AppConstructor      // the ABCI application constructor
-	GenesisState      simapp.GenesisState // custom gensis state to provide
-	TimeoutCommit     time.Duration       // the consensus commitment timeout
-	AccountTokens     sdk.Int             // the amount of unique validator tokens (e.g. 1000node0)
-	StakingTokens     sdk.Int             // the amount of tokens each validator has available to stake
-	BondedTokens      sdk.Int             // the amount of tokens each validator stakes
-	NumValidators     int                 // the total number of validators to create and bond
-	ChainID           string              // the network chain-id
-	BondDenom         string              // the staking bond denomination
-	MinGasPrices      string              // the minimum gas prices each validator will accept
-	PruningStrategy   string              // the pruning strategy each validator will have
-	SigningAlgo       string              // signing algorithm for keys
-	RPCAddress        string              // RPC listen address (including port)
-	JSONRPCAddress    string              // JSON-RPC listen address (including port)
-	APIAddress        string              // REST API listen address (including port)
-	GRPCAddress       string              // GRPC server listen address (including port)
-	EnableTMLogging   bool                // enable Tendermint logging to STDOUT
-	CleanupDir        bool                // remove base temporary directory during cleanup
-	PrintMnemonic     bool                // print the mnemonic of first validator as log output for testing
+	KeyringOptions     []keyring.Option // keyring configuration options
+	Codec              codec.Codec
+	InterfaceRegistry  codectypes.InterfaceRegistry
+	TxConfig           client.TxConfig
+	AccountRetriever   client.AccountRetriever
+	AppConstructor     AppConstructor      // the ABCI application constructor
+	GenesisState       simapp.GenesisState // custom gensis state to provide
+	TimeoutCommit      time.Duration       // the consensus commitment timeout
+	AccountTokens      sdk.Int             // the amount of unique validator tokens (e.g. 1000node0)
+	StakingTokens      sdk.Int             // the amount of tokens each validator has available to stake
+	BondedTokens       sdk.Int             // the amount of tokens each validator stakes
+	NumValidators      int                 // the total number of validators to create and bond
+	SignedBlocksWindow int                 // the signed blocks window for slashing to check the validator liveness
+	ChainID            string              // the network chain-id
+	BondDenom          string              // the staking bond denomination
+	MinGasPrices       string              // the minimum gas prices each validator will accept
+	PruningStrategy    string              // the pruning strategy each validator will have
+	SigningAlgo        string              // signing algorithm for keys
+	RPCAddress         string              // RPC listen address (including port)
+	JSONRPCAddress     string              // JSON-RPC listen address (including port)
+	APIAddress         string              // REST API listen address (including port)
+	GRPCAddress        string              // GRPC server listen address (including port)
+	EnableTMLogging    bool                // enable Tendermint logging to STDOUT
+	CleanupDir         bool                // remove base temporary directory during cleanup
+	PrintMnemonic      bool                // print the mnemonic of first validator as log output for testing
 }
 
 // DefaultConfig returns a sane default configuration suitable for nearly all
@@ -121,25 +122,26 @@ func DefaultConfig() Config {
 	encCfg := encoding.MakeConfig(app.ModuleBasics)
 
 	return Config{
-		Codec:             encCfg.Marshaler,
-		TxConfig:          encCfg.TxConfig,
-		InterfaceRegistry: encCfg.InterfaceRegistry,
-		AccountRetriever:  authtypes.AccountRetriever{},
-		AppConstructor:    NewAppConstructor(encCfg),
-		GenesisState:      app.ModuleBasics.DefaultGenesis(encCfg.Marshaler),
-		TimeoutCommit:     2 * time.Second,
-		ChainID:           fmt.Sprintf("teleport_%d-1", tmrand.Int63n(9999999999999)+1),
-		NumValidators:     4,
-		BondDenom:         types.AttoTele,
-		MinGasPrices:      fmt.Sprintf("0.000006%s", types.AttoTele),
-		AccountTokens:     sdk.TokensFromConsensusPower(1000, types.PowerReduction),
-		StakingTokens:     sdk.TokensFromConsensusPower(500, types.PowerReduction),
-		BondedTokens:      sdk.TokensFromConsensusPower(100, types.PowerReduction),
-		PruningStrategy:   storetypes.PruningOptionNothing,
-		CleanupDir:        true,
-		SigningAlgo:       string(hd.EthSecp256k1Type),
-		KeyringOptions:    []keyring.Option{hd.EthSecp256k1Option()},
-		PrintMnemonic:     false,
+		Codec:              encCfg.Marshaler,
+		TxConfig:           encCfg.TxConfig,
+		InterfaceRegistry:  encCfg.InterfaceRegistry,
+		AccountRetriever:   authtypes.AccountRetriever{},
+		AppConstructor:     NewAppConstructor(encCfg),
+		GenesisState:       app.ModuleBasics.DefaultGenesis(encCfg.Marshaler),
+		TimeoutCommit:      2 * time.Second,
+		ChainID:            fmt.Sprintf("teleport_%d-1", tmrand.Int63n(9999999999999)+1),
+		NumValidators:      4,
+		SignedBlocksWindow: 100,
+		BondDenom:          types.AttoTele,
+		MinGasPrices:       fmt.Sprintf("0.000006%s", types.AttoTele),
+		AccountTokens:      sdk.TokensFromConsensusPower(1000, types.PowerReduction),
+		StakingTokens:      sdk.TokensFromConsensusPower(500, types.PowerReduction),
+		BondedTokens:       sdk.TokensFromConsensusPower(100, types.PowerReduction),
+		PruningStrategy:    storetypes.PruningOptionNothing,
+		CleanupDir:         true,
+		SigningAlgo:        string(hd.EthSecp256k1Type),
+		KeyringOptions:     []keyring.Option{hd.EthSecp256k1Option()},
+		PrintMnemonic:      false,
 	}
 }
 
