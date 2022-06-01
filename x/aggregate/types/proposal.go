@@ -47,6 +47,9 @@ func init() {
 	govtypes.RegisterProposalType(ProposalTypeToggleTokenRelay)
 	govtypes.RegisterProposalType(ProposalTypeUpdateTokenPairERC20)
 	govtypes.RegisterProposalType(ProposalTypeRegisterERC20Trace)
+	govtypes.RegisterProposalType(ProposalTypeEnableTimeBasedSupplyLimit)
+	govtypes.RegisterProposalType(ProposalTypeDisableTimeBasedSupplyLimit)
+
 	govtypes.RegisterProposalTypeCodec(&RegisterCoinProposal{}, "aggregate/RegisterCoinProposal")
 	govtypes.RegisterProposalTypeCodec(&AddCoinProposal{}, "aggregate/AddCoinProposal")
 	govtypes.RegisterProposalTypeCodec(&RegisterERC20Proposal{}, "aggregate/RegisterERC20Proposal")
