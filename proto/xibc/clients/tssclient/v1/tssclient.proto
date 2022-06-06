@@ -13,12 +13,14 @@ message ClientState {
   string tss_address = 1;
   bytes pubkey = 2;
   repeated bytes part_pubkeys = 3;
+  uint64 threshold = 4;
 }
 
 message Header {
   string tss_address = 1;
   bytes pubkey = 2;
   repeated bytes part_pubkeys = 3;
+  uint64 threshold = 4;
 }
 
 // ConsensusState defines the consensus state
