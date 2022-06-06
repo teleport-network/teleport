@@ -8,12 +8,12 @@ import (
 )
 
 // NewPacketState creates a new PacketState instance.
-func NewPacketState(sourceChain, destinationChain string, seq uint64, data []byte) PacketState {
+func NewPacketState(srcChain, dstChain string, seq uint64, data []byte) PacketState {
 	return PacketState{
-		SourceChain:      sourceChain,
-		DestinationChain: destinationChain,
-		Sequence:         seq,
-		Data:             data,
+		SrcChain: srcChain,
+		DstChain: dstChain,
+		Sequence: seq,
+		Data:     data,
 	}
 }
 
@@ -23,22 +23,22 @@ func (pa PacketState) Validate() error {
 	if pa.Data == nil {
 		return errors.New("data bytes cannot be nil")
 	}
-	return validateGenFields(pa.SourceChain, pa.DestinationChain, pa.Sequence)
+	return validateGenFields(pa.SrcChain, pa.DstChain, pa.Sequence)
 }
 
 // NewPacketSequence creates a new PacketSequences instance.
-func NewPacketSequence(sourceChain, destinationChain string, seq uint64) PacketSequence {
+func NewPacketSequence(srcChain string, dstChain string, seq uint64) PacketSequence {
 	return PacketSequence{
-		SourceChain:      sourceChain,
-		DestinationChain: destinationChain,
-		Sequence:         seq,
+		SrcChain: srcChain,
+		DstChain: dstChain,
+		Sequence: seq,
 	}
 }
 
 // Validate performs basic validation of fields returning an error upon any
 // failure.
 func (ps PacketSequence) Validate() error {
-	return validateGenFields(ps.SourceChain, ps.DestinationChain, ps.Sequence)
+	return validateGenFields(ps.SrcChain, ps.DstChain, ps.Sequence)
 }
 
 // NewGenesisState creates a GenesisState instance.
@@ -116,12 +116,12 @@ func (gs GenesisState) Validate() error {
 	return nil
 }
 
-func validateGenFields(sourceChain, destChain string, sequence uint64) error {
-	if err := host.SourceChainValidator(sourceChain); err != nil {
-		return fmt.Errorf("invalid port ID: %w", err)
+func validateGenFields(srcChain string, dstChain string, sequence uint64) error {
+	if err := host.SrcChainValidator(srcChain); err != nil {
+		return fmt.Errorf("invalid src chain ID: %w", err)
 	}
-	if err := host.DestChainValidator(destChain); err != nil {
-		return fmt.Errorf("invalid chain ID: %w", err)
+	if err := host.DstChainValidator(dstChain); err != nil {
+		return fmt.Errorf("invalid dst chain ID: %w", err)
 	}
 	if sequence == 0 {
 		return errors.New("sequence cannot be 0")

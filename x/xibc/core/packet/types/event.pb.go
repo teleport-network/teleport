@@ -25,12 +25,10 @@ const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
 // EventSendPacket is emitted on send packet
 type EventSendPacket struct {
-	Sequence   string   `protobuf:"bytes,1,opt,name=sequence,proto3" json:"sequence,omitempty"`
-	SrcChain   string   `protobuf:"bytes,2,opt,name=src_chain,json=srcChain,proto3" json:"src_chain,omitempty"`
-	DstChain   string   `protobuf:"bytes,3,opt,name=dst_chain,json=dstChain,proto3" json:"dst_chain,omitempty"`
-	RelayChain string   `protobuf:"bytes,4,opt,name=relay_chain,json=relayChain,proto3" json:"relay_chain,omitempty"`
-	Ports      []string `protobuf:"bytes,5,rep,name=ports,proto3" json:"ports,omitempty"`
-	DataList   [][]byte `protobuf:"bytes,6,rep,name=data_list,json=dataList,proto3" json:"data_list,omitempty"`
+	SrcChain string `protobuf:"bytes,1,opt,name=src_chain,json=srcChain,proto3" json:"src_chain,omitempty"`
+	DstChain string `protobuf:"bytes,2,opt,name=dst_chain,json=dstChain,proto3" json:"dst_chain,omitempty"`
+	Sequence string `protobuf:"bytes,3,opt,name=sequence,proto3" json:"sequence,omitempty"`
+	Packet   []byte `protobuf:"bytes,4,opt,name=packet,proto3" json:"packet,omitempty"`
 }
 
 func (m *EventSendPacket) Reset()         { *m = EventSendPacket{} }
@@ -66,13 +64,6 @@ func (m *EventSendPacket) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_EventSendPacket proto.InternalMessageInfo
 
-func (m *EventSendPacket) GetSequence() string {
-	if m != nil {
-		return m.Sequence
-	}
-	return ""
-}
-
 func (m *EventSendPacket) GetSrcChain() string {
 	if m != nil {
 		return m.SrcChain
@@ -87,35 +78,26 @@ func (m *EventSendPacket) GetDstChain() string {
 	return ""
 }
 
-func (m *EventSendPacket) GetRelayChain() string {
+func (m *EventSendPacket) GetSequence() string {
 	if m != nil {
-		return m.RelayChain
+		return m.Sequence
 	}
 	return ""
 }
 
-func (m *EventSendPacket) GetPorts() []string {
+func (m *EventSendPacket) GetPacket() []byte {
 	if m != nil {
-		return m.Ports
-	}
-	return nil
-}
-
-func (m *EventSendPacket) GetDataList() [][]byte {
-	if m != nil {
-		return m.DataList
+		return m.Packet
 	}
 	return nil
 }
 
 // EventRecvPacket is emitted on receive packet
 type EventRecvPacket struct {
-	Sequence   string   `protobuf:"bytes,1,opt,name=sequence,proto3" json:"sequence,omitempty"`
-	SrcChain   string   `protobuf:"bytes,2,opt,name=src_chain,json=srcChain,proto3" json:"src_chain,omitempty"`
-	DstChain   string   `protobuf:"bytes,3,opt,name=dst_chain,json=dstChain,proto3" json:"dst_chain,omitempty"`
-	RelayChain string   `protobuf:"bytes,4,opt,name=relay_chain,json=relayChain,proto3" json:"relay_chain,omitempty"`
-	Ports      []string `protobuf:"bytes,5,rep,name=ports,proto3" json:"ports,omitempty"`
-	DataList   [][]byte `protobuf:"bytes,6,rep,name=data_list,json=dataList,proto3" json:"data_list,omitempty"`
+	SrcChain string `protobuf:"bytes,1,opt,name=src_chain,json=srcChain,proto3" json:"src_chain,omitempty"`
+	DstChain string `protobuf:"bytes,2,opt,name=dst_chain,json=dstChain,proto3" json:"dst_chain,omitempty"`
+	Sequence string `protobuf:"bytes,3,opt,name=sequence,proto3" json:"sequence,omitempty"`
+	Packet   []byte `protobuf:"bytes,4,opt,name=packet,proto3" json:"packet,omitempty"`
 }
 
 func (m *EventRecvPacket) Reset()         { *m = EventRecvPacket{} }
@@ -151,13 +133,6 @@ func (m *EventRecvPacket) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_EventRecvPacket proto.InternalMessageInfo
 
-func (m *EventRecvPacket) GetSequence() string {
-	if m != nil {
-		return m.Sequence
-	}
-	return ""
-}
-
 func (m *EventRecvPacket) GetSrcChain() string {
 	if m != nil {
 		return m.SrcChain
@@ -172,36 +147,27 @@ func (m *EventRecvPacket) GetDstChain() string {
 	return ""
 }
 
-func (m *EventRecvPacket) GetRelayChain() string {
+func (m *EventRecvPacket) GetSequence() string {
 	if m != nil {
-		return m.RelayChain
+		return m.Sequence
 	}
 	return ""
 }
 
-func (m *EventRecvPacket) GetPorts() []string {
+func (m *EventRecvPacket) GetPacket() []byte {
 	if m != nil {
-		return m.Ports
-	}
-	return nil
-}
-
-func (m *EventRecvPacket) GetDataList() [][]byte {
-	if m != nil {
-		return m.DataList
+		return m.Packet
 	}
 	return nil
 }
 
 // EventWriteAck is emitted on receive packet
 type EventWriteAck struct {
-	Sequence   string   `protobuf:"bytes,1,opt,name=sequence,proto3" json:"sequence,omitempty"`
-	SrcChain   string   `protobuf:"bytes,2,opt,name=src_chain,json=srcChain,proto3" json:"src_chain,omitempty"`
-	DstChain   string   `protobuf:"bytes,3,opt,name=dst_chain,json=dstChain,proto3" json:"dst_chain,omitempty"`
-	RelayChain string   `protobuf:"bytes,4,opt,name=relay_chain,json=relayChain,proto3" json:"relay_chain,omitempty"`
-	Ports      []string `protobuf:"bytes,5,rep,name=ports,proto3" json:"ports,omitempty"`
-	DataList   [][]byte `protobuf:"bytes,6,rep,name=data_list,json=dataList,proto3" json:"data_list,omitempty"`
-	Ack        []byte   `protobuf:"bytes,7,opt,name=ack,proto3" json:"ack,omitempty"`
+	SrcChain string `protobuf:"bytes,1,opt,name=src_chain,json=srcChain,proto3" json:"src_chain,omitempty"`
+	DstChain string `protobuf:"bytes,2,opt,name=dst_chain,json=dstChain,proto3" json:"dst_chain,omitempty"`
+	Sequence string `protobuf:"bytes,3,opt,name=sequence,proto3" json:"sequence,omitempty"`
+	Packet   []byte `protobuf:"bytes,4,opt,name=packet,proto3" json:"packet,omitempty"`
+	Ack      []byte `protobuf:"bytes,5,opt,name=ack,proto3" json:"ack,omitempty"`
 }
 
 func (m *EventWriteAck) Reset()         { *m = EventWriteAck{} }
@@ -237,13 +203,6 @@ func (m *EventWriteAck) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_EventWriteAck proto.InternalMessageInfo
 
-func (m *EventWriteAck) GetSequence() string {
-	if m != nil {
-		return m.Sequence
-	}
-	return ""
-}
-
 func (m *EventWriteAck) GetSrcChain() string {
 	if m != nil {
 		return m.SrcChain
@@ -258,23 +217,16 @@ func (m *EventWriteAck) GetDstChain() string {
 	return ""
 }
 
-func (m *EventWriteAck) GetRelayChain() string {
+func (m *EventWriteAck) GetSequence() string {
 	if m != nil {
-		return m.RelayChain
+		return m.Sequence
 	}
 	return ""
 }
 
-func (m *EventWriteAck) GetPorts() []string {
+func (m *EventWriteAck) GetPacket() []byte {
 	if m != nil {
-		return m.Ports
-	}
-	return nil
-}
-
-func (m *EventWriteAck) GetDataList() [][]byte {
-	if m != nil {
-		return m.DataList
+		return m.Packet
 	}
 	return nil
 }
@@ -288,13 +240,11 @@ func (m *EventWriteAck) GetAck() []byte {
 
 // EventAcknowledgePacket is emitted on acknowledgement packet
 type EventAcknowledgePacket struct {
-	Sequence   string   `protobuf:"bytes,1,opt,name=sequence,proto3" json:"sequence,omitempty"`
-	SrcChain   string   `protobuf:"bytes,2,opt,name=src_chain,json=srcChain,proto3" json:"src_chain,omitempty"`
-	DstChain   string   `protobuf:"bytes,3,opt,name=dst_chain,json=dstChain,proto3" json:"dst_chain,omitempty"`
-	RelayChain string   `protobuf:"bytes,4,opt,name=relay_chain,json=relayChain,proto3" json:"relay_chain,omitempty"`
-	Ports      []string `protobuf:"bytes,5,rep,name=ports,proto3" json:"ports,omitempty"`
-	DataList   [][]byte `protobuf:"bytes,6,rep,name=data_list,json=dataList,proto3" json:"data_list,omitempty"`
-	Ack        []byte   `protobuf:"bytes,7,opt,name=ack,proto3" json:"ack,omitempty"`
+	SrcChain string `protobuf:"bytes,1,opt,name=src_chain,json=srcChain,proto3" json:"src_chain,omitempty"`
+	DstChain string `protobuf:"bytes,2,opt,name=dst_chain,json=dstChain,proto3" json:"dst_chain,omitempty"`
+	Sequence string `protobuf:"bytes,3,opt,name=sequence,proto3" json:"sequence,omitempty"`
+	Packet   []byte `protobuf:"bytes,4,opt,name=packet,proto3" json:"packet,omitempty"`
+	Ack      []byte `protobuf:"bytes,5,opt,name=ack,proto3" json:"ack,omitempty"`
 }
 
 func (m *EventAcknowledgePacket) Reset()         { *m = EventAcknowledgePacket{} }
@@ -330,13 +280,6 @@ func (m *EventAcknowledgePacket) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_EventAcknowledgePacket proto.InternalMessageInfo
 
-func (m *EventAcknowledgePacket) GetSequence() string {
-	if m != nil {
-		return m.Sequence
-	}
-	return ""
-}
-
 func (m *EventAcknowledgePacket) GetSrcChain() string {
 	if m != nil {
 		return m.SrcChain
@@ -351,23 +294,16 @@ func (m *EventAcknowledgePacket) GetDstChain() string {
 	return ""
 }
 
-func (m *EventAcknowledgePacket) GetRelayChain() string {
+func (m *EventAcknowledgePacket) GetSequence() string {
 	if m != nil {
-		return m.RelayChain
+		return m.Sequence
 	}
 	return ""
 }
 
-func (m *EventAcknowledgePacket) GetPorts() []string {
+func (m *EventAcknowledgePacket) GetPacket() []byte {
 	if m != nil {
-		return m.Ports
-	}
-	return nil
-}
-
-func (m *EventAcknowledgePacket) GetDataList() [][]byte {
-	if m != nil {
-		return m.DataList
+		return m.Packet
 	}
 	return nil
 }
@@ -389,29 +325,26 @@ func init() {
 func init() { proto.RegisterFile("xibc/core/packet/v1/event.proto", fileDescriptor_e28bb2b978caec0f) }
 
 var fileDescriptor_e28bb2b978caec0f = []byte{
-	// 346 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xd4, 0x93, 0xb1, 0x6e, 0xe2, 0x40,
-	0x10, 0x86, 0xd9, 0xf3, 0xc1, 0xc1, 0x1e, 0xa7, 0x3b, 0xf9, 0xd0, 0xc9, 0xe2, 0x24, 0x63, 0x51,
-	0xb9, 0x89, 0x57, 0x28, 0x75, 0x0a, 0x12, 0xa5, 0x4b, 0x11, 0x39, 0x05, 0x52, 0x1a, 0x64, 0xd6,
-	0x23, 0x63, 0xd9, 0xf1, 0x3a, 0xbb, 0x83, 0x81, 0xb7, 0xc8, 0xfb, 0xe4, 0x05, 0x22, 0xa5, 0xa1,
-	0x48, 0x91, 0x32, 0x82, 0x17, 0x89, 0x76, 0x8d, 0x48, 0xc1, 0x13, 0xd0, 0xcd, 0xfc, 0xdf, 0xbf,
-	0xa3, 0x7f, 0xb4, 0x1a, 0x3a, 0x58, 0xa5, 0x33, 0xce, 0xb8, 0x90, 0xc0, 0xca, 0x88, 0x67, 0x80,
-	0xac, 0x1a, 0x31, 0xa8, 0xa0, 0xc0, 0xa0, 0x94, 0x02, 0x85, 0xfd, 0x57, 0x1b, 0x02, 0x6d, 0x08,
-	0x6a, 0x43, 0x50, 0x8d, 0xfa, 0xbd, 0x44, 0x24, 0xc2, 0x70, 0xa6, 0xab, 0xda, 0x3a, 0x7c, 0x26,
-	0xf4, 0xf7, 0xb5, 0x7e, 0x7a, 0x07, 0x45, 0x7c, 0x6b, 0xcc, 0x76, 0x9f, 0xb6, 0x15, 0x3c, 0x2e,
-	0xa0, 0xe0, 0xe0, 0x10, 0x8f, 0xf8, 0x9d, 0xf0, 0xd0, 0xdb, 0xff, 0x69, 0x47, 0x49, 0x3e, 0xe5,
-	0xf3, 0x28, 0x2d, 0x9c, 0x6f, 0x7b, 0x28, 0xf9, 0x95, 0xee, 0x35, 0x8c, 0x15, 0xee, 0xa1, 0x55,
-	0xc3, 0x58, 0x61, 0x0d, 0x07, 0xf4, 0xa7, 0x84, 0x3c, 0x5a, 0xef, 0xf1, 0x77, 0x83, 0xa9, 0x91,
-	0x6a, 0x43, 0x8f, 0x36, 0x4b, 0x21, 0x51, 0x39, 0x4d, 0xcf, 0xf2, 0x3b, 0x61, 0xdd, 0x98, 0x99,
-	0x11, 0x46, 0xd3, 0x3c, 0x55, 0xe8, 0xb4, 0x3c, 0xcb, 0xef, 0x86, 0x6d, 0x2d, 0xdc, 0xa4, 0x0a,
-	0xbf, 0xd2, 0x87, 0xc0, 0xab, 0x93, 0x4b, 0xff, 0x4a, 0xe8, 0x2f, 0x93, 0x7e, 0x22, 0x53, 0x84,
-	0x31, 0xcf, 0x4e, 0x27, 0xbb, 0xfd, 0x87, 0x5a, 0x11, 0xcf, 0x9c, 0x1f, 0x1e, 0xf1, 0xbb, 0xa1,
-	0x2e, 0x87, 0x6f, 0x84, 0xfe, 0x33, 0xdb, 0x8c, 0x79, 0x56, 0x88, 0x65, 0x0e, 0x71, 0x02, 0xa7,
-	0xf6, 0x25, 0xc7, 0x6b, 0x5d, 0x4e, 0x5e, 0xb6, 0x2e, 0xd9, 0x6c, 0x5d, 0xf2, 0xb1, 0x75, 0xc9,
-	0xd3, 0xce, 0x6d, 0x6c, 0x76, 0x6e, 0xe3, 0x7d, 0xe7, 0x36, 0xee, 0x2f, 0x92, 0x14, 0xe7, 0x8b,
-	0x59, 0xc0, 0xc5, 0x03, 0x43, 0xc8, 0x41, 0x8f, 0x3f, 0x2b, 0x00, 0x97, 0x42, 0x66, 0x07, 0x81,
-	0xad, 0xd8, 0xd1, 0xb5, 0xe2, 0xba, 0x04, 0x35, 0x6b, 0x99, 0x03, 0x3c, 0xff, 0x0c, 0x00, 0x00,
-	0xff, 0xff, 0x08, 0x35, 0xa8, 0x2c, 0xce, 0x03, 0x00, 0x00,
+	// 304 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xc4, 0x92, 0xb1, 0x4e, 0xf3, 0x30,
+	0x10, 0xc7, 0xeb, 0xaf, 0x1f, 0x55, 0x6b, 0x81, 0x40, 0x01, 0x55, 0x51, 0x91, 0x4c, 0xd5, 0xa9,
+	0x0b, 0xb1, 0x2a, 0x66, 0x86, 0x82, 0xd8, 0x51, 0x19, 0x2a, 0xb1, 0xa0, 0xe6, 0x72, 0x4a, 0xa3,
+	0x14, 0x3b, 0xd8, 0x6e, 0x5a, 0x26, 0x1e, 0x01, 0x46, 0x1e, 0x89, 0xb1, 0x23, 0x23, 0x4a, 0x5e,
+	0x04, 0xd9, 0x89, 0xba, 0x74, 0xa7, 0xdb, 0xdd, 0xfd, 0x7f, 0x27, 0xff, 0x64, 0x1d, 0xbd, 0x58,
+	0x27, 0x21, 0x70, 0x90, 0x0a, 0x79, 0x36, 0x83, 0x14, 0x0d, 0xcf, 0x47, 0x1c, 0x73, 0x14, 0x26,
+	0xc8, 0x94, 0x34, 0xd2, 0x3b, 0xb5, 0x40, 0x60, 0x81, 0xa0, 0x02, 0x82, 0x7c, 0xd4, 0x3b, 0x8b,
+	0x65, 0x2c, 0x5d, 0xce, 0x6d, 0x55, 0xa1, 0x83, 0x37, 0x7a, 0x7c, 0x67, 0x37, 0x1f, 0x50, 0x44,
+	0xf7, 0x8e, 0xf5, 0xce, 0x69, 0x47, 0x2b, 0x78, 0x82, 0xf9, 0x2c, 0x11, 0x3e, 0xe9, 0x93, 0x61,
+	0x67, 0xd2, 0xd6, 0x0a, 0x6e, 0x6d, 0x6f, 0xc3, 0x48, 0x9b, 0x3a, 0xfc, 0x57, 0x85, 0x91, 0x36,
+	0x55, 0xd8, 0xa3, 0x6d, 0x8d, 0x2f, 0x4b, 0x14, 0x80, 0x7e, 0xb3, 0x5e, 0xac, 0x7b, 0xaf, 0x4b,
+	0x5b, 0x95, 0x8b, 0xff, 0xbf, 0x4f, 0x86, 0x87, 0x93, 0xba, 0xdb, 0x0a, 0x4c, 0x10, 0xf2, 0xbd,
+	0x08, 0xbc, 0x13, 0x7a, 0xe4, 0x0c, 0xa6, 0x2a, 0x31, 0x38, 0x86, 0xf4, 0x6f, 0xdf, 0xf7, 0x4e,
+	0x68, 0x73, 0x06, 0xa9, 0x7f, 0xe0, 0x86, 0xb6, 0x1c, 0x7c, 0x12, 0xda, 0x75, 0x46, 0x63, 0x48,
+	0x85, 0x5c, 0x2d, 0x30, 0x8a, 0x71, 0x1f, 0x5f, 0xb3, 0xab, 0x76, 0x33, 0xfd, 0x2a, 0x18, 0xd9,
+	0x14, 0x8c, 0xfc, 0x14, 0x8c, 0x7c, 0x94, 0xac, 0xb1, 0x29, 0x59, 0xe3, 0xbb, 0x64, 0x8d, 0xc7,
+	0xeb, 0x38, 0x31, 0xf3, 0x65, 0x18, 0x80, 0x7c, 0xe6, 0x06, 0x17, 0x98, 0x49, 0x65, 0x2e, 0x05,
+	0x9a, 0x95, 0x54, 0xe9, 0x76, 0xc0, 0xd7, 0x7c, 0xe7, 0x76, 0xcd, 0x6b, 0x86, 0x3a, 0x6c, 0xb9,
+	0x73, 0xbc, 0xfa, 0x0d, 0x00, 0x00, 0xff, 0xff, 0x0d, 0xfb, 0x7d, 0x57, 0xdc, 0x02, 0x00, 0x00,
 }
 
 func (m *EventSendPacket) Marshal() (dAtA []byte, err error) {
@@ -434,49 +367,31 @@ func (m *EventSendPacket) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	if len(m.DataList) > 0 {
-		for iNdEx := len(m.DataList) - 1; iNdEx >= 0; iNdEx-- {
-			i -= len(m.DataList[iNdEx])
-			copy(dAtA[i:], m.DataList[iNdEx])
-			i = encodeVarintEvent(dAtA, i, uint64(len(m.DataList[iNdEx])))
-			i--
-			dAtA[i] = 0x32
-		}
-	}
-	if len(m.Ports) > 0 {
-		for iNdEx := len(m.Ports) - 1; iNdEx >= 0; iNdEx-- {
-			i -= len(m.Ports[iNdEx])
-			copy(dAtA[i:], m.Ports[iNdEx])
-			i = encodeVarintEvent(dAtA, i, uint64(len(m.Ports[iNdEx])))
-			i--
-			dAtA[i] = 0x2a
-		}
-	}
-	if len(m.RelayChain) > 0 {
-		i -= len(m.RelayChain)
-		copy(dAtA[i:], m.RelayChain)
-		i = encodeVarintEvent(dAtA, i, uint64(len(m.RelayChain)))
+	if len(m.Packet) > 0 {
+		i -= len(m.Packet)
+		copy(dAtA[i:], m.Packet)
+		i = encodeVarintEvent(dAtA, i, uint64(len(m.Packet)))
 		i--
 		dAtA[i] = 0x22
+	}
+	if len(m.Sequence) > 0 {
+		i -= len(m.Sequence)
+		copy(dAtA[i:], m.Sequence)
+		i = encodeVarintEvent(dAtA, i, uint64(len(m.Sequence)))
+		i--
+		dAtA[i] = 0x1a
 	}
 	if len(m.DstChain) > 0 {
 		i -= len(m.DstChain)
 		copy(dAtA[i:], m.DstChain)
 		i = encodeVarintEvent(dAtA, i, uint64(len(m.DstChain)))
 		i--
-		dAtA[i] = 0x1a
+		dAtA[i] = 0x12
 	}
 	if len(m.SrcChain) > 0 {
 		i -= len(m.SrcChain)
 		copy(dAtA[i:], m.SrcChain)
 		i = encodeVarintEvent(dAtA, i, uint64(len(m.SrcChain)))
-		i--
-		dAtA[i] = 0x12
-	}
-	if len(m.Sequence) > 0 {
-		i -= len(m.Sequence)
-		copy(dAtA[i:], m.Sequence)
-		i = encodeVarintEvent(dAtA, i, uint64(len(m.Sequence)))
 		i--
 		dAtA[i] = 0xa
 	}
@@ -503,49 +418,31 @@ func (m *EventRecvPacket) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	if len(m.DataList) > 0 {
-		for iNdEx := len(m.DataList) - 1; iNdEx >= 0; iNdEx-- {
-			i -= len(m.DataList[iNdEx])
-			copy(dAtA[i:], m.DataList[iNdEx])
-			i = encodeVarintEvent(dAtA, i, uint64(len(m.DataList[iNdEx])))
-			i--
-			dAtA[i] = 0x32
-		}
-	}
-	if len(m.Ports) > 0 {
-		for iNdEx := len(m.Ports) - 1; iNdEx >= 0; iNdEx-- {
-			i -= len(m.Ports[iNdEx])
-			copy(dAtA[i:], m.Ports[iNdEx])
-			i = encodeVarintEvent(dAtA, i, uint64(len(m.Ports[iNdEx])))
-			i--
-			dAtA[i] = 0x2a
-		}
-	}
-	if len(m.RelayChain) > 0 {
-		i -= len(m.RelayChain)
-		copy(dAtA[i:], m.RelayChain)
-		i = encodeVarintEvent(dAtA, i, uint64(len(m.RelayChain)))
+	if len(m.Packet) > 0 {
+		i -= len(m.Packet)
+		copy(dAtA[i:], m.Packet)
+		i = encodeVarintEvent(dAtA, i, uint64(len(m.Packet)))
 		i--
 		dAtA[i] = 0x22
+	}
+	if len(m.Sequence) > 0 {
+		i -= len(m.Sequence)
+		copy(dAtA[i:], m.Sequence)
+		i = encodeVarintEvent(dAtA, i, uint64(len(m.Sequence)))
+		i--
+		dAtA[i] = 0x1a
 	}
 	if len(m.DstChain) > 0 {
 		i -= len(m.DstChain)
 		copy(dAtA[i:], m.DstChain)
 		i = encodeVarintEvent(dAtA, i, uint64(len(m.DstChain)))
 		i--
-		dAtA[i] = 0x1a
+		dAtA[i] = 0x12
 	}
 	if len(m.SrcChain) > 0 {
 		i -= len(m.SrcChain)
 		copy(dAtA[i:], m.SrcChain)
 		i = encodeVarintEvent(dAtA, i, uint64(len(m.SrcChain)))
-		i--
-		dAtA[i] = 0x12
-	}
-	if len(m.Sequence) > 0 {
-		i -= len(m.Sequence)
-		copy(dAtA[i:], m.Sequence)
-		i = encodeVarintEvent(dAtA, i, uint64(len(m.Sequence)))
 		i--
 		dAtA[i] = 0xa
 	}
@@ -577,51 +474,33 @@ func (m *EventWriteAck) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		copy(dAtA[i:], m.Ack)
 		i = encodeVarintEvent(dAtA, i, uint64(len(m.Ack)))
 		i--
-		dAtA[i] = 0x3a
+		dAtA[i] = 0x2a
 	}
-	if len(m.DataList) > 0 {
-		for iNdEx := len(m.DataList) - 1; iNdEx >= 0; iNdEx-- {
-			i -= len(m.DataList[iNdEx])
-			copy(dAtA[i:], m.DataList[iNdEx])
-			i = encodeVarintEvent(dAtA, i, uint64(len(m.DataList[iNdEx])))
-			i--
-			dAtA[i] = 0x32
-		}
-	}
-	if len(m.Ports) > 0 {
-		for iNdEx := len(m.Ports) - 1; iNdEx >= 0; iNdEx-- {
-			i -= len(m.Ports[iNdEx])
-			copy(dAtA[i:], m.Ports[iNdEx])
-			i = encodeVarintEvent(dAtA, i, uint64(len(m.Ports[iNdEx])))
-			i--
-			dAtA[i] = 0x2a
-		}
-	}
-	if len(m.RelayChain) > 0 {
-		i -= len(m.RelayChain)
-		copy(dAtA[i:], m.RelayChain)
-		i = encodeVarintEvent(dAtA, i, uint64(len(m.RelayChain)))
+	if len(m.Packet) > 0 {
+		i -= len(m.Packet)
+		copy(dAtA[i:], m.Packet)
+		i = encodeVarintEvent(dAtA, i, uint64(len(m.Packet)))
 		i--
 		dAtA[i] = 0x22
+	}
+	if len(m.Sequence) > 0 {
+		i -= len(m.Sequence)
+		copy(dAtA[i:], m.Sequence)
+		i = encodeVarintEvent(dAtA, i, uint64(len(m.Sequence)))
+		i--
+		dAtA[i] = 0x1a
 	}
 	if len(m.DstChain) > 0 {
 		i -= len(m.DstChain)
 		copy(dAtA[i:], m.DstChain)
 		i = encodeVarintEvent(dAtA, i, uint64(len(m.DstChain)))
 		i--
-		dAtA[i] = 0x1a
+		dAtA[i] = 0x12
 	}
 	if len(m.SrcChain) > 0 {
 		i -= len(m.SrcChain)
 		copy(dAtA[i:], m.SrcChain)
 		i = encodeVarintEvent(dAtA, i, uint64(len(m.SrcChain)))
-		i--
-		dAtA[i] = 0x12
-	}
-	if len(m.Sequence) > 0 {
-		i -= len(m.Sequence)
-		copy(dAtA[i:], m.Sequence)
-		i = encodeVarintEvent(dAtA, i, uint64(len(m.Sequence)))
 		i--
 		dAtA[i] = 0xa
 	}
@@ -653,51 +532,33 @@ func (m *EventAcknowledgePacket) MarshalToSizedBuffer(dAtA []byte) (int, error) 
 		copy(dAtA[i:], m.Ack)
 		i = encodeVarintEvent(dAtA, i, uint64(len(m.Ack)))
 		i--
-		dAtA[i] = 0x3a
+		dAtA[i] = 0x2a
 	}
-	if len(m.DataList) > 0 {
-		for iNdEx := len(m.DataList) - 1; iNdEx >= 0; iNdEx-- {
-			i -= len(m.DataList[iNdEx])
-			copy(dAtA[i:], m.DataList[iNdEx])
-			i = encodeVarintEvent(dAtA, i, uint64(len(m.DataList[iNdEx])))
-			i--
-			dAtA[i] = 0x32
-		}
-	}
-	if len(m.Ports) > 0 {
-		for iNdEx := len(m.Ports) - 1; iNdEx >= 0; iNdEx-- {
-			i -= len(m.Ports[iNdEx])
-			copy(dAtA[i:], m.Ports[iNdEx])
-			i = encodeVarintEvent(dAtA, i, uint64(len(m.Ports[iNdEx])))
-			i--
-			dAtA[i] = 0x2a
-		}
-	}
-	if len(m.RelayChain) > 0 {
-		i -= len(m.RelayChain)
-		copy(dAtA[i:], m.RelayChain)
-		i = encodeVarintEvent(dAtA, i, uint64(len(m.RelayChain)))
+	if len(m.Packet) > 0 {
+		i -= len(m.Packet)
+		copy(dAtA[i:], m.Packet)
+		i = encodeVarintEvent(dAtA, i, uint64(len(m.Packet)))
 		i--
 		dAtA[i] = 0x22
+	}
+	if len(m.Sequence) > 0 {
+		i -= len(m.Sequence)
+		copy(dAtA[i:], m.Sequence)
+		i = encodeVarintEvent(dAtA, i, uint64(len(m.Sequence)))
+		i--
+		dAtA[i] = 0x1a
 	}
 	if len(m.DstChain) > 0 {
 		i -= len(m.DstChain)
 		copy(dAtA[i:], m.DstChain)
 		i = encodeVarintEvent(dAtA, i, uint64(len(m.DstChain)))
 		i--
-		dAtA[i] = 0x1a
+		dAtA[i] = 0x12
 	}
 	if len(m.SrcChain) > 0 {
 		i -= len(m.SrcChain)
 		copy(dAtA[i:], m.SrcChain)
 		i = encodeVarintEvent(dAtA, i, uint64(len(m.SrcChain)))
-		i--
-		dAtA[i] = 0x12
-	}
-	if len(m.Sequence) > 0 {
-		i -= len(m.Sequence)
-		copy(dAtA[i:], m.Sequence)
-		i = encodeVarintEvent(dAtA, i, uint64(len(m.Sequence)))
 		i--
 		dAtA[i] = 0xa
 	}
@@ -721,10 +582,6 @@ func (m *EventSendPacket) Size() (n int) {
 	}
 	var l int
 	_ = l
-	l = len(m.Sequence)
-	if l > 0 {
-		n += 1 + l + sovEvent(uint64(l))
-	}
 	l = len(m.SrcChain)
 	if l > 0 {
 		n += 1 + l + sovEvent(uint64(l))
@@ -733,21 +590,13 @@ func (m *EventSendPacket) Size() (n int) {
 	if l > 0 {
 		n += 1 + l + sovEvent(uint64(l))
 	}
-	l = len(m.RelayChain)
+	l = len(m.Sequence)
 	if l > 0 {
 		n += 1 + l + sovEvent(uint64(l))
 	}
-	if len(m.Ports) > 0 {
-		for _, s := range m.Ports {
-			l = len(s)
-			n += 1 + l + sovEvent(uint64(l))
-		}
-	}
-	if len(m.DataList) > 0 {
-		for _, b := range m.DataList {
-			l = len(b)
-			n += 1 + l + sovEvent(uint64(l))
-		}
+	l = len(m.Packet)
+	if l > 0 {
+		n += 1 + l + sovEvent(uint64(l))
 	}
 	return n
 }
@@ -758,10 +607,6 @@ func (m *EventRecvPacket) Size() (n int) {
 	}
 	var l int
 	_ = l
-	l = len(m.Sequence)
-	if l > 0 {
-		n += 1 + l + sovEvent(uint64(l))
-	}
 	l = len(m.SrcChain)
 	if l > 0 {
 		n += 1 + l + sovEvent(uint64(l))
@@ -770,21 +615,13 @@ func (m *EventRecvPacket) Size() (n int) {
 	if l > 0 {
 		n += 1 + l + sovEvent(uint64(l))
 	}
-	l = len(m.RelayChain)
+	l = len(m.Sequence)
 	if l > 0 {
 		n += 1 + l + sovEvent(uint64(l))
 	}
-	if len(m.Ports) > 0 {
-		for _, s := range m.Ports {
-			l = len(s)
-			n += 1 + l + sovEvent(uint64(l))
-		}
-	}
-	if len(m.DataList) > 0 {
-		for _, b := range m.DataList {
-			l = len(b)
-			n += 1 + l + sovEvent(uint64(l))
-		}
+	l = len(m.Packet)
+	if l > 0 {
+		n += 1 + l + sovEvent(uint64(l))
 	}
 	return n
 }
@@ -795,10 +632,6 @@ func (m *EventWriteAck) Size() (n int) {
 	}
 	var l int
 	_ = l
-	l = len(m.Sequence)
-	if l > 0 {
-		n += 1 + l + sovEvent(uint64(l))
-	}
 	l = len(m.SrcChain)
 	if l > 0 {
 		n += 1 + l + sovEvent(uint64(l))
@@ -807,21 +640,13 @@ func (m *EventWriteAck) Size() (n int) {
 	if l > 0 {
 		n += 1 + l + sovEvent(uint64(l))
 	}
-	l = len(m.RelayChain)
+	l = len(m.Sequence)
 	if l > 0 {
 		n += 1 + l + sovEvent(uint64(l))
 	}
-	if len(m.Ports) > 0 {
-		for _, s := range m.Ports {
-			l = len(s)
-			n += 1 + l + sovEvent(uint64(l))
-		}
-	}
-	if len(m.DataList) > 0 {
-		for _, b := range m.DataList {
-			l = len(b)
-			n += 1 + l + sovEvent(uint64(l))
-		}
+	l = len(m.Packet)
+	if l > 0 {
+		n += 1 + l + sovEvent(uint64(l))
 	}
 	l = len(m.Ack)
 	if l > 0 {
@@ -836,10 +661,6 @@ func (m *EventAcknowledgePacket) Size() (n int) {
 	}
 	var l int
 	_ = l
-	l = len(m.Sequence)
-	if l > 0 {
-		n += 1 + l + sovEvent(uint64(l))
-	}
 	l = len(m.SrcChain)
 	if l > 0 {
 		n += 1 + l + sovEvent(uint64(l))
@@ -848,21 +669,13 @@ func (m *EventAcknowledgePacket) Size() (n int) {
 	if l > 0 {
 		n += 1 + l + sovEvent(uint64(l))
 	}
-	l = len(m.RelayChain)
+	l = len(m.Sequence)
 	if l > 0 {
 		n += 1 + l + sovEvent(uint64(l))
 	}
-	if len(m.Ports) > 0 {
-		for _, s := range m.Ports {
-			l = len(s)
-			n += 1 + l + sovEvent(uint64(l))
-		}
-	}
-	if len(m.DataList) > 0 {
-		for _, b := range m.DataList {
-			l = len(b)
-			n += 1 + l + sovEvent(uint64(l))
-		}
+	l = len(m.Packet)
+	if l > 0 {
+		n += 1 + l + sovEvent(uint64(l))
 	}
 	l = len(m.Ack)
 	if l > 0 {
@@ -908,38 +721,6 @@ func (m *EventSendPacket) Unmarshal(dAtA []byte) error {
 		switch fieldNum {
 		case 1:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Sequence", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowEvent
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthEvent
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthEvent
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Sequence = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 2:
-			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field SrcChain", wireType)
 			}
 			var stringLen uint64
@@ -970,7 +751,7 @@ func (m *EventSendPacket) Unmarshal(dAtA []byte) error {
 			}
 			m.SrcChain = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
-		case 3:
+		case 2:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field DstChain", wireType)
 			}
@@ -1002,73 +783,41 @@ func (m *EventSendPacket) Unmarshal(dAtA []byte) error {
 			}
 			m.DstChain = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Sequence", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowEvent
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthEvent
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthEvent
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Sequence = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
 		case 4:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field RelayChain", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowEvent
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthEvent
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthEvent
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.RelayChain = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 5:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Ports", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowEvent
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthEvent
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthEvent
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Ports = append(m.Ports, string(dAtA[iNdEx:postIndex]))
-			iNdEx = postIndex
-		case 6:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field DataList", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field Packet", wireType)
 			}
 			var byteLen int
 			for shift := uint(0); ; shift += 7 {
@@ -1095,8 +844,10 @@ func (m *EventSendPacket) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.DataList = append(m.DataList, make([]byte, postIndex-iNdEx))
-			copy(m.DataList[len(m.DataList)-1], dAtA[iNdEx:postIndex])
+			m.Packet = append(m.Packet[:0], dAtA[iNdEx:postIndex]...)
+			if m.Packet == nil {
+				m.Packet = []byte{}
+			}
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
@@ -1150,38 +901,6 @@ func (m *EventRecvPacket) Unmarshal(dAtA []byte) error {
 		switch fieldNum {
 		case 1:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Sequence", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowEvent
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthEvent
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthEvent
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Sequence = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 2:
-			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field SrcChain", wireType)
 			}
 			var stringLen uint64
@@ -1212,7 +931,7 @@ func (m *EventRecvPacket) Unmarshal(dAtA []byte) error {
 			}
 			m.SrcChain = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
-		case 3:
+		case 2:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field DstChain", wireType)
 			}
@@ -1244,73 +963,41 @@ func (m *EventRecvPacket) Unmarshal(dAtA []byte) error {
 			}
 			m.DstChain = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Sequence", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowEvent
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthEvent
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthEvent
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Sequence = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
 		case 4:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field RelayChain", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowEvent
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthEvent
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthEvent
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.RelayChain = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 5:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Ports", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowEvent
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthEvent
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthEvent
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Ports = append(m.Ports, string(dAtA[iNdEx:postIndex]))
-			iNdEx = postIndex
-		case 6:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field DataList", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field Packet", wireType)
 			}
 			var byteLen int
 			for shift := uint(0); ; shift += 7 {
@@ -1337,8 +1024,10 @@ func (m *EventRecvPacket) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.DataList = append(m.DataList, make([]byte, postIndex-iNdEx))
-			copy(m.DataList[len(m.DataList)-1], dAtA[iNdEx:postIndex])
+			m.Packet = append(m.Packet[:0], dAtA[iNdEx:postIndex]...)
+			if m.Packet == nil {
+				m.Packet = []byte{}
+			}
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
@@ -1392,38 +1081,6 @@ func (m *EventWriteAck) Unmarshal(dAtA []byte) error {
 		switch fieldNum {
 		case 1:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Sequence", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowEvent
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthEvent
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthEvent
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Sequence = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 2:
-			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field SrcChain", wireType)
 			}
 			var stringLen uint64
@@ -1454,7 +1111,7 @@ func (m *EventWriteAck) Unmarshal(dAtA []byte) error {
 			}
 			m.SrcChain = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
-		case 3:
+		case 2:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field DstChain", wireType)
 			}
@@ -1486,73 +1143,41 @@ func (m *EventWriteAck) Unmarshal(dAtA []byte) error {
 			}
 			m.DstChain = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Sequence", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowEvent
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthEvent
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthEvent
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Sequence = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
 		case 4:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field RelayChain", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowEvent
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthEvent
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthEvent
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.RelayChain = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 5:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Ports", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowEvent
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthEvent
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthEvent
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Ports = append(m.Ports, string(dAtA[iNdEx:postIndex]))
-			iNdEx = postIndex
-		case 6:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field DataList", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field Packet", wireType)
 			}
 			var byteLen int
 			for shift := uint(0); ; shift += 7 {
@@ -1579,10 +1204,12 @@ func (m *EventWriteAck) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.DataList = append(m.DataList, make([]byte, postIndex-iNdEx))
-			copy(m.DataList[len(m.DataList)-1], dAtA[iNdEx:postIndex])
+			m.Packet = append(m.Packet[:0], dAtA[iNdEx:postIndex]...)
+			if m.Packet == nil {
+				m.Packet = []byte{}
+			}
 			iNdEx = postIndex
-		case 7:
+		case 5:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Ack", wireType)
 			}
@@ -1668,38 +1295,6 @@ func (m *EventAcknowledgePacket) Unmarshal(dAtA []byte) error {
 		switch fieldNum {
 		case 1:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Sequence", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowEvent
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthEvent
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthEvent
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Sequence = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 2:
-			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field SrcChain", wireType)
 			}
 			var stringLen uint64
@@ -1730,7 +1325,7 @@ func (m *EventAcknowledgePacket) Unmarshal(dAtA []byte) error {
 			}
 			m.SrcChain = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
-		case 3:
+		case 2:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field DstChain", wireType)
 			}
@@ -1762,73 +1357,41 @@ func (m *EventAcknowledgePacket) Unmarshal(dAtA []byte) error {
 			}
 			m.DstChain = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Sequence", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowEvent
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthEvent
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthEvent
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Sequence = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
 		case 4:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field RelayChain", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowEvent
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthEvent
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthEvent
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.RelayChain = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 5:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Ports", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowEvent
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthEvent
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthEvent
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Ports = append(m.Ports, string(dAtA[iNdEx:postIndex]))
-			iNdEx = postIndex
-		case 6:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field DataList", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field Packet", wireType)
 			}
 			var byteLen int
 			for shift := uint(0); ; shift += 7 {
@@ -1855,10 +1418,12 @@ func (m *EventAcknowledgePacket) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.DataList = append(m.DataList, make([]byte, postIndex-iNdEx))
-			copy(m.DataList[len(m.DataList)-1], dAtA[iNdEx:postIndex])
+			m.Packet = append(m.Packet[:0], dAtA[iNdEx:postIndex]...)
+			if m.Packet == nil {
+				m.Packet = []byte{}
+			}
 			iNdEx = postIndex
-		case 7:
+		case 5:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Ack", wireType)
 			}

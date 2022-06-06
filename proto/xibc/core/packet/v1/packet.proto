@@ -9,21 +9,40 @@ import "gogoproto/gogo.proto";
 message Packet {
   option (gogoproto.goproto_getters) = false;
 
+  // identifies the chain id of the sending chain.
+  string src_chain = 1 [ (gogoproto.moretags) = "yaml:\"src_chain\"" ];
+  // identifies the chain id of the receiving chain.
+  string dst_chain = 2 [ (gogoproto.moretags) = "yaml:\"dst_chain\"" ];
+
   // number corresponds to the order of sends and receives, where a Packet
   // with an earlier sequence number must be sent and received before a Packet
   // with a later sequence number.
-  uint64 sequence = 1;
-  // identifies the chain id of the sending chain.
-  string source_chain = 2 [ (gogoproto.moretags) = "yaml:\"source_chain\"" ];
-  // identifies the chain id of the receiving chain.
-  string destination_chain = 3
-      [ (gogoproto.moretags) = "yaml:\"destination_port\"" ];
-  // identifies the chain id of the relay chain.
-  string relay_chain = 4 [ (gogoproto.moretags) = "yaml:\"relay_chain\"" ];
-  // identifies the ports on the sending chain and destination chain
-  repeated string ports = 5;
-  // actual opaque bytes transferred directly to the application module
-  repeated bytes data_list = 6;
+  uint64 sequence = 3;
+  string sender = 4;
+  // transfer data. keep empty if not used.
+  bytes transfer_data = 5;
+  // call data. keep empty if not used
+  bytes call_data = 6;
+  string callback_address = 7;
+  uint64 fee_option = 8;
+}
+
+// TransferData defines packet transfer_data struct
+message TransferData {
+  // identifies the token receiver on est chain
+  string receiver = 1;
+  bytes amount = 2;
+  // identifies the token address on src chain
+  string token = 3;
+  // identifies the ori token address on dst chain if exist
+  string oriToken = 4;
+}
+
+message CallData {
+  // identifies the contract address on dst chain
+  string contractAddress = 1;
+  // identifies the data which used to call the contract
+  bytes callData = 2;
 }
 
 // PacketState defines the generic type necessary to retrieve and store
@@ -34,10 +53,9 @@ message PacketState {
   option (gogoproto.goproto_getters) = false;
 
   // the sending chain identifier.
-  string source_chain = 1 [ (gogoproto.moretags) = "yaml:\"source_chain\"" ];
+  string src_chain = 1 [ (gogoproto.moretags) = "yaml:\"src_chain\"" ];
   // the receiving chain identifier.
-  string destination_chain = 2
-      [ (gogoproto.moretags) = "yaml:\"source_chain\"" ];
+  string dst_chain = 2 [ (gogoproto.moretags) = "yaml:\"dst_chain\"" ];
   // packet sequence.
   uint64 sequence = 3;
   // embedded data that represents packet state.
@@ -47,10 +65,15 @@ message PacketState {
 // Acknowledgement is the recommended acknowledgement format to be used by
 // app-specific protocols.
 message Acknowledgement {
-  // the execution results of the packet data list
-  repeated bytes results = 1;
-  // error message
-  string message = 2;
-  // relayer address
-  string relayer = 3;
+  // error code
+  // 0: success;
+  // 1: system failed;
+  // 2: transfer failed;
+  // 3: call failed;
+  // 4: undefined
+  uint64 code = 1;
+  bytes result = 2;
+  string message = 3;
+  string relayer = 4;
+  uint64 fee_option = 5;
 }

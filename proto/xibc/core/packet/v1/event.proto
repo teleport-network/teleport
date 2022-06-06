@@ -8,42 +8,34 @@ option go_package = "github.com/teleport-network/teleport/x/xibc/core/packet/typ
 
 // EventSendPacket is emitted on send packet
 message EventSendPacket {
-  string sequence = 1;
-  string src_chain = 2;
-  string dst_chain = 3;
-  string relay_chain = 4;
-  repeated string ports = 5;
-  repeated bytes data_list = 6;
+  string src_chain = 1;
+  string dst_chain = 2;
+  string sequence = 3;
+  bytes packet = 4;
 }
 
 // EventRecvPacket is emitted on receive packet
 message EventRecvPacket {
-  string sequence = 1;
-  string src_chain = 2;
-  string dst_chain = 3;
-  string relay_chain = 4;
-  repeated string ports = 5;
-  repeated bytes data_list = 6;
+  string src_chain = 1;
+  string dst_chain = 2;
+  string sequence = 3;
+  bytes packet = 4;
 }
 
 // EventWriteAck is emitted on receive packet
 message EventWriteAck {
-  string sequence = 1;
-  string src_chain = 2;
-  string dst_chain = 3;
-  string relay_chain = 4;
-  repeated string ports = 5;
-  repeated bytes data_list = 6;
-  bytes ack = 7;
+  string src_chain = 1;
+  string dst_chain = 2;
+  string sequence = 3;
+  bytes packet = 4;
+  bytes ack = 5;
 }
 
 // EventAcknowledgePacket is emitted on acknowledgement packet
 message EventAcknowledgePacket {
-  string sequence = 1;
-  string src_chain = 2;
-  string dst_chain = 3;
-  string relay_chain = 4;
-  repeated string ports = 5;
-  repeated bytes data_list = 6;
-  bytes ack = 7;
+  string src_chain = 1;
+  string dst_chain = 2;
+  string sequence = 3;
+  bytes packet = 4;
+  bytes ack = 5;
 }

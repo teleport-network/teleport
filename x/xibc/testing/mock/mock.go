@@ -17,7 +17,6 @@ import (
 
 	xibchost "github.com/teleport-network/teleport/x/xibc/core/host"
 	packettypes "github.com/teleport-network/teleport/x/xibc/core/packet/types"
-	porttypes "github.com/teleport-network/teleport/x/xibc/core/routing/types"
 )
 
 const (
@@ -26,10 +25,8 @@ const (
 
 var (
 	MockResult             = []byte("mock result")
-	MockAcknowledgement, _ = packettypes.NewResultAcknowledgement([][]byte{MockResult}, "").GetBytes()
+	MockAcknowledgement, _ = packettypes.NewAcknowledgement(0, MockResult, "", "", 0).ABIPack()
 )
-
-var _ porttypes.XIBCModule = AppModule{}
 
 // AppModuleBasic is the mock AppModuleBasic.
 type AppModuleBasic struct{}

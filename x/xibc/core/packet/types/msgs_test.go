@@ -22,20 +22,21 @@ import (
 
 const (
 	// valid constatns used for testing
-	sourceChain = "source-chain"
-	destChain   = "dest-chain"
-	relayChain  = ""
-	port        = "mock"
+	srcChain = "src-chain"
+	dstChain = "dst-chain"
 )
 
 // define variables used for testing
 var (
-	height            = clienttypes.NewHeight(0, 1)
-	validPacketData   = []byte("testdata")
-	unknownPacketData = []byte("unknown")
+	height           = clienttypes.NewHeight(0, 1)
+	mockTransferData = []byte("transfer")
+	mockCallData     = []byte("call")
+	mockAck          = []byte("ack")
 
-	packet        = types.NewPacket(1, sourceChain, destChain, relayChain, []string{port}, [][]byte{validPacketData})
-	invalidPacket = types.NewPacket(0, sourceChain, destChain, relayChain, []string{port}, [][]byte{unknownPacketData})
+	packet               = types.NewPacket(srcChain, dstChain, 1, "sender", mockTransferData, mockCallData, "", 0)
+	invalidPacket        = types.NewPacket(srcChain, dstChain, 1, "sender", []byte(""), []byte(""), "", 0)
+	packetData, _        = packet.ABIPack()
+	invalidPacketData, _ = invalidPacket.ABIPack()
 
 	addr      = sdk.AccAddress("testaddr111111111111")
 	emptyAddr sdk.AccAddress
@@ -84,10 +85,10 @@ func (suite *TypesTestSuite) TestMsgRecvPacketValidateBasic() {
 		msg     *types.MsgRecvPacket
 		expPass bool
 	}{
-		{"success", types.NewMsgRecvPacket(packet, suite.proof, height, addr), true},
-		{"proof height is zero", types.NewMsgRecvPacket(packet, suite.proof, clienttypes.ZeroHeight(), addr), false},
-		{"missing signer address", types.NewMsgRecvPacket(packet, suite.proof, height, emptyAddr), false},
-		{"invalid packet", types.NewMsgRecvPacket(invalidPacket, suite.proof, height, addr), false},
+		{"success", types.NewMsgRecvPacket(packetData, suite.proof, height, addr), true},
+		{"proof height is zero", types.NewMsgRecvPacket(packetData, suite.proof, clienttypes.ZeroHeight(), addr), false},
+		{"missing signer address", types.NewMsgRecvPacket(packetData, suite.proof, height, emptyAddr), false},
+		{"invalid packet", types.NewMsgRecvPacket(invalidPacketData, suite.proof, height, addr), false},
 	}
 
 	for _, tc := range testCases {
@@ -102,7 +103,7 @@ func (suite *TypesTestSuite) TestMsgRecvPacketValidateBasic() {
 }
 
 func (suite *TypesTestSuite) TestMsgRecvPacketGetSigners() {
-	msg := types.NewMsgRecvPacket(packet, suite.proof, height, addr)
+	msg := types.NewMsgRecvPacket(packetData, suite.proof, height, addr)
 	res := msg.GetSigners()
 
 	expected := "[7465737461646472313131313131313131313131]"
@@ -115,11 +116,11 @@ func (suite *TypesTestSuite) TestMsgAcknowledgementValidateBasic() {
 		msg     *types.MsgAcknowledgement
 		expPass bool
 	}{
-		{"success", types.NewMsgAcknowledgement(packet, packet.GetDataList()[0], suite.proof, height, addr), true},
-		{"proof height must be > 0", types.NewMsgAcknowledgement(packet, packet.GetDataList()[0], suite.proof, clienttypes.ZeroHeight(), addr), false},
-		{"empty ack", types.NewMsgAcknowledgement(packet, nil, suite.proof, height, addr), false},
-		{"missing signer address", types.NewMsgAcknowledgement(packet, packet.GetDataList()[0], suite.proof, height, emptyAddr), false},
-		{"invalid packet", types.NewMsgAcknowledgement(invalidPacket, packet.GetDataList()[0], suite.proof, height, addr), false},
+		{"success", types.NewMsgAcknowledgement(packetData, mockAck, suite.proof, height, addr), true},
+		{"proof height must be > 0", types.NewMsgAcknowledgement(packetData, mockAck, suite.proof, clienttypes.ZeroHeight(), addr), false},
+		{"empty ack", types.NewMsgAcknowledgement(packetData, nil, suite.proof, height, addr), false},
+		{"missing signer address", types.NewMsgAcknowledgement(packetData, mockAck, suite.proof, height, emptyAddr), false},
+		{"invalid packet", types.NewMsgAcknowledgement(invalidPacketData, mockAck, suite.proof, height, addr), false},
 	}
 
 	for _, tc := range testCases {

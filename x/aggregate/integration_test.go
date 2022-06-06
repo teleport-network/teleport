@@ -10,7 +10,7 @@ import (
 	"github.com/ethereum/go-ethereum/crypto"
 
 	erc20contracts "github.com/teleport-network/teleport/syscontracts/erc20"
-	transfercontract "github.com/teleport-network/teleport/syscontracts/xibc_transfer"
+	endpointcontract "github.com/teleport-network/teleport/syscontracts/xibc_endpoint"
 	xibctesting "github.com/teleport-network/teleport/x/xibc/testing"
 )
 
@@ -33,7 +33,7 @@ func (suite *AggregateTestSuite) SetupTest() {
 
 func (suite *AggregateTestSuite) TestReBindToken() {
 	// deploy ERC20
-	erc20Address := suite.DeployERC20ByTransfer(suite.chainA)
+	erc20Address := suite.DeployERC20(suite.chainA)
 
 	// add erc20 trace
 	err := suite.chainA.App.AggregateKeeper.RegisterERC20Trace(
@@ -77,7 +77,7 @@ func (suite *AggregateTestSuite) TestReBindToken() {
 // ================================================================================================================
 // Functions for step
 // ================================================================================================================
-func (suite *AggregateTestSuite) DeployERC20ByTransfer(fromChain *xibctesting.TestChain) common.Address {
+func (suite *AggregateTestSuite) DeployERC20(fromChain *xibctesting.TestChain) common.Address {
 	ctorArgs, err := erc20contracts.ERC20MinterBurnerDecimalsContract.ABI.Pack("", "name", "symbol", uint8(18))
 	suite.Require().NoError(err)
 
@@ -85,10 +85,10 @@ func (suite *AggregateTestSuite) DeployERC20ByTransfer(fromChain *xibctesting.Te
 	copy(data[:len(erc20contracts.ERC20MinterBurnerDecimalsContract.Bin)], erc20contracts.ERC20MinterBurnerDecimalsContract.Bin)
 	copy(data[len(erc20contracts.ERC20MinterBurnerDecimalsContract.Bin):], ctorArgs)
 
-	nonce := fromChain.App.EvmKeeper.GetNonce(fromChain.GetContext(), transfercontract.TransferContractAddress)
-	contractAddr := crypto.CreateAddress(transfercontract.TransferContractAddress, nonce)
+	nonce := fromChain.App.EvmKeeper.GetNonce(fromChain.GetContext(), endpointcontract.EndpointContractAddress)
+	contractAddr := crypto.CreateAddress(endpointcontract.EndpointContractAddress, nonce)
 
-	res, err := fromChain.App.XIBCTransferKeeper.CallEVMWithData(fromChain.GetContext(), transfercontract.TransferContractAddress, nil, data)
+	res, err := fromChain.App.AggregateKeeper.CallEVMWithData(fromChain.GetContext(), endpointcontract.EndpointContractAddress, nil, data)
 	suite.Require().NoError(err)
 	suite.Require().False(res.Failed(), res.VmError)
 

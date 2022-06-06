@@ -13,7 +13,7 @@ var _ sdk.Msg = &MsgAcknowledgement{}
 // NewMsgRecvPacket constructs new MsgRecvPacket
 // nolint:interfacer
 func NewMsgRecvPacket(
-	packet Packet,
+	packet []byte,
 	proofCommitment []byte,
 	proofHeight clienttypes.Height,
 	signer sdk.AccAddress,
@@ -34,7 +34,12 @@ func (msg MsgRecvPacket) ValidateBasic() error {
 	if _, err := sdk.AccAddressFromBech32(msg.Signer); err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "string could not be parsed as address: %v", err)
 	}
-	return msg.Packet.ValidateBasic()
+	var packet Packet
+	err := packet.ABIDecode(msg.Packet)
+	if err != nil {
+		return sdkerrors.Wrapf(ErrDecodeAbi, "string could not be parsed as address: %v", err)
+	}
+	return packet.ValidateBasic()
 }
 
 // GetSigners implements sdk.Msg
@@ -49,7 +54,7 @@ func (msg MsgRecvPacket) GetSigners() []sdk.AccAddress {
 // NewMsgAcknowledgement constructs a new MsgAcknowledgement
 // nolint:interfacer
 func NewMsgAcknowledgement(
-	packet Packet,
+	packet []byte,
 	ack []byte,
 	proofAcked []byte,
 	proofHeight clienttypes.Height,
@@ -75,7 +80,12 @@ func (msg MsgAcknowledgement) ValidateBasic() error {
 	if _, err := sdk.AccAddressFromBech32(msg.Signer); err != nil {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "string could not be parsed as address: %v", err)
 	}
-	return msg.Packet.ValidateBasic()
+	var packet Packet
+	err := packet.ABIDecode(msg.Packet)
+	if err != nil {
+		return sdkerrors.Wrapf(ErrDecodeAbi, "string could not be parsed as address: %v", err)
+	}
+	return packet.ValidateBasic()
 }
 
 // GetSigners implements sdk.Msg

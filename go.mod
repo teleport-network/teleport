@@ -6,6 +6,7 @@ require (
 	github.com/armon/go-metrics v0.3.10
 	github.com/confio/ics23/go v0.7.0
 	github.com/cosmos/cosmos-sdk v0.45.2
+	github.com/cosmos/iavl v0.17.3
 	github.com/cosmos/ibc-go/v3 v3.0.0
 	github.com/edsrzf/mmap-go v1.1.0
 	github.com/ethereum/go-ethereum v1.10.16
@@ -23,9 +24,9 @@ require (
 	github.com/tendermint/tendermint v0.34.16
 	github.com/tendermint/tm-db v0.6.7
 	github.com/tharsis/ethermint v0.13.0
-	golang.org/x/crypto v0.0.0-20220411220226-7b82a4e95df4
-	google.golang.org/genproto v0.0.0-20220407144326-9054f6ed7bac
-	google.golang.org/grpc v1.45.0
+	golang.org/x/crypto v0.0.0-20220525230936-793ad666bf5e
+	google.golang.org/genproto v0.0.0-20220602131408-e326c6e8e9c8
+	google.golang.org/grpc v1.46.2
 	google.golang.org/protobuf v1.28.0
 )
 
@@ -49,7 +50,6 @@ require (
 	github.com/cosmos/btcutil v1.0.4 // indirect
 	github.com/cosmos/go-bip39 v1.0.0 // indirect
 	github.com/cosmos/gorocksdb v1.2.0 // indirect
-	github.com/cosmos/iavl v0.17.3 // indirect
 	github.com/cosmos/ledger-cosmos-go v0.11.1 // indirect
 	github.com/cosmos/ledger-go v0.9.2 // indirect
 	github.com/danieljoos/wincred v1.0.2 // indirect
@@ -144,7 +144,7 @@ require (
 	gopkg.in/natefinch/npipe.v2 v2.0.0-20160621034901-c1b8fa8bdcce // indirect
 	gopkg.in/olebedev/go-duktape.v3 v3.0.0-20200619000410-60c24ae608a6 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
-	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b // indirect
+	gopkg.in/yaml.v3 v3.0.0 // indirect
 	nhooyr.io/websocket v1.8.7 // indirect
 )
 
