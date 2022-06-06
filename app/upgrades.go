@@ -37,11 +37,11 @@ func (app *Teleport) registerUpgradeHandlers() {
 			DeprecatedAgentContractAddress := "0x0000000000000000000000000000000040000001"
 
 			// Delete deprecated xibc contracts account, code and state
-			app.EvmKeeper.DeleteAccount(ctx, common.HexToAddress(DeprecatedTransferContractAddress))
-			app.EvmKeeper.DeleteAccount(ctx, common.HexToAddress(DeprecatedRCCContractAddress))
-			app.EvmKeeper.DeleteAccount(ctx, common.HexToAddress(DeprecatedMultiCallContractAddress))
-			app.EvmKeeper.DeleteAccount(ctx, common.HexToAddress(DeprecatedAgentContractAddress))
-			app.EvmKeeper.DeleteAccount(ctx, common.HexToAddress(DeprecatedPacketContractAddress))
+			_ = app.EvmKeeper.DeleteAccount(ctx, common.HexToAddress(DeprecatedTransferContractAddress))
+			_ = app.EvmKeeper.DeleteAccount(ctx, common.HexToAddress(DeprecatedRCCContractAddress))
+			_ = app.EvmKeeper.DeleteAccount(ctx, common.HexToAddress(DeprecatedMultiCallContractAddress))
+			_ = app.EvmKeeper.DeleteAccount(ctx, common.HexToAddress(DeprecatedAgentContractAddress))
+			_ = app.EvmKeeper.DeleteAccount(ctx, common.HexToAddress(DeprecatedPacketContractAddress))
 
 			// Set new code
 			app.SetEVMCode(ctx, common.HexToAddress(syscontracts.AgentContractAddress), agentcontract.AgentContract.Bin)
