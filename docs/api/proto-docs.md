@@ -851,6 +851,7 @@ height.
 | `tss_address` | [string](#string) |  |  |
 | `pubkey` | [bytes](#bytes) |  |  |
 | `part_pubkeys` | [bytes](#bytes) | repeated |  |
+| `threshold` | [uint64](#uint64) |  |  |
 
 
 
@@ -878,6 +879,7 @@ ConsensusState defines the consensus state
 | `tss_address` | [string](#string) |  |  |
 | `pubkey` | [bytes](#bytes) |  |  |
 | `part_pubkeys` | [bytes](#bytes) | repeated |  |
+| `threshold` | [uint64](#uint64) |  |  |
 
 
 
