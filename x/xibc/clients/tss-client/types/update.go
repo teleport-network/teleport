@@ -26,5 +26,6 @@ func (cs ClientState) CheckHeaderAndUpdateState(
 	cs.TssAddress = tssHeader.TssAddress
 	cs.Pubkey = tssHeader.Pubkey
 	cs.PartPubkeys = tssHeader.PartPubkeys
+	cs.Threshold = tssHeader.Threshold
 	return &cs, nil, nil
 }
