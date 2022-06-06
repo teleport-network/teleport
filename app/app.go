@@ -114,6 +114,7 @@ import (
 	feemarkettypes "github.com/tharsis/ethermint/x/feemarket/types"
 
 	"github.com/teleport-network/teleport/adapter"
+	adbank "github.com/teleport-network/teleport/adapter/bank"
 	adgov "github.com/teleport-network/teleport/adapter/gov"
 	adstaking "github.com/teleport-network/teleport/adapter/staking"
 	_ "github.com/teleport-network/teleport/client/docs/statik"
@@ -399,20 +400,24 @@ func NewTeleport(
 	app.AccountKeeper = authkeeper.NewAccountKeeper(
 		appCodec, keys[authtypes.StoreKey], app.GetSubspace(authtypes.ModuleName), ethermint.ProtoAccount, maccPerms,
 	)
-	app.BankKeeper = bankkeeper.NewBaseKeeper(
+
+	bankKeeper := bankkeeper.NewBaseKeeper(
 		appCodec, keys[banktypes.StoreKey], app.AccountKeeper, app.GetSubspace(banktypes.ModuleName), app.BlockedAddrs(),
 	)
+	app.BankKeeper = bankKeeper
+
+	overwriteBankKeeper := adbank.NewOverwriteBankKeeper(bankKeeper)
+
 	stakingKeeper := stakingkeeper.NewKeeper(
-		appCodec, keys[stakingtypes.StoreKey], app.AccountKeeper, app.BankKeeper, app.GetSubspace(stakingtypes.ModuleName),
+		appCodec, keys[stakingtypes.StoreKey], app.AccountKeeper, overwriteBankKeeper, app.GetSubspace(stakingtypes.ModuleName),
 	)
 	app.DistrKeeper = distrkeeper.NewKeeper(
 		appCodec, keys[distrtypes.StoreKey], app.GetSubspace(distrtypes.ModuleName), app.AccountKeeper, app.BankKeeper,
 		&stakingKeeper, authtypes.FeeCollectorName, app.ModuleAccountAddrs(),
 	)
 
-	slashStakingKeeper := adstaking.NewSlashStakingKeeper(stakingKeeper, app.BankKeeper)
 	app.SlashingKeeper = slashingkeeper.NewKeeper(
-		appCodec, keys[slashingtypes.StoreKey], &slashStakingKeeper, app.GetSubspace(slashingtypes.ModuleName),
+		appCodec, keys[slashingtypes.StoreKey], &stakingKeeper, app.GetSubspace(slashingtypes.ModuleName),
 	)
 	app.CrisisKeeper = crisiskeeper.NewKeeper(
 		app.GetSubspace(crisistypes.ModuleName), invCheckPeriod, app.BankKeeper, authtypes.FeeCollectorName,
@@ -492,7 +497,7 @@ func NewTeleport(
 		keys[govtypes.StoreKey],
 		app.GetSubspace(govtypes.ModuleName),
 		app.AccountKeeper,
-		app.BankKeeper,
+		overwriteBankKeeper,
 		&stakingKeeper,
 		govRouter,
 	)
@@ -1025,7 +1030,7 @@ func initParamsKeeper(appCodec codec.BinaryCodec, legacyAmino *codec.LegacyAmino
 
 func GetStoreKeys() map[string]*sdk.KVStoreKey {
 	copyStoreKeys := make(map[string]*sdk.KVStoreKey)
-	for k,v := range keys {
+	for k, v := range keys {
 		storeKey := *v
 		copyStoreKeys[k] = &storeKey
 	}
