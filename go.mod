@@ -3,7 +3,7 @@ module github.com/teleport-network/teleport
 go 1.17
 
 require (
-	github.com/armon/go-metrics v0.3.10
+	github.com/armon/go-metrics v0.4.0
 	github.com/confio/ics23/go v0.7.0
 	github.com/cosmos/cosmos-sdk v0.45.2
 	github.com/cosmos/iavl v0.17.3
