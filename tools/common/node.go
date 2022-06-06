@@ -101,7 +101,6 @@ func (node *Node) isLeaf() bool {
 	return node.height == 0
 }
 
-
 // decodeBytes decodes a varint length-prefixed byte slice, returning it along with the number
 // of input bytes read.
 func decodeBytes(bz []byte) ([]byte, int, error) {

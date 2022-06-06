@@ -764,8 +764,8 @@ func NewTeleport(
 	}
 
 	app.SetAnteHandler(ante.NewAnteHandler(options))
-
 	app.SetEndBlocker(app.EndBlocker)
+	app.registerUpgradeHandlers()
 
 	if loadLatest {
 		if err := app.LoadLatestVersion(); err != nil {
@@ -1025,7 +1025,7 @@ func initParamsKeeper(appCodec codec.BinaryCodec, legacyAmino *codec.LegacyAmino
 
 func GetStoreKeys() map[string]*sdk.KVStoreKey {
 	copyStoreKeys := make(map[string]*sdk.KVStoreKey)
-	for k,v := range keys {
+	for k, v := range keys {
 		storeKey := *v
 		copyStoreKeys[k] = &storeKey
 	}
