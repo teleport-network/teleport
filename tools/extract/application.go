@@ -56,5 +56,3 @@ func CopyApplication(home string, targetHome string, storeKeys map[string]*sdk.K
 	}
 	return common.Commit(targetBatchSlice)
 }
-
-

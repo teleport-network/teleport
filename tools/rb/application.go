@@ -6,8 +6,9 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	gogotypes "github.com/gogo/protobuf/types"
-	"github.com/teleport-network/teleport/tools/common"
 	dbm "github.com/tendermint/tm-db"
+
+	"github.com/teleport-network/teleport/tools/common"
 )
 
 func RollbackApp(home string, storeKeys map[string]*sdk.KVStoreKey, height int64) error {
@@ -51,7 +52,6 @@ func deleteVersionsFrom(version int64, latestVersion int64, db *dbm.PrefixDB) er
 			return err
 		}
 	}
-
 
 	// Next, delete orphans:
 	// - Delete orphan entries *and referred nodes* with fromVersion >= version

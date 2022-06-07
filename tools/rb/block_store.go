@@ -2,6 +2,7 @@ package rb
 
 import (
 	"fmt"
+
 	"github.com/gogo/protobuf/proto"
 
 	tmstore "github.com/tendermint/tendermint/proto/tendermint/store"

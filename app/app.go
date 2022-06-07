@@ -769,8 +769,8 @@ func NewTeleport(
 	}
 
 	app.SetAnteHandler(ante.NewAnteHandler(options))
-
 	app.SetEndBlocker(app.EndBlocker)
+	app.registerUpgradeHandlers()
 
 	if loadLatest {
 		if err := app.LoadLatestVersion(); err != nil {

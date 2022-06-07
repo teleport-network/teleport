@@ -75,7 +75,7 @@ func restoreStateFromBlock(blockStoreDB dbm.DB, stateDB dbm.DB, rollbackHeight i
 
 	currentBlock := bs.LoadBlockMeta(rollbackHeight + 1)
 	if currentBlock == nil {
-		return -1, nil, fmt.Errorf("block at height %d not found", rollbackHeight + 1)
+		return -1, nil, fmt.Errorf("block at height %d not found", rollbackHeight+1)
 	}
 
 	lastValidatorSet, err := ss.LoadValidators(rollbackHeight)

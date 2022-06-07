@@ -2,7 +2,9 @@ package tools
 
 import (
 	"errors"
+
 	"github.com/spf13/cobra"
+
 	"github.com/teleport-network/teleport/tools/extract"
 	"github.com/teleport-network/teleport/tools/rb"
 
