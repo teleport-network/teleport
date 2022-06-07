@@ -38,8 +38,9 @@ func NewERC20Data(name, symbol string, decimals uint8) ERC20Data {
 
 // ERC20BindingResponse defines the bool value from the call response
 type BindingsResponse struct {
+	OriChain string
 	OriToken string
 	Amount   *big.Int
-	Bound    bool
 	Scale    uint8
+	Bound    bool
 }

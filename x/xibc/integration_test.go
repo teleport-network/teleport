@@ -701,7 +701,7 @@ func (suite *XIBCTestSuite) Bindings(
 	fromChain *xibctesting.TestChain,
 	tokenAddress common.Address,
 	oriChain string,
-) packettypes.InToken {
+) aggregatetypes.BindingsResponse {
 	res, err := fromChain.App.XIBCKeeper.PacketKeeper.CallEVM(
 		fromChain.GetContext(),
 		endpointcontract.EndpointContract.ABI,
@@ -712,7 +712,7 @@ func (suite *XIBCTestSuite) Bindings(
 	)
 	suite.Require().NoError(err)
 
-	var bind packettypes.InToken
+	var bind aggregatetypes.BindingsResponse
 	err = endpointcontract.EndpointContract.ABI.UnpackIntoInterface(&bind, "bindings", res.Ret)
 	suite.Require().NoError(err)
 
