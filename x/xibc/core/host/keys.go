@@ -30,8 +30,6 @@ const (
 	KeyConsensusStatePrefix   = "consensusStates"
 	KeySequencePrefix         = "sequences"
 	KeyNextSeqSendPrefix      = "nextSequenceSend"
-	KeyNextSeqRecvPrefix      = "nextSequenceRecv"
-	KeyNextSeqAckPrefix       = "nextSequenceAck"
 	KeyPacketCommitmentPrefix = "commitments"
 	KeyPacketRelayerPrefix    = "relayer"
 	KeyPacketAckPrefix        = "acks"

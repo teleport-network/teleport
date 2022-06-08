@@ -15,14 +15,6 @@ message GenesisState {
     (gogoproto.nullable) = false,
     (gogoproto.moretags) = "yaml:\"send_sequences\""
   ];
-  repeated PacketSequence recv_sequences = 5 [
-    (gogoproto.nullable) = false,
-    (gogoproto.moretags) = "yaml:\"recv_sequences\""
-  ];
-  repeated PacketSequence ack_sequences = 6 [
-    (gogoproto.nullable) = false,
-    (gogoproto.moretags) = "yaml:\"ack_sequences\""
-  ];
 }
 
 // PacketSequence defines the genesis type necessary to retrieve and store
