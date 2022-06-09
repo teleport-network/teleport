@@ -10,7 +10,7 @@ import (
 )
 
 const (
-	paramsIndex    = 205
+	paramsIndex    = 208
 	paramsLenght   = 32
 	rinkebyChainID = 4
 )

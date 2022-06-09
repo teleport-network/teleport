@@ -231,7 +231,6 @@ func NewTestChainWithAccount(t *testing.T, coord *Coordinator, chainID string, s
 	}
 	chain.App.XIBCKeeper.ClientKeeper.SetChainName(chain.GetContext(), chainID)
 	coord.CommitBlock(chain)
-
 	chain.SetPacketChainName()
 	return chain
 }
