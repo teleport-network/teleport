@@ -61,8 +61,6 @@ func DefaultGenesisState() GenesisState {
 		Receipts:         []PacketState{},
 		Commitments:      []PacketState{},
 		SendSequences:    []PacketSequence{},
-		RecvSequences:    []PacketSequence{},
-		AckSequences:     []PacketSequence{},
 	}
 }
 
@@ -96,18 +94,6 @@ func (gs GenesisState) Validate() error {
 	for i, ss := range gs.SendSequences {
 		if err := ss.Validate(); err != nil {
 			return fmt.Errorf("invalid send sequence %v index %d: %w", ss, i, err)
-		}
-	}
-
-	for i, rs := range gs.RecvSequences {
-		if err := rs.Validate(); err != nil {
-			return fmt.Errorf("invalid receive sequence %v index %d: %w", rs, i, err)
-		}
-	}
-
-	for i, as := range gs.AckSequences {
-		if err := as.Validate(); err != nil {
-			return fmt.Errorf("invalid acknowledgement sequence %v index %d: %w", as, i, err)
 		}
 	}
 
