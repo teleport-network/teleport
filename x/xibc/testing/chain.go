@@ -671,27 +671,6 @@ func (chain *TestChain) RegisterRelayer(chains []string, addresses []string) {
 	)
 }
 
-func (chain *TestChain) GetPacketChainName() {
-	packetContractAbi := packetcontract.PacketContract.ABI
-	res, err := chain.App.XIBCKeeper.PacketKeeper.CallEVM(
-		chain.GetContext(),
-		packetContractAbi,
-		packettypes.ModuleAddress,
-		packetcontract.PacketContractAddress,
-		"chainName",
-	)
-	if err != nil {
-		panic(err)
-	}
-	type Name struct {
-		ChainName string
-	}
-	var name Name
-	err = packetContractAbi.UnpackIntoInterface(&name, "chainName", res.Ret)
-
-	fmt.Println(name)
-}
-
 func (chain *TestChain) SetPacketChainName() {
 	packetContractAbi := packetcontract.PacketContract.ABI
 	if _, err := chain.App.XIBCKeeper.PacketKeeper.CallEVM(
