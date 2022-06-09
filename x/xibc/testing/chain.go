@@ -231,7 +231,6 @@ func NewTestChainWithAccount(t *testing.T, coord *Coordinator, chainID string, s
 	}
 	chain.App.XIBCKeeper.ClientKeeper.SetChainName(chain.GetContext(), chainID)
 	coord.CommitBlock(chain)
-
 	chain.SetPacketChainName()
 	return chain
 }
@@ -670,6 +669,27 @@ func (chain *TestChain) RegisterRelayer(chains []string, addresses []string) {
 		chains,
 		addresses,
 	)
+}
+
+func (chain *TestChain) GetPacketChainName() {
+	packetContractAbi := packetcontract.PacketContract.ABI
+	res, err := chain.App.XIBCKeeper.PacketKeeper.CallEVM(
+		chain.GetContext(),
+		packetContractAbi,
+		packettypes.ModuleAddress,
+		packetcontract.PacketContractAddress,
+		"chainName",
+	)
+	if err != nil {
+		panic(err)
+	}
+	type Name struct {
+		ChainName string
+	}
+	var name Name
+	err = packetContractAbi.UnpackIntoInterface(&name, "chainName", res.Ret)
+
+	fmt.Println(name)
 }
 
 func (chain *TestChain) SetPacketChainName() {

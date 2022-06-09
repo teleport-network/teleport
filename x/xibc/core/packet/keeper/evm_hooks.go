@@ -75,6 +75,7 @@ func (h Hooks) PostTxProcessing(
 			h.k.Logger(ctx).Error("failed to decode packet", "error", err.Error())
 			return err
 		}
+
 		// todo ? add data validate?
 		//var transferData types.TransferData
 		//if err = transferData.ABIDecode(packet.GetTransferData()); err != nil {
