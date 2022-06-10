@@ -15,16 +15,16 @@ func InitGenesis(ctx sdk.Context, k keeper.Keeper, gs types.GenesisState) {
 	}
 
 	for _, ack := range gs.Acknowledgements {
-		k.SetPacketAcknowledgement(ctx, ack.SourceChain, ack.DestinationChain, ack.Sequence, ack.Data)
+		k.SetPacketAcknowledgement(ctx, ack.SrcChain, ack.DstChain, ack.Sequence, ack.Data)
 	}
 	for _, commitment := range gs.Commitments {
-		k.SetPacketCommitment(ctx, commitment.SourceChain, commitment.DestinationChain, commitment.Sequence, commitment.Data)
+		k.SetPacketCommitment(ctx, commitment.SrcChain, commitment.DstChain, commitment.Sequence, commitment.Data)
 	}
 	for _, receipt := range gs.Receipts {
-		k.SetPacketReceipt(ctx, receipt.SourceChain, receipt.DestinationChain, receipt.Sequence)
+		k.SetPacketReceipt(ctx, receipt.SrcChain, receipt.DstChain, receipt.Sequence)
 	}
 	for _, ss := range gs.SendSequences {
-		k.SetNextSequenceSend(ctx, ss.SourceChain, ss.DestinationChain, ss.Sequence)
+		k.SetNextSequenceSend(ctx, ss.SrcChain, ss.DstChain, ss.Sequence)
 	}
 }
 
@@ -35,7 +35,5 @@ func ExportGenesis(ctx sdk.Context, k keeper.Keeper) types.GenesisState {
 		Commitments:      k.GetAllPacketCommitments(ctx),
 		Receipts:         k.GetAllPacketReceipts(ctx),
 		SendSequences:    k.GetAllPacketSendSeqs(ctx),
-		RecvSequences:    k.GetAllPacketRecvSeqs(ctx),
-		AckSequences:     k.GetAllPacketAckSeqs(ctx),
 	}
 }

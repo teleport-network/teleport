@@ -21,7 +21,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/client/grpc/tmservice"
 	"github.com/cosmos/cosmos-sdk/client/rpc"
 	"github.com/cosmos/cosmos-sdk/codec"
-	"github.com/cosmos/cosmos-sdk/codec/types"
+	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	"github.com/cosmos/cosmos-sdk/server/api"
 	"github.com/cosmos/cosmos-sdk/server/config"
 	servertypes "github.com/cosmos/cosmos-sdk/server/types"
@@ -114,18 +114,17 @@ import (
 	feemarkettypes "github.com/tharsis/ethermint/x/feemarket/types"
 
 	"github.com/teleport-network/teleport/adapter"
+	adbank "github.com/teleport-network/teleport/adapter/bank"
 	adgov "github.com/teleport-network/teleport/adapter/gov"
 	adstaking "github.com/teleport-network/teleport/adapter/staking"
 	_ "github.com/teleport-network/teleport/client/docs/statik"
 	gabci "github.com/teleport-network/teleport/grpc_abci"
 	syscontracts "github.com/teleport-network/teleport/syscontracts"
-	agentcontract "github.com/teleport-network/teleport/syscontracts/agent"
 	wtelecontract "github.com/teleport-network/teleport/syscontracts/wtele"
-	multicallcontract "github.com/teleport-network/teleport/syscontracts/xibc_multicall"
+	agentcontract "github.com/teleport-network/teleport/syscontracts/xibc_agent"
+	endpointcontract "github.com/teleport-network/teleport/syscontracts/xibc_endpoint"
 	packetcontract "github.com/teleport-network/teleport/syscontracts/xibc_packet"
-	rcccontract "github.com/teleport-network/teleport/syscontracts/xibc_rcc"
-	transfercontract "github.com/teleport-network/teleport/syscontracts/xibc_transfer"
-	teletypes "github.com/teleport-network/teleport/types"
+	"github.com/teleport-network/teleport/types"
 	"github.com/teleport-network/teleport/x/aggregate"
 	aggregateclient "github.com/teleport-network/teleport/x/aggregate/client"
 	aggregatekeeper "github.com/teleport-network/teleport/x/aggregate/keeper"
@@ -134,21 +133,11 @@ import (
 	rvestingkeeper "github.com/teleport-network/teleport/x/rvesting/keeper"
 	rvestingmodule "github.com/teleport-network/teleport/x/rvesting/module"
 	rvestingtypes "github.com/teleport-network/teleport/x/rvesting/types"
-	xibcmulticallkeeper "github.com/teleport-network/teleport/x/xibc/apps/multicall/keeper"
-	xibcmulticall "github.com/teleport-network/teleport/x/xibc/apps/multicall/module"
-	xibcmulticalltypes "github.com/teleport-network/teleport/x/xibc/apps/multicall/types"
-	xibcrcckeeper "github.com/teleport-network/teleport/x/xibc/apps/rcc/keeper"
-	xibcrcc "github.com/teleport-network/teleport/x/xibc/apps/rcc/module"
-	xibcrcctypes "github.com/teleport-network/teleport/x/xibc/apps/rcc/types"
-	xibctransferkeeper "github.com/teleport-network/teleport/x/xibc/apps/transfer/keeper"
-	xibctransfer "github.com/teleport-network/teleport/x/xibc/apps/transfer/module"
-	xibctransfertypes "github.com/teleport-network/teleport/x/xibc/apps/transfer/types"
 	xibcclient "github.com/teleport-network/teleport/x/xibc/core/client"
 	xibcclientcli "github.com/teleport-network/teleport/x/xibc/core/client/client"
 	xibcclienttypes "github.com/teleport-network/teleport/x/xibc/core/client/types"
 	xibchost "github.com/teleport-network/teleport/x/xibc/core/host"
 	xibcpackettypes "github.com/teleport-network/teleport/x/xibc/core/packet/types"
-	xibcroutingtypes "github.com/teleport-network/teleport/x/xibc/core/routing/types"
 	xibckeeper "github.com/teleport-network/teleport/x/xibc/keeper"
 	xibcmodule "github.com/teleport-network/teleport/x/xibc/module"
 )
@@ -161,7 +150,7 @@ func init() {
 
 	DefaultNodeHome = filepath.Join(userHomeDir, ".teleport")
 
-	sdk.DefaultPowerReduction = teletypes.PowerReduction
+	sdk.DefaultPowerReduction = types.PowerReduction
 }
 
 // Name defines the application binary name
@@ -219,9 +208,6 @@ var (
 		evm.AppModuleBasic{},
 		aggregatemodule.AppModuleBasic{},
 		xibcmodule.AppModuleBasic{},
-		xibctransfer.AppModuleBasic{},
-		xibcrcc.AppModuleBasic{},
-		xibcmulticall.AppModuleBasic{},
 		rvestingmodule.AppModuleBasic{},
 	)
 
@@ -235,8 +221,6 @@ var (
 		ibctransfertypes.ModuleName:    {authtypes.Minter, authtypes.Burner},
 		evmtypes.ModuleName:            {authtypes.Minter, authtypes.Burner}, // used for secure addition and subtraction of balance using module account
 		xibcpackettypes.SubModuleName:  nil,
-		xibctransfertypes.ModuleName:   nil,
-		xibcrcctypes.ModuleName:        nil,
 		aggregatetypes.ModuleName:      {authtypes.Minter, authtypes.Burner},
 		icatypes.ModuleName:            nil,
 		rvestingtypes.ModuleName:       nil,
@@ -246,6 +230,34 @@ var (
 	allowedReceivingModAcc = map[string]bool{
 		distrtypes.ModuleName: true,
 	}
+
+	keys = sdk.NewKVStoreKeys(
+		// SDK keys
+		authtypes.StoreKey,
+		banktypes.StoreKey,
+		stakingtypes.StoreKey,
+		distrtypes.StoreKey,
+		slashingtypes.StoreKey,
+		govtypes.StoreKey,
+		paramstypes.StoreKey,
+		upgradetypes.StoreKey,
+		evidencetypes.StoreKey,
+		capabilitytypes.StoreKey,
+		feegrant.StoreKey,
+		authzkeeper.StoreKey,
+		// ibc keys
+		ibchost.StoreKey,
+		ibctransfertypes.StoreKey,
+		icacontrollertypes.StoreKey,
+		icahosttypes.StoreKey,
+		// xibc keys
+		xibchost.StoreKey,
+		// ethermint keys
+		evmtypes.StoreKey,
+		feemarkettypes.StoreKey,
+		// teleport keys
+		aggregatetypes.StoreKey,
+	)
 )
 
 var (
@@ -264,7 +276,7 @@ type Teleport struct {
 
 	// encoding
 	appCodec          codec.Codec
-	interfaceRegistry types.InterfaceRegistry
+	interfaceRegistry codectypes.InterfaceRegistry
 
 	invCheckPeriod uint
 
@@ -288,10 +300,7 @@ type Teleport struct {
 	AuthzKeeper         authzkeeper.Keeper
 	IBCKeeper           *ibckeeper.Keeper // IBC Keeper must be a pointer in the app, so we can SetRouter on it correctly
 	IBCTransferKeeper   ibctransferkeeper.Keeper
-	XIBCKeeper          *xibckeeper.Keeper // XIBC Keeper must be a pointer in the app, so we can SetRouter on it correctly
-	XIBCTransferKeeper  xibctransferkeeper.Keeper
-	XIBCRCCKeeper       xibcrcckeeper.Keeper
-	XIBCMultiCallKeeper xibcmulticallkeeper.Keeper
+	XIBCKeeper          *xibckeeper.Keeper
 	EvidenceKeeper      evidencekeeper.Keeper
 	ICAControllerKeeper icacontrollerkeeper.Keeper
 	ICAHostKeeper       icahostkeeper.Keeper
@@ -302,9 +311,6 @@ type Teleport struct {
 
 	// make scoped keepers public for test purposes
 	ScopedXIBCKeeper          capabilitykeeper.ScopedKeeper
-	ScopedXIBCTransferKeeper  capabilitykeeper.ScopedKeeper
-	ScopedXIBCRCCKeeper       capabilitykeeper.ScopedKeeper
-	ScopedXIBCMultiCallKeeper capabilitykeeper.ScopedKeeper
 	ScopedICAControllerKeeper capabilitykeeper.ScopedKeeper
 	ScopedICAHostKeeper       capabilitykeeper.ScopedKeeper
 
@@ -357,34 +363,6 @@ func NewTeleport(
 	bApp.SetVersion(version.Version)
 	bApp.SetInterfaceRegistry(interfaceRegistry)
 
-	keys := sdk.NewKVStoreKeys(
-		// SDK keys
-		authtypes.StoreKey,
-		banktypes.StoreKey,
-		stakingtypes.StoreKey,
-		distrtypes.StoreKey,
-		slashingtypes.StoreKey,
-		govtypes.StoreKey,
-		paramstypes.StoreKey,
-		upgradetypes.StoreKey,
-		evidencetypes.StoreKey,
-		capabilitytypes.StoreKey,
-		feegrant.StoreKey,
-		authzkeeper.StoreKey,
-		// ibc keys
-		ibchost.StoreKey,
-		ibctransfertypes.StoreKey,
-		icacontrollertypes.StoreKey,
-		icahosttypes.StoreKey,
-		// xibc keys
-		xibchost.StoreKey,
-		// ethermint keys
-		evmtypes.StoreKey,
-		feemarkettypes.StoreKey,
-		// teleport keys
-		aggregatetypes.StoreKey,
-	)
-
 	// Add the EVM transient store key
 	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey, evmtypes.TransientKey)
 	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
@@ -413,9 +391,6 @@ func NewTeleport(
 	scopedICAHostKeeper := app.CapabilityKeeper.ScopeToModule(icahosttypes.SubModuleName)
 
 	scopedXIBCKeeper := app.CapabilityKeeper.ScopeToModule(xibchost.ModuleName)
-	scopedXIBCTransferKeeper := app.CapabilityKeeper.ScopeToModule(xibctransfertypes.ModuleName)
-	scopedXIBCRCCKeeper := app.CapabilityKeeper.ScopeToModule(xibcrcctypes.ModuleName)
-	scopedXIBCMultiCallKeeper := app.CapabilityKeeper.ScopeToModule(xibcmulticalltypes.ModuleName)
 
 	// Applications that wish to enforce statically created ScopedKeepers should call `Seal` after creating
 	// their scoped modules in `NewApp` with `ScopeToModule`
@@ -425,16 +400,22 @@ func NewTeleport(
 	app.AccountKeeper = authkeeper.NewAccountKeeper(
 		appCodec, keys[authtypes.StoreKey], app.GetSubspace(authtypes.ModuleName), ethermint.ProtoAccount, maccPerms,
 	)
-	app.BankKeeper = bankkeeper.NewBaseKeeper(
+
+	bankKeeper := bankkeeper.NewBaseKeeper(
 		appCodec, keys[banktypes.StoreKey], app.AccountKeeper, app.GetSubspace(banktypes.ModuleName), app.BlockedAddrs(),
 	)
+	app.BankKeeper = bankKeeper
+
+	overwriteBankKeeper := adbank.NewOverwriteBankKeeper(bankKeeper)
+
 	stakingKeeper := stakingkeeper.NewKeeper(
-		appCodec, keys[stakingtypes.StoreKey], app.AccountKeeper, app.BankKeeper, app.GetSubspace(stakingtypes.ModuleName),
+		appCodec, keys[stakingtypes.StoreKey], app.AccountKeeper, overwriteBankKeeper, app.GetSubspace(stakingtypes.ModuleName),
 	)
 	app.DistrKeeper = distrkeeper.NewKeeper(
 		appCodec, keys[distrtypes.StoreKey], app.GetSubspace(distrtypes.ModuleName), app.AccountKeeper, app.BankKeeper,
 		&stakingKeeper, authtypes.FeeCollectorName, app.ModuleAccountAddrs(),
 	)
+
 	app.SlashingKeeper = slashingkeeper.NewKeeper(
 		appCodec, keys[slashingtypes.StoreKey], &stakingKeeper, app.GetSubspace(slashingtypes.ModuleName),
 	)
@@ -516,7 +497,7 @@ func NewTeleport(
 		keys[govtypes.StoreKey],
 		app.GetSubspace(govtypes.ModuleName),
 		app.AccountKeeper,
-		app.BankKeeper,
+		overwriteBankKeeper,
 		&stakingKeeper,
 		govRouter,
 	)
@@ -578,39 +559,6 @@ func NewTeleport(
 		AddRoute(icahosttypes.SubModuleName, icaHostIBCModule)
 	app.IBCKeeper.SetRouter(ibcRouter)
 
-	// Create XIBC Transfer Keeper
-	app.XIBCTransferKeeper = xibctransferkeeper.NewKeeper(
-		appCodec,
-		app.AccountKeeper,
-		app.XIBCKeeper.PacketKeeper,
-		app.XIBCKeeper.ClientKeeper,
-		app.EvmKeeper,
-	)
-	xibcTransferModule := xibctransfer.NewAppModule(app.XIBCTransferKeeper, app.AccountKeeper)
-
-	// Create XIBC RCC Keeper
-	app.XIBCRCCKeeper = xibcrcckeeper.NewKeeper(
-		appCodec,
-		app.AccountKeeper,
-		app.XIBCKeeper.PacketKeeper,
-		app.XIBCKeeper.ClientKeeper,
-		app.EvmKeeper,
-	)
-	xibcRCCModule := xibcrcc.NewAppModule(app.XIBCRCCKeeper, app.AccountKeeper)
-
-	// Create XIBC MultiCall Keeper
-	app.XIBCMultiCallKeeper = xibcmulticallkeeper.NewKeeper(
-		app.XIBCKeeper.PacketKeeper,
-		app.XIBCKeeper.ClientKeeper,
-		app.AggregateKeeper,
-	)
-	xibcMultiCallModule := xibcmulticall.NewAppModule(app.XIBCMultiCallKeeper)
-
-	xibcRouter := xibcroutingtypes.NewRouter()
-	xibcRouter.AddRoute(xibctransfertypes.PortID, xibcTransferModule)
-	xibcRouter.AddRoute(xibcrcctypes.PortID, xibcRCCModule)
-	app.XIBCKeeper.SetRouter(xibcRouter)
-
 	// create evidence keeper with router
 	evidenceKeeper := evidencekeeper.NewKeeper(
 		appCodec,
@@ -652,9 +600,6 @@ func NewTeleport(
 		icaModule,
 		// xibc modules
 		xibcmodule.NewAppModule(app.XIBCKeeper),
-		xibcTransferModule,
-		xibcRCCModule,
-		xibcMultiCallModule,
 		// Ethermint app modules
 		evm.NewAppModule(app.EvmKeeper, app.AccountKeeper),
 		feemarket.NewAppModule(app.FeeMarketKeeper),
@@ -694,9 +639,6 @@ func NewTeleport(
 		paramstypes.ModuleName,
 		vestingtypes.ModuleName,
 		aggregatetypes.ModuleName,
-		xibctransfertypes.ModuleName,
-		xibcrcctypes.ModuleName,
-		xibcmulticalltypes.ModuleName,
 	)
 
 	// NOTE: fee market module must go last in order to retrieve the block gas used.
@@ -724,9 +666,6 @@ func NewTeleport(
 		upgradetypes.ModuleName,
 		vestingtypes.ModuleName,
 		aggregatetypes.ModuleName,
-		xibctransfertypes.ModuleName,
-		xibcrcctypes.ModuleName,
-		xibcmulticalltypes.ModuleName,
 		rvestingtypes.ModuleName,
 	)
 
@@ -760,9 +699,6 @@ func NewTeleport(
 		// teleport modules
 		aggregatetypes.ModuleName,
 		xibchost.ModuleName,
-		xibctransfertypes.ModuleName,
-		xibcrcctypes.ModuleName,
-		xibcmulticalltypes.ModuleName,
 		rvestingtypes.ModuleName,
 		// NOTE: crisis module must go at the end to check for invariants on each module
 		crisistypes.ModuleName,
@@ -800,9 +736,6 @@ func NewTeleport(
 		ibc.NewAppModule(app.IBCKeeper),
 		ibcTransferModule,
 		xibcmodule.NewAppModule(app.XIBCKeeper),
-		xibcTransferModule,
-		xibcRCCModule,
-		xibcMultiCallModule,
 		evm.NewAppModule(app.EvmKeeper, app.AccountKeeper),
 		feemarket.NewAppModule(app.FeeMarketKeeper),
 		//rvesting.NewAppModule(app.RVestingKeeper), todo to be implemented
@@ -836,8 +769,8 @@ func NewTeleport(
 	}
 
 	app.SetAnteHandler(ante.NewAnteHandler(options))
-
 	app.SetEndBlocker(app.EndBlocker)
+	app.registerUpgradeHandlers()
 
 	if loadLatest {
 		if err := app.LoadLatestVersion(); err != nil {
@@ -851,18 +784,13 @@ func NewTeleport(
 	app.ScopedICAHostKeeper = scopedICAHostKeeper
 
 	app.ScopedXIBCKeeper = scopedXIBCKeeper
-	app.ScopedXIBCTransferKeeper = scopedXIBCTransferKeeper
-	app.ScopedXIBCRCCKeeper = scopedXIBCRCCKeeper
-	app.ScopedXIBCMultiCallKeeper = scopedXIBCMultiCallKeeper
 
 	app.EvmKeeper.SetHooks(
 		evmkeeper.NewMultiEvmHooks(
 			stakingHook,
 			govHook,
 			app.AggregateKeeper.Hooks(),
-			app.XIBCTransferKeeper.Hooks(),
-			app.XIBCRCCKeeper.Hooks(),
-			app.XIBCMultiCallKeeper.Hooks(),
+			app.XIBCKeeper.PacketKeeper.Hooks(),
 		),
 	)
 	return app
@@ -901,12 +829,11 @@ func (app *Teleport) InitChainer(ctx sdk.Context, req abci.RequestInitChain) abc
 		panic(err)
 	}
 
-	app.SetEVMCode(ctx, common.HexToAddress(syscontracts.TransferContractAddress), transfercontract.TransferContract.Bin)
-	app.SetEVMCode(ctx, common.HexToAddress(syscontracts.RCCContractAddress), rcccontract.RCCContract.Bin)
-	app.SetEVMCode(ctx, common.HexToAddress(syscontracts.MultiCallContractAddress), multicallcontract.MultiCallContract.Bin)
 	app.SetEVMCode(ctx, common.HexToAddress(syscontracts.WTELEContractAddress), wtelecontract.WTELEContract.Bin)
 	app.SetEVMCode(ctx, common.HexToAddress(syscontracts.AgentContractAddress), agentcontract.AgentContract.Bin)
 	app.SetEVMCode(ctx, common.HexToAddress(syscontracts.PacketContractAddress), packetcontract.PacketContract.Bin)
+	app.SetEVMCode(ctx, common.HexToAddress(syscontracts.EndpointContractAddress), endpointcontract.EndpointContract.Bin)
+	app.SetEVMCode(ctx, common.HexToAddress(syscontracts.ExecuteContractAddress), endpointcontract.ExecuteContract.Bin)
 
 	return res
 }
@@ -965,7 +892,7 @@ func (app *Teleport) AppCodec() codec.Codec {
 }
 
 // InterfaceRegistry returns Teleport's InterfaceRegistry
-func (app *Teleport) InterfaceRegistry() types.InterfaceRegistry {
+func (app *Teleport) InterfaceRegistry() codectypes.InterfaceRegistry {
 	return app.interfaceRegistry
 }
 
@@ -1107,4 +1034,13 @@ func initParamsKeeper(appCodec codec.BinaryCodec, legacyAmino *codec.LegacyAmino
 	paramsKeeper.Subspace(aggregatetypes.ModuleName)
 	paramsKeeper.Subspace(rvestingtypes.ModuleName)
 	return paramsKeeper
+}
+
+func GetStoreKeys() map[string]*sdk.KVStoreKey {
+	copyStoreKeys := make(map[string]*sdk.KVStoreKey)
+	for k, v := range keys {
+		storeKey := *v
+		copyStoreKeys[k] = &storeKey
+	}
+	return copyStoreKeys
 }

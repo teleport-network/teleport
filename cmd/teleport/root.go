@@ -38,6 +38,7 @@ import (
 	servercfg "github.com/tharsis/ethermint/server/config"
 
 	"github.com/teleport-network/teleport/app"
+	"github.com/teleport-network/teleport/tools"
 	"github.com/teleport-network/teleport/types"
 )
 
@@ -110,6 +111,9 @@ func NewRootCmd() (*cobra.Command, params.EncodingConfig) {
 		NewTestnetCmd(app.ModuleBasics, banktypes.GenesisBalancesIterator{}),
 		AddIBCDenomCommand(debug.Cmd()),
 		config.Cmd(),
+		tools.NewRollbackCmd(app.GetStoreKeys()),
+		tools.NewExtractLatestVersionAppCmd(app.GetStoreKeys()),
+		tools.NewExtractLatestVersionBlockCmd(),
 	)
 
 	a := appCreator{encodingConfig}

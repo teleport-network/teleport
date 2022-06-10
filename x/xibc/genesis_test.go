@@ -2,9 +2,6 @@ package xibc_test
 
 import (
 	"fmt"
-	"testing"
-
-	"github.com/stretchr/testify/suite"
 
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 
@@ -15,37 +12,11 @@ import (
 	xibctmtypes "github.com/teleport-network/teleport/x/xibc/clients/light-clients/tendermint/types"
 	clienttypes "github.com/teleport-network/teleport/x/xibc/core/client/types"
 	commitmenttypes "github.com/teleport-network/teleport/x/xibc/core/commitment/types"
+	"github.com/teleport-network/teleport/x/xibc/core/host"
+	packettypes "github.com/teleport-network/teleport/x/xibc/core/packet/types"
 	xibctesting "github.com/teleport-network/teleport/x/xibc/testing"
 	"github.com/teleport-network/teleport/x/xibc/types"
 )
-
-const (
-	chainName  = "tendermint-0"
-	chainName2 = "tendermin-1"
-)
-
-var clientHeight = clienttypes.NewHeight(0, 10)
-
-type XIBCTestSuite struct {
-	suite.Suite
-
-	coordinator *xibctesting.Coordinator
-
-	chainA *xibctesting.TestChain
-	chainB *xibctesting.TestChain
-}
-
-// SetupTest creates a coordinator with 2 test chains.
-func (suite *XIBCTestSuite) SetupTest() {
-	suite.coordinator = xibctesting.NewCoordinator(suite.T(), 2)
-
-	suite.chainA = suite.coordinator.GetChain(xibctesting.GetChainID(0))
-	suite.chainB = suite.coordinator.GetChain(xibctesting.GetChainID(1))
-}
-
-func TestXIBCTestSuite(t *testing.T) {
-	suite.Run(t, new(XIBCTestSuite))
-}
 
 func (suite *XIBCTestSuite) TestValidateGenesis() {
 	header := suite.chainA.CreateTMClientHeader(
@@ -250,4 +221,94 @@ func (suite *XIBCTestSuite) TestExportGenesis() {
 			})
 		})
 	}
+}
+
+func (suite *XIBCTestSuite) TestResetStates() {
+	header := suite.chainA.CreateTMClientHeader(
+		suite.chainA.ChainID, suite.chainA.CurrentHeader.Height,
+		clienttypes.NewHeight(0, uint64(suite.chainA.CurrentHeader.Height-1)),
+		suite.chainA.CurrentHeader.Time, suite.chainA.Vals,
+		suite.chainA.Vals, suite.chainA.Signers,
+	)
+
+	packetStates := []packettypes.PacketState{{
+		SrcChain: chainName,
+		DstChain: chainName2,
+		Sequence: 1,
+		Data:     []byte{0x01},
+	}}
+
+	packetSequences := []packettypes.PacketSequence{{
+		SrcChain: chainName,
+		DstChain: chainName2,
+		Sequence: 1,
+	}}
+
+	genState := &types.GenesisState{
+		ClientGenesis: clienttypes.NewGenesisState(
+			[]clienttypes.IdentifiedClientState{
+				clienttypes.NewIdentifiedClientState(
+					chainName, xibctmtypes.NewClientState(
+						suite.chainA.ChainID, xibctmtypes.DefaultTrustLevel,
+						xibctesting.TrustingPeriod, xibctesting.UnbondingPeriod,
+						xibctesting.MaxClockDrift, clientHeight,
+						commitmenttypes.GetSDKSpecs(), xibctesting.Prefix, 0,
+					),
+				),
+			},
+			[]clienttypes.ClientConsensusStates{
+				clienttypes.NewClientConsensusStates(
+					chainName,
+					[]clienttypes.ConsensusStateWithHeight{
+						clienttypes.NewConsensusStateWithHeight(
+							header.GetHeight().(clienttypes.Height),
+							xibctmtypes.NewConsensusState(
+								header.GetTime(), header.Header.AppHash, header.Header.NextValidatorsHash,
+							),
+						),
+					},
+				),
+			},
+			[]clienttypes.IdentifiedGenesisMetadata{
+				clienttypes.NewIdentifiedGenesisMetadata(
+					chainName,
+					[]clienttypes.GenesisMetadata{
+						clienttypes.NewGenesisMetadata([]byte("consensusStates/1/processedTime"), []byte("val1")),
+						clienttypes.NewGenesisMetadata([]byte("consensusStates/2/processedTime"), []byte("val2")),
+					},
+				),
+			},
+			chainName2,
+		),
+		PacketGenesis: packettypes.NewGenesisState(packetStates, packetStates, packetStates, packetSequences),
+	}
+
+	teleport := app.Setup(false, nil)
+	ctx := teleport.BaseApp.NewContext(false, tmproto.Header{Height: 1})
+	xibc.InitGenesis(ctx, *teleport.XIBCKeeper, true, genState)
+
+	exportedGenesis := xibc.ExportGenesis(ctx, *teleport.XIBCKeeper)
+
+	suite.Require().Len(exportedGenesis.ClientGenesis.Clients, 1)
+	suite.Require().Len(exportedGenesis.ClientGenesis.ClientsConsensus, 1)
+	suite.Require().Len(exportedGenesis.ClientGenesis.ClientsMetadata, 1)
+	suite.Require().Equal(exportedGenesis.ClientGenesis.NativeChainName, chainName2)
+
+	suite.Require().Len(exportedGenesis.PacketGenesis.Commitments, 1)
+	suite.Require().Len(exportedGenesis.PacketGenesis.Receipts, 1)
+	suite.Require().Len(exportedGenesis.PacketGenesis.Acknowledgements, 1)
+	suite.Require().Len(exportedGenesis.PacketGenesis.SendSequences, 1)
+
+	xibc.ResetStates(ctx, teleport.GetKey(host.StoreKey), *teleport.XIBCKeeper)
+	exportedGenesis = xibc.ExportGenesis(ctx, *teleport.XIBCKeeper)
+
+	suite.Require().Len(exportedGenesis.ClientGenesis.Clients, 0)
+	suite.Require().Len(exportedGenesis.ClientGenesis.ClientsConsensus, 0)
+	suite.Require().Len(exportedGenesis.ClientGenesis.ClientsMetadata, 0)
+	suite.Require().Equal(exportedGenesis.ClientGenesis.NativeChainName, chainName2)
+
+	suite.Require().Len(exportedGenesis.PacketGenesis.Commitments, 0)
+	suite.Require().Len(exportedGenesis.PacketGenesis.Receipts, 0)
+	suite.Require().Len(exportedGenesis.PacketGenesis.Acknowledgements, 0)
+	suite.Require().Len(exportedGenesis.PacketGenesis.SendSequences, 0)
 }

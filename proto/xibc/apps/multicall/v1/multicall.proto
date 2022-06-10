@@ -1,7 +1,0 @@
-syntax = "proto3";
-
-package xibc.apps.multicall.v1;
-
-option go_package = "github.com/teleport-network/teleport/x/xibc/apps/multicall/types";
-
-import "gogoproto/gogo.proto";

@@ -12,25 +12,26 @@ import (
 )
 
 func TestCommitPacket(t *testing.T) {
-	packet := types.NewPacket(1, sourceChain, destChain, relayChain, []string{port}, [][]byte{validPacketData})
+	packet := types.NewPacket(srcChain, dstChain, 1, "sender", mockTransferData, mockCallData, "", 0)
 
 	registry := codectypes.NewInterfaceRegistry()
 	clienttypes.RegisterInterfaces(registry)
 	types.RegisterInterfaces(registry)
 
-	commitment := types.CommitPacket(&packet)
+	commitment, err := types.CommitPacket(packet)
+	require.NoError(t, err)
 	require.NotNil(t, commitment)
 }
 
 func TestPacketValidateBasic(t *testing.T) {
 	testCases := []struct {
-		packet  types.Packet
+		packet  *types.Packet
 		expPass bool
 		errMsg  string
 	}{
-		{types.NewPacket(1, sourceChain, destChain, relayChain, []string{port}, [][]byte{validPacketData}), true, ""},
-		{types.NewPacket(0, sourceChain, destChain, relayChain, []string{port}, [][]byte{validPacketData}), false, "invalid sequence"},
-		{types.NewPacket(1, sourceChain, destChain, relayChain, []string{port}, [][]byte{unknownPacketData}), true, ""},
+		{types.NewPacket(srcChain, dstChain, 1, "sender", mockTransferData, mockCallData, "", 0), true, ""},
+		{types.NewPacket(srcChain, dstChain, 0, "sender", mockTransferData, mockCallData, "", 0), false, "invalid sequence"},
+		{types.NewPacket(srcChain, dstChain, 1, "sender", []byte(""), mockCallData, "", 0), true, ""},
 	}
 
 	for i, tc := range testCases {

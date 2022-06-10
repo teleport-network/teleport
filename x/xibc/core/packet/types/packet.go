@@ -17,16 +17,13 @@ import (
 // sha256_hash(timeout_timestamp + timeout_height.RevisionNumber + timeout_height.RevisionHeight + sha256_hash(port + data))
 // from a given packet. This results in a fixed length preimage.
 // NOTE: sdk.Uint64ToBigEndian sets the uint64 to a slice of length 8.
-func CommitPacket(packet exported.PacketI) []byte {
-	var dataSum []byte
-	for i, data := range packet.GetDataList() {
-		dataHash := sha256.Sum256(
-			append([]byte(packet.GetPorts()[i]), data...),
-		)
-		dataSum = append(dataSum, dataHash[:]...)
+func CommitPacket(packet exported.PacketI) ([]byte, error) {
+	packeBytes, err := packet.ABIPack()
+	if err != nil {
+		return nil, err
 	}
-	hash := sha256.Sum256(dataSum)
-	return hash[:]
+	hash := sha256.Sum256(packeBytes)
+	return hash[:], nil
 }
 
 // CommitAcknowledgement returns the hash of commitment bytes
@@ -41,94 +38,110 @@ var ModuleCdc = codec.NewProtoCodec(codectypes.NewInterfaceRegistry())
 
 // NewPacket creates a new Packet instance. It panics if the provided packet data interface is not registered.
 func NewPacket(
+	srcChain string,
+	dstChain string,
 	sequence uint64,
-	sourceChain string,
-	destinationChain string,
-	relayChain string,
-	ports []string,
-	dataList [][]byte,
-) Packet {
-	return Packet{
-		Sequence:         sequence,
-		SourceChain:      sourceChain,
-		DestinationChain: destinationChain,
-		RelayChain:       relayChain,
-		Ports:            ports,
-		DataList:         dataList,
+	sender string,
+	transferData []byte,
+	callData []byte,
+	callbackAddress string,
+	feeOption uint64,
+) *Packet {
+	return &Packet{
+		SrcChain:        srcChain,
+		DstChain:        dstChain,
+		Sequence:        sequence,
+		Sender:          sender,
+		TransferData:    transferData,
+		CallData:        callData,
+		CallbackAddress: callbackAddress,
+		FeeOption:       feeOption,
 	}
 }
 
 // GetSequence implements PacketI interface
 func (p Packet) GetSequence() uint64 { return p.Sequence }
 
-// GetSourceChain implements PacketI interface
-func (p Packet) GetSourceChain() string { return p.SourceChain }
+// GetSrcChain implements PacketI interface
+func (p Packet) GetSrcChain() string { return p.SrcChain }
 
-// GetDestinationChain implements PacketI interface
-func (p Packet) GetDestChain() string { return p.DestinationChain }
+// GetDstChain implements PacketI interface
+func (p Packet) GetDstChain() string { return p.DstChain }
 
 // GetRelayChain implements PacketI interface
-func (p Packet) GetRelayChain() string { return p.RelayChain }
+func (p Packet) GetSender() string { return p.Sender }
 
-// GetPorts implements PacketI interface
-func (p Packet) GetPorts() []string { return p.Ports }
+// GetTransferData implements PacketI interface
+func (p Packet) GetTransferData() []byte { return p.TransferData }
 
-// GetDataList implements PacketI interface
-func (p Packet) GetDataList() [][]byte { return p.DataList }
+// GetCallData implements PacketI interface
+func (p Packet) GetCallData() []byte { return p.CallData }
+
+// GetCallbackAddress implements PacketI interface
+func (p Packet) GetCallbackAddress() string { return p.CallbackAddress }
+
+// GetFeeOption implements PacketI interface
+func (p Packet) GetFeeOption() uint64 { return p.FeeOption }
+
+// ABIPack implements PacketI interface
+func (p Packet) ABIPack() ([]byte, error) {
+	pack, err := abi.Arguments{{Type: TuplePacketData}}.Pack(p)
+	if err != nil {
+		return nil, err
+	}
+	return pack, nil
+}
+
+// ABIDecode implements PacketI interface
+func (p *Packet) ABIDecode(bz []byte) error {
+	dataBz, err := abi.Arguments{{Type: TuplePacketData}}.Unpack(bz)
+	if err != nil {
+		return err
+	}
+	bzTmp, err := json.Marshal(dataBz[0])
+	if err != nil {
+		return err
+	}
+	return json.Unmarshal(bzTmp, &p)
+}
 
 // ValidateBasic implements PacketI interface
 func (p Packet) ValidateBasic() error {
-	if len(p.SourceChain) == 0 {
+	if len(p.SrcChain) == 0 {
 		return sdkerrors.Wrap(ErrInvalidSrcChain, "srcChain is empty")
 	}
 
-	if len(p.DestinationChain) == 0 {
-		return sdkerrors.Wrap(ErrInvalidDestChain, "destChain is empty")
+	if len(p.DstChain) == 0 {
+		return sdkerrors.Wrap(ErrInvalidDstChain, "dstChain is empty")
 	}
 
-	if p.SourceChain == p.DestinationChain {
-		return sdkerrors.Wrap(ErrScChainEqualToDestChain, "srcChain equals to destChain")
-	}
-
-	if p.SourceChain == p.RelayChain || p.DestinationChain == p.RelayChain {
-		return sdkerrors.Wrap(ErrInvalidRelayChain, "relayChain is equal to srcChain or destChain")
+	if p.SrcChain == p.DstChain {
+		return sdkerrors.Wrap(ErrScChainEqualToDstChain, "srcChain equals to dstChain")
 	}
 
 	if p.Sequence == 0 {
 		return sdkerrors.Wrap(ErrInvalidPacket, "packet sequence cannot be 0")
 	}
-	if len(p.Ports) != len(p.DataList) {
-		return sdkerrors.Wrap(ErrInvalidPacket, "the number of ports must be as many as the data")
-	}
-	if len(p.DataList) == 0 {
-		return sdkerrors.Wrap(ErrInvalidPacket, "empty packet data list")
-	}
-	for _, data := range p.DataList {
-		if len(data) == 0 {
-			return sdkerrors.Wrap(ErrInvalidPacket, "packet data bytes cannot be empty")
-		}
+	// todo validate packet data
+	if len(p.CallData) == 0 && len(p.TransferData) == 0 {
+		return sdkerrors.Wrap(ErrInvalidPacket, "packet has no data")
 	}
 	return nil
 }
 
 // NewResultAcknowledgement returns a new instance of Acknowledgement using an Acknowledgement_Result type in the Response field.
-func NewResultAcknowledgement(results [][]byte, relayer string) Acknowledgement {
+func NewAcknowledgement(code uint64, results []byte, message, relayer string, feeOption uint64) Acknowledgement {
 	return Acknowledgement{
-		Results: results,
-		Relayer: relayer,
+		Code:      code,
+		Result:    results,
+		Message:   message,
+		Relayer:   relayer,
+		FeeOption: feeOption,
 	}
 }
 
-// NewErrorAcknowledgement returns a new instance of Acknowledgement using an Acknowledgement_Error type in the Response field.
-func NewErrorAcknowledgement(message string, relayer string) Acknowledgement {
-	return Acknowledgement{
-		Message: message,
-		Relayer: relayer,
-	}
-}
-
-// GetBytes is a helper for serialising acknowledgements
-func (ack Acknowledgement) GetBytes() ([]byte, error) {
+// ABIPack is a helper for serialising acknowledgements
+func (ack Acknowledgement) ABIPack() ([]byte, error) {
 	pack, err := abi.Arguments{{Type: TupleAckData}}.Pack(ack)
 	if err != nil {
 		return nil, err
@@ -136,7 +149,7 @@ func (ack Acknowledgement) GetBytes() ([]byte, error) {
 	return pack, nil
 }
 
-func (ack *Acknowledgement) DecodeBytes(bz []byte) error {
+func (ack *Acknowledgement) ABIDecode(bz []byte) error {
 	dataBz, err := abi.Arguments{{Type: TupleAckData}}.Unpack(bz)
 	if err != nil {
 		return err
@@ -145,16 +158,114 @@ func (ack *Acknowledgement) DecodeBytes(bz []byte) error {
 	if err != nil {
 		return err
 	}
-	if err := json.Unmarshal(bzTmp, &ack); err != nil {
-		return err
-	}
-	return nil
+	return json.Unmarshal(bzTmp, &ack)
 }
 
 // Result is the execution result of packet data
 type Result struct {
+	Code uint64
 	// the execution result
 	Result []byte
 	// error message
 	Message string
+}
+
+// ABIPack is a helper for serialising Result
+func (result Result) ABIPack() ([]byte, error) {
+	pack, err := abi.Arguments{{Type: TupleRecvPacketResultData}}.Pack(result)
+	if err != nil {
+		return nil, err
+	}
+	return pack, nil
+}
+
+func (result *Result) DecodeInterface(bz interface{}) error {
+	bzTmp, err := json.Marshal(bz)
+	if err != nil {
+		return err
+	}
+	return json.Unmarshal(bzTmp, &result)
+}
+
+func (result *Result) ABIDecode(bz []byte) error {
+	dataBz, err := abi.Arguments{{Type: TupleRecvPacketResultData}}.Unpack(bz)
+	if err != nil {
+		return err
+	}
+	bzTmp, err := json.Marshal(dataBz[0])
+	if err != nil {
+		return err
+	}
+	return json.Unmarshal(bzTmp, &result)
+}
+
+func (e *EventSendPacket) ABIDecode(bz []byte) error {
+	dataBz, err := abi.Arguments{{Type: TuplePacketSendData}}.Unpack(bz)
+	if err != nil {
+		return err
+	}
+	bzTmp, err := json.Marshal(dataBz[0])
+	if err != nil {
+		return err
+	}
+	return json.Unmarshal(bzTmp, &e)
+}
+
+func (e *EventSendPacket) DecodeInterface(bz interface{}) error {
+	bzTmp, err := json.Marshal(bz)
+	if err != nil {
+		return err
+	}
+	return json.Unmarshal(bzTmp, &e)
+}
+
+// ABIPack is a helper for serialising Result
+func (e *EventSendPacket) ABIPack() ([]byte, error) {
+	pack, err := abi.Arguments{{Type: TuplePacketSendData}}.Pack(e)
+	if err != nil {
+		return nil, err
+	}
+	return pack, nil
+}
+
+// ABIPack is a helper for serialising Result
+func (e *TransferData) ABIPack() ([]byte, error) {
+	pack, err := abi.Arguments{{Type: TupleTransferData}}.Pack(e)
+	if err != nil {
+		return nil, err
+	}
+	return pack, nil
+}
+
+func (e *TransferData) ABIDecode(bz []byte) error {
+	dataBz, err := abi.Arguments{{Type: TupleTransferData}}.Unpack(bz)
+	if err != nil {
+		return err
+	}
+	bzTmp, err := json.Marshal(dataBz[0])
+	if err != nil {
+		return err
+	}
+	return json.Unmarshal(bzTmp, &e)
+}
+
+// ABIPack is a helper for serialising Result
+func (e *CallData) ABIPack() ([]byte, error) {
+	pack, err := abi.Arguments{{Type: TupleCallData}}.Pack(e)
+	if err != nil {
+		return nil, err
+	}
+	return pack, nil
+}
+
+func (e *CallData) ABIDecode(bz []byte) error {
+	dataBz, err := abi.Arguments{{Type: TupleCallData}}.Unpack(bz)
+	if err != nil {
+		return err
+	}
+	bzTmp, err := json.Marshal(dataBz[0])
+	if err != nil {
+		return err
+	}
+	return json.Unmarshal(bzTmp, &e)
 }

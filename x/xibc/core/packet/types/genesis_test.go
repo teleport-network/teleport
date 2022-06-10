@@ -37,12 +37,6 @@ func TestValidateGenesis(t *testing.T) {
 			[]types.PacketSequence{
 				types.NewPacketSequence(testChain1, testChain2, 1),
 			},
-			[]types.PacketSequence{
-				types.NewPacketSequence(testChain1, testChain2, 1),
-			},
-			[]types.PacketSequence{
-				types.NewPacketSequence(testChain1, testChain2, 1),
-			},
 		),
 		expPass: true,
 	}, {
@@ -66,30 +60,6 @@ func TestValidateGenesis(t *testing.T) {
 		genState: types.GenesisState{
 			SendSequences: []types.PacketSequence{
 				types.NewPacketSequence(testChain1, testChain2, 0),
-			},
-		},
-		expPass: false,
-	}, {
-		name: "invalid recv seq",
-		genState: types.GenesisState{
-			RecvSequences: []types.PacketSequence{
-				types.NewPacketSequence(testChain1, "(testCha1)", 1),
-			},
-		},
-		expPass: false,
-	}, {
-		name: "invalid recv seq 2",
-		genState: types.GenesisState{
-			RecvSequences: []types.PacketSequence{
-				types.NewPacketSequence("(testChain1)", testChain2, 1),
-			},
-		},
-		expPass: false,
-	}, {
-		name: "invalid ack seq",
-		genState: types.GenesisState{
-			AckSequences: []types.PacketSequence{
-				types.NewPacketSequence(testChain1, "(testChain2)", 1),
 			},
 		},
 		expPass: false,

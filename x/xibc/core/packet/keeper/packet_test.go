@@ -16,8 +16,8 @@ type testCase = struct {
 }
 
 var (
-	validPacketData = []byte("VALID PACKET DATA")
-	relayChain      = ""
+	mockTransferData = []byte("mock Transfer data")
+	mockCallData     = []byte("mock Call data")
 )
 
 // TestSendPacket tests SendPacket from chainA to chainB
@@ -30,7 +30,7 @@ func (suite *KeeperTestSuite) TestSendPacket() {
 			path := xibctesting.NewPath(suite.chainA, suite.chainB)
 			suite.coordinator.SetupClients(path)
 
-			packet = types.NewPacket(1, path.EndpointA.ChainName, path.EndpointB.ChainName, relayChain, []string{xibctesting.MockPort}, [][]byte{validPacketData})
+			packet = types.NewPacket(path.EndpointA.ChainName, path.EndpointB.ChainName, 1, "sender", mockTransferData, mockCallData, "", 0)
 		},
 		true,
 	}, {
@@ -38,7 +38,7 @@ func (suite *KeeperTestSuite) TestSendPacket() {
 		func() {
 			path := xibctesting.NewPath(suite.chainA, suite.chainB)
 			suite.coordinator.SetupClients(path)
-			packet = types.NewPacket(5, path.EndpointA.ChainName, path.EndpointB.ChainName, relayChain, []string{xibctesting.MockPort}, [][]byte{validPacketData})
+			packet = types.NewPacket(path.EndpointA.ChainName, path.EndpointB.ChainName, 5, "sender", mockTransferData, mockCallData, "", 0)
 		},
 		false,
 	}, {
@@ -46,8 +46,7 @@ func (suite *KeeperTestSuite) TestSendPacket() {
 		func() {
 			path := xibctesting.NewPath(suite.chainA, suite.chainB)
 			suite.coordinator.SetupClients(path)
-
-			packet = types.NewPacket(1, path.EndpointA.ChainName, xibctesting.InvalidID, relayChain, []string{xibctesting.MockPort}, [][]byte{validPacketData})
+			packet = types.NewPacket(path.EndpointA.ChainName, xibctesting.InvalidID, 1, "sender", mockTransferData, mockCallData, "", 0)
 		},
 		false,
 	}, {
@@ -55,7 +54,7 @@ func (suite *KeeperTestSuite) TestSendPacket() {
 		func() {
 			path := xibctesting.NewPath(suite.chainA, suite.chainB)
 			suite.coordinator.SetupClients(path)
-			packet = types.NewPacket(1, path.EndpointA.ChainName, path.EndpointB.ChainName, relayChain, []string{xibctesting.MockPort}, [][]byte{validPacketData})
+			packet = types.NewPacket(path.EndpointA.ChainName, path.EndpointB.ChainName, 1, "sender", mockTransferData, mockCallData, "", 0)
 			suite.chainA.App.XIBCKeeper.PacketKeeper.SetNextSequenceSend(suite.chainA.GetContext(), path.EndpointA.ChainName, path.EndpointB.ChainName, 5)
 		},
 		false,
@@ -83,7 +82,7 @@ func (suite *KeeperTestSuite) TestSendPacket() {
 // occur last (resource instensive), only tests expected to succeed and packet commitment
 // verification tests need to simulate sending a packet from chainA to chainB.
 func (suite *KeeperTestSuite) TestRecvPacket() {
-	var packet types.Packet
+	var packet exported.PacketI
 
 	testCases := []testCase{{
 		"success",
@@ -91,7 +90,7 @@ func (suite *KeeperTestSuite) TestRecvPacket() {
 			path := xibctesting.NewPath(suite.chainA, suite.chainB)
 			suite.coordinator.SetupClients(path)
 
-			packet = types.NewPacket(1, path.EndpointA.ChainName, path.EndpointB.ChainName, relayChain, []string{xibctesting.MockPort}, [][]byte{validPacketData})
+			packet = types.NewPacket(path.EndpointA.ChainName, path.EndpointB.ChainName, 1, "sender", mockTransferData, mockCallData, "", 0)
 			err := path.EndpointA.SendPacket(packet)
 			suite.Require().NoError(err)
 		},
@@ -101,48 +100,41 @@ func (suite *KeeperTestSuite) TestRecvPacket() {
 		func() {
 			path := xibctesting.NewPath(suite.chainA, suite.chainB)
 			suite.coordinator.SetupClients(path)
-			packet = types.NewPacket(1, path.EndpointA.ChainName, path.EndpointB.ChainName, relayChain, []string{xibctesting.MockPort}, [][]byte{validPacketData})
+			packet = types.NewPacket(path.EndpointA.ChainName, path.EndpointB.ChainName, 1, "sender", mockTransferData, mockCallData, "", 0)
 
 			// send 2 packets
 			err := path.EndpointA.SendPacket(packet)
 			suite.Require().NoError(err)
 
 			// set sequence to 2
-			packet = types.NewPacket(2, path.EndpointA.ChainName, path.EndpointB.ChainName, relayChain, []string{xibctesting.MockPort}, [][]byte{validPacketData})
+			packet = types.NewPacket(path.EndpointA.ChainName, path.EndpointB.ChainName, 2, "sender", mockTransferData, mockCallData, "", 0)
 			err = path.EndpointA.SendPacket(packet)
 			suite.Require().NoError(err)
 		},
 		true,
-	}, {
-		"port not found",
-		func() {
-			// use wrong port
-			path := xibctesting.NewPath(suite.chainA, suite.chainB)
-			suite.coordinator.SetupClients(path)
-			packet = types.NewPacket(1, path.EndpointA.ChainName, path.EndpointB.ChainName, relayChain, []string{xibctesting.InvalidID}, [][]byte{validPacketData})
-		},
-		false,
-	}, {
-		"receipt already stored",
-		func() {
-			path := xibctesting.NewPath(suite.chainA, suite.chainB)
-			suite.coordinator.SetupClients(path)
-			packet = types.NewPacket(1, path.EndpointA.ChainName, path.EndpointB.ChainName, relayChain, []string{xibctesting.MockPort}, [][]byte{validPacketData})
-			err := path.EndpointA.SendPacket(packet)
-			suite.Require().NoError(err)
-			suite.chainB.App.XIBCKeeper.PacketKeeper.SetPacketReceipt(suite.chainB.GetContext(), path.EndpointA.ChainName, path.EndpointB.ChainName, 1)
-		},
-		false,
-	}, {
-		"validation failed",
-		func() {
-			// packet commitment not set resulting in invalid proof
-			path := xibctesting.NewPath(suite.chainA, suite.chainB)
-			suite.coordinator.SetupClients(path)
-			packet = types.NewPacket(1, path.EndpointA.ChainName, path.EndpointB.ChainName, relayChain, []string{xibctesting.InvalidID}, [][]byte{validPacketData})
-		},
-		false,
-	}}
+	},
+		{
+			"receipt already stored",
+			func() {
+				path := xibctesting.NewPath(suite.chainA, suite.chainB)
+				suite.coordinator.SetupClients(path)
+
+				packet = types.NewPacket(path.EndpointA.ChainName, path.EndpointB.ChainName, 1, "sender", mockTransferData, mockCallData, "", 0)
+				err := path.EndpointA.SendPacket(packet)
+				suite.Require().NoError(err)
+				suite.chainB.App.XIBCKeeper.PacketKeeper.SetPacketReceipt(suite.chainB.GetContext(), path.EndpointA.ChainName, path.EndpointB.ChainName, 1)
+			},
+			false,
+		}, {
+			"validation failed",
+			func() {
+				// packet commitment not set resulting in invalid proof
+				path := xibctesting.NewPath(suite.chainA, suite.chainB)
+				suite.coordinator.SetupClients(path)
+				packet = types.NewPacket(path.EndpointA.ChainName, path.EndpointB.ChainName, 1, "sender", []byte(""), []byte(""), "", 0)
+			},
+			false,
+		}}
 
 	for i, tc := range testCases {
 		suite.Run(fmt.Sprintf("Case %s, %d/%d tests", tc.name, i, len(testCases)), func() {
@@ -150,21 +142,22 @@ func (suite *KeeperTestSuite) TestRecvPacket() {
 			tc.malleate()
 
 			// get proof of packet commitment from chainA
-			packetKey := host.PacketCommitmentKey(packet.GetSourceChain(), packet.GetDestChain(), packet.GetSequence())
+			packetKey := host.PacketCommitmentKey(packet.GetSrcChain(), packet.GetDstChain(), packet.GetSequence())
 			proof, proofHeight := suite.chainA.QueryProof(packetKey)
-
+			packetBytes, err := packet.ABIPack()
+			suite.Require().NoError(err)
 			msg := &types.MsgRecvPacket{
-				Packet:          packet,
+				Packet:          packetBytes,
 				ProofCommitment: proof,
 				ProofHeight:     proofHeight,
 			}
-			err := suite.chainB.App.XIBCKeeper.PacketKeeper.RecvPacket(suite.chainB.GetContext(), msg)
+			err = suite.chainB.App.XIBCKeeper.PacketKeeper.RecvPacket(suite.chainB.GetContext(), msg)
 
 			if tc.expPass {
 				suite.Require().NoError(err)
 
 				receipt, receiptStored := suite.chainB.App.XIBCKeeper.PacketKeeper.GetPacketReceipt(
-					suite.chainB.GetContext(), packet.GetSourceChain(), packet.GetDestChain(), packet.GetSequence(),
+					suite.chainB.GetContext(), packet.GetSrcChain(), packet.GetDstChain(), packet.GetSequence(),
 				)
 
 				suite.Require().True(receiptStored, "packet receipt not stored after RecvPacket")
@@ -188,7 +181,7 @@ func (suite *KeeperTestSuite) TestWriteAcknowledgement() {
 		func() {
 			path := xibctesting.NewPath(suite.chainA, suite.chainB)
 			suite.coordinator.SetupClients(path)
-			packet = types.NewPacket(1, path.EndpointA.ChainName, path.EndpointB.ChainName, relayChain, []string{xibctesting.MockPort}, [][]byte{validPacketData})
+			packet = types.NewPacket(path.EndpointA.ChainName, path.EndpointB.ChainName, 1, "sender", mockTransferData, mockCallData, "", 0)
 			ack = xibctesting.TestHash
 		},
 		true,
@@ -197,9 +190,9 @@ func (suite *KeeperTestSuite) TestWriteAcknowledgement() {
 		func() {
 			path := xibctesting.NewPath(suite.chainA, suite.chainB)
 			suite.coordinator.SetupClients(path)
-			packet = types.NewPacket(1, path.EndpointA.ChainName, path.EndpointB.ChainName, relayChain, []string{xibctesting.MockPort}, [][]byte{validPacketData})
+			packet = types.NewPacket(path.EndpointA.ChainName, path.EndpointB.ChainName, 1, "sender", mockTransferData, mockCallData, "", 0)
 			ack = xibctesting.TestHash
-			suite.chainB.App.XIBCKeeper.PacketKeeper.SetPacketAcknowledgement(suite.chainB.GetContext(), packet.GetSourceChain(), packet.GetDestChain(), packet.GetSequence(), ack)
+			suite.chainB.App.XIBCKeeper.PacketKeeper.SetPacketAcknowledgement(suite.chainB.GetContext(), packet.GetSrcChain(), packet.GetDstChain(), packet.GetSequence(), ack)
 		},
 		false,
 	}, {
@@ -207,7 +200,7 @@ func (suite *KeeperTestSuite) TestWriteAcknowledgement() {
 		func() {
 			path := xibctesting.NewPath(suite.chainA, suite.chainB)
 			suite.coordinator.SetupClients(path)
-			packet = types.NewPacket(1, path.EndpointA.ChainName, path.EndpointB.ChainName, relayChain, []string{xibctesting.MockPort}, [][]byte{validPacketData})
+			packet = types.NewPacket(path.EndpointA.ChainName, path.EndpointB.ChainName, 1, "sender", mockTransferData, mockCallData, "", 0)
 			ack = nil
 		},
 		false,
@@ -230,7 +223,7 @@ func (suite *KeeperTestSuite) TestWriteAcknowledgement() {
 
 // TestAcknowledgePacket tests the call AcknowledgePacket on chainA.
 func (suite *KeeperTestSuite) TestAcknowledgePacket() {
-	var packet types.Packet
+	var packet *types.Packet
 	testCases := []testCase{
 		{
 			"success",
@@ -238,34 +231,42 @@ func (suite *KeeperTestSuite) TestAcknowledgePacket() {
 				// setup
 				path := xibctesting.NewPath(suite.chainA, suite.chainB)
 				suite.coordinator.SetupClients(path)
-				packet = types.NewPacket(
-					1,
-					path.EndpointA.ChainName,
-					path.EndpointB.ChainName,
-					relayChain,
-					[]string{xibctesting.MockPort},
-					[][]byte{validPacketData},
-				)
-
+				packet = types.NewPacket(path.EndpointA.ChainName, path.EndpointB.ChainName, 1, "sender", mockTransferData, mockCallData, "", 0)
 				// create packet commitment
 				err := path.EndpointA.SendPacket(packet)
 				suite.Require().NoError(err)
 
 				// create packet receipt and acknowledgement
-				err = path.EndpointB.RecvPacket(packet)
+				// get proof of packet commitment from chainA
+				packetKey := host.PacketCommitmentKey(packet.GetSrcChain(), packet.GetDstChain(), packet.GetSequence())
+				proof, proofHeight := suite.chainA.QueryProof(packetKey)
+				packetBytes, err := packet.ABIPack()
+				suite.Require().NoError(err)
+				msg := &types.MsgRecvPacket{
+					Packet:          packetBytes,
+					ProofCommitment: proof,
+					ProofHeight:     proofHeight,
+				}
+				err = suite.chainB.App.XIBCKeeper.PacketKeeper.RecvPacket(suite.chainB.GetContext(), msg)
+				suite.Require().NoError(err)
+
+				ack, err := types.NewAcknowledgement(
+					0,
+					[]byte(""),
+					"",
+					suite.chainB.SenderAcc.String(),
+					0,
+				).ABIPack()
+				suite.Require().NoError(err)
+				err = suite.chainB.App.XIBCKeeper.PacketKeeper.WriteAcknowledgement(suite.chainB.GetContext(), packet, ack)
+				suite.Require().NoError(err)
+
+				err = path.EndpointB.UpdateClient()
+				suite.Require().NoError(err)
+				err = path.EndpointA.UpdateClient()
 				suite.Require().NoError(err)
 			},
 			true,
-		},
-		{
-			"port not found",
-			func() {
-				// use wrong port naming
-				path := xibctesting.NewPath(suite.chainA, suite.chainB)
-				suite.coordinator.SetupClients(path)
-				packet = types.NewPacket(1, path.EndpointA.ChainName, path.EndpointB.ChainName, relayChain, []string{xibctesting.InvalidID}, [][]byte{validPacketData})
-			},
-			false,
 		},
 		{
 			"packet hasn't been sent",
@@ -273,7 +274,7 @@ func (suite *KeeperTestSuite) TestAcknowledgePacket() {
 				// packet commitment never written
 				path := xibctesting.NewPath(suite.chainA, suite.chainB)
 				suite.coordinator.SetupClients(path)
-				packet = types.NewPacket(1, path.EndpointA.ChainName, path.EndpointB.ChainName, relayChain, []string{xibctesting.MockPort}, [][]byte{validPacketData})
+				packet = types.NewPacket(path.EndpointA.ChainName, path.EndpointB.ChainName, 1, "sender", mockTransferData, mockCallData, "", 0)
 			},
 			false,
 		},
@@ -285,29 +286,35 @@ func (suite *KeeperTestSuite) TestAcknowledgePacket() {
 			tc.malleate()
 
 			packetKey := host.PacketAcknowledgementKey(
-				packet.GetSourceChain(),
-				packet.GetDestChain(),
+				packet.GetSrcChain(),
+				packet.GetDstChain(),
 				packet.GetSequence(),
 			)
 			proof, proofHeight := suite.chainB.QueryProof(packetKey)
 
-			ack, err := types.NewResultAcknowledgement(
-				[][]byte{[]byte("mock result")},
+			ack, err := types.NewAcknowledgement(
+				0,
+				[]byte(""),
+				"",
 				suite.chainB.SenderAcc.String(),
-			).GetBytes()
+				0,
+			).ABIPack()
 			suite.Require().NoError(err)
 
+			packetBytes, err := packet.ABIPack()
+			suite.Require().NoError(err)
 			msg := &types.MsgAcknowledgement{
-				Packet:          packet,
+				Packet:          packetBytes,
 				Acknowledgement: ack,
 				ProofAcked:      proof,
 				ProofHeight:     proofHeight,
 			}
+
 			err = suite.chainA.App.XIBCKeeper.PacketKeeper.AcknowledgePacket(suite.chainA.GetContext(), msg)
 			pc := suite.chainA.App.XIBCKeeper.PacketKeeper.GetPacketCommitment(
 				suite.chainA.GetContext(),
-				packet.GetSourceChain(),
-				packet.GetDestChain(),
+				packet.GetSrcChain(),
+				packet.GetDstChain(),
 				packet.GetSequence(),
 			)
 

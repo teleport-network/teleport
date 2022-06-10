@@ -50,13 +50,13 @@ func ClientIdentifierValidator(id string) error {
 	return defaultIdentifierValidator(id, DefaultMinClientIDLength, DefaultMaxCharacterLength)
 }
 
-// DestChainValidator is the default validator function for Chain identifiers.
-func DestChainValidator(id string) error {
+// DstChainValidator is the default validator function for Chain identifiers.
+func DstChainValidator(id string) error {
 	return defaultIdentifierValidator(id, DefaultMinChainIDLength, DefaultMaxCharacterLength)
 }
 
-// SourceChainValidator is the default validator function for SourceChain name.
-func SourceChainValidator(id string) error {
+// SrcChainValidator is the default validator function for SourceChain name.
+func SrcChainValidator(id string) error {
 	return defaultIdentifierValidator(id, DefaultMinChainIDLength, DefaultMaxCharacterLength)
 }
 

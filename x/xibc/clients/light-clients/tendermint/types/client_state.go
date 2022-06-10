@@ -173,15 +173,15 @@ func (cs ClientState) Status(ctx sdk.Context, clientStore sdk.KVStore, cdc codec
 }
 
 // VerifyPacketCommitment verifies a proof of an outgoing packet commitment at
-// the specified sourceChain, specified destChain, and specified sequence.
+// the specified srcChain, specified dstChain, and specified sequence.
 func (cs ClientState) VerifyPacketCommitment(
 	ctx sdk.Context,
 	store sdk.KVStore,
 	cdc codec.BinaryCodec,
 	height exported.Height,
 	proof []byte,
-	sourceChain,
-	destChain string,
+	srcChain string,
+	dstChain string,
 	sequence uint64,
 	commitmentBytes []byte,
 ) error {
@@ -195,7 +195,7 @@ func (cs ClientState) VerifyPacketCommitment(
 		return err
 	}
 
-	commitmentPath := commitmenttypes.NewMerklePath(host.PacketCommitmentPath(sourceChain, destChain, sequence))
+	commitmentPath := commitmenttypes.NewMerklePath(host.PacketCommitmentPath(srcChain, dstChain, sequence))
 	path, err := commitmenttypes.ApplyPrefix(cs.GetPrefix(), commitmentPath)
 	if err != nil {
 		return err
@@ -205,15 +205,15 @@ func (cs ClientState) VerifyPacketCommitment(
 }
 
 // VerifyPacketAcknowledgement verifies a proof of an incoming packet
-// acknowledgement at the specified sourceChain, specified destChain, and specified sequence.
+// acknowledgement at the specified srcChain, specified dstChain, and specified sequence.
 func (cs ClientState) VerifyPacketAcknowledgement(
 	ctx sdk.Context,
 	store sdk.KVStore,
 	cdc codec.BinaryCodec,
 	height exported.Height,
 	proof []byte,
-	sourceChain,
-	destChain string,
+	srcChain string,
+	dstChain string,
 	sequence uint64,
 	ackBytes []byte,
 ) error {
@@ -227,7 +227,7 @@ func (cs ClientState) VerifyPacketAcknowledgement(
 		return err
 	}
 
-	ackPath := commitmenttypes.NewMerklePath(host.PacketAcknowledgementPath(sourceChain, destChain, sequence))
+	ackPath := commitmenttypes.NewMerklePath(host.PacketAcknowledgementPath(srcChain, dstChain, sequence))
 	path, err := commitmenttypes.ApplyPrefix(cs.GetPrefix(), ackPath)
 	if err != nil {
 		return err
@@ -267,7 +267,11 @@ func produceVerificationArgs(
 	height exported.Height,
 	prefix exported.Prefix,
 	proof []byte,
-) (merkleProof commitmenttypes.MerkleProof, consensusState *ConsensusState, err error) {
+) (
+	merkleProof commitmenttypes.MerkleProof,
+	consensusState *ConsensusState,
+	err error,
+) {
 	if cs.GetLatestHeight().LT(height) {
 		return commitmenttypes.MerkleProof{}, nil, sdkerrors.Wrapf(
 			sdkerrors.ErrInvalidHeight,
@@ -280,8 +284,7 @@ func produceVerificationArgs(
 		return commitmenttypes.MerkleProof{}, nil, sdkerrors.Wrap(commitmenttypes.ErrInvalidPrefix, "prefix cannot be empty")
 	}
 
-	_, ok := prefix.(*commitmenttypes.MerklePrefix)
-	if !ok {
+	if _, ok := prefix.(*commitmenttypes.MerklePrefix); !ok {
 		return commitmenttypes.MerkleProof{}, nil, sdkerrors.Wrapf(commitmenttypes.ErrInvalidPrefix, "invalid prefix type %T, expected *MerklePrefix", prefix)
 	}
 

@@ -75,8 +75,8 @@ type ClientState interface {
 		cdc codec.BinaryCodec,
 		height Height,
 		proof []byte,
-		sourceChain,
-		destChain string,
+		srcChain string,
+		dstChain string,
 		sequence uint64,
 		commitmentBytes []byte,
 	) error
@@ -88,8 +88,8 @@ type ClientState interface {
 		cdc codec.BinaryCodec,
 		height Height,
 		proof []byte,
-		sourceChain,
-		destChain string,
+		srcChain string,
+		dstChain string,
 		sequence uint64,
 		ackBytes []byte,
 	) error

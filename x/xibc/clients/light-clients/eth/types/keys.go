@@ -10,28 +10,28 @@ import (
 )
 
 const (
-	paramsIndex    = 205
+	paramsIndex    = 208
 	paramsLenght   = 32
 	rinkebyChainID = 4
 )
 
 type ProofKeyConstructor struct {
-	sourceChain string
-	destChain   string
-	sequence    uint64
+	srcChain string
+	dstChain string
+	sequence uint64
 }
 
-func NewProofKeyConstructor(sourceChain string, destChain string, sequence uint64) ProofKeyConstructor {
+func NewProofKeyConstructor(srcChain string, dstChain string, sequence uint64) ProofKeyConstructor {
 	return ProofKeyConstructor{
-		sourceChain: sourceChain,
-		destChain:   destChain,
-		sequence:    sequence,
+		srcChain: srcChain,
+		dstChain: dstChain,
+		sequence: sequence,
 	}
 }
 
 func (k ProofKeyConstructor) GetPacketCommitmentProofKey() []byte {
 	hash := crypto.Keccak256Hash(
-		host.PacketCommitmentKey(k.sourceChain, k.destChain, k.sequence),
+		host.PacketCommitmentKey(k.srcChain, k.dstChain, k.sequence),
 		common.LeftPadBytes(big.NewInt(paramsIndex).Bytes(), paramsLenght),
 	)
 	return hash.Bytes()
@@ -39,7 +39,7 @@ func (k ProofKeyConstructor) GetPacketCommitmentProofKey() []byte {
 
 func (k ProofKeyConstructor) GetAckProofKey() []byte {
 	hash := crypto.Keccak256Hash(
-		host.PacketAcknowledgementKey(k.sourceChain, k.destChain, k.sequence),
+		host.PacketAcknowledgementKey(k.srcChain, k.dstChain, k.sequence),
 		common.LeftPadBytes(big.NewInt(paramsIndex).Bytes(), paramsLenght),
 	)
 	return hash.Bytes()

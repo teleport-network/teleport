@@ -41,7 +41,7 @@ func (path *Path) RegisterRelayers() {
 		path.EndpointB.Chain.GetContext(),
 		path.EndpointB.Chain.SenderAcc.String(),
 		[]string{path.EndpointA.ChainName},
-		[]string{path.EndpointB.Chain.SenderAcc.String()}, // use EndpointB address
+		[]string{path.EndpointA.Chain.SenderAcc.String()}, // use EndpointB address
 	)
 }
 
@@ -49,11 +49,14 @@ func (path *Path) RegisterRelayers() {
 // if EndpointA does not contain a packet commitment for that packet. An error is returned
 // if a relay step fails or the packet commitment does not exist on either endpoint.
 func (path *Path) RelayPacket(packet packettypes.Packet, ack []byte) error {
-	packetCommit := packettypes.CommitPacket(packet)
+	packetCommit, err := packettypes.CommitPacket(&packet)
+	if err != nil {
+		return err
+	}
 	packetCommitA := path.EndpointA.Chain.App.XIBCKeeper.PacketKeeper.GetPacketCommitment(
 		path.EndpointA.Chain.GetContext(),
-		packet.GetSourceChain(),
-		packet.GetDestChain(),
+		packet.GetSrcChain(),
+		packet.GetDstChain(),
 		packet.GetSequence(),
 	)
 
@@ -65,7 +68,7 @@ func (path *Path) RelayPacket(packet packettypes.Packet, ack []byte) error {
 		if err := path.EndpointB.RecvPacket(packet); err != nil {
 			return err
 		}
-		if path.EndpointB.ChainName != packet.DestinationChain {
+		if path.EndpointB.ChainName != packet.DstChain {
 			return nil
 		}
 		return path.EndpointA.AcknowledgePacket(packet, ack)
@@ -73,8 +76,8 @@ func (path *Path) RelayPacket(packet packettypes.Packet, ack []byte) error {
 
 	packetCommitB := path.EndpointB.Chain.App.XIBCKeeper.PacketKeeper.GetPacketCommitment(
 		path.EndpointB.Chain.GetContext(),
-		packet.GetSourceChain(),
-		packet.GetDestChain(),
+		packet.GetSrcChain(),
+		packet.GetDstChain(),
 		packet.GetSequence(),
 	)
 
@@ -86,7 +89,7 @@ func (path *Path) RelayPacket(packet packettypes.Packet, ack []byte) error {
 		if err := path.EndpointA.RecvPacket(packet); err != nil {
 			return err
 		}
-		if path.EndpointA.ChainName != packet.DestinationChain {
+		if path.EndpointA.ChainName != packet.DstChain {
 			return nil
 		}
 		return path.EndpointB.AcknowledgePacket(packet, ack)

@@ -4,6 +4,8 @@ import (
 	context "context"
 	"math/big"
 
+	ethtypes "github.com/ethereum/go-ethereum/core/types"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 
@@ -36,6 +38,7 @@ type AccountKeeper interface {
 type EVMKeeper interface {
 	ChainID() *big.Int
 	GetNonce(ctx sdk.Context, addr common.Address) uint64
+	PostTxProcessing(ctx sdk.Context, msg core.Message, receipt *ethtypes.Receipt) error
 	ApplyMessage(ctx sdk.Context, msg core.Message, tracer vm.EVMLogger, commit bool) (*types.MsgEthereumTxResponse, error)
 	EthereumTx(goCtx context.Context, msg *types.MsgEthereumTx) (*types.MsgEthereumTxResponse, error)
 	EstimateGas(c context.Context, req *types.EthCallRequest) (*types.EstimateGasResponse, error)

@@ -6,6 +6,9 @@ import (
 	"testing"
 	"time"
 
+	packetcontract "github.com/teleport-network/teleport/syscontracts/xibc_packet"
+	packettypes "github.com/teleport-network/teleport/x/xibc/core/packet/types"
+
 	"github.com/stretchr/testify/require"
 
 	abci "github.com/tendermint/tendermint/abci/types"
@@ -51,7 +54,6 @@ const (
 	DefaultDelayPeriod uint64        = 0
 
 	InvalidID = "InvalidID"
-	MockPort  = mock.ModuleName
 
 	// used for testing UpdateClientProposal
 	Title       = "title"
@@ -160,9 +162,76 @@ func NewTestChain(t *testing.T, coord *Coordinator, chainID string) *TestChain {
 		SenderAcc:      acc.GetAddress(),
 		SenderAddress:  senderAddress,
 	}
-
+	chain.App.XIBCKeeper.ClientKeeper.SetChainName(chain.GetContext(), chainID)
 	coord.CommitBlock(chain)
 
+	chain.SetPacketChainName()
+	return chain
+}
+
+// NewTestChain initializes a new TestChain instance with a single validator set using a
+// given private key. It also creates a sender account to be used for delivering transactions.
+func NewTestChainWithAccount(t *testing.T, coord *Coordinator, chainID string, senderPrivKey *ethsecp256k1.PrivKey) *TestChain {
+
+	// set DefaultPowerReduction to the teleport PowerReduction
+	sdk.DefaultPowerReduction = teletypes.PowerReduction
+
+	// generate validator private/public key
+	privVal := mock.NewPV()
+	pubKey, err := privVal.GetPubKey()
+	require.NoError(t, err)
+
+	// create validator set with single validator
+	validator := tmtypes.NewValidator(pubKey, 1)
+	valSet := tmtypes.NewValidatorSet([]*tmtypes.Validator{validator})
+	signers := []tmtypes.PrivValidator{privVal}
+
+	// generate genesis account
+	senderAddress := common.BytesToAddress(senderPrivKey.PubKey().Address().Bytes())
+	acc := authtypes.NewBaseAccount(senderPrivKey.PubKey().Address().Bytes(), senderPrivKey.PubKey(), 0, 0)
+	balance := banktypes.Balance{
+		Address: acc.GetAddress().String(),
+		Coins:   sdk.NewCoins(sdk.NewCoin(sdk.DefaultBondDenom, sdk.NewInt(100000000000000))),
+	}
+
+	teleport := SetupWithGenesisValSet(t, valSet, []authtypes.GenesisAccount{acc}, balance)
+
+	// create current header and call begin block
+	header := tmproto.Header{
+		Height:          1,
+		ChainID:         chainID,
+		Time:            coord.CurrentTime.UTC(),
+		ProposerAddress: valSet.Proposer.Address,
+	}
+
+	txConfig := encoding.MakeConfig(app.ModuleBasics).TxConfig
+
+	queryHelperEvm := baseapp.NewQueryServerTestHelper(
+		teleport.BaseApp.NewContext(false, header),
+		teleport.InterfaceRegistry(),
+	)
+	evm.RegisterQueryServer(queryHelperEvm, teleport.EvmKeeper)
+
+	// create an account to send transactions from
+	chain := &TestChain{
+		t:              t,
+		Coordinator:    coord,
+		ChainID:        chainID,
+		App:            teleport,
+		CurrentHeader:  header,
+		QueryServer:    teleport.XIBCKeeper,
+		QueryClientEvm: evm.NewQueryClient(queryHelperEvm),
+		TxConfig:       txConfig,
+		Codec:          teleport.AppCodec(),
+		Vals:           valSet,
+		Signers:        signers,
+		SenderPrivKey:  senderPrivKey,
+		SenderAcc:      acc.GetAddress(),
+		SenderAddress:  senderAddress,
+	}
+	chain.App.XIBCKeeper.ClientKeeper.SetChainName(chain.GetContext(), chainID)
+	coord.CommitBlock(chain)
+	chain.SetPacketChainName()
 	return chain
 }
 
@@ -351,8 +420,8 @@ func (chain *TestChain) GetValsAtHeight(height int64) (*tmtypes.ValidatorSet, bo
 func (chain *TestChain) GetAcknowledgement(packet exported.PacketI) []byte {
 	ack, found := chain.App.XIBCKeeper.PacketKeeper.GetPacketAcknowledgement(
 		chain.GetContext(),
-		packet.GetSourceChain(),
-		packet.GetDestChain(),
+		packet.GetSrcChain(),
+		packet.GetDstChain(),
 		packet.GetSequence(),
 	)
 	require.True(chain.t, found)
@@ -600,4 +669,18 @@ func (chain *TestChain) RegisterRelayer(chains []string, addresses []string) {
 		chains,
 		addresses,
 	)
+}
+
+func (chain *TestChain) SetPacketChainName() {
+	packetContractAbi := packetcontract.PacketContract.ABI
+	if _, err := chain.App.XIBCKeeper.PacketKeeper.CallEVM(
+		chain.GetContext(),
+		packetContractAbi,
+		packettypes.ModuleAddress,
+		packetcontract.PacketContractAddress,
+		"setChainName",
+		chain.App.XIBCKeeper.ClientKeeper.GetChainName(chain.GetContext()),
+	); err != nil {
+		panic(err)
+	}
 }

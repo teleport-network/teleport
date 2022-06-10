@@ -9,6 +9,8 @@ import (
 	"github.com/stretchr/testify/require"
 
 	abci "github.com/tendermint/tendermint/abci/types"
+
+	"github.com/tharsis/ethermint/crypto/ethsecp256k1"
 )
 
 const ChainIDPrefix = "teleport_9000-1"
@@ -35,9 +37,10 @@ func NewCoordinator(t *testing.T, n int) *Coordinator {
 		CurrentTime: globalStartTime,
 	}
 
+	senderPrivKey, _ := ethsecp256k1.GenerateKey()
 	for i := 0; i < n; i++ {
 		chainID := GetChainID(i)
-		chains[chainID] = NewTestChain(t, coord, chainID)
+		chains[chainID] = NewTestChainWithAccount(t, coord, chainID, senderPrivKey)
 	}
 	coord.Chains = chains
 
