@@ -1,8 +1,6 @@
 package xibc
 
 import (
-	"fmt"
-
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
 	client "github.com/teleport-network/teleport/x/xibc/core/client"
@@ -42,7 +40,6 @@ func ResetStates(ctx sdk.Context, storeKey sdk.StoreKey, k keeper.Keeper) {
 	defer iterator.Close()
 
 	for ; iterator.Valid(); iterator.Next() {
-		fmt.Println(string(iterator.Key()))
 		store.Delete(iterator.Key())
 	}
 

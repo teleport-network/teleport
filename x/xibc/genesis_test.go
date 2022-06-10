@@ -273,8 +273,8 @@ func (suite *XIBCTestSuite) TestResetStates() {
 				clienttypes.NewIdentifiedGenesisMetadata(
 					chainName,
 					[]clienttypes.GenesisMetadata{
-						clienttypes.NewGenesisMetadata([]byte("key1"), []byte("val1")),
-						clienttypes.NewGenesisMetadata([]byte("key2"), []byte("val2")),
+						clienttypes.NewGenesisMetadata([]byte("consensusStates/1/processedTime"), []byte("val1")),
+						clienttypes.NewGenesisMetadata([]byte("consensusStates/2/processedTime"), []byte("val2")),
 					},
 				),
 			},
@@ -291,6 +291,7 @@ func (suite *XIBCTestSuite) TestResetStates() {
 
 	suite.Require().Len(exportedGenesis.ClientGenesis.Clients, 1)
 	suite.Require().Len(exportedGenesis.ClientGenesis.ClientsConsensus, 1)
+	suite.Require().Len(exportedGenesis.ClientGenesis.ClientsMetadata, 1)
 	suite.Require().Equal(exportedGenesis.ClientGenesis.NativeChainName, chainName2)
 
 	suite.Require().Len(exportedGenesis.PacketGenesis.Commitments, 1)
@@ -303,6 +304,7 @@ func (suite *XIBCTestSuite) TestResetStates() {
 
 	suite.Require().Len(exportedGenesis.ClientGenesis.Clients, 0)
 	suite.Require().Len(exportedGenesis.ClientGenesis.ClientsConsensus, 0)
+	suite.Require().Len(exportedGenesis.ClientGenesis.ClientsMetadata, 0)
 	suite.Require().Equal(exportedGenesis.ClientGenesis.NativeChainName, chainName2)
 
 	suite.Require().Len(exportedGenesis.PacketGenesis.Commitments, 0)
