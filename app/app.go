@@ -7,6 +7,8 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/teleport-network/teleport/x/xibc"
+
 	"github.com/gorilla/mux"
 	"github.com/rakyll/statik/fs"
 	"github.com/spf13/cast"
@@ -801,13 +803,9 @@ func (app *Teleport) Name() string { return app.BaseApp.Name() }
 
 // BeginBlocker updates every begin block
 func (app *Teleport) BeginBlocker(ctx sdk.Context, req abci.RequestBeginBlock) abci.ResponseBeginBlock {
-	if ctx.BlockHeight() == 413501 {
-		app.SetEVMCode(ctx, common.HexToAddress(syscontracts.TransferContractAddress), transfercontract.TransferContract.Bin)
-		app.SetEVMCode(ctx, common.HexToAddress(syscontracts.RCCContractAddress), rcccontract.RCCContract.Bin)
-		app.SetEVMCode(ctx, common.HexToAddress(syscontracts.MultiCallContractAddress), multicallcontract.MultiCallContract.Bin)
-		app.SetEVMCode(ctx, common.HexToAddress(syscontracts.WTELEContractAddress), wtelecontract.WTELEContract.Bin)
-		app.SetEVMCode(ctx, common.HexToAddress(syscontracts.AgentContractAddress), agentcontract.AgentContract.Bin)
+	if ctx.BlockHeight() == 860000 {
 		app.SetEVMCode(ctx, common.HexToAddress(syscontracts.PacketContractAddress), packetcontract.PacketContract.Bin)
+		xibc.ResetStates(ctx, app.GetKey(xibchost.StoreKey), *app.XIBCKeeper)
 	}
 	return app.mm.BeginBlock(ctx, req)
 }
