@@ -19,16 +19,6 @@ func NewDecodeStore(cdc codec.BinaryCodec, kvA, kvB kv.Pair) (string, bool) {
 		seqB := sdk.BigEndianToUint64(kvB.Value)
 		return fmt.Sprintf("NextSeqSend A: %d\nNextSeqSend B: %d", seqA, seqB), true
 
-	case bytes.HasPrefix(kvA.Key, []byte(host.KeyNextSeqRecvPrefix)):
-		seqA := sdk.BigEndianToUint64(kvA.Value)
-		seqB := sdk.BigEndianToUint64(kvB.Value)
-		return fmt.Sprintf("NextSeqRecv A: %d\nNextSeqRecv B: %d", seqA, seqB), true
-
-	case bytes.HasPrefix(kvA.Key, []byte(host.KeyNextSeqAckPrefix)):
-		seqA := sdk.BigEndianToUint64(kvA.Value)
-		seqB := sdk.BigEndianToUint64(kvB.Value)
-		return fmt.Sprintf("NextSeqAck A: %d\nNextSeqAck B: %d", seqA, seqB), true
-
 	case bytes.HasPrefix(kvA.Key, []byte(host.KeyPacketCommitmentPrefix)):
 		return fmt.Sprintf("CommitmentHash A: %X\nCommitmentHash B: %X", kvA.Value, kvB.Value), true
 

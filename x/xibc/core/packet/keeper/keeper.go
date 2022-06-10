@@ -182,30 +182,6 @@ func (k Keeper) GetAllPacketSendSeqs(ctx sdk.Context) (seqs []types.PacketSequen
 	return seqs
 }
 
-// GetAllPacketRecvSeqs returns all stored next recv sequences.
-func (k Keeper) GetAllPacketRecvSeqs(ctx sdk.Context) (seqs []types.PacketSequence) {
-	store := ctx.KVStore(k.storeKey)
-	iterator := sdk.KVStorePrefixIterator(store, []byte(host.KeyNextSeqRecvPrefix))
-	k.IteratePacketSequence(ctx, iterator, func(srcChain string, dstChain string, nextRecvSeq uint64) bool {
-		ps := types.NewPacketSequence(srcChain, dstChain, nextRecvSeq)
-		seqs = append(seqs, ps)
-		return false
-	})
-	return seqs
-}
-
-// GetAllPacketAckSeqs returns all stored next acknowledgements sequences.
-func (k Keeper) GetAllPacketAckSeqs(ctx sdk.Context) (seqs []types.PacketSequence) {
-	store := ctx.KVStore(k.storeKey)
-	iterator := sdk.KVStorePrefixIterator(store, []byte(host.KeyNextSeqAckPrefix))
-	k.IteratePacketSequence(ctx, iterator, func(srcChain string, dstChain string, nextAckSeq uint64) bool {
-		ps := types.NewPacketSequence(srcChain, dstChain, nextAckSeq)
-		seqs = append(seqs, ps)
-		return false
-	})
-	return seqs
-}
-
 // IteratePacketCommitment provides an iterator over all PacketCommitment objects. For each
 // packet commitment, cb will be called. If the cb returns true, the iterator will close
 // and stop.

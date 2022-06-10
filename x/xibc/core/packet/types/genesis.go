@@ -44,15 +44,13 @@ func (ps PacketSequence) Validate() error {
 // NewGenesisState creates a GenesisState instance.
 func NewGenesisState(
 	acks, commitments, receipts []PacketState,
-	sendSeqs, recvSeqs, ackSeqs []PacketSequence,
+	sendSeqs []PacketSequence,
 ) GenesisState {
 	return GenesisState{
 		Acknowledgements: acks,
 		Commitments:      commitments,
 		Receipts:         receipts,
 		SendSequences:    sendSeqs,
-		RecvSequences:    recvSeqs,
-		AckSequences:     ackSeqs,
 	}
 }
 
@@ -63,8 +61,6 @@ func DefaultGenesisState() GenesisState {
 		Receipts:         []PacketState{},
 		Commitments:      []PacketState{},
 		SendSequences:    []PacketSequence{},
-		RecvSequences:    []PacketSequence{},
-		AckSequences:     []PacketSequence{},
 	}
 }
 
@@ -98,18 +94,6 @@ func (gs GenesisState) Validate() error {
 	for i, ss := range gs.SendSequences {
 		if err := ss.Validate(); err != nil {
 			return fmt.Errorf("invalid send sequence %v index %d: %w", ss, i, err)
-		}
-	}
-
-	for i, rs := range gs.RecvSequences {
-		if err := rs.Validate(); err != nil {
-			return fmt.Errorf("invalid receive sequence %v index %d: %w", rs, i, err)
-		}
-	}
-
-	for i, as := range gs.AckSequences {
-		if err := as.Validate(); err != nil {
-			return fmt.Errorf("invalid acknowledgement sequence %v index %d: %w", as, i, err)
 		}
 	}
 

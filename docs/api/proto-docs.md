@@ -1789,8 +1789,6 @@ GenesisState defines the xibc channel submodule's genesis state.
 | `commitments` | [PacketState](#xibc.core.packet.v1.PacketState) | repeated |  |
 | `receipts` | [PacketState](#xibc.core.packet.v1.PacketState) | repeated |  |
 | `send_sequences` | [PacketSequence](#xibc.core.packet.v1.PacketSequence) | repeated |  |
-| `recv_sequences` | [PacketSequence](#xibc.core.packet.v1.PacketSequence) | repeated |  |
-| `ack_sequences` | [PacketSequence](#xibc.core.packet.v1.PacketSequence) | repeated |  |
 
 
 

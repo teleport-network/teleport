@@ -35,7 +35,5 @@ func ExportGenesis(ctx sdk.Context, k keeper.Keeper) types.GenesisState {
 		Commitments:      k.GetAllPacketCommitments(ctx),
 		Receipts:         k.GetAllPacketReceipts(ctx),
 		SendSequences:    k.GetAllPacketSendSeqs(ctx),
-		RecvSequences:    k.GetAllPacketRecvSeqs(ctx),
-		AckSequences:     k.GetAllPacketAckSeqs(ctx),
 	}
 }
