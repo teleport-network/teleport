@@ -9,7 +9,7 @@ import (
 	xibctesting "github.com/teleport-network/teleport/x/xibc/testing"
 )
 
-func (suite KeeperTestSuite) TestHandleCreateClientProposal() {
+func (suite KeeperTestSuite) TestHandleCreateClientProposal() { //nolint
 	header := suite.chainA.CreateTMClientHeader(
 		suite.chainA.ChainID, suite.chainA.CurrentHeader.Height,
 		types.NewHeight(0, uint64(suite.chainA.CurrentHeader.Height-1)),
@@ -84,7 +84,7 @@ func (suite KeeperTestSuite) TestHandleCreateClientProposal() {
 	}
 }
 
-func (suite KeeperTestSuite) TestHandleUpgradeClientProposal() {
+func (suite KeeperTestSuite) TestHandleUpgradeClientProposal() { //nolint
 	header := suite.chainA.CreateTMClientHeader(
 		suite.chainA.ChainID, suite.chainA.CurrentHeader.Height,
 		types.NewHeight(0, uint64(suite.chainA.CurrentHeader.Height-1)),
@@ -157,7 +157,7 @@ func (suite KeeperTestSuite) TestHandleUpgradeClientProposal() {
 	}
 }
 
-func (suite KeeperTestSuite) TestHandleRegisterRelayerProposal() {
+func (suite KeeperTestSuite) TestHandleRegisterRelayerProposal() { //nolint
 	header := suite.chainA.CreateTMClientHeader(
 		suite.chainA.ChainID, suite.chainA.CurrentHeader.Height,
 		types.NewHeight(0, uint64(suite.chainA.CurrentHeader.Height-1)),

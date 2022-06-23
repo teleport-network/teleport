@@ -77,35 +77,7 @@ func (suite *KeeperTestSuite) setupRegisterCoin() (banktypes.Metadata, *types.To
 	return validMetadata, pair
 }
 
-// func (suite *KeeperTestSuite) setupRegisterIBCVoucher() (banktypes.Metadata, *types.TokenPair) {
-// 	suite.SetupTest()
-
-// 	validMetadata := banktypes.Metadata{
-// 		Description: "ATOM IBC voucher (channel 14)",
-// 		Base:        ibcBase,
-// 		// NOTE: Denom units MUST be increasing
-// 		DenomUnits: []*banktypes.DenomUnit{
-// 			{
-// 				Denom:    ibcBase,
-// 				Exponent: 0,
-// 			},
-// 		},
-// 		Name:    "ATOM channel-14",
-// 		Symbol:  "ibcATOM-14",
-// 		Display: ibcBase,
-// 	}
-
-// 	err := suite.app.BankKeeper.MintCoins(suite.ctx, types.ModuleName, sdk.Coins{sdk.NewInt64Coin(validMetadata.Base, 1)})
-// 	suite.Require().NoError(err)
-
-// 	// pair := types.NewTokenPair(contractAddr, cosmosTokenBase, true, types.OWNER_MODULE)
-// 	pair, err := suite.app.AggregateKeeper.RegisterCoin(suite.ctx, validMetadata)
-// 	suite.Require().NoError(err)
-// 	suite.Commit()
-// 	return validMetadata, pair
-// }
-
-func (suite KeeperTestSuite) TestRegisterCoin() {
+func (suite KeeperTestSuite) TestRegisterCoin() { //nolint
 	metadata := banktypes.Metadata{
 		Description: "description",
 		Base:        cosmosTokenBase,
@@ -267,7 +239,7 @@ func (suite KeeperTestSuite) TestRegisterCoin() {
 	}
 }
 
-func (suite KeeperTestSuite) TestRegisterERC20() {
+func (suite KeeperTestSuite) TestRegisterERC20() { //nolint
 	var (
 		contractAddr common.Address
 		pair         types.TokenPair
@@ -303,7 +275,7 @@ func (suite KeeperTestSuite) TestRegisterERC20() {
 		{
 			"meta data already stored",
 			func() {
-				suite.app.AggregateKeeper.CreateCoinMetadata(suite.ctx, contractAddr)
+				_, _ = suite.app.AggregateKeeper.CreateCoinMetadata(suite.ctx, contractAddr)
 			},
 			false,
 		},
@@ -348,11 +320,7 @@ func (suite KeeperTestSuite) TestRegisterERC20() {
 	}
 }
 
-// func (suite *KeeperTestSuite) TestRegisterIBCVoucher() {
-// 	suite.setupRegisterIBCVoucher()
-// }
-
-func (suite KeeperTestSuite) TestToggleConverision() {
+func (suite KeeperTestSuite) TestToggleConverision() { //nolint
 	var (
 		contractAddr common.Address
 		id           []byte

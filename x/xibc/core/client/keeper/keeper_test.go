@@ -159,7 +159,7 @@ func (suite *KeeperTestSuite) TestSetClientConsensusState() {
 	suite.Require().Equal(suite.consensusState, tmConsState, "ConsensusState not stored correctly")
 }
 
-func (suite KeeperTestSuite) TestGetAllGenesisClients() {
+func (suite KeeperTestSuite) TestGetAllGenesisClients() { //nolint
 	chainNames := []string{
 		testChainName2, testChainName3, testChainName,
 	}
@@ -180,7 +180,7 @@ func (suite KeeperTestSuite) TestGetAllGenesisClients() {
 	suite.Require().Equal(expGenClients.Sort(), genClients)
 }
 
-func (suite KeeperTestSuite) TestGetAllGenesisMetadata() {
+func (suite KeeperTestSuite) TestGetAllGenesisMetadata() { //nolint
 	expectedGenMetadata := []types.IdentifiedGenesisMetadata{
 		types.NewIdentifiedGenesisMetadata(
 			"clientA",
@@ -210,7 +210,7 @@ func (suite KeeperTestSuite) TestGetAllGenesisMetadata() {
 	suite.Require().Equal(expectedGenMetadata, actualGenMetadata, "retrieved metadata is unexpected")
 }
 
-func (suite KeeperTestSuite) TestConsensusStateHelpers() {
+func (suite KeeperTestSuite) TestConsensusStateHelpers() { //nolint
 	// initial setup
 	clientState := xibctmtypes.NewClientState(
 		testChainID, xibctmtypes.DefaultTrustLevel,
@@ -244,7 +244,7 @@ func (suite KeeperTestSuite) TestConsensusStateHelpers() {
 
 // 2 clients in total are created on chainA. The first client is updated so it contains an initial consensus state
 // and a consensus state at the update height.
-func (suite KeeperTestSuite) TestGetAllConsensusStates() {
+func (suite KeeperTestSuite) TestGetAllConsensusStates() { //nolint
 	// setup testing conditions
 	path := xibctesting.NewPath(suite.chainA, suite.chainB)
 	suite.coordinator.SetupClients(path)

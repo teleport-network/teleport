@@ -39,7 +39,7 @@ func (suite *KeeperTestSuite) SetupTest() {
 }
 
 // TestGetAllSequences sets all packet sequences
-func (suite KeeperTestSuite) TestGetAllSequences() {
+func (suite KeeperTestSuite) TestGetAllSequences() { //nolint
 	path := xibctesting.NewPath(suite.chainA, suite.chainB)
 	suite.coordinator.SetupClients(path)
 
@@ -62,7 +62,7 @@ func (suite KeeperTestSuite) TestGetAllSequences() {
 }
 
 // TestGetAllPacketState creates a set of acks, packet commitments, and receipts
-func (suite KeeperTestSuite) TestGetAllPacketState() {
+func (suite KeeperTestSuite) TestGetAllPacketState() { //nolint
 	path := xibctesting.NewPath(suite.chainA, suite.chainB)
 	suite.coordinator.SetupClients(path)
 
