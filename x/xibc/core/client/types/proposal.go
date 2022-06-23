@@ -71,7 +71,7 @@ func (cup *CreateClientProposal) GetTitle() string { return cup.Title }
 func (cup *CreateClientProposal) GetDescription() string { return cup.Description }
 
 // ProposalRoute returns the routing key of a client update proposal.
-func (cup *CreateClientProposal) ProposalRoute() string { return GovRouterKey }
+func (cup *CreateClientProposal) ProposalRoute() string { return RouterKey }
 
 // ProposalType returns the type of a client update proposal.
 func (cup *CreateClientProposal) ProposalType() string { return ProposalTypeClientCreate }
@@ -138,7 +138,7 @@ func (cup *UpgradeClientProposal) GetTitle() string { return cup.Title }
 func (cup *UpgradeClientProposal) GetDescription() string { return cup.Description }
 
 // ProposalRoute returns the routing key of a client upgrade proposal.
-func (cup *UpgradeClientProposal) ProposalRoute() string { return GovRouterKey }
+func (cup *UpgradeClientProposal) ProposalRoute() string { return RouterKey }
 
 // ProposalType returns the type of a client upgrade proposal.
 func (cup *UpgradeClientProposal) ProposalType() string { return ProposalTypeClientUpgrade }
@@ -205,7 +205,7 @@ func (cup *ToggleClientProposal) GetTitle() string { return cup.Title }
 func (cup *ToggleClientProposal) GetDescription() string { return cup.Description }
 
 // ProposalRoute returns the routing key of a client toggle proposal.
-func (cup *ToggleClientProposal) ProposalRoute() string { return GovRouterKey }
+func (cup *ToggleClientProposal) ProposalRoute() string { return RouterKey }
 
 // ProposalType returns the type of a client toggle proposal.
 func (cup *ToggleClientProposal) ProposalType() string { return ProposalTypeClientToggle }
@@ -260,7 +260,7 @@ func (rrp *RegisterRelayerProposal) GetTitle() string { return rrp.Title }
 func (rrp *RegisterRelayerProposal) GetDescription() string { return rrp.Description }
 
 // ProposalRoute returns the routing key of a registering relayer proposal.
-func (rrp *RegisterRelayerProposal) ProposalRoute() string { return GovRouterKey }
+func (rrp *RegisterRelayerProposal) ProposalRoute() string { return RouterKey }
 
 // ProposalType returns the type of a client registering relayer proposal.
 func (rrp *RegisterRelayerProposal) ProposalType() string { return ProposalTypeRelayerRegister }

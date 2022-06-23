@@ -681,6 +681,7 @@ func (suite *XIBCTestSuite) OutTokens(
 		endpointcontract.EndpointContract.ABI,
 		aggregatetypes.ModuleAddress,
 		endpointcontract.EndpointContractAddress,
+		false,
 		"outTokens",
 		tokenAddress,
 		dstChain,
@@ -707,6 +708,7 @@ func (suite *XIBCTestSuite) Bindings(
 		endpointcontract.EndpointContract.ABI,
 		aggregatetypes.ModuleAddress,
 		endpointcontract.EndpointContractAddress,
+		false,
 		"bindings",
 		strings.ToLower(tokenAddress.String())+"/"+oriChain,
 	)
@@ -731,6 +733,7 @@ func (suite *XIBCTestSuite) GetPacketFees(fromChain *xibctesting.TestChain, srcC
 		packet,
 		packettypes.ModuleAddress,
 		packetcontract.PacketContractAddress,
+		true,
 		"packetFees",
 		data,
 	)
@@ -752,6 +755,7 @@ func (suite *XIBCTestSuite) GetAck(fromChain *xibctesting.TestChain, dstChain st
 		packet,
 		packettypes.ModuleAddress,
 		packetcontract.PacketContractAddress,
+		true,
 		"acks",
 		data,
 	)
@@ -771,6 +775,7 @@ func (suite *XIBCTestSuite) GetLatestPacket(fromChain *xibctesting.TestChain) pa
 		packetABI,
 		packettypes.ModuleAddress,
 		packetcontract.PacketContractAddress,
+		true,
 		"latestPacket",
 	)
 	suite.Require().NoError(err)
@@ -789,6 +794,7 @@ func (suite *XIBCTestSuite) GetAckStatus(fromChain *xibctesting.TestChain, dstCh
 		packet,
 		packettypes.ModuleAddress,
 		packetcontract.PacketContractAddress,
+		true,
 		"getAckStatus",
 		dstChain,
 		sequence,
@@ -815,7 +821,7 @@ func (suite *XIBCTestSuite) DeployERC20ByCrossChain(fromChain *xibctesting.TestC
 	nonce := fromChain.App.EvmKeeper.GetNonce(fromChain.GetContext(), endpointcontract.EndpointContractAddress)
 	contractAddr := crypto.CreateAddress(endpointcontract.EndpointContractAddress, nonce)
 
-	res, err := fromChain.App.AggregateKeeper.CallEVMWithData(fromChain.GetContext(), endpointcontract.EndpointContractAddress, nil, data)
+	res, err := fromChain.App.AggregateKeeper.CallEVMWithData(fromChain.GetContext(), endpointcontract.EndpointContractAddress, nil, data, true)
 	suite.Require().NoError(err)
 	suite.Require().False(res.Failed(), res.VmError)
 
@@ -826,7 +832,7 @@ func (suite *XIBCTestSuite) GrantERC20MintRoleByCrossChain(fromChain *xibctestin
 	ctorArgs, err := erc20contracts.ERC20MinterBurnerDecimalsContract.ABI.Pack("grantRole", common.BytesToHash(crypto.Keccak256([]byte("MINTER_ROLE"))), address)
 	suite.Require().NoError(err)
 
-	res, err := fromChain.App.AggregateKeeper.CallEVMWithData(fromChain.GetContext(), endpointcontract.EndpointContractAddress, &erc20, ctorArgs)
+	res, err := fromChain.App.AggregateKeeper.CallEVMWithData(fromChain.GetContext(), endpointcontract.EndpointContractAddress, &erc20, ctorArgs, true)
 	suite.Require().NoError(err)
 	suite.Require().False(res.Failed(), res.VmError)
 }
@@ -851,6 +857,7 @@ func (suite *XIBCTestSuite) ERC20Balance(
 		erc20,
 		packettypes.ModuleAddress,
 		contract,
+		true,
 		"balanceOf",
 		account,
 	)

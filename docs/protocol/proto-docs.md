@@ -11,9 +11,8 @@
     - [RegisterCoinProposal](#teleport.aggregate.v1.RegisterCoinProposal)
     - [RegisterERC20Proposal](#teleport.aggregate.v1.RegisterERC20Proposal)
     - [RegisterERC20TraceProposal](#teleport.aggregate.v1.RegisterERC20TraceProposal)
-    - [ToggleTokenRelayProposal](#teleport.aggregate.v1.ToggleTokenRelayProposal)
+    - [ToggleTokenConversionProposal](#teleport.aggregate.v1.ToggleTokenConversionProposal)
     - [TokenPair](#teleport.aggregate.v1.TokenPair)
-    - [UpdateTokenPairERC20Proposal](#teleport.aggregate.v1.UpdateTokenPairERC20Proposal)
   
     - [Owner](#teleport.aggregate.v1.Owner)
   
@@ -230,14 +229,15 @@ supply limit of an ERC20
 <a name="teleport.aggregate.v1.RegisterCoinProposal"></a>
 
 ### RegisterCoinProposal
-RegisterCoinProposal is a gov Content type to register a token pair
+RegisterCoinProposal is a gov Content type to register a token pair for a
+native Cosmos coin.
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | `title` | [string](#string) |  | title of the proposal |
 | `description` | [string](#string) |  | proposal description |
-| `metadata` | [cosmos.bank.v1beta1.Metadata](#cosmos.bank.v1beta1.Metadata) |  | token pair of Cosmos native denom and ERC20 token address |
+| `metadata` | [cosmos.bank.v1beta1.Metadata](#cosmos.bank.v1beta1.Metadata) |  | metadata of the native Cosmos coin |
 
 
 
@@ -247,7 +247,8 @@ RegisterCoinProposal is a gov Content type to register a token pair
 <a name="teleport.aggregate.v1.RegisterERC20Proposal"></a>
 
 ### RegisterERC20Proposal
-RegisterCoinProposal is a gov Content type to register a token pair
+RegisterERC20Proposal is a gov Content type to register a token pair for an
+ERC20 token
 
 
 | Field | Type | Label | Description |
@@ -281,11 +282,11 @@ RegisterERC20TraceProposal is a gov Content type to register a ERC20 trace
 
 
 
-<a name="teleport.aggregate.v1.ToggleTokenRelayProposal"></a>
+<a name="teleport.aggregate.v1.ToggleTokenConversionProposal"></a>
 
-### ToggleTokenRelayProposal
-ToggleTokenRelayProposal is a gov Content type to toggle the internal
-relaying of a token pair
+### ToggleTokenConversionProposal
+ToggleTokenConversionProposal is a gov Content type to toggle the conversion
+of a token pair.
 
 
 | Field | Type | Label | Description |
@@ -302,8 +303,8 @@ relaying of a token pair
 <a name="teleport.aggregate.v1.TokenPair"></a>
 
 ### TokenPair
-TokenPair defines an instance that records pairing consisting of a Cosmos
-native Coin and an ERC20 token address
+TokenPair defines an instance that records a pairing consisting of a native
+ Cosmos Coin and an ERC20 token address.
 
 
 | Field | Type | Label | Description |
@@ -312,25 +313,6 @@ native Coin and an ERC20 token address
 | `denoms` | [string](#string) | repeated | cosmos base denomination to be mapped to |
 | `enabled` | [bool](#bool) |  | shows token mapping enable status |
 | `contract_owner` | [Owner](#teleport.aggregate.v1.Owner) |  | ERC20 owner address ENUM (0 invalid, 1 ModuleAccount, 2 external address) |
-
-
-
-
-
-
-<a name="teleport.aggregate.v1.UpdateTokenPairERC20Proposal"></a>
-
-### UpdateTokenPairERC20Proposal
-UpdateTokenPairERC20Proposal is a gov Content type to update a token pair's
-ERC20 contract address
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| `title` | [string](#string) |  | title of the proposal |
-| `description` | [string](#string) |  | proposal description |
-| `erc20_address` | [string](#string) |  | contract address of ERC20 token |
-| `new_erc20_address` | [string](#string) |  | new address of ERC20 token contract |
 
 
 
@@ -369,7 +351,8 @@ Owner enumerates the ownership of a ERC20 contract
 <a name="teleport.aggregate.v1.EventDisableTimeBasedSupplyLimit"></a>
 
 ### EventDisableTimeBasedSupplyLimit
-Event
+EventDisableTimeBasedSupplyLimit is emitted on aggregate disable time based
+supply limit
 
 
 | Field | Type | Label | Description |
@@ -384,7 +367,8 @@ Event
 <a name="teleport.aggregate.v1.EventEnableTimeBasedSupplyLimit"></a>
 
 ### EventEnableTimeBasedSupplyLimit
-Event
+EventEnableTimeBasedSupplyLimit is emitted on aggregate enable time based
+supply limit
 
 
 | Field | Type | Label | Description |
@@ -488,8 +472,8 @@ Params defines the aggregate module params
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `enable_aggregate` | [bool](#bool) |  | parameter to enable the intrarelaying of Cosmos coins <--> ERC20 tokens |
-| `enable_evm_hook` | [bool](#bool) |  | parameter to enable the EVM hook to convert an ERC20 token to a Cosmos Coin by transferring the Tokens through a MsgEthereumTx to the ModuleAddress Ethereum address. |
+| `enable_aggregate` | [bool](#bool) |  | parameter to enable the conversion of Cosmos coins <--> ERC20 tokens. |
+| `enable_evm_hook` | [bool](#bool) |  | parameter to enable the EVM hook that converts an ERC20 token to a Cosmos Coin by transferring the Tokens through a MsgEthereumTx to the ModuleAddress Ethereum address. |
 
 
 
@@ -614,8 +598,8 @@ Query defines the gRPC querier service
 
 | Method Name | Request Type | Response Type | Description | HTTP Verb | Endpoint |
 | ----------- | ------------ | ------------- | ------------| ------- | -------- |
-| `TokenPairs` | [QueryTokenPairsRequest](#teleport.aggregate.v1.QueryTokenPairsRequest) | [QueryTokenPairsResponse](#teleport.aggregate.v1.QueryTokenPairsResponse) | Retrieves registered token pairs | GET|/teleport/aggregate/v1/token_pairs|
-| `TokenPair` | [QueryTokenPairRequest](#teleport.aggregate.v1.QueryTokenPairRequest) | [QueryTokenPairResponse](#teleport.aggregate.v1.QueryTokenPairResponse) | Retrieves a registered token pair | GET|/teleport/aggregate/v1/token_pairs/{token}|
+| `TokenPairs` | [QueryTokenPairsRequest](#teleport.aggregate.v1.QueryTokenPairsRequest) | [QueryTokenPairsResponse](#teleport.aggregate.v1.QueryTokenPairsResponse) | TokenPairs retrieves registered token pairs | GET|/teleport/aggregate/v1/token_pairs|
+| `TokenPair` | [QueryTokenPairRequest](#teleport.aggregate.v1.QueryTokenPairRequest) | [QueryTokenPairResponse](#teleport.aggregate.v1.QueryTokenPairResponse) | TokenPair retrieves a registered token pair | GET|/teleport/aggregate/v1/token_pairs/{token}|
 | `Params` | [QueryParamsRequest](#teleport.aggregate.v1.QueryParamsRequest) | [QueryParamsResponse](#teleport.aggregate.v1.QueryParamsResponse) | Params retrieves the aggregate module params | GET|/teleport/aggregate/v1/params|
 
  <!-- end services -->
@@ -632,14 +616,14 @@ Query defines the gRPC querier service
 <a name="teleport.aggregate.v1.MsgConvertCoin"></a>
 
 ### MsgConvertCoin
-MsgConvertCoin defines a Msg to convert a Cosmos Coin to a ERC20 token
+MsgConvertCoin defines a Msg to convert a native Cosmos coin to a ERC20 token
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `coin` | [cosmos.base.v1beta1.Coin](#cosmos.base.v1beta1.Coin) |  | Cosmos coin which denomination is registered on aggregate bridge. The coin amount defines the total ERC20 tokens to convert. |
+| `coin` | [cosmos.base.v1beta1.Coin](#cosmos.base.v1beta1.Coin) |  | Cosmos coin which denomination is registered in a token pair. The coin amount defines the amount of coins to convert. |
 | `receiver` | [string](#string) |  | recipient hex address to receive ERC20 token |
-| `sender` | [string](#string) |  | cosmos bech32 address from the owner of the given ERC20 tokens |
+| `sender` | [string](#string) |  | cosmos bech32 address from the owner of the given Cosmos coins |
 
 
 
@@ -659,14 +643,15 @@ MsgConvertCoinResponse returns no fields
 <a name="teleport.aggregate.v1.MsgConvertERC20"></a>
 
 ### MsgConvertERC20
-MsgConvertERC20 defines a Msg to convert an ERC20 token to a Cosmos SDK coin.
+MsgConvertERC20 defines a Msg to convert a ERC20 token to a native Cosmos
+coin.
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `contract_address` | [string](#string) |  | ERC20 token contract address registered on aggregate bridge |
-| `amount` | [string](#string) |  | amount of ERC20 tokens to mint |
-| `receiver` | [string](#string) |  | bech32 address to receive SDK coins. |
+| `contract_address` | [string](#string) |  | ERC20 token contract address registered in a token pair |
+| `amount` | [string](#string) |  | amount of ERC20 tokens to convert |
+| `receiver` | [string](#string) |  | bech32 address to receive native Cosmos coins |
 | `sender` | [string](#string) |  | sender hex address from the owner of the given ERC20 tokens |
 | `denom` | [string](#string) |  | denom for contract convert to |
 
@@ -698,8 +683,8 @@ Msg defines the aggregate Msg service.
 
 | Method Name | Request Type | Response Type | Description | HTTP Verb | Endpoint |
 | ----------- | ------------ | ------------- | ------------| ------- | -------- |
-| `ConvertCoin` | [MsgConvertCoin](#teleport.aggregate.v1.MsgConvertCoin) | [MsgConvertCoinResponse](#teleport.aggregate.v1.MsgConvertCoinResponse) | ConvertCoin mints a ERC20 representation of the SDK Coin denom that is registered on the token mapping. | GET|/teleport/aggregate/v1/tx/convert_coin|
-| `ConvertERC20` | [MsgConvertERC20](#teleport.aggregate.v1.MsgConvertERC20) | [MsgConvertERC20Response](#teleport.aggregate.v1.MsgConvertERC20Response) | ConvertERC20 mints a Cosmos coin representation of the ERC20 token contract that is registered on the token mapping. | GET|/teleport/aggregate/v1/tx/convert_erc20|
+| `ConvertCoin` | [MsgConvertCoin](#teleport.aggregate.v1.MsgConvertCoin) | [MsgConvertCoinResponse](#teleport.aggregate.v1.MsgConvertCoinResponse) | ConvertCoin mints a ERC20 representation of the native Cosmos coin denom that is registered on the token mapping. | GET|/teleport/aggregate/v1/tx/convert_coin|
+| `ConvertERC20` | [MsgConvertERC20](#teleport.aggregate.v1.MsgConvertERC20) | [MsgConvertERC20Response](#teleport.aggregate.v1.MsgConvertERC20Response) | ConvertERC20 mints a native Cosmos coin representation of the ERC20 token contract that is registered on the token mapping. | GET|/teleport/aggregate/v1/tx/convert_erc20|
 
  <!-- end services -->
 
@@ -1642,6 +1627,7 @@ EventWriteAck is emitted on receive packet
 | `sequence` | [string](#string) |  |  |
 | `packet` | [bytes](#bytes) |  |  |
 | `ack` | [bytes](#bytes) |  |  |
+| `code` | [uint64](#uint64) |  |  |
 
 
 

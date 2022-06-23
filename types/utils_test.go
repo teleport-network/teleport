@@ -67,7 +67,7 @@ func TestIsSupportedKeys(t *testing.T) {
 	}
 }
 
-func TestGetEvmosAddressFromBech32(t *testing.T) {
+func TestGetTeleportAddressFromBech32(t *testing.T) {
 	testCases := []struct {
 		name       string
 		address    string

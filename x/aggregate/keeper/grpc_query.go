@@ -17,7 +17,7 @@ import (
 
 var _ types.QueryServer = Keeper{}
 
-// TokenPairs return registered pairs
+// TokenPairs returns all registered pairs
 func (k Keeper) TokenPairs(c context.Context, req *types.QueryTokenPairsRequest) (*types.QueryTokenPairsResponse, error) {
 	if req == nil {
 		return nil, status.Error(codes.InvalidArgument, "empty request")
@@ -78,7 +78,7 @@ func (k Keeper) TokenPair(c context.Context, req *types.QueryTokenPairRequest) (
 	return &types.QueryTokenPairResponse{TokenPair: pair}, nil
 }
 
-// Params return hub contract param
+// Params returns the params of the aggregate module
 func (k Keeper) Params(c context.Context, _ *types.QueryParamsRequest) (*types.QueryParamsResponse, error) {
 	ctx := sdk.UnwrapSDKContext(c)
 	params := k.GetParams(ctx)

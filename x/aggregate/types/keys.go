@@ -14,8 +14,8 @@ const (
 	// StoreKey to be used when creating the KVStore
 	StoreKey = ModuleName
 
-	// GovRouterKey to be used for gov routing
-	GovRouterKey = ModuleName
+	// RouterKey to be used for gov routing
+	RouterKey = ModuleName
 
 	// QuerierRoute is the querier route for aggregate
 	QuerierRoute = ModuleName

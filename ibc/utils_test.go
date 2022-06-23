@@ -78,7 +78,7 @@ func TestGetTransferSenderRecipient(t *testing.T) {
 			true,
 		},
 		{
-			"valid - cosmos sender, evmos recipient",
+			"valid - cosmos sender, tele recipient",
 			channeltypes.Packet{
 				Data: transfertypes.ModuleCdc.MustMarshalJSON(
 					&transfertypes.FungibleTokenPacketData{
@@ -108,7 +108,7 @@ func TestGetTransferSenderRecipient(t *testing.T) {
 			false,
 		},
 		{
-			"valid - osmosis sender, evmos recipient",
+			"valid - osmosis sender, tele recipient",
 			channeltypes.Packet{
 				Data: transfertypes.ModuleCdc.MustMarshalJSON(
 					&transfertypes.FungibleTokenPacketData{

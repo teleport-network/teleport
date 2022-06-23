@@ -36,7 +36,7 @@ func (k Keeper) CallPacket(
 		)
 	}
 
-	res, err := k.CallEVMWithData(ctx, types.ModuleAddress, &packet.PacketContractAddress, payload)
+	res, err := k.CallEVMWithData(ctx, types.ModuleAddress, &packet.PacketContractAddress, payload, true)
 	if err != nil {
 		return nil, fmt.Errorf("contract call failed: method '%s' %s, %s", method, packet.PacketContractAddress, err)
 	}
@@ -50,6 +50,7 @@ func (k Keeper) CallEVM(
 	abi abi.ABI,
 	from common.Address,
 	contract common.Address,
+	commit bool,
 	method string,
 	args ...interface{},
 ) (
@@ -63,7 +64,7 @@ func (k Keeper) CallEVM(
 		)
 	}
 
-	resp, err := k.CallEVMWithData(ctx, from, &contract, data)
+	resp, err := k.CallEVMWithData(ctx, from, &contract, data, commit)
 	if err != nil {
 		return nil, fmt.Errorf("contract call failed: method '%s' %s, %s", method, contract, err)
 	}
@@ -76,6 +77,7 @@ func (k Keeper) CallEVMWithData(
 	from common.Address,
 	contract *common.Address,
 	data []byte,
+	commit bool,
 ) (
 	*evmtypes.MsgEthereumTxResponse,
 	error,
@@ -99,7 +101,7 @@ func (k Keeper) CallEVMWithData(
 		true,                  // checkNonce
 	)
 
-	res, err := k.evmKeeper.ApplyMessage(ctx, msg, evmtypes.NewNoOpTracer(), true)
+	res, err := k.evmKeeper.ApplyMessage(ctx, msg, evmtypes.NewNoOpTracer(), commit)
 	if err != nil {
 		return nil, err
 	}

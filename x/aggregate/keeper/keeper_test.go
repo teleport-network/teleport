@@ -20,7 +20,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/baseapp"
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/crypto/keyring"
-	"github.com/cosmos/cosmos-sdk/simapp"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
@@ -59,6 +58,10 @@ type KeeperTestSuite struct {
 	ethSigner        ethtypes.Signer
 	signer           keyring.Signer
 	mintFeeCollector bool
+}
+
+func TestKeeperTestSuite(t *testing.T) {
+	suite.Run(t, new(KeeperTestSuite))
 }
 
 // Test helpers
@@ -115,7 +118,7 @@ func (suite *KeeperTestSuite) DoSetupTest(t require.TestingT) {
 			abci.RequestInitChain{
 				ChainId:         "teleport_9000-1",
 				Validators:      []abci.ValidatorUpdate{},
-				ConsensusParams: simapp.DefaultConsensusParams,
+				ConsensusParams: app.DefaultConsensusParams,
 				AppStateBytes:   stateBytes,
 			},
 		)
@@ -339,7 +342,7 @@ func (suite *KeeperTestSuite) MintERC20Token(contractAddr, from, to common.Addre
 	return suite.sendTx(contractAddr, from, transferData)
 }
 
-func (suite *KeeperTestSuite) BurnERC20Token(contractAddr, from common.Address, amount *big.Int) *evm.MsgEthereumTx {
+func (suite *KeeperTestSuite) TransferERC20TokenToModule(contractAddr, from common.Address, amount *big.Int) *evm.MsgEthereumTx {
 	transferData, err := erc20contracts.ERC20MinterBurnerDecimalsContract.ABI.Pack("transfer", types.ModuleAddress, amount)
 	suite.Require().NoError(err)
 	return suite.sendTx(contractAddr, from, transferData)
@@ -399,7 +402,7 @@ func (suite *KeeperTestSuite) sendTx(contractAddr, from common.Address, transfer
 func (suite *KeeperTestSuite) BalanceOf(contract, account common.Address) interface{} {
 	erc20 := erc20contracts.ERC20MinterBurnerDecimalsContract.ABI
 
-	res, err := suite.app.AggregateKeeper.CallEVM(suite.ctx, erc20, types.ModuleAddress, contract, "balanceOf", account)
+	res, err := suite.app.AggregateKeeper.CallEVM(suite.ctx, erc20, types.ModuleAddress, contract, false, "balanceOf", account)
 	if err != nil {
 		return nil
 	}
@@ -415,7 +418,7 @@ func (suite *KeeperTestSuite) BalanceOf(contract, account common.Address) interf
 func (suite *KeeperTestSuite) NameOf(contract common.Address) string {
 	erc20 := erc20contracts.ERC20MinterBurnerDecimalsContract.ABI
 
-	res, err := suite.app.AggregateKeeper.CallEVM(suite.ctx, erc20, types.ModuleAddress, contract, "name")
+	res, err := suite.app.AggregateKeeper.CallEVM(suite.ctx, erc20, types.ModuleAddress, contract, false, "name")
 	suite.Require().NoError(err)
 	suite.Require().NotNil(res)
 
@@ -430,8 +433,4 @@ func (suite *KeeperTestSuite) TransferERC20Token(contractAddr, from, to common.A
 	transferData, err := erc20contracts.ERC20MinterBurnerDecimalsContract.ABI.Pack("transfer", to, amount)
 	suite.Require().NoError(err)
 	return suite.sendTx(contractAddr, from, transferData)
-}
-
-func TestKeeperTestSuite(t *testing.T) {
-	suite.Run(t, new(KeeperTestSuite))
 }

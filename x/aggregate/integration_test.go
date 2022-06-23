@@ -34,6 +34,9 @@ func (suite *AggregateTestSuite) SetupTest() {
 func (suite *AggregateTestSuite) TestReBindToken() {
 	// deploy ERC20
 	erc20Address := suite.DeployERC20(suite.chainA)
+	println("================================================")
+	println(erc20Address.String())
+	println("================================================")
 
 	// add erc20 trace
 	err := suite.chainA.App.AggregateKeeper.RegisterERC20Trace(
@@ -88,7 +91,7 @@ func (suite *AggregateTestSuite) DeployERC20(fromChain *xibctesting.TestChain) c
 	nonce := fromChain.App.EvmKeeper.GetNonce(fromChain.GetContext(), endpointcontract.EndpointContractAddress)
 	contractAddr := crypto.CreateAddress(endpointcontract.EndpointContractAddress, nonce)
 
-	res, err := fromChain.App.AggregateKeeper.CallEVMWithData(fromChain.GetContext(), endpointcontract.EndpointContractAddress, nil, data)
+	res, err := fromChain.App.AggregateKeeper.CallEVMWithData(fromChain.GetContext(), endpointcontract.EndpointContractAddress, nil, data, false)
 	suite.Require().NoError(err)
 	suite.Require().False(res.Failed(), res.VmError)
 

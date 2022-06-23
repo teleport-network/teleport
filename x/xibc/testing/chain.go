@@ -678,6 +678,7 @@ func (chain *TestChain) SetPacketChainName() {
 		packetContractAbi,
 		packettypes.ModuleAddress,
 		packetcontract.PacketContractAddress,
+		true,
 		"setChainName",
 		chain.App.XIBCKeeper.ClientKeeper.GetChainName(chain.GetContext()),
 	); err != nil {

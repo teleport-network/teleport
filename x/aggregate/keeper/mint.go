@@ -15,15 +15,15 @@ import (
 //  - minting is enabled for the given (erc20,coin) token pair
 //  - recipient address is not on the blocked list
 //  - bank module transfers are enabled for the Cosmos coin
-func (k Keeper) MintingEnabled(ctx sdk.Context, sender, receiver sdk.AccAddress, token, denom string) (types.TokenPair, error) {
+func (k Keeper) MintingEnabled(ctx sdk.Context, sender sdk.AccAddress, receiver sdk.AccAddress, token string, denom string) (types.TokenPair, error) {
 	params := k.GetParams(ctx)
 	if !params.EnableAggregate {
-		return types.TokenPair{}, sdkerrors.Wrap(types.ErrERC20Disabled, "module is currently disabled by governance")
+		return types.TokenPair{}, sdkerrors.Wrap(types.ErrAggregateDisabled, "module is currently disabled by governance")
 	}
 
 	id := k.GetTokenPairID(ctx, token)
-	denomId := k.GetTokenPairID(ctx, denom)
-	if !bytes.Equal(denomId, id) {
+	denomID := k.GetTokenPairID(ctx, denom)
+	if !bytes.Equal(denomID, id) {
 		return types.TokenPair{}, sdkerrors.Wrapf(types.ErrTokenPairNotFound, "denom '%s' not registered by id", denom)
 	}
 
@@ -33,11 +33,11 @@ func (k Keeper) MintingEnabled(ctx sdk.Context, sender, receiver sdk.AccAddress,
 
 	pair, found := k.GetTokenPair(ctx, id)
 	if !found {
-		return types.TokenPair{}, sdkerrors.Wrapf(types.ErrTokenPairNotFound, "token '%s' not registered", token)
+		return types.TokenPair{}, sdkerrors.Wrapf(types.ErrERC20TokenPairDisabled, "token '%s' not registered", token)
 	}
 
 	if !pair.Enabled {
-		return types.TokenPair{}, sdkerrors.Wrapf(types.ErrERC20Disabled, "minting token '%s' is not enabled by governance", token)
+		return types.TokenPair{}, sdkerrors.Wrapf(types.ErrAggregateDisabled, "minting token '%s' is not enabled by governance", token)
 	}
 
 	if k.bankKeeper.BlockedAddr(receiver.Bytes()) {

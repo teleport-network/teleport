@@ -29,12 +29,12 @@ func GetQueryCmd() *cobra.Command {
 	return cmd
 }
 
-// GetTokenPairsCmd queries all token pairs registered
+// GetTokenPairsCmd queries all registered token pairs
 func GetTokenPairsCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "token-pairs",
-		Short: "Gets token pairs registered",
-		Long:  "Gets token pairs registered",
+		Short: "Gets registered token pairs",
+		Long:  "Gets registered token pairs",
 		Args:  cobra.NoArgs,
 		RunE: func(cmd *cobra.Command, _ []string) error {
 			clientCtx, err := client.GetClientQueryContext(cmd)
@@ -66,12 +66,12 @@ func GetTokenPairsCmd() *cobra.Command {
 	return cmd
 }
 
-// GetTokenPairsCmd queries a token pair registered
+// GetTokenPairsCmd queries a registered token pair
 func GetTokenPairCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "token-pair [token]",
-		Short: "Get a token pair registered",
-		Long:  "Get a token pair registered",
+		Short: "Get a registered token pair",
+		Long:  "Get a registered token pair",
 		Args:  cobra.ExactArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			clientCtx, err := client.GetClientQueryContext(cmd)
@@ -98,7 +98,7 @@ func GetTokenPairCmd() *cobra.Command {
 	return cmd
 }
 
-// GetHubParamsCmd queries hub info
+// GetParamsCmd queries aggregate module params
 func GetParamsCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "params",

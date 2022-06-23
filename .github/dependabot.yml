@@ -9,6 +9,7 @@ updates:
     reviewers:
       - Zer0ne001
       - KaelTop
+      - FletcherMan
     labels:
       - dependencies
   - package-ecosystem: docker
@@ -20,6 +21,7 @@ updates:
     reviewers:
       - Zer0ne001
       - KaelTop
+      - FletcherMan
   - package-ecosystem: gomod
     directory: "/"
     schedule:

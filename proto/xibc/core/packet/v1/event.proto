@@ -29,6 +29,7 @@ message EventWriteAck {
   string sequence = 3;
   bytes packet = 4;
   bytes ack = 5;
+  uint64 code = 6;
 }
 
 // EventAcknowledgePacket is emitted on acknowledgement packet

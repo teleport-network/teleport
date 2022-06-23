@@ -29,20 +29,22 @@ message EventRegisterTokens {
   string erc20_token = 2;
 }
 
-// Event
+// EventEnableTimeBasedSupplyLimit is emitted on aggregate enable time based
+// supply limit
 message EventEnableTimeBasedSupplyLimit {
-  string erc20_address = 3 [ (gogoproto.customname) = "ERC20Address" ];
+  string erc20_address = 1 [ (gogoproto.customname) = "ERC20Address" ];
   // time peroid in seconds
-  string timePeriod = 4;
+  string timePeriod = 2;
   // time based limit
-  string timeBasedLimit = 5;
+  string timeBasedLimit = 3;
   // max amount single transfer
-  string maxAmount = 6;
+  string maxAmount = 4;
   // min amount single transfer
-  string minAmount = 7;
+  string minAmount = 5;
 }
 
-// Event
+// EventDisableTimeBasedSupplyLimit is emitted on aggregate disable time based
+// supply limit
 message EventDisableTimeBasedSupplyLimit {
-  string erc20_address = 3 [ (gogoproto.customname) = "ERC20Address" ];
+  string erc20_address = 1 [ (gogoproto.customname) = "ERC20Address" ];
 }

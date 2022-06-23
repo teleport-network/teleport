@@ -85,11 +85,7 @@ func (p Packet) GetFeeOption() uint64 { return p.FeeOption }
 
 // ABIPack implements PacketI interface
 func (p Packet) ABIPack() ([]byte, error) {
-	pack, err := abi.Arguments{{Type: TuplePacketData}}.Pack(p)
-	if err != nil {
-		return nil, err
-	}
-	return pack, nil
+	return abi.Arguments{{Type: TuplePacketData}}.Pack(p)
 }
 
 // ABIDecode implements PacketI interface
@@ -110,15 +106,12 @@ func (p Packet) ValidateBasic() error {
 	if len(p.SrcChain) == 0 {
 		return sdkerrors.Wrap(ErrInvalidSrcChain, "srcChain is empty")
 	}
-
 	if len(p.DstChain) == 0 {
 		return sdkerrors.Wrap(ErrInvalidDstChain, "dstChain is empty")
 	}
-
 	if p.SrcChain == p.DstChain {
 		return sdkerrors.Wrap(ErrScChainEqualToDstChain, "srcChain equals to dstChain")
 	}
-
 	if p.Sequence == 0 {
 		return sdkerrors.Wrap(ErrInvalidPacket, "packet sequence cannot be 0")
 	}
@@ -142,11 +135,7 @@ func NewAcknowledgement(code uint64, results []byte, message, relayer string, fe
 
 // ABIPack is a helper for serialising acknowledgements
 func (ack Acknowledgement) ABIPack() ([]byte, error) {
-	pack, err := abi.Arguments{{Type: TupleAckData}}.Pack(ack)
-	if err != nil {
-		return nil, err
-	}
-	return pack, nil
+	return abi.Arguments{{Type: TupleAckData}}.Pack(ack)
 }
 
 func (ack *Acknowledgement) ABIDecode(bz []byte) error {
@@ -172,11 +161,7 @@ type Result struct {
 
 // ABIPack is a helper for serialising Result
 func (result Result) ABIPack() ([]byte, error) {
-	pack, err := abi.Arguments{{Type: TupleRecvPacketResultData}}.Pack(result)
-	if err != nil {
-		return nil, err
-	}
-	return pack, nil
+	return abi.Arguments{{Type: TupleRecvPacketResultData}}.Pack(result)
 }
 
 func (result *Result) DecodeInterface(bz interface{}) error {
@@ -221,20 +206,12 @@ func (e *EventSendPacket) DecodeInterface(bz interface{}) error {
 
 // ABIPack is a helper for serialising Result
 func (e *EventSendPacket) ABIPack() ([]byte, error) {
-	pack, err := abi.Arguments{{Type: TuplePacketSendData}}.Pack(e)
-	if err != nil {
-		return nil, err
-	}
-	return pack, nil
+	return abi.Arguments{{Type: TuplePacketSendData}}.Pack(e)
 }
 
 // ABIPack is a helper for serialising Result
 func (e *TransferData) ABIPack() ([]byte, error) {
-	pack, err := abi.Arguments{{Type: TupleTransferData}}.Pack(e)
-	if err != nil {
-		return nil, err
-	}
-	return pack, nil
+	return abi.Arguments{{Type: TupleTransferData}}.Pack(e)
 }
 
 func (e *TransferData) ABIDecode(bz []byte) error {
@@ -251,11 +228,7 @@ func (e *TransferData) ABIDecode(bz []byte) error {
 
 // ABIPack is a helper for serialising Result
 func (e *CallData) ABIPack() ([]byte, error) {
-	pack, err := abi.Arguments{{Type: TupleCallData}}.Pack(e)
-	if err != nil {
-		return nil, err
-	}
-	return pack, nil
+	return abi.Arguments{{Type: TupleCallData}}.Pack(e)
 }
 
 func (e *CallData) ABIDecode(bz []byte) error {

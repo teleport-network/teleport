@@ -23,7 +23,16 @@ func (suite *KeeperTestSuite) TestMintingEnabled() {
 		expPass  bool
 	}{
 		{
-			"intrarelaying is disabled globally",
+			"ok",
+			func() {
+				suite.app.AggregateKeeper.SetTokenPair(suite.ctx, expPair)
+				suite.app.AggregateKeeper.SetDenomsMap(suite.ctx, expPair.Denoms, id)
+				suite.app.AggregateKeeper.SetERC20Map(suite.ctx, expPair.GetERC20Contract(), id)
+			},
+			true,
+		},
+		{
+			"conversion is disabled globally",
 			func() {
 				params := types.DefaultParams()
 				params.EnableAggregate = false
@@ -37,7 +46,7 @@ func (suite *KeeperTestSuite) TestMintingEnabled() {
 			false,
 		},
 		{
-			"intrarelaying is disabled for the given pair",
+			"conversion is disabled for the given pair",
 			func() {
 				expPair.Enabled = false
 				suite.app.AggregateKeeper.SetTokenPair(suite.ctx, expPair)
@@ -63,13 +72,24 @@ func (suite *KeeperTestSuite) TestMintingEnabled() {
 			false,
 		},
 		{
-			"ok",
+			"token not registered",
+			func() {
+				suite.app.AggregateKeeper.SetDenomsMap(suite.ctx, expPair.Denoms, id)
+				suite.app.AggregateKeeper.SetERC20Map(suite.ctx, expPair.GetERC20Contract(), id)
+			},
+			false,
+		},
+		{
+			"receiver address is blocked (module account)",
 			func() {
 				suite.app.AggregateKeeper.SetTokenPair(suite.ctx, expPair)
 				suite.app.AggregateKeeper.SetDenomsMap(suite.ctx, expPair.Denoms, id)
 				suite.app.AggregateKeeper.SetERC20Map(suite.ctx, expPair.GetERC20Contract(), id)
+
+				acc := suite.app.AccountKeeper.GetModuleAccount(suite.ctx, types.ModuleName)
+				receiver = acc.GetAddress()
 			},
-			true,
+			false,
 		},
 	}
 

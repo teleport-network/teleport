@@ -11,12 +11,12 @@ import "gogoproto/gogo.proto";
 
 // Query defines the gRPC querier service
 service Query {
-  // Retrieves registered token pairs
+  // TokenPairs retrieves registered token pairs
   rpc TokenPairs(QueryTokenPairsRequest) returns (QueryTokenPairsResponse) {
     option (google.api.http).get = "/teleport/aggregate/v1/token_pairs";
   }
 
-  // Retrieves a registered token pair
+  // TokenPair retrieves a registered token pair
   rpc TokenPair(QueryTokenPairRequest) returns (QueryTokenPairResponse) {
     option (google.api.http).get = "/teleport/aggregate/v1/token_pairs/{token}";
   }

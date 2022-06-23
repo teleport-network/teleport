@@ -8,17 +8,16 @@ import (
 
 // aggregate events
 const (
-	EventTypeTokenLock            = "token_lock"
-	EventTypeTokenUnlock          = "token_unlock"
-	EventTypeMint                 = "mint"
-	EventTypeConvertCoin          = "convert_coin"
-	EventTypeConvertERC20         = "convert_erc20"
-	EventTypeBurn                 = "burn"
-	EventTypeRegisterCoin         = "register_coin"
-	EventTypeRegisterERC20        = "register_erc20"
-	EventTypeToggleTokenRelay     = "toggle_token_relay" // #nosec
-	EventTypeUpdateTokenPairERC20 = "update_token_pair_erc20"
-	EventTypeRegisterERC20Trace   = "register_erc20_trace"
+	EventTypeTokenLock             = "token_lock"
+	EventTypeTokenUnlock           = "token_unlock"
+	EventTypeMint                  = "mint"
+	EventTypeConvertCoin           = "convert_coin"
+	EventTypeConvertERC20          = "convert_erc20"
+	EventTypeBurn                  = "burn"
+	EventTypeRegisterCoin          = "register_coin"
+	EventTypeRegisterERC20         = "register_erc20"
+	EventTypeToggleTokenConversion = "toggle_token_conversion" // #nosec
+	EventTypeRegisterERC20Trace    = "register_erc20_trace"
 
 	AttributeKeyCosmosCoin  = "cosmos_coin"
 	AttributeKeyERC20Token  = "erc20_token" // #nosec

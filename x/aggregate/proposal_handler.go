@@ -24,17 +24,14 @@ func NewAggregateProposalHandler(k *keeper.Keeper) govtypes.Handler {
 			return handleAddCoinProposal(ctx, k, c)
 		case *types.RegisterERC20Proposal:
 			return handleRegisterERC20Proposal(ctx, k, c)
-		case *types.ToggleTokenRelayProposal:
-			return handleToggleRelayProposal(ctx, k, c)
-		case *types.UpdateTokenPairERC20Proposal:
-			return handleUpdateTokenPairERC20Proposal(ctx, k, c)
+		case *types.ToggleTokenConversionProposal:
+			return handleToggleConversionProposal(ctx, k, c)
 		case *types.RegisterERC20TraceProposal:
 			return handleRegisterERC20TraceProposal(ctx, k, c)
 		case *types.EnableTimeBasedSupplyLimitProposal:
 			return handleEnableTimeBasedSupplyLimitProposal(ctx, k, c)
 		case *types.DisableTimeBasedSupplyLimitProposal:
 			return handleDisableTimeBasedSupplyLimitProposal(ctx, k, c)
-
 		default:
 			return sdkerrors.Wrapf(sdkerrors.ErrUnknownRequest, "unrecognized %s proposal content type: %T", types.ModuleName, c)
 		}
@@ -46,11 +43,12 @@ func handleRegisterCoinProposal(ctx sdk.Context, k *keeper.Keeper, p *types.Regi
 	if err != nil {
 		return err
 	}
-	err = ctx.EventManager().EmitTypedEvent(&types.EventRegisterTokens{Denom: pair.Denoms, Erc20Token: pair.ERC20Address})
-	if err != nil {
-		return err
-	}
-	return nil
+	return ctx.EventManager().EmitTypedEvent(
+		&types.EventRegisterTokens{
+			Denom:      pair.Denoms,
+			Erc20Token: pair.ERC20Address,
+		},
+	)
 }
 
 func handleAddCoinProposal(ctx sdk.Context, k *keeper.Keeper, p *types.AddCoinProposal) error {
@@ -58,12 +56,12 @@ func handleAddCoinProposal(ctx sdk.Context, k *keeper.Keeper, p *types.AddCoinPr
 	if err != nil {
 		return err
 	}
-
-	err = ctx.EventManager().EmitTypedEvent(&types.EventRegisterTokens{Denom: pair.Denoms, Erc20Token: pair.ERC20Address})
-	if err != nil {
-		return err
-	}
-	return nil
+	return ctx.EventManager().EmitTypedEvent(
+		&types.EventRegisterTokens{
+			Denom:      pair.Denoms,
+			Erc20Token: pair.ERC20Address,
+		},
+	)
 }
 
 func handleRegisterERC20Proposal(ctx sdk.Context, k *keeper.Keeper, p *types.RegisterERC20Proposal) error {
@@ -71,48 +69,31 @@ func handleRegisterERC20Proposal(ctx sdk.Context, k *keeper.Keeper, p *types.Reg
 	if err != nil {
 		return err
 	}
-
-	err = ctx.EventManager().EmitTypedEvent(&types.EventRegisterTokens{Denom: pair.Denoms, Erc20Token: pair.ERC20Address})
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return ctx.EventManager().EmitTypedEvent(
+		&types.EventRegisterTokens{
+			Denom:      pair.Denoms,
+			Erc20Token: pair.ERC20Address,
+		},
+	)
 }
 
-func handleToggleRelayProposal(ctx sdk.Context, k *keeper.Keeper, p *types.ToggleTokenRelayProposal) error {
-	pair, err := k.ToggleRelay(ctx, p.Token)
+func handleToggleConversionProposal(ctx sdk.Context, k *keeper.Keeper, p *types.ToggleTokenConversionProposal) error {
+	pair, err := k.ToggleConversion(ctx, p.Token)
 	if err != nil {
 		return err
 	}
-
-	err = ctx.EventManager().EmitTypedEvent(&types.EventRegisterTokens{Denom: pair.Denoms, Erc20Token: pair.ERC20Address})
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func handleUpdateTokenPairERC20Proposal(ctx sdk.Context, k *keeper.Keeper, p *types.UpdateTokenPairERC20Proposal) error {
-	pair, err := k.UpdateTokenPairERC20(ctx, p.ConvertERC20Address(), p.ConvertNewERC20Address())
-	if err != nil {
-		return err
-	}
-
-	err = ctx.EventManager().EmitTypedEvent(&types.EventRegisterTokens{Denom: pair.Denoms, Erc20Token: pair.ERC20Address})
-	if err != nil {
-		return err
-	}
-
-	return nil
+	return ctx.EventManager().EmitTypedEvent(
+		&types.EventRegisterTokens{
+			Denom:      pair.Denoms,
+			Erc20Token: pair.ERC20Address,
+		},
+	)
 }
 
 func handleRegisterERC20TraceProposal(ctx sdk.Context, k *keeper.Keeper, p *types.RegisterERC20TraceProposal) error {
 	if err := k.RegisterERC20Trace(ctx, common.HexToAddress(p.ERC20Address), p.OriginToken, p.OriginChain, uint8(p.Scale)); err != nil {
 		return err
 	}
-
 	ctx.EventManager().EmitEvent(
 		sdk.NewEvent(
 			types.EventTypeRegisterERC20Trace,
@@ -121,7 +102,6 @@ func handleRegisterERC20TraceProposal(ctx sdk.Context, k *keeper.Keeper, p *type
 			sdk.NewAttribute(types.AttributeKeyOriginChain, p.OriginChain),
 		),
 	)
-
 	return nil
 }
 
@@ -141,7 +121,6 @@ func handleEnableTimeBasedSupplyLimitProposal(ctx sdk.Context, k *keeper.Keeper,
 	); err != nil {
 		return err
 	}
-
 	_ = ctx.EventManager().EmitTypedEvent(
 		&types.EnableTimeBasedSupplyLimitProposal{
 			ERC20Address:   p.ERC20Address,
@@ -151,7 +130,6 @@ func handleEnableTimeBasedSupplyLimitProposal(ctx sdk.Context, k *keeper.Keeper,
 			MinAmount:      p.MinAmount,
 		},
 	)
-
 	return nil
 }
 
@@ -159,12 +137,10 @@ func handleDisableTimeBasedSupplyLimitProposal(ctx sdk.Context, k *keeper.Keeper
 	if err := k.DisableTimeBasedSupplyLimit(ctx, common.HexToAddress(p.ERC20Address)); err != nil {
 		return err
 	}
-
 	_ = ctx.EventManager().EmitTypedEvent(
 		&types.DisableTimeBasedSupplyLimitProposal{
 			ERC20Address: p.ERC20Address,
 		},
 	)
-
 	return nil
 }

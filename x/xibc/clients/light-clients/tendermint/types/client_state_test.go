@@ -258,14 +258,7 @@ func (suite *TendermintTestSuite) TestVerifyPacketAcknowledgement() {
 			err = suite.chainB.App.XIBCKeeper.PacketKeeper.RecvPacket(suite.chainB.GetContext(), msg)
 			suite.Require().NoError(err)
 
-			ack, err := packettypes.NewAcknowledgement(
-				0,
-				[]byte(""),
-				"",
-				suite.chainB.SenderAcc.String(),
-				0,
-			).ABIPack()
-			suite.Require().NoError(err)
+			ack := packettypes.NewAcknowledgement(0, []byte(""), "", suite.chainB.SenderAcc.String(), 0)
 			err = suite.chainB.App.XIBCKeeper.PacketKeeper.WriteAcknowledgement(suite.chainB.GetContext(), packet, ack)
 			suite.Require().NoError(err)
 
@@ -291,13 +284,10 @@ func (suite *TendermintTestSuite) TestVerifyPacketAcknowledgement() {
 			ctx := suite.chainA.GetContext()
 			store := path.EndpointA.ClientStore()
 
-			ack, err = packettypes.NewAcknowledgement(
-				0,
-				[]byte(""),
-				"",
-				suite.chainB.SenderAcc.String(),
-				0,
-			).ABIPack()
+			ack = packettypes.NewAcknowledgement(0, []byte(""), "", suite.chainB.SenderAcc.String(), 0)
+			suite.Require().NoError(err)
+
+			ackBz, err := ack.ABIPack()
 			suite.Require().NoError(err)
 
 			err = clientState.VerifyPacketAcknowledgement(
@@ -309,7 +299,7 @@ func (suite *TendermintTestSuite) TestVerifyPacketAcknowledgement() {
 				packet.GetSrcChain(),
 				packet.GetDstChain(),
 				packet.GetSequence(),
-				packettypes.CommitAcknowledgement(ack),
+				packettypes.CommitAcknowledgement(ackBz),
 			)
 
 			if tc.expPass {

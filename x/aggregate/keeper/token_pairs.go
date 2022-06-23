@@ -9,8 +9,8 @@ import (
 	"github.com/teleport-network/teleport/x/aggregate/types"
 )
 
-// GetAllTokenPairs - get all registered token tokenPairs
-func (k Keeper) GetAllTokenPairs(ctx sdk.Context) []types.TokenPair {
+// GetTokenPairs - get all registered token tokenPairs
+func (k Keeper) GetTokenPairs(ctx sdk.Context) []types.TokenPair {
 	tokenPairs := []types.TokenPair{}
 
 	store := ctx.KVStore(k.storeKey)

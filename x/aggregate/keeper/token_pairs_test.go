@@ -19,9 +19,7 @@ func (suite *KeeperTestSuite) TestGetAllTokenPairs() {
 		name     string
 		malleate func()
 	}{
-		{
-			"no pair registered", func() { expRes = []types.TokenPair{} },
-		},
+		{"no pair registered", func() { expRes = []types.TokenPair{} }},
 		{
 			"1 pair registered",
 			func() {
@@ -48,7 +46,7 @@ func (suite *KeeperTestSuite) TestGetAllTokenPairs() {
 			suite.SetupTest() // reset
 
 			tc.malleate()
-			res := suite.app.AggregateKeeper.GetAllTokenPairs(suite.ctx)
+			res := suite.app.AggregateKeeper.GetTokenPairs(suite.ctx)
 
 			suite.Require().ElementsMatch(expRes, res, tc.name)
 		})

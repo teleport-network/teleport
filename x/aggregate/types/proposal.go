@@ -21,8 +21,7 @@ const (
 	ProposalTypeRegisterCoin                string = "RegisterCoin"
 	ProposalTypeAddCoin                     string = "AddCoin"
 	ProposalTypeRegisterERC20               string = "RegisterERC20"
-	ProposalTypeToggleTokenRelay            string = "ToggleTokenRelay" // #nosec
-	ProposalTypeUpdateTokenPairERC20        string = "UpdateTokenPairERC20"
+	ProposalTypeToggleTokenConversion       string = "ToggleTokenConversion" // #nosec
 	ProposalTypeRegisterERC20Trace          string = "RegisterERC20Trace"
 	ProposalTypeEnableTimeBasedSupplyLimit  string = "EnableTimeBasedSupplyLimit"
 	ProposalTypeDisableTimeBasedSupplyLimit string = "DisableTimeBasedSupplyLimit"
@@ -33,8 +32,7 @@ var (
 	_ govtypes.Content = &RegisterCoinProposal{}
 	_ govtypes.Content = &AddCoinProposal{}
 	_ govtypes.Content = &RegisterERC20Proposal{}
-	_ govtypes.Content = &ToggleTokenRelayProposal{}
-	_ govtypes.Content = &UpdateTokenPairERC20Proposal{}
+	_ govtypes.Content = &ToggleTokenConversionProposal{}
 	_ govtypes.Content = &RegisterERC20TraceProposal{}
 	_ govtypes.Content = &EnableTimeBasedSupplyLimitProposal{}
 	_ govtypes.Content = &DisableTimeBasedSupplyLimitProposal{}
@@ -44,8 +42,7 @@ func init() {
 	govtypes.RegisterProposalType(ProposalTypeRegisterCoin)
 	govtypes.RegisterProposalType(ProposalTypeAddCoin)
 	govtypes.RegisterProposalType(ProposalTypeRegisterERC20)
-	govtypes.RegisterProposalType(ProposalTypeToggleTokenRelay)
-	govtypes.RegisterProposalType(ProposalTypeUpdateTokenPairERC20)
+	govtypes.RegisterProposalType(ProposalTypeToggleTokenConversion)
 	govtypes.RegisterProposalType(ProposalTypeRegisterERC20Trace)
 	govtypes.RegisterProposalType(ProposalTypeEnableTimeBasedSupplyLimit)
 	govtypes.RegisterProposalType(ProposalTypeDisableTimeBasedSupplyLimit)
@@ -53,8 +50,7 @@ func init() {
 	govtypes.RegisterProposalTypeCodec(&RegisterCoinProposal{}, "aggregate/RegisterCoinProposal")
 	govtypes.RegisterProposalTypeCodec(&AddCoinProposal{}, "aggregate/AddCoinProposal")
 	govtypes.RegisterProposalTypeCodec(&RegisterERC20Proposal{}, "aggregate/RegisterERC20Proposal")
-	govtypes.RegisterProposalTypeCodec(&ToggleTokenRelayProposal{}, "aggregate/ToggleTokenRelayProposal")
-	govtypes.RegisterProposalTypeCodec(&UpdateTokenPairERC20Proposal{}, "aggregate/UpdateTokenPairERC20Proposal")
+	govtypes.RegisterProposalTypeCodec(&ToggleTokenConversionProposal{}, "aggregate/ToggleTokenConversionProposal")
 	govtypes.RegisterProposalTypeCodec(&RegisterERC20TraceProposal{}, "aggregate/RegisterERC20TraceProposal")
 	govtypes.RegisterProposalTypeCodec(&EnableTimeBasedSupplyLimitProposal{}, "aggregate/EnableTimeBasedSupplyLimitProposal")
 	govtypes.RegisterProposalTypeCodec(&DisableTimeBasedSupplyLimitProposal{}, "aggregate/DisableTimeBasedSupplyLimitProposal")
@@ -82,7 +78,7 @@ func NewRegisterCoinProposal(title, description string, coinMetadata banktypes.M
 }
 
 // ProposalRoute returns router key for this proposal
-func (*RegisterCoinProposal) ProposalRoute() string { return GovRouterKey }
+func (*RegisterCoinProposal) ProposalRoute() string { return RouterKey }
 
 // ProposalType returns proposal type for this proposal
 func (*RegisterCoinProposal) ProposalType() string {
@@ -99,35 +95,26 @@ func (p *RegisterCoinProposal) ValidateBasic() error {
 		return err
 	}
 
-	if err := validateIBC(p.Metadata); err != nil {
+	if err := validateIBCVoucherMetadata(p.Metadata); err != nil {
 		return err
 	}
 
 	return govtypes.ValidateAbstract(p)
 }
 
-func validateIBC(metadata banktypes.Metadata) error {
+// validateIBCVoucherMetadata checks that the coin metadata fields are consistent
+// with an IBC voucher denomination.
+func validateIBCVoucherMetadata(metadata banktypes.Metadata) error {
 	// Check ibc/ denom
 	denomSplit := strings.SplitN(metadata.Base, "/", 2)
-
 	if denomSplit[0] == metadata.Base && strings.TrimSpace(metadata.Base) != "" {
 		// Not IBC
 		return nil
 	}
-
 	if len(denomSplit) != 2 || denomSplit[0] != ibctransfertypes.DenomPrefix {
 		// NOTE: should be unaccessible (covered on ValidateIBCDenom)
 		return fmt.Errorf("invalid metadata. %s denomination should be prefixed with the format 'ibc/", metadata.Base)
 	}
-
-	if !strings.Contains(metadata.Name, "channel-") {
-		return fmt.Errorf("invalid metadata (Name) for ibc. %s should include channel", metadata.Name)
-	}
-
-	if !strings.HasPrefix(metadata.Symbol, "ibc") {
-		return fmt.Errorf("invalid metadata (Symbol) for ibc. %s should include \"ibc\" prefix", metadata.Symbol)
-	}
-
 	return nil
 }
 
@@ -155,7 +142,7 @@ func NewAddCoinProposal(title, description string, coinMetadata banktypes.Metada
 }
 
 // ProposalRoute returns router key for this proposal
-func (*AddCoinProposal) ProposalRoute() string { return GovRouterKey }
+func (*AddCoinProposal) ProposalRoute() string { return RouterKey }
 
 // ProposalType returns proposal type for this proposal
 func (*AddCoinProposal) ProposalType() string {
@@ -167,19 +154,15 @@ func (rtbp *AddCoinProposal) ValidateBasic() error {
 	if err := rtbp.Metadata.Validate(); err != nil {
 		return err
 	}
-
 	if err := ibctransfertypes.ValidateIBCDenom(rtbp.Metadata.Base); err != nil {
 		return err
 	}
-
-	if err := validateIBC(rtbp.Metadata); err != nil {
+	if err := validateIBCVoucherMetadata(rtbp.Metadata); err != nil {
 		return err
 	}
-
 	if check := common.IsHexAddress(rtbp.ContractAddress); !check {
-		return sdkerrors.Wrap(ErrERC20Disabled, "ERC20 address invalid")
+		return sdkerrors.Wrap(ErrAggregateDisabled, "ERC20 address invalid")
 	}
-
 	return govtypes.ValidateAbstract(rtbp)
 }
 
@@ -195,7 +178,7 @@ func NewRegisterERC20Proposal(title, description, erc20Addr string) govtypes.Con
 }
 
 // ProposalRoute returns router key for this proposal
-func (*RegisterERC20Proposal) ProposalRoute() string { return GovRouterKey }
+func (*RegisterERC20Proposal) ProposalRoute() string { return RouterKey }
 
 // ProposalType returns proposal type for this proposal
 func (*RegisterERC20Proposal) ProposalType() string {
@@ -212,9 +195,9 @@ func (p *RegisterERC20Proposal) ValidateBasic() error {
 
 // ================================================================================================================
 
-// NewToggleTokenRelayProposal returns new instance of ToggleTokenRelayProposal
-func NewToggleTokenRelayProposal(title, description string, token string) govtypes.Content {
-	return &ToggleTokenRelayProposal{
+// NewToggleTokenConversionProposal returns new instance of ToggleTokenConversionProposal
+func NewToggleTokenConversionProposal(title, description string, token string) govtypes.Content {
+	return &ToggleTokenConversionProposal{
 		Title:       title,
 		Description: description,
 		Token:       token,
@@ -222,67 +205,22 @@ func NewToggleTokenRelayProposal(title, description string, token string) govtyp
 }
 
 // ProposalRoute returns router key for this proposal
-func (*ToggleTokenRelayProposal) ProposalRoute() string { return GovRouterKey }
+func (*ToggleTokenConversionProposal) ProposalRoute() string { return RouterKey }
 
 // ProposalType returns proposal type for this proposal
-func (*ToggleTokenRelayProposal) ProposalType() string {
-	return ProposalTypeToggleTokenRelay
+func (*ToggleTokenConversionProposal) ProposalType() string {
+	return ProposalTypeToggleTokenConversion
 }
 
 // ValidateBasic performs a stateless check of the proposal fields
-func (etrp *ToggleTokenRelayProposal) ValidateBasic() error {
-	// check if the token is a hex address, if not, check if it is a valid SDK
-	// denom
-	if err := ethermint.ValidateAddress(etrp.Token); err != nil {
-		if err := sdk.ValidateDenom(etrp.Token); err != nil {
+func (ttcp *ToggleTokenConversionProposal) ValidateBasic() error {
+	// check if the token is a hex address, if not, check if it is a valid SDK denom
+	if err := ethermint.ValidateAddress(ttcp.Token); err != nil {
+		if err := sdk.ValidateDenom(ttcp.Token); err != nil {
 			return err
 		}
 	}
-
-	return govtypes.ValidateAbstract(etrp)
-}
-
-// ================================================================================================================
-
-// NewUpdateTokenPairERC20Proposal returns new instance of UpdateTokenPairERC20Proposal
-func NewUpdateTokenPairERC20Proposal(title, description, erc20Addr, newERC20Addr string) govtypes.Content {
-	return &UpdateTokenPairERC20Proposal{
-		Title:           title,
-		Description:     description,
-		ERC20Address:    erc20Addr,
-		NewERC20Address: newERC20Addr,
-	}
-}
-
-// ProposalRoute returns router key for this proposal
-func (*UpdateTokenPairERC20Proposal) ProposalRoute() string { return GovRouterKey }
-
-// ProposalType returns proposal type for this proposal
-func (*UpdateTokenPairERC20Proposal) ProposalType() string {
-	return ProposalTypeUpdateTokenPairERC20
-}
-
-// ValidateBasic performs a stateless check of the proposal fields
-func (p *UpdateTokenPairERC20Proposal) ValidateBasic() error {
-	if err := ethermint.ValidateAddress(p.ERC20Address); err != nil {
-		return sdkerrors.Wrap(err, "ERC20 address")
-	}
-
-	if err := ethermint.ValidateAddress(p.NewERC20Address); err != nil {
-		return sdkerrors.Wrap(err, "new ERC20 address")
-	}
-
-	return govtypes.ValidateAbstract(p)
-}
-
-// ConvertERC20Address returns the common.Address representation of the ERC20 hex address
-func (p UpdateTokenPairERC20Proposal) ConvertERC20Address() common.Address {
-	return common.HexToAddress(p.ERC20Address)
-}
-
-// ConvertNewERC20Address returns the common.Address representation of the new ERC20 hex address
-func (p UpdateTokenPairERC20Proposal) ConvertNewERC20Address() common.Address {
-	return common.HexToAddress(p.NewERC20Address)
+	return govtypes.ValidateAbstract(ttcp)
 }
 
 // ================================================================================================================
@@ -307,7 +245,7 @@ func NewRegisterERC20TraceProposal(
 }
 
 // ProposalRoute returns router key for this proposal
-func (*RegisterERC20TraceProposal) ProposalRoute() string { return GovRouterKey }
+func (*RegisterERC20TraceProposal) ProposalRoute() string { return RouterKey }
 
 // ProposalType returns proposal type for this proposal
 func (*RegisterERC20TraceProposal) ProposalType() string {
@@ -361,7 +299,7 @@ func NewEnableTimeBasedSupplyLimitProposal(
 }
 
 // ProposalRoute returns router key for this proposal
-func (*EnableTimeBasedSupplyLimitProposal) ProposalRoute() string { return GovRouterKey }
+func (*EnableTimeBasedSupplyLimitProposal) ProposalRoute() string { return RouterKey }
 
 // ProposalType returns proposal type for this proposal
 func (*EnableTimeBasedSupplyLimitProposal) ProposalType() string {
@@ -413,7 +351,7 @@ func NewDisableTimeBasedSupplyLimitProposal(
 }
 
 // ProposalRoute returns router key for this proposal
-func (*DisableTimeBasedSupplyLimitProposal) ProposalRoute() string { return GovRouterKey }
+func (*DisableTimeBasedSupplyLimitProposal) ProposalRoute() string { return RouterKey }
 
 // ProposalType returns proposal type for this proposal
 func (*DisableTimeBasedSupplyLimitProposal) ProposalType() string {

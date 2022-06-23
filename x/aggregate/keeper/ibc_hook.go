@@ -65,8 +65,7 @@ func (k Keeper) OnRecvPacket(
 	)
 	// use cctx to ConvertCoin
 	context := sdk.WrapSDKContext(cctx)
-	_, err = k.ConvertCoin(context, msg)
-	if err != nil {
+	if _, err = k.ConvertCoin(context, msg); err != nil {
 		event.Status = types.STATUS_FAILED
 		event.Message = err.Error()
 		_ = ctx.EventManager().EmitTypedEvent(event)
@@ -89,10 +88,19 @@ func (k Keeper) OnAcknowledgementPacket(
 	return nil
 }
 
-func (k Keeper) SendPacket(ctx sdk.Context, channelCap *capabilitytypes.Capability, packet exported.PacketI) error {
+func (k Keeper) SendPacket(
+	ctx sdk.Context,
+	channelCap *capabilitytypes.Capability,
+	packet exported.PacketI,
+) error {
 	return k.ics4Wrapper.SendPacket(ctx, channelCap, packet)
 }
 
-func (k Keeper) WriteAcknowledgement(ctx sdk.Context, channelCap *capabilitytypes.Capability, packet exported.PacketI, ack exported.Acknowledgement) error {
+func (k Keeper) WriteAcknowledgement(
+	ctx sdk.Context,
+	channelCap *capabilitytypes.Capability,
+	packet exported.PacketI,
+	ack exported.Acknowledgement,
+) error {
 	return k.ics4Wrapper.WriteAcknowledgement(ctx, channelCap, packet, ack)
 }

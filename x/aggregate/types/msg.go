@@ -49,11 +49,7 @@ func (msg MsgConvertCoin) ValidateBasic() error {
 
 // GetSigners defines whose signature is required
 func (msg MsgConvertCoin) GetSigners() []sdk.AccAddress {
-	addr, err := sdk.AccAddressFromBech32(msg.Sender)
-	if err != nil {
-		return nil
-	}
-
+	addr := sdk.MustAccAddressFromBech32(msg.Sender)
 	return []sdk.AccAddress{addr}
 }
 
@@ -77,7 +73,7 @@ func (msg MsgConvertERC20) ValidateBasic() error {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidCoins, "cannot mint a non-positive amount")
 	}
 	if _, err := sdk.AccAddressFromBech32(msg.Receiver); err != nil {
-		return sdkerrors.Wrap(err, "invalid reciver address")
+		return sdkerrors.Wrap(err, "invalid receiver address")
 	}
 	if !common.IsHexAddress(msg.Sender) {
 		return sdkerrors.Wrapf(sdkerrors.ErrInvalidAddress, "invalid sender hex address %s", msg.Sender)

@@ -205,10 +205,17 @@ endif
 
 ifeq (, $(shell which protoc-gen-go))
 	@echo "Installing protoc-gen-go..."
-	@go install github.com/fjl/gencodec github.com/golang/protobuf/protoc-gen-go
+	@go get github.com/fjl/gencodec
+	@go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
 else
 	@echo "protoc-gen-go already installed; skipping..."
 endif
+
+# ifeq (, $(shell which protoc-gen-go-grpc))
+# 	@go install google.golang.org/grpc/cmd/protoc-gen-go-grpc
+# else
+# 	@echo "protoc-gen-go-grpc already installed; skipping..."
+# endif
 
 ifeq (, $(shell which protoc))
 	@echo "Please istalling protobuf according to your OS"

@@ -27,7 +27,7 @@ func (k Keeper) AddERC20TraceToTransferContract(
 		return nil, err
 	}
 
-	return k.CallEVMWithData(ctx, types.ModuleAddress, &endpointcontract.EndpointContractAddress, payload)
+	return k.CallEVMWithData(ctx, types.ModuleAddress, &endpointcontract.EndpointContractAddress, payload, true)
 }
 
 func (k Keeper) EnableTimeBasedSupplyLimitInTransferContract(
@@ -53,7 +53,7 @@ func (k Keeper) EnableTimeBasedSupplyLimitInTransferContract(
 		return nil, err
 	}
 
-	return k.CallEVMWithData(ctx, types.ModuleAddress, &endpointcontract.EndpointContractAddress, payload)
+	return k.CallEVMWithData(ctx, types.ModuleAddress, &endpointcontract.EndpointContractAddress, payload, false)
 }
 
 func (k Keeper) DisableTimeBasedSupplyLimitInTransferContract(
@@ -68,5 +68,5 @@ func (k Keeper) DisableTimeBasedSupplyLimitInTransferContract(
 		return nil, err
 	}
 
-	return k.CallEVMWithData(ctx, types.ModuleAddress, &endpointcontract.EndpointContractAddress, payload)
+	return k.CallEVMWithData(ctx, types.ModuleAddress, &endpointcontract.EndpointContractAddress, payload, false)
 }

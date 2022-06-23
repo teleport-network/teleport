@@ -170,7 +170,7 @@ func (endpoint *Endpoint) RecvPacket(packet packettypes.Packet) error {
 
 // WriteAcknowledgement writes an acknowledgement
 // The counterparty client is updated.
-func (endpoint *Endpoint) WriteAcknowledgement(acknowledgement []byte, packet exported.PacketI) error {
+func (endpoint *Endpoint) WriteAcknowledgement(acknowledgement packettypes.Acknowledgement, packet exported.PacketI) error {
 	// no need to send message, acting as a handler
 	if err := endpoint.Chain.App.XIBCKeeper.PacketKeeper.WriteAcknowledgement(
 		endpoint.Chain.GetContext(),

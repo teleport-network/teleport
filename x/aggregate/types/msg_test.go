@@ -20,13 +20,11 @@ func TestMsgsTestSuite(t *testing.T) {
 }
 
 func (suite *MsgsTestSuite) TestMsgConvertCoinGetters() {
-	msgInvalid := MsgConvertCoin{}
 	msg := NewMsgConvertCoin(
 		sdk.NewCoin("test", sdk.NewInt(100)),
 		tests.GenerateAddress(),
 		sdk.AccAddress(tests.GenerateAddress().Bytes()),
 	)
-	suite.Require().Nil(msgInvalid.GetSigners())
 	suite.Require().NotNil(msg.GetSigners())
 }
 

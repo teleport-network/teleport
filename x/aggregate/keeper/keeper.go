@@ -33,13 +33,13 @@ func NewKeeper(
 	accountKeeper types.AccountKeeper,
 	bankkeeper types.BankKeeper,
 	evmKeeper types.EVMKeeper,
-) *Keeper {
+) Keeper {
 	// set KeyTable if it has not already been set
 	if !paramSpace.HasKeyTable() {
 		paramSpace = paramSpace.WithKeyTable(types.ParamKeyTable())
 	}
 
-	return &Keeper{
+	return Keeper{
 		storeKey:      storeKey,
 		cdc:           cdc,
 		paramSpace:    paramSpace,

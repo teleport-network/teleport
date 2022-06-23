@@ -80,9 +80,9 @@ func (m *GenesisState) GetTokenPairs() []TokenPair {
 
 // Params defines the aggregate module params
 type Params struct {
-	// parameter to enable the intrarelaying of Cosmos coins <--> ERC20 tokens
+	// parameter to enable the conversion of Cosmos coins <--> ERC20 tokens.
 	EnableAggregate bool `protobuf:"varint,1,opt,name=enable_aggregate,json=enableAggregate,proto3" json:"enable_aggregate,omitempty"`
-	// parameter to enable the EVM hook to convert an ERC20 token to a Cosmos
+	// parameter to enable the EVM hook that converts an ERC20 token to a Cosmos
 	// Coin by transferring the Tokens through a MsgEthereumTx to the
 	// ModuleAddress Ethereum address.
 	EnableEVMHook bool `protobuf:"varint,2,opt,name=enable_evm_hook,json=enableEvmHook,proto3" json:"enable_evm_hook,omitempty"`

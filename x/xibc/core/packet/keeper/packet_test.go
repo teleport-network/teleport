@@ -171,18 +171,13 @@ func (suite *KeeperTestSuite) TestRecvPacket() {
 }
 
 func (suite *KeeperTestSuite) TestWriteAcknowledgement() {
-	var (
-		ack    []byte
-		packet exported.PacketI
-	)
-
+	var packet exported.PacketI
 	testCases := []testCase{{
 		"success",
 		func() {
 			path := xibctesting.NewPath(suite.chainA, suite.chainB)
 			suite.coordinator.SetupClients(path)
 			packet = types.NewPacket(path.EndpointA.ChainName, path.EndpointB.ChainName, 1, "sender", mockTransferData, mockCallData, "", 0)
-			ack = xibctesting.TestHash
 		},
 		true,
 	}, {
@@ -191,17 +186,7 @@ func (suite *KeeperTestSuite) TestWriteAcknowledgement() {
 			path := xibctesting.NewPath(suite.chainA, suite.chainB)
 			suite.coordinator.SetupClients(path)
 			packet = types.NewPacket(path.EndpointA.ChainName, path.EndpointB.ChainName, 1, "sender", mockTransferData, mockCallData, "", 0)
-			ack = xibctesting.TestHash
-			suite.chainB.App.XIBCKeeper.PacketKeeper.SetPacketAcknowledgement(suite.chainB.GetContext(), packet.GetSrcChain(), packet.GetDstChain(), packet.GetSequence(), ack)
-		},
-		false,
-	}, {
-		"empty acknowledgement",
-		func() {
-			path := xibctesting.NewPath(suite.chainA, suite.chainB)
-			suite.coordinator.SetupClients(path)
-			packet = types.NewPacket(path.EndpointA.ChainName, path.EndpointB.ChainName, 1, "sender", mockTransferData, mockCallData, "", 0)
-			ack = nil
+			suite.chainB.App.XIBCKeeper.PacketKeeper.SetPacketAcknowledgement(suite.chainB.GetContext(), packet.GetSrcChain(), packet.GetDstChain(), packet.GetSequence(), xibctesting.TestHash)
 		},
 		false,
 	}}
@@ -211,7 +196,7 @@ func (suite *KeeperTestSuite) TestWriteAcknowledgement() {
 			suite.SetupTest() // reset
 			tc.malleate()
 
-			err := suite.chainB.App.XIBCKeeper.PacketKeeper.WriteAcknowledgement(suite.chainB.GetContext(), packet, ack)
+			err := suite.chainB.App.XIBCKeeper.PacketKeeper.WriteAcknowledgement(suite.chainB.GetContext(), packet, types.Acknowledgement{})
 			if tc.expPass {
 				suite.Require().NoError(err, "Invalid Case %d passed: %s", i, tc.name)
 			} else {
@@ -250,14 +235,7 @@ func (suite *KeeperTestSuite) TestAcknowledgePacket() {
 				err = suite.chainB.App.XIBCKeeper.PacketKeeper.RecvPacket(suite.chainB.GetContext(), msg)
 				suite.Require().NoError(err)
 
-				ack, err := types.NewAcknowledgement(
-					0,
-					[]byte(""),
-					"",
-					suite.chainB.SenderAcc.String(),
-					0,
-				).ABIPack()
-				suite.Require().NoError(err)
+				ack := types.NewAcknowledgement(0, []byte(""), "", suite.chainB.SenderAcc.String(), 0)
 				err = suite.chainB.App.XIBCKeeper.PacketKeeper.WriteAcknowledgement(suite.chainB.GetContext(), packet, ack)
 				suite.Require().NoError(err)
 

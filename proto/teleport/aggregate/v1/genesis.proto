@@ -16,9 +16,9 @@ message GenesisState {
 
 // Params defines the aggregate module params
 message Params {
-  // parameter to enable the intrarelaying of Cosmos coins <--> ERC20 tokens
+  // parameter to enable the conversion of Cosmos coins <--> ERC20 tokens.
   bool enable_aggregate = 1;
-  // parameter to enable the EVM hook to convert an ERC20 token to a Cosmos
+  // parameter to enable the EVM hook that converts an ERC20 token to a Cosmos
   // Coin by transferring the Tokens through a MsgEthereumTx to the
   // ModuleAddress Ethereum address.
   bool enable_evm_hook = 2 [ (gogoproto.customname) = "EnableEVMHook" ];

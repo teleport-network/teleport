@@ -164,9 +164,13 @@ func (k Keeper) RecvPacket(ctx sdk.Context, msg *types.MsgRecvPacket) error {
 func (k Keeper) WriteAcknowledgement(
 	ctx sdk.Context,
 	packet exported.PacketI,
-	acknowledgement []byte,
+	ack types.Acknowledgement,
 ) error {
-	if len(acknowledgement) == 0 {
+	ackBz, err := ack.ABIPack()
+	if err != nil {
+		return sdkerrors.Wrapf(types.ErrInvalidAcknowledgement, "pack ack failed")
+	}
+	if len(ackBz) == 0 {
 		return sdkerrors.Wrap(types.ErrInvalidAcknowledgement, "acknowledgement cannot be empty")
 	}
 
@@ -192,7 +196,7 @@ func (k Keeper) WriteAcknowledgement(
 		packet.GetSrcChain(),
 		packet.GetDstChain(),
 		packet.GetSequence(),
-		types.CommitAcknowledgement(acknowledgement),
+		types.CommitAcknowledgement(ackBz),
 	)
 
 	// log that a packet acknowledgement has been written
@@ -209,7 +213,8 @@ func (k Keeper) WriteAcknowledgement(
 			DstChain: packet.GetDstChain(),
 			Sequence: strconv.FormatUint(packet.GetSequence(), 10),
 			Packet:   packetBytes,
-			Ack:      acknowledgement,
+			Ack:      ackBz,
+			Code:     ack.Code,
 		},
 	)
 
