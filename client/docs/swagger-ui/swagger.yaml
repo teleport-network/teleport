@@ -20,15 +20,15 @@ paths:
                   enable_aggregate:
                     type: boolean
                     format: boolean
-                    title: >-
-                      parameter to enable the intrarelaying of Cosmos coins <-->
-                      ERC20 tokens
+                    description: >-
+                      parameter to enable the conversion of Cosmos coins <-->
+                      ERC20 tokens.
                   enable_evm_hook:
                     type: boolean
                     format: boolean
                     description: >-
-                      parameter to enable the EVM hook to convert an ERC20 token
-                      to a Cosmos
+                      parameter to enable the EVM hook that converts an ERC20
+                      token to a Cosmos
 
                       Coin by transferring the Tokens through a MsgEthereumTx to
                       the
@@ -64,7 +64,7 @@ paths:
         - Query
   /teleport/aggregate/v1/token_pairs:
     get:
-      summary: Retrieves registered token pairs
+      summary: TokenPairs retrieves registered token pairs
       operationId: TokenPairs
       responses:
         '200':
@@ -104,11 +104,10 @@ paths:
                         invalid/undefined owner
                          - OWNER_MODULE: OWNER_MODULE erc20 is owned by the intrarelayer module account
                          - OWNER_EXTERNAL: EXTERNAL erc20 is owned by an external account
-                  title: >-
-                    TokenPair defines an instance that records pairing
-                    consisting of a Cosmos
-
-                    native Coin and an ERC20 token address
+                  description: >-
+                    TokenPair defines an instance that records a pairing
+                    consisting of a native
+                     Cosmos Coin and an ERC20 token address.
               pagination:
                 title: pagination defines the pagination in the response
                 type: object
@@ -227,7 +226,7 @@ paths:
         - Query
   /teleport/aggregate/v1/token_pairs/{token}:
     get:
-      summary: Retrieves a registered token pair
+      summary: TokenPair retrieves a registered token pair
       operationId: TokenPair
       responses:
         '200':
@@ -265,11 +264,10 @@ paths:
                       invalid/undefined owner
                        - OWNER_MODULE: OWNER_MODULE erc20 is owned by the intrarelayer module account
                        - OWNER_EXTERNAL: EXTERNAL erc20 is owned by an external account
-                title: >-
-                  TokenPair defines an instance that records pairing consisting
-                  of a Cosmos
-
-                  native Coin and an ERC20 token address
+                description: >-
+                  TokenPair defines an instance that records a pairing
+                  consisting of a native
+                   Cosmos Coin and an ERC20 token address.
             title: >-
               QueryTokenPairResponse is the response type for the
               Query/TokenPair RPC
@@ -31844,15 +31842,16 @@ definitions:
       enable_aggregate:
         type: boolean
         format: boolean
-        title: >-
-          parameter to enable the intrarelaying of Cosmos coins <--> ERC20
-          tokens
+        description: parameter to enable the conversion of Cosmos coins <--> ERC20 tokens.
       enable_evm_hook:
         type: boolean
         format: boolean
-        description: |-
-          parameter to enable the EVM hook to convert an ERC20 token to a Cosmos
+        description: >-
+          parameter to enable the EVM hook that converts an ERC20 token to a
+          Cosmos
+
           Coin by transferring the Tokens through a MsgEthereumTx to the
+
           ModuleAddress Ethereum address.
     title: Params defines the aggregate module params
   teleport.aggregate.v1.QueryParamsResponse:
@@ -31864,14 +31863,14 @@ definitions:
           enable_aggregate:
             type: boolean
             format: boolean
-            title: >-
-              parameter to enable the intrarelaying of Cosmos coins <--> ERC20
-              tokens
+            description: >-
+              parameter to enable the conversion of Cosmos coins <--> ERC20
+              tokens.
           enable_evm_hook:
             type: boolean
             format: boolean
             description: >-
-              parameter to enable the EVM hook to convert an ERC20 token to a
+              parameter to enable the EVM hook that converts an ERC20 token to a
               Cosmos
 
               Coin by transferring the Tokens through a MsgEthereumTx to the
@@ -31912,11 +31911,10 @@ definitions:
               invalid/undefined owner
                - OWNER_MODULE: OWNER_MODULE erc20 is owned by the intrarelayer module account
                - OWNER_EXTERNAL: EXTERNAL erc20 is owned by an external account
-        title: >-
-          TokenPair defines an instance that records pairing consisting of a
-          Cosmos
-
-          native Coin and an ERC20 token address
+        description: >-
+          TokenPair defines an instance that records a pairing consisting of a
+          native
+           Cosmos Coin and an ERC20 token address.
     title: |-
       QueryTokenPairResponse is the response type for the Query/TokenPair RPC
       method
@@ -31955,11 +31953,10 @@ definitions:
                 invalid/undefined owner
                  - OWNER_MODULE: OWNER_MODULE erc20 is owned by the intrarelayer module account
                  - OWNER_EXTERNAL: EXTERNAL erc20 is owned by an external account
-          title: >-
-            TokenPair defines an instance that records pairing consisting of a
-            Cosmos
-
-            native Coin and an ERC20 token address
+          description: >-
+            TokenPair defines an instance that records a pairing consisting of a
+            native
+             Cosmos Coin and an ERC20 token address.
       pagination:
         title: pagination defines the pagination in the response
         type: object
@@ -32019,9 +32016,10 @@ definitions:
           owner
            - OWNER_MODULE: OWNER_MODULE erc20 is owned by the intrarelayer module account
            - OWNER_EXTERNAL: EXTERNAL erc20 is owned by an external account
-    title: |-
-      TokenPair defines an instance that records pairing consisting of a Cosmos
-      native Coin and an ERC20 token address
+    description: >-
+      TokenPair defines an instance that records a pairing consisting of a
+      native
+       Cosmos Coin and an ERC20 token address.
   cosmos.base.v1beta1.Coin:
     type: object
     properties:

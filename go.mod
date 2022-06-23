@@ -24,8 +24,8 @@ require (
 	github.com/tendermint/tendermint v0.34.20-0.20220517115723-e6f071164839
 	github.com/tendermint/tm-db v0.6.7
 	github.com/tharsis/ethermint v0.16.1
-	golang.org/x/crypto v0.0.0-20220525230936-793ad666bf5e
-	google.golang.org/genproto v0.0.0-20220617124728-180714bec0ad
+	golang.org/x/crypto v0.0.0-20220622213112-05595931fe9d
+	google.golang.org/genproto v0.0.0-20220622171453-ea41d75dfa0f
 	google.golang.org/grpc v1.47.0
 	google.golang.org/protobuf v1.28.0
 )
