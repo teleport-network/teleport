@@ -331,6 +331,9 @@ type Teleport struct {
 	// simulation manager
 	sm *module.SimulationManager
 
+	//This is used to cache tx
+	TxCache *ante.TxCache
+
 	// the configurator
 	configurator module.Configurator
 }
@@ -375,6 +378,7 @@ func NewTeleport(
 		keys:              keys,
 		tkeys:             tkeys,
 		memKeys:           memKeys,
+		TxCache:           ante.NewTxCache(),
 	}
 
 	// init params keeper and subspaces
@@ -762,6 +766,7 @@ func NewTeleport(
 		FeeMarketKeeper: app.FeeMarketKeeper,
 		SignModeHandler: encodingConfig.TxConfig.SignModeHandler(),
 		SigGasConsumer:  ante.DefaultSigVerificationGasConsumer,
+		TxCache:         app.TxCache,
 	}
 
 	if err := options.Validate(); err != nil {
