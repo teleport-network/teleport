@@ -133,13 +133,6 @@ import (
 	rvestingkeeper "github.com/teleport-network/teleport/x/rvesting/keeper"
 	rvestingmodule "github.com/teleport-network/teleport/x/rvesting/module"
 	rvestingtypes "github.com/teleport-network/teleport/x/rvesting/types"
-	xibcclient "github.com/teleport-network/teleport/x/xibc/core/client"
-	xibcclientcli "github.com/teleport-network/teleport/x/xibc/core/client/client"
-	xibcclienttypes "github.com/teleport-network/teleport/x/xibc/core/client/types"
-	xibchost "github.com/teleport-network/teleport/x/xibc/core/host"
-	xibcpackettypes "github.com/teleport-network/teleport/x/xibc/core/packet/types"
-	xibckeeper "github.com/teleport-network/teleport/x/xibc/keeper"
-	xibcmodule "github.com/teleport-network/teleport/x/xibc/module"
 )
 
 func init() {
@@ -178,11 +171,6 @@ var (
 			// ibc
 			ibcclientclient.UpdateClientProposalHandler,
 			ibcclientclient.UpgradeProposalHandler,
-			// xibc
-			xibcclientcli.CreateClientProposalHandler,
-			xibcclientcli.UpgradeClientProposalHandler,
-			xibcclientcli.ToggleClientProposalHandler,
-			xibcclientcli.RegisterRelayerProposalHandler,
 			// aggregate
 			aggregateclient.AddCoinProposalHandler,
 			aggregateclient.RegisterCoinProposalHandler,
@@ -207,7 +195,6 @@ var (
 		feemarket.AppModuleBasic{},
 		evm.AppModuleBasic{},
 		aggregatemodule.AppModuleBasic{},
-		xibcmodule.AppModuleBasic{},
 		rvestingmodule.AppModuleBasic{},
 	)
 
@@ -220,7 +207,6 @@ var (
 		govtypes.ModuleName:            {authtypes.Burner},
 		ibctransfertypes.ModuleName:    {authtypes.Minter, authtypes.Burner},
 		evmtypes.ModuleName:            {authtypes.Minter, authtypes.Burner}, // used for secure addition and subtraction of balance using module account
-		xibcpackettypes.SubModuleName:  nil,
 		aggregatetypes.ModuleName:      {authtypes.Minter, authtypes.Burner},
 		icatypes.ModuleName:            nil,
 		rvestingtypes.ModuleName:       nil,
@@ -250,8 +236,6 @@ var (
 		ibctransfertypes.StoreKey,
 		icacontrollertypes.StoreKey,
 		icahosttypes.StoreKey,
-		// xibc keys
-		xibchost.StoreKey,
 		// ethermint keys
 		evmtypes.StoreKey,
 		feemarkettypes.StoreKey,
@@ -300,7 +284,6 @@ type Teleport struct {
 	AuthzKeeper         authzkeeper.Keeper
 	IBCKeeper           *ibckeeper.Keeper // IBC Keeper must be a pointer in the app, so we can SetRouter on it correctly
 	IBCTransferKeeper   ibctransferkeeper.Keeper
-	XIBCKeeper          *xibckeeper.Keeper
 	EvidenceKeeper      evidencekeeper.Keeper
 	ICAControllerKeeper icacontrollerkeeper.Keeper
 	ICAHostKeeper       icahostkeeper.Keeper
@@ -390,8 +373,6 @@ func NewTeleport(
 	scopedICAControllerKeeper := app.CapabilityKeeper.ScopeToModule(icacontrollertypes.SubModuleName)
 	scopedICAHostKeeper := app.CapabilityKeeper.ScopeToModule(icahosttypes.SubModuleName)
 
-	scopedXIBCKeeper := app.CapabilityKeeper.ScopeToModule(xibchost.ModuleName)
-
 	// Applications that wish to enforce statically created ScopedKeepers should call `Seal` after creating
 	// their scoped modules in `NewApp` with `ScopeToModule`
 	app.CapabilityKeeper.Seal()
@@ -458,16 +439,6 @@ func NewTeleport(
 		appCodec, keys[ibchost.StoreKey], app.GetSubspace(ibchost.ModuleName), app.StakingKeeper, app.UpgradeKeeper, scopedIBCKeeper,
 	)
 
-	// Create XIBC Keeper
-	app.XIBCKeeper = xibckeeper.NewKeeper(
-		appCodec,
-		keys[xibchost.StoreKey],
-		app.GetSubspace(xibchost.ModuleName),
-		app.StakingKeeper,
-		app.AccountKeeper,
-		app.EvmKeeper,
-	)
-
 	// Create RVesting Keeper
 	app.RVestingKeeper = rvestingkeeper.NewKeeper(
 		app.GetSubspace(rvestingtypes.ModuleName), app.BankKeeper, app.AccountKeeper, authtypes.FeeCollectorName,
@@ -489,7 +460,6 @@ func NewTeleport(
 		AddRoute(distrtypes.RouterKey, distr.NewCommunityPoolSpendProposalHandler(app.DistrKeeper)).
 		AddRoute(upgradetypes.RouterKey, upgrade.NewSoftwareUpgradeProposalHandler(app.UpgradeKeeper)).
 		AddRoute(ibchost.RouterKey, ibcclient.NewClientProposalHandler(app.IBCKeeper.ClientKeeper)).
-		AddRoute(xibcclienttypes.GovRouterKey, xibcclient.NewClientProposalHandler(app.XIBCKeeper.ClientKeeper)).
 		AddRoute(aggregatetypes.GovRouterKey, aggregate.NewAggregateProposalHandler(app.AggregateKeeper))
 
 	govKeeper := govkeeper.NewKeeper(
@@ -598,8 +568,6 @@ func NewTeleport(
 		ibc.NewAppModule(app.IBCKeeper),
 		ibcTransferModule,
 		icaModule,
-		// xibc modules
-		xibcmodule.NewAppModule(app.XIBCKeeper),
 		// Ethermint app modules
 		evm.NewAppModule(app.EvmKeeper, app.AccountKeeper),
 		feemarket.NewAppModule(app.FeeMarketKeeper),
@@ -625,7 +593,6 @@ func NewTeleport(
 		evidencetypes.ModuleName,
 		stakingtypes.ModuleName,
 		ibchost.ModuleName,
-		xibchost.ModuleName,
 		// no-op modules
 		ibctransfertypes.ModuleName,
 		icatypes.ModuleName,
@@ -650,7 +617,6 @@ func NewTeleport(
 		feemarkettypes.ModuleName,
 		// no-op modules
 		ibchost.ModuleName,
-		xibchost.ModuleName,
 		ibctransfertypes.ModuleName,
 		icatypes.ModuleName,
 		capabilitytypes.ModuleName,
@@ -698,7 +664,6 @@ func NewTeleport(
 		feemarkettypes.ModuleName,
 		// teleport modules
 		aggregatetypes.ModuleName,
-		xibchost.ModuleName,
 		rvestingtypes.ModuleName,
 		// NOTE: crisis module must go at the end to check for invariants on each module
 		crisistypes.ModuleName,
@@ -735,7 +700,6 @@ func NewTeleport(
 		authzmodule.NewAppModule(appCodec, app.AuthzKeeper, app.AccountKeeper, app.BankKeeper, app.interfaceRegistry),
 		ibc.NewAppModule(app.IBCKeeper),
 		ibcTransferModule,
-		xibcmodule.NewAppModule(app.XIBCKeeper),
 		evm.NewAppModule(app.EvmKeeper, app.AccountKeeper),
 		feemarket.NewAppModule(app.FeeMarketKeeper),
 		//rvesting.NewAppModule(app.RVestingKeeper), todo to be implemented
@@ -783,14 +747,11 @@ func NewTeleport(
 	app.ScopedICAControllerKeeper = scopedICAControllerKeeper
 	app.ScopedICAHostKeeper = scopedICAHostKeeper
 
-	app.ScopedXIBCKeeper = scopedXIBCKeeper
-
 	app.EvmKeeper.SetHooks(
 		evmkeeper.NewMultiEvmHooks(
 			stakingHook,
 			govHook,
 			app.AggregateKeeper.Hooks(),
-			app.XIBCKeeper.PacketKeeper.Hooks(),
 		),
 	)
 	return app

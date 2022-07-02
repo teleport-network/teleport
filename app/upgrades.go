@@ -13,8 +13,6 @@ import (
 	agentcontract "github.com/teleport-network/teleport/syscontracts/xibc_agent"
 	endpointcontract "github.com/teleport-network/teleport/syscontracts/xibc_endpoint"
 	packetcontract "github.com/teleport-network/teleport/syscontracts/xibc_packet"
-	"github.com/teleport-network/teleport/x/xibc"
-	xibchost "github.com/teleport-network/teleport/x/xibc/core/host"
 )
 
 // nolint: ignore
@@ -50,8 +48,6 @@ func (app *Teleport) registerUpgradeHandlers() {
 			app.SetEVMCode(ctx, common.HexToAddress(syscontracts.PacketContractAddress), packetcontract.PacketContract.Bin)
 			app.SetEVMCode(ctx, common.HexToAddress(syscontracts.EndpointContractAddress), endpointcontract.EndpointContract.Bin)
 			app.SetEVMCode(ctx, common.HexToAddress(syscontracts.ExecuteContractAddress), endpointcontract.ExecuteContract.Bin)
-
-			xibc.ResetStates(ctx, app.GetKey(xibchost.StoreKey), *app.XIBCKeeper)
 
 			return app.mm.RunMigrations(ctx, app.configurator, vm)
 		})
