@@ -53,24 +53,6 @@ func (k Keeper) GetTokenPair(ctx sdk.Context, id []byte) (types.TokenPair, bool)
 	return tokenPair, true
 }
 
-// SetTokenPair stores a token pair
-func (k Keeper) SetTokenPair(ctx sdk.Context, tokenPair types.TokenPair) {
-	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefixTokenPair)
-	key := tokenPair.GetID()
-	bz := k.cdc.MustMarshal(&tokenPair)
-	store.Set(key, bz)
-}
-
-// DeleteTokenPair removes a token pair.
-func (k Keeper) DeleteTokenPair(ctx sdk.Context, tokenPair types.TokenPair) {
-	id := tokenPair.GetID()
-	k.deleteTokenPair(ctx, id)
-	k.deleteERC20Map(ctx, tokenPair.GetERC20Contract())
-	for _, denom := range tokenPair.Denoms {
-		k.deleteDenomMap(ctx, denom)
-	}
-}
-
 // deleteTokenPair deletes the token pair for the given id
 func (k Keeper) deleteTokenPair(ctx sdk.Context, id []byte) {
 	store := prefix.NewStore(ctx.KVStore(k.storeKey), types.KeyPrefixTokenPair)

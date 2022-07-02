@@ -22,12 +22,6 @@ func InitGenesis(
 		panic("the aggregate module account has not been set")
 	}
 
-	for _, pair := range data.TokenPairs {
-		id := pair.GetID()
-		k.SetTokenPair(ctx, pair)
-		k.SetDenomsMap(ctx, pair.Denoms, id)
-		k.SetERC20Map(ctx, pair.GetERC20Contract(), id)
-	}
 }
 
 // ExportGenesis export module status

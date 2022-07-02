@@ -21,7 +21,6 @@ type Keeper struct {
 	paramSpace    paramtypes.Subspace
 	accountKeeper types.AccountKeeper
 	bankKeeper    types.BankKeeper
-	evmKeeper     types.EVMKeeper
 	ics4Wrapper   porttypes.ICS4Wrapper
 }
 
@@ -32,7 +31,6 @@ func NewKeeper(
 	paramSpace paramtypes.Subspace,
 	accountKeeper types.AccountKeeper,
 	bankkeeper types.BankKeeper,
-	evmKeeper types.EVMKeeper,
 ) *Keeper {
 	// set KeyTable if it has not already been set
 	if !paramSpace.HasKeyTable() {
@@ -45,7 +43,6 @@ func NewKeeper(
 		paramSpace:    paramSpace,
 		accountKeeper: accountKeeper,
 		bankKeeper:    bankkeeper,
-		evmKeeper:     evmKeeper,
 	}
 }
 

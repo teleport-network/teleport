@@ -98,32 +98,17 @@ import (
 	ibckeeper "github.com/cosmos/ibc-go/v3/modules/core/keeper"
 	ibctesting "github.com/cosmos/ibc-go/v3/testing"
 
-	"github.com/ethereum/go-ethereum/common"
-	"github.com/ethereum/go-ethereum/crypto"
-
 	"github.com/tharsis/ethermint/app/ante"
 	"github.com/tharsis/ethermint/encoding"
-	srvflags "github.com/tharsis/ethermint/server/flags"
 	ethermint "github.com/tharsis/ethermint/types"
-	"github.com/tharsis/ethermint/x/evm"
 	evmrest "github.com/tharsis/ethermint/x/evm/client/rest"
-	evmkeeper "github.com/tharsis/ethermint/x/evm/keeper"
 	evmtypes "github.com/tharsis/ethermint/x/evm/types"
-	"github.com/tharsis/ethermint/x/feemarket"
-	feemarketkeeper "github.com/tharsis/ethermint/x/feemarket/keeper"
 	feemarkettypes "github.com/tharsis/ethermint/x/feemarket/types"
 
 	"github.com/teleport-network/teleport/adapter"
 	adbank "github.com/teleport-network/teleport/adapter/bank"
-	adgov "github.com/teleport-network/teleport/adapter/gov"
-	adstaking "github.com/teleport-network/teleport/adapter/staking"
 	_ "github.com/teleport-network/teleport/client/docs/statik"
 	gabci "github.com/teleport-network/teleport/grpc_abci"
-	syscontracts "github.com/teleport-network/teleport/syscontracts"
-	wtelecontract "github.com/teleport-network/teleport/syscontracts/wtele"
-	agentcontract "github.com/teleport-network/teleport/syscontracts/xibc_agent"
-	endpointcontract "github.com/teleport-network/teleport/syscontracts/xibc_endpoint"
-	packetcontract "github.com/teleport-network/teleport/syscontracts/xibc_packet"
 	"github.com/teleport-network/teleport/types"
 	"github.com/teleport-network/teleport/x/aggregate"
 	aggregateclient "github.com/teleport-network/teleport/x/aggregate/client"
@@ -133,13 +118,6 @@ import (
 	rvestingkeeper "github.com/teleport-network/teleport/x/rvesting/keeper"
 	rvestingmodule "github.com/teleport-network/teleport/x/rvesting/module"
 	rvestingtypes "github.com/teleport-network/teleport/x/rvesting/types"
-	xibcclient "github.com/teleport-network/teleport/x/xibc/core/client"
-	xibcclientcli "github.com/teleport-network/teleport/x/xibc/core/client/client"
-	xibcclienttypes "github.com/teleport-network/teleport/x/xibc/core/client/types"
-	xibchost "github.com/teleport-network/teleport/x/xibc/core/host"
-	xibcpackettypes "github.com/teleport-network/teleport/x/xibc/core/packet/types"
-	xibckeeper "github.com/teleport-network/teleport/x/xibc/keeper"
-	xibcmodule "github.com/teleport-network/teleport/x/xibc/module"
 )
 
 func init() {
@@ -178,11 +156,6 @@ var (
 			// ibc
 			ibcclientclient.UpdateClientProposalHandler,
 			ibcclientclient.UpgradeProposalHandler,
-			// xibc
-			xibcclientcli.CreateClientProposalHandler,
-			xibcclientcli.UpgradeClientProposalHandler,
-			xibcclientcli.ToggleClientProposalHandler,
-			xibcclientcli.RegisterRelayerProposalHandler,
 			// aggregate
 			aggregateclient.AddCoinProposalHandler,
 			aggregateclient.RegisterCoinProposalHandler,
@@ -204,10 +177,7 @@ var (
 		upgrade.AppModuleBasic{},
 		evidence.AppModuleBasic{},
 		vesting.AppModuleBasic{},
-		feemarket.AppModuleBasic{},
-		evm.AppModuleBasic{},
 		aggregatemodule.AppModuleBasic{},
-		xibcmodule.AppModuleBasic{},
 		rvestingmodule.AppModuleBasic{},
 	)
 
@@ -220,7 +190,6 @@ var (
 		govtypes.ModuleName:            {authtypes.Burner},
 		ibctransfertypes.ModuleName:    {authtypes.Minter, authtypes.Burner},
 		evmtypes.ModuleName:            {authtypes.Minter, authtypes.Burner}, // used for secure addition and subtraction of balance using module account
-		xibcpackettypes.SubModuleName:  nil,
 		aggregatetypes.ModuleName:      {authtypes.Minter, authtypes.Burner},
 		icatypes.ModuleName:            nil,
 		rvestingtypes.ModuleName:       nil,
@@ -250,11 +219,6 @@ var (
 		ibctransfertypes.StoreKey,
 		icacontrollertypes.StoreKey,
 		icahosttypes.StoreKey,
-		// xibc keys
-		xibchost.StoreKey,
-		// ethermint keys
-		evmtypes.StoreKey,
-		feemarkettypes.StoreKey,
 		// teleport keys
 		aggregatetypes.StoreKey,
 	)
@@ -300,7 +264,6 @@ type Teleport struct {
 	AuthzKeeper         authzkeeper.Keeper
 	IBCKeeper           *ibckeeper.Keeper // IBC Keeper must be a pointer in the app, so we can SetRouter on it correctly
 	IBCTransferKeeper   ibctransferkeeper.Keeper
-	XIBCKeeper          *xibckeeper.Keeper
 	EvidenceKeeper      evidencekeeper.Keeper
 	ICAControllerKeeper icacontrollerkeeper.Keeper
 	ICAHostKeeper       icahostkeeper.Keeper
@@ -315,8 +278,6 @@ type Teleport struct {
 	ScopedICAHostKeeper       capabilitykeeper.ScopedKeeper
 
 	// Ethermint keepers
-	EvmKeeper       *evmkeeper.Keeper
-	FeeMarketKeeper feemarketkeeper.Keeper
 
 	// Teleport keepers
 	AggregateKeeper *aggregatekeeper.Keeper
@@ -330,9 +291,6 @@ type Teleport struct {
 
 	// simulation manager
 	sm *module.SimulationManager
-
-	//This is used to cache tx
-	TxCache *ante.TxCache
 
 	// the configurator
 	configurator module.Configurator
@@ -378,7 +336,6 @@ func NewTeleport(
 		keys:              keys,
 		tkeys:             tkeys,
 		memKeys:           memKeys,
-		TxCache:           ante.NewTxCache(),
 	}
 
 	// init params keeper and subspaces
@@ -393,8 +350,6 @@ func NewTeleport(
 	scopedIBCTransferKeeper := app.CapabilityKeeper.ScopeToModule(ibctransfertypes.ModuleName)
 	scopedICAControllerKeeper := app.CapabilityKeeper.ScopeToModule(icacontrollertypes.SubModuleName)
 	scopedICAHostKeeper := app.CapabilityKeeper.ScopeToModule(icahosttypes.SubModuleName)
-
-	scopedXIBCKeeper := app.CapabilityKeeper.ScopeToModule(xibchost.ModuleName)
 
 	// Applications that wish to enforce statically created ScopedKeepers should call `Seal` after creating
 	// their scoped modules in `NewApp` with `ScopeToModule`
@@ -437,39 +392,9 @@ func NewTeleport(
 
 	app.AuthzKeeper = authzkeeper.NewKeeper(keys[authzkeeper.StoreKey], appCodec, app.BaseApp.MsgServiceRouter())
 
-	tracer := cast.ToString(appOpts.Get(srvflags.EVMTracer))
-
-	// Create Ethermint keepers
-	app.FeeMarketKeeper = feemarketkeeper.NewKeeper(
-		appCodec, keys[feemarkettypes.StoreKey], app.GetSubspace(feemarkettypes.ModuleName),
-	)
-
-	// Create Ethermint keepers
-	app.EvmKeeper = evmkeeper.NewKeeper(
-		appCodec,
-		keys[evmtypes.StoreKey],
-		tkeys[evmtypes.TransientKey],
-		app.GetSubspace(evmtypes.ModuleName),
-		app.AccountKeeper,
-		app.BankKeeper,
-		app.StakingKeeper,
-		app.FeeMarketKeeper,
-		tracer,
-	)
-
 	// Create IBC Keeper
 	app.IBCKeeper = ibckeeper.NewKeeper(
 		appCodec, keys[ibchost.StoreKey], app.GetSubspace(ibchost.ModuleName), app.StakingKeeper, app.UpgradeKeeper, scopedIBCKeeper,
-	)
-
-	// Create XIBC Keeper
-	app.XIBCKeeper = xibckeeper.NewKeeper(
-		appCodec,
-		keys[xibchost.StoreKey],
-		app.GetSubspace(xibchost.ModuleName),
-		app.StakingKeeper,
-		app.AccountKeeper,
-		app.EvmKeeper,
 	)
 
 	// Create RVesting Keeper
@@ -484,7 +409,6 @@ func NewTeleport(
 		app.GetSubspace(aggregatetypes.ModuleName),
 		app.AccountKeeper,
 		app.BankKeeper,
-		app.EvmKeeper,
 	)
 	// register the proposal types
 	govRouter := govtypes.NewRouter()
@@ -493,7 +417,6 @@ func NewTeleport(
 		AddRoute(distrtypes.RouterKey, distr.NewCommunityPoolSpendProposalHandler(app.DistrKeeper)).
 		AddRoute(upgradetypes.RouterKey, upgrade.NewSoftwareUpgradeProposalHandler(app.UpgradeKeeper)).
 		AddRoute(ibchost.RouterKey, ibcclient.NewClientProposalHandler(app.IBCKeeper.ClientKeeper)).
-		AddRoute(xibcclienttypes.GovRouterKey, xibcclient.NewClientProposalHandler(app.XIBCKeeper.ClientKeeper)).
 		AddRoute(aggregatetypes.GovRouterKey, aggregate.NewAggregateProposalHandler(app.AggregateKeeper))
 
 	govKeeper := govkeeper.NewKeeper(
@@ -603,10 +526,6 @@ func NewTeleport(
 		ibcTransferModule,
 		icaModule,
 		// xibc modules
-		xibcmodule.NewAppModule(app.XIBCKeeper),
-		// Ethermint app modules
-		evm.NewAppModule(app.EvmKeeper, app.AccountKeeper),
-		feemarket.NewAppModule(app.FeeMarketKeeper),
 		// teleport app modules
 		aggregatemodule.NewAppModule(*app.AggregateKeeper, app.AccountKeeper),
 		rvestingmodule.NewAppModule(app.RVestingKeeper),
@@ -629,7 +548,6 @@ func NewTeleport(
 		evidencetypes.ModuleName,
 		stakingtypes.ModuleName,
 		ibchost.ModuleName,
-		xibchost.ModuleName,
 		// no-op modules
 		ibctransfertypes.ModuleName,
 		icatypes.ModuleName,
@@ -654,7 +572,6 @@ func NewTeleport(
 		feemarkettypes.ModuleName,
 		// no-op modules
 		ibchost.ModuleName,
-		xibchost.ModuleName,
 		ibctransfertypes.ModuleName,
 		icatypes.ModuleName,
 		capabilitytypes.ModuleName,
@@ -702,7 +619,6 @@ func NewTeleport(
 		feemarkettypes.ModuleName,
 		// teleport modules
 		aggregatetypes.ModuleName,
-		xibchost.ModuleName,
 		rvestingtypes.ModuleName,
 		// NOTE: crisis module must go at the end to check for invariants on each module
 		crisistypes.ModuleName,
@@ -712,11 +628,6 @@ func NewTeleport(
 	app.mm.RegisterRoutes(app.Router(), app.QueryRouter(), encodingConfig.Amino)
 	app.configurator = module.NewConfigurator(app.appCodec, app.MsgServiceRouter(), app.GRPCQueryRouter())
 	app.mm.RegisterServices(app.configurator)
-
-	// create the adapter manager
-	stakingHook := adstaking.NewHookAdapter(&app.AccountKeeper, &app.StakingKeeper, app.EvmKeeper, app.MsgServiceRouter())
-	govHook := adgov.NewHookAdapter(&app.AccountKeeper, app.EvmKeeper, app.MsgServiceRouter())
-	app.am = adapter.NewManager(stakingHook, govHook)
 
 	// add test gRPC service for testing gRPC queries in isolation
 	// testdata.RegisterTestServiceServer(app.GRPCQueryRouter(), testdata.TestServiceImpl{})
@@ -739,9 +650,6 @@ func NewTeleport(
 		authzmodule.NewAppModule(appCodec, app.AuthzKeeper, app.AccountKeeper, app.BankKeeper, app.interfaceRegistry),
 		ibc.NewAppModule(app.IBCKeeper),
 		ibcTransferModule,
-		xibcmodule.NewAppModule(app.XIBCKeeper),
-		evm.NewAppModule(app.EvmKeeper, app.AccountKeeper),
-		feemarket.NewAppModule(app.FeeMarketKeeper),
 		//rvesting.NewAppModule(app.RVestingKeeper), todo to be implemented
 	)
 
@@ -759,17 +667,18 @@ func NewTeleport(
 	options := ante.HandlerOptions{
 		AccountKeeper:  app.AccountKeeper,
 		BankKeeper:     app.BankKeeper,
-		EvmKeeper:      app.EvmKeeper,
 		FeegrantKeeper: app.FeeGrantKeeper,
 		IBCKeeper:      app.IBCKeeper,
 		//IBCChannelKeeper: app.IBCKeeper.ChannelKeeper,
-		FeeMarketKeeper: app.FeeMarketKeeper,
 		SignModeHandler: encodingConfig.TxConfig.SignModeHandler(),
 		SigGasConsumer:  ante.DefaultSigVerificationGasConsumer,
-		TxCache:         app.TxCache,
 	}
+	//
+	//if err := options.Validate(); err != nil {
+	//	panic(err)
+	//}
 
-	if err := options.Validate(); err != nil {
+	if err := validate(options); err != nil {
 		panic(err)
 	}
 
@@ -788,16 +697,6 @@ func NewTeleport(
 	app.ScopedICAControllerKeeper = scopedICAControllerKeeper
 	app.ScopedICAHostKeeper = scopedICAHostKeeper
 
-	app.ScopedXIBCKeeper = scopedXIBCKeeper
-
-	app.EvmKeeper.SetHooks(
-		evmkeeper.NewMultiEvmHooks(
-			stakingHook,
-			govHook,
-			app.AggregateKeeper.Hooks(),
-			app.XIBCKeeper.PacketKeeper.Hooks(),
-		),
-	)
 	return app
 }
 
@@ -826,25 +725,7 @@ func (app *Teleport) InitChainer(ctx sdk.Context, req abci.RequestInitChain) abc
 		panic(err)
 	}
 
-	app.SetEVMCode(ctx, common.HexToAddress(syscontracts.WTELEContractAddress), wtelecontract.WTELEContract.Bin)
-	app.SetEVMCode(ctx, common.HexToAddress(syscontracts.AgentContractAddress), agentcontract.AgentContract.Bin)
-	app.SetEVMCode(ctx, common.HexToAddress(syscontracts.PacketContractAddress), packetcontract.PacketContract.Bin)
-	app.SetEVMCode(ctx, common.HexToAddress(syscontracts.EndpointContractAddress), endpointcontract.EndpointContract.Bin)
-	app.SetEVMCode(ctx, common.HexToAddress(syscontracts.ExecuteContractAddress), endpointcontract.ExecuteContract.Bin)
-
 	return res
-}
-
-// SetEVMCode set code in evm
-func (app *Teleport) SetEVMCode(ctx sdk.Context, addr common.Address, code []byte) {
-	codeHash := crypto.Keccak256Hash(code)
-	app.EvmKeeper.SetCode(ctx, codeHash.Bytes(), code)
-
-	account := app.AccountKeeper.NewAccountWithAddress(ctx, addr.Bytes())
-	ethAccount := account.(*ethermint.EthAccount)
-
-	ethAccount.CodeHash = codeHash.Hex()
-	app.AccountKeeper.SetAccount(ctx, ethAccount)
 }
 
 // LoadHeight loads state at a particular height
@@ -1024,9 +905,6 @@ func initParamsKeeper(appCodec codec.BinaryCodec, legacyAmino *codec.LegacyAmino
 	paramsKeeper.Subspace(ibctransfertypes.ModuleName)
 	paramsKeeper.Subspace(icacontrollertypes.SubModuleName)
 	paramsKeeper.Subspace(icahosttypes.SubModuleName)
-	// ethermint subspaces
-	paramsKeeper.Subspace(evmtypes.ModuleName)
-	paramsKeeper.Subspace(feemarkettypes.ModuleName)
 	// teleport subspaces
 	paramsKeeper.Subspace(aggregatetypes.ModuleName)
 	paramsKeeper.Subspace(rvestingtypes.ModuleName)

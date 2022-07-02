@@ -7,12 +7,6 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 	upgradetypes "github.com/cosmos/cosmos-sdk/x/upgrade/types"
-	"github.com/ethereum/go-ethereum/common"
-
-	syscontracts "github.com/teleport-network/teleport/syscontracts"
-	agentcontract "github.com/teleport-network/teleport/syscontracts/xibc_agent"
-	endpointcontract "github.com/teleport-network/teleport/syscontracts/xibc_endpoint"
-	packetcontract "github.com/teleport-network/teleport/syscontracts/xibc_packet"
 )
 
 // nolint: ignore
@@ -24,31 +18,6 @@ func (app *Teleport) registerUpgradeHandlers() {
 			// Refs:
 			// - https://docs.cosmos.network/master/building-modules/upgrade.html#registering-migrations
 			// - https://docs.cosmos.network/master/migrations/chain-upgrade-guide-044.html#chain-upgrade
-
-			// xibc core contracts
-			DeprecatedPacketContractAddress := "0x0000000000000000000000000000000020000001"
-
-			// xibc app contracts
-			DeprecatedTransferContractAddress := "0x0000000000000000000000000000000030000001"
-			DeprecatedRCCContractAddress := "0x0000000000000000000000000000000030000002"
-			DeprecatedMultiCallContractAddress := "0x0000000000000000000000000000000030000003"
-
-			// app contracts
-			DeprecatedAgentContractAddress := "0x0000000000000000000000000000000040000001"
-
-			// Delete deprecated xibc contracts account, code and state
-			_ = app.EvmKeeper.DeleteAccount(ctx, common.HexToAddress(DeprecatedTransferContractAddress))
-			_ = app.EvmKeeper.DeleteAccount(ctx, common.HexToAddress(DeprecatedRCCContractAddress))
-			_ = app.EvmKeeper.DeleteAccount(ctx, common.HexToAddress(DeprecatedMultiCallContractAddress))
-			_ = app.EvmKeeper.DeleteAccount(ctx, common.HexToAddress(DeprecatedAgentContractAddress))
-			_ = app.EvmKeeper.DeleteAccount(ctx, common.HexToAddress(DeprecatedPacketContractAddress))
-
-			// Set new code
-			app.SetEVMCode(ctx, common.HexToAddress(syscontracts.AgentContractAddress), agentcontract.AgentContract.Bin)
-			app.SetEVMCode(ctx, common.HexToAddress(syscontracts.PacketContractAddress), packetcontract.PacketContract.Bin)
-			app.SetEVMCode(ctx, common.HexToAddress(syscontracts.EndpointContractAddress), endpointcontract.EndpointContract.Bin)
-			app.SetEVMCode(ctx, common.HexToAddress(syscontracts.ExecuteContractAddress), endpointcontract.ExecuteContract.Bin)
-
 			return app.mm.RunMigrations(ctx, app.configurator, vm)
 		})
 
