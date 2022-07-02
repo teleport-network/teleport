@@ -105,8 +105,6 @@ import (
 	adbank "github.com/teleport-network/teleport/adapter/bank"
 	_ "github.com/teleport-network/teleport/client/docs/statik"
 	gabci "github.com/teleport-network/teleport/grpc_abci"
-	syscontracts "github.com/teleport-network/teleport/syscontracts"
-	wtelecontract "github.com/teleport-network/teleport/syscontracts/wtele"
 	"github.com/teleport-network/teleport/types"
 	"github.com/teleport-network/teleport/x/aggregate"
 	aggregateclient "github.com/teleport-network/teleport/x/aggregate/client"
@@ -715,8 +713,6 @@ func (app *Teleport) InitChainer(ctx sdk.Context, req abci.RequestInitChain) abc
 	}
 	app.UpgradeKeeper.SetModuleVersionMap(ctx, app.mm.GetVersionMap())
 	res := app.mm.InitGenesis(ctx, app.appCodec, genesisState)
-
-	app.SetEVMCode(ctx, common.HexToAddress(syscontracts.WTELEContractAddress), wtelecontract.WTELEContract.Bin)
 
 	return res
 }
