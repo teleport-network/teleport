@@ -13,7 +13,6 @@ import (
 	"github.com/ethereum/go-ethereum/crypto"
 
 	ethermint "github.com/tharsis/ethermint/types"
-	evmkeeper "github.com/tharsis/ethermint/x/evm/keeper"
 	evmtypes "github.com/tharsis/ethermint/x/evm/types"
 
 	adcommon "github.com/teleport-network/teleport/adapter/common"
@@ -25,7 +24,6 @@ var _ evmtypes.EvmHooks = &HookAdapter{}
 
 type HookAdapter struct {
 	accountKeeper *authkeeper.AccountKeeper
-	evmKeeper     *evmkeeper.Keeper
 	router        *baseapp.MsgServiceRouter
 	abi           *ethabi.ABI
 	govContract   common.Address
@@ -34,7 +32,6 @@ type HookAdapter struct {
 
 func (h HookAdapter) InitGenesis(ctx sdk.Context) error {
 	codeHash := crypto.Keccak256Hash(govcontract.GovContract.Bin)
-	h.evmKeeper.SetCode(ctx, codeHash.Bytes(), govcontract.GovContract.Bin)
 
 	account := h.accountKeeper.NewAccountWithAddress(ctx, common.HexToAddress(syscontracts.GovContractAddress).Bytes())
 	ethAccount := account.(*ethermint.EthAccount)
@@ -51,7 +48,6 @@ func (h HookAdapter) Name() string {
 
 func NewHookAdapter(
 	accountKeeper *authkeeper.AccountKeeper,
-	evmKeeper *evmkeeper.Keeper,
 	router *baseapp.MsgServiceRouter,
 ) *HookAdapter {
 	parsed, err := ethabi.JSON(strings.NewReader(govcontract.GovMetaData.ABI))
@@ -62,7 +58,6 @@ func NewHookAdapter(
 
 	hook := &HookAdapter{
 		accountKeeper: accountKeeper,
-		evmKeeper:     evmKeeper,
 		router:        router,
 		abi:           &parsed,
 		govContract:   common.HexToAddress(syscontracts.GovContractAddress),

@@ -101,18 +101,6 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/crypto"
 
-	"github.com/tharsis/ethermint/app/ante"
-	"github.com/tharsis/ethermint/encoding"
-	srvflags "github.com/tharsis/ethermint/server/flags"
-	ethermint "github.com/tharsis/ethermint/types"
-	"github.com/tharsis/ethermint/x/evm"
-	evmrest "github.com/tharsis/ethermint/x/evm/client/rest"
-	evmkeeper "github.com/tharsis/ethermint/x/evm/keeper"
-	evmtypes "github.com/tharsis/ethermint/x/evm/types"
-	"github.com/tharsis/ethermint/x/feemarket"
-	feemarketkeeper "github.com/tharsis/ethermint/x/feemarket/keeper"
-	feemarkettypes "github.com/tharsis/ethermint/x/feemarket/types"
-
 	"github.com/teleport-network/teleport/adapter"
 	adbank "github.com/teleport-network/teleport/adapter/bank"
 	adgov "github.com/teleport-network/teleport/adapter/gov"
@@ -133,6 +121,12 @@ import (
 	rvestingkeeper "github.com/teleport-network/teleport/x/rvesting/keeper"
 	rvestingmodule "github.com/teleport-network/teleport/x/rvesting/module"
 	rvestingtypes "github.com/teleport-network/teleport/x/rvesting/types"
+	"github.com/tharsis/ethermint/app/ante"
+	"github.com/tharsis/ethermint/encoding"
+	ethermint "github.com/tharsis/ethermint/types"
+	"github.com/tharsis/ethermint/x/evm"
+	evmrest "github.com/tharsis/ethermint/x/evm/client/rest"
+	evmtypes "github.com/tharsis/ethermint/x/evm/types"
 )
 
 func init() {
@@ -192,7 +186,6 @@ var (
 		upgrade.AppModuleBasic{},
 		evidence.AppModuleBasic{},
 		vesting.AppModuleBasic{},
-		feemarket.AppModuleBasic{},
 		evm.AppModuleBasic{},
 		aggregatemodule.AppModuleBasic{},
 		rvestingmodule.AppModuleBasic{},
@@ -238,7 +231,6 @@ var (
 		icahosttypes.StoreKey,
 		// ethermint keys
 		evmtypes.StoreKey,
-		feemarkettypes.StoreKey,
 		// teleport keys
 		aggregatetypes.StoreKey,
 	)
@@ -296,10 +288,6 @@ type Teleport struct {
 	ScopedXIBCKeeper          capabilitykeeper.ScopedKeeper
 	ScopedICAControllerKeeper capabilitykeeper.ScopedKeeper
 	ScopedICAHostKeeper       capabilitykeeper.ScopedKeeper
-
-	// Ethermint keepers
-	EvmKeeper       *evmkeeper.Keeper
-	FeeMarketKeeper feemarketkeeper.Keeper
 
 	// Teleport keepers
 	AggregateKeeper *aggregatekeeper.Keeper
@@ -414,26 +402,6 @@ func NewTeleport(
 
 	app.AuthzKeeper = authzkeeper.NewKeeper(keys[authzkeeper.StoreKey], appCodec, app.BaseApp.MsgServiceRouter())
 
-	tracer := cast.ToString(appOpts.Get(srvflags.EVMTracer))
-
-	// Create Ethermint keepers
-	app.FeeMarketKeeper = feemarketkeeper.NewKeeper(
-		appCodec, keys[feemarkettypes.StoreKey], app.GetSubspace(feemarkettypes.ModuleName),
-	)
-
-	// Create Ethermint keepers
-	app.EvmKeeper = evmkeeper.NewKeeper(
-		appCodec,
-		keys[evmtypes.StoreKey],
-		tkeys[evmtypes.TransientKey],
-		app.GetSubspace(evmtypes.ModuleName),
-		app.AccountKeeper,
-		app.BankKeeper,
-		app.StakingKeeper,
-		app.FeeMarketKeeper,
-		tracer,
-	)
-
 	// Create IBC Keeper
 	app.IBCKeeper = ibckeeper.NewKeeper(
 		appCodec, keys[ibchost.StoreKey], app.GetSubspace(ibchost.ModuleName), app.StakingKeeper, app.UpgradeKeeper, scopedIBCKeeper,
@@ -451,7 +419,6 @@ func NewTeleport(
 		app.GetSubspace(aggregatetypes.ModuleName),
 		app.AccountKeeper,
 		app.BankKeeper,
-		app.EvmKeeper,
 	)
 	// register the proposal types
 	govRouter := govtypes.NewRouter()
@@ -568,9 +535,6 @@ func NewTeleport(
 		ibc.NewAppModule(app.IBCKeeper),
 		ibcTransferModule,
 		icaModule,
-		// Ethermint app modules
-		evm.NewAppModule(app.EvmKeeper, app.AccountKeeper),
-		feemarket.NewAppModule(app.FeeMarketKeeper),
 		// teleport app modules
 		aggregatemodule.NewAppModule(*app.AggregateKeeper, app.AccountKeeper),
 		rvestingmodule.NewAppModule(app.RVestingKeeper),
@@ -585,8 +549,6 @@ func NewTeleport(
 	app.mm.SetOrderBeginBlockers(
 		upgradetypes.ModuleName,
 		capabilitytypes.ModuleName,
-		feemarkettypes.ModuleName,
-		evmtypes.ModuleName,
 		rvestingtypes.ModuleName, // must come before distribution module
 		distrtypes.ModuleName,
 		slashingtypes.ModuleName,
@@ -613,8 +575,6 @@ func NewTeleport(
 		crisistypes.ModuleName,
 		govtypes.ModuleName,
 		stakingtypes.ModuleName,
-		evmtypes.ModuleName,
-		feemarkettypes.ModuleName,
 		// no-op modules
 		ibchost.ModuleName,
 		ibctransfertypes.ModuleName,
@@ -660,8 +620,6 @@ func NewTeleport(
 		vestingtypes.ModuleName,
 		icatypes.ModuleName,
 		// Ethermint modules
-		evmtypes.ModuleName,
-		feemarkettypes.ModuleName,
 		// teleport modules
 		aggregatetypes.ModuleName,
 		rvestingtypes.ModuleName,
@@ -675,8 +633,8 @@ func NewTeleport(
 	app.mm.RegisterServices(app.configurator)
 
 	// create the adapter manager
-	stakingHook := adstaking.NewHookAdapter(&app.AccountKeeper, &app.StakingKeeper, app.EvmKeeper, app.MsgServiceRouter())
-	govHook := adgov.NewHookAdapter(&app.AccountKeeper, app.EvmKeeper, app.MsgServiceRouter())
+	stakingHook := adstaking.NewHookAdapter(&app.AccountKeeper, &app.StakingKeeper, app.MsgServiceRouter())
+	govHook := adgov.NewHookAdapter(&app.AccountKeeper, app.MsgServiceRouter())
 	app.am = adapter.NewManager(stakingHook, govHook)
 
 	// add test gRPC service for testing gRPC queries in isolation
@@ -700,8 +658,6 @@ func NewTeleport(
 		authzmodule.NewAppModule(appCodec, app.AuthzKeeper, app.AccountKeeper, app.BankKeeper, app.interfaceRegistry),
 		ibc.NewAppModule(app.IBCKeeper),
 		ibcTransferModule,
-		evm.NewAppModule(app.EvmKeeper, app.AccountKeeper),
-		feemarket.NewAppModule(app.FeeMarketKeeper),
 		//rvesting.NewAppModule(app.RVestingKeeper), todo to be implemented
 	)
 
@@ -719,16 +675,17 @@ func NewTeleport(
 	options := ante.HandlerOptions{
 		AccountKeeper:  app.AccountKeeper,
 		BankKeeper:     app.BankKeeper,
-		EvmKeeper:      app.EvmKeeper,
 		FeegrantKeeper: app.FeeGrantKeeper,
 		IBCKeeper:      app.IBCKeeper,
 		//IBCChannelKeeper: app.IBCKeeper.ChannelKeeper,
-		FeeMarketKeeper: app.FeeMarketKeeper,
 		SignModeHandler: encodingConfig.TxConfig.SignModeHandler(),
 		SigGasConsumer:  ante.DefaultSigVerificationGasConsumer,
 	}
-
-	if err := options.Validate(); err != nil {
+	//
+	//if err := options.Validate(); err != nil {
+	//	panic(err)
+	//}
+	if err := validate(options); err != nil {
 		panic(err)
 	}
 
@@ -747,13 +704,6 @@ func NewTeleport(
 	app.ScopedICAControllerKeeper = scopedICAControllerKeeper
 	app.ScopedICAHostKeeper = scopedICAHostKeeper
 
-	app.EvmKeeper.SetHooks(
-		evmkeeper.NewMultiEvmHooks(
-			stakingHook,
-			govHook,
-			app.AggregateKeeper.Hooks(),
-		),
-	)
 	return app
 }
 
@@ -794,7 +744,6 @@ func (app *Teleport) InitChainer(ctx sdk.Context, req abci.RequestInitChain) abc
 // SetEVMCode set code in evm
 func (app *Teleport) SetEVMCode(ctx sdk.Context, addr common.Address, code []byte) {
 	codeHash := crypto.Keccak256Hash(code)
-	app.EvmKeeper.SetCode(ctx, codeHash.Bytes(), code)
 
 	account := app.AccountKeeper.NewAccountWithAddress(ctx, addr.Bytes())
 	ethAccount := account.(*ethermint.EthAccount)
@@ -980,9 +929,6 @@ func initParamsKeeper(appCodec codec.BinaryCodec, legacyAmino *codec.LegacyAmino
 	paramsKeeper.Subspace(ibctransfertypes.ModuleName)
 	paramsKeeper.Subspace(icacontrollertypes.SubModuleName)
 	paramsKeeper.Subspace(icahosttypes.SubModuleName)
-	// ethermint subspaces
-	paramsKeeper.Subspace(evmtypes.ModuleName)
-	paramsKeeper.Subspace(feemarkettypes.ModuleName)
 	// teleport subspaces
 	paramsKeeper.Subspace(aggregatetypes.ModuleName)
 	paramsKeeper.Subspace(rvestingtypes.ModuleName)
