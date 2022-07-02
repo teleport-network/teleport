@@ -22,8 +22,8 @@ import (
 	ibctesting "github.com/cosmos/ibc-go/v3/testing"
 	"github.com/cosmos/ibc-go/v3/testing/simapp"
 
-	"github.com/tharsis/ethermint/encoding"
-	feemarkettypes "github.com/tharsis/ethermint/x/feemarket/types"
+	"github.com/evmos/ethermint/encoding"
+	feemarkettypes "github.com/evmos/ethermint/x/feemarket/types"
 )
 
 // DefaultConsensusParams defines the default Tendermint consensus params used in Teleport testing.

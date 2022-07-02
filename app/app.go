@@ -114,12 +114,12 @@ import (
 	rvestingkeeper "github.com/teleport-network/teleport/x/rvesting/keeper"
 	rvestingmodule "github.com/teleport-network/teleport/x/rvesting/module"
 	rvestingtypes "github.com/teleport-network/teleport/x/rvesting/types"
-	"github.com/tharsis/ethermint/app/ante"
-	"github.com/tharsis/ethermint/encoding"
-	ethermint "github.com/tharsis/ethermint/types"
-	"github.com/tharsis/ethermint/x/evm"
-	evmrest "github.com/tharsis/ethermint/x/evm/client/rest"
-	evmtypes "github.com/tharsis/ethermint/x/evm/types"
+	"github.com/evmos/ethermint/app/ante"
+	"github.com/evmos/ethermint/encoding"
+	ethermint "github.com/evmos/ethermint/types"
+	"github.com/evmos/ethermint/x/evm"
+	evmrest "github.com/evmos/ethermint/x/evm/client/rest"
+	evmtypes "github.com/evmos/ethermint/x/evm/types"
 )
 
 func init() {

@@ -13,7 +13,7 @@ import (
 
 	"github.com/ethereum/go-ethereum/ethclient"
 
-	"github.com/tharsis/ethermint/server/config"
+	"github.com/evmos/ethermint/server/config"
 
 	"github.com/teleport-network/teleport/testutil/network"
 	"github.com/teleport-network/teleport/x/aggregate/types"

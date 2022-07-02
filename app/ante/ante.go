@@ -5,7 +5,7 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	authante "github.com/cosmos/cosmos-sdk/x/auth/ante"
 	ibcante "github.com/cosmos/ibc-go/v3/modules/core/ante"
-	ethAnte "github.com/tharsis/ethermint/app/ante"
+	ethAnte "github.com/evmos/ethermint/app/ante"
 )
 
 func Validate(options ethAnte.HandlerOptions) error {

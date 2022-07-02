@@ -6,7 +6,7 @@ import (
 	"github.com/stretchr/testify/suite"
 
 	"github.com/ethereum/go-ethereum/common"
-	"github.com/tharsis/ethermint/tests"
+	"github.com/evmos/ethermint/tests"
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )

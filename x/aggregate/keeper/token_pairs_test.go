@@ -7,7 +7,7 @@ import (
 
 	"github.com/ethereum/go-ethereum/common"
 
-	"github.com/tharsis/ethermint/tests"
+	"github.com/evmos/ethermint/tests"
 
 	"github.com/teleport-network/teleport/x/aggregate/types"
 )

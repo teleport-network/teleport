@@ -463,7 +463,7 @@ proto-check-breaking:
 TM_URL              = https://raw.githubusercontent.com/$(shell grep -m 1 "github.com/tendermint/tendermint" ./go.mod | sed 's/ /\//g' | sed 's/\t//g' | sed 's/github.com\///g')/proto/tendermint
 GOGO_PROTO_URL      = https://raw.githubusercontent.com/regen-network/protobuf/cosmos
 COSMOS_SDK_URL      = https://raw.githubusercontent.com/$(shell grep -m 1 "github.com/cosmos/cosmos-sdk" ./go.mod | sed 's/ /\//g' | sed 's/\t//g' | sed 's/github.com\///g')
-ETHERMINT_URL      	= https://raw.githubusercontent.com/$(shell grep -m 1 "github.com/tharsis/ethermint" ./go.mod | sed 's/ /\//g' | sed 's/\t//g' | sed 's/github.com\///g')
+ETHERMINT_URL      	= https://raw.githubusercontent.com/$(shell grep -m 1 "github.com/evmos/ethermint" ./go.mod | sed 's/ /\//g' | sed 's/\t//g' | sed 's/github.com\///g')
 IBC_GO_URL      	= https://raw.githubusercontent.com/$(shell grep -m 1 "github.com/cosmos/ibc-go" ./go.mod | sed 's/ /\//g' | sed 's/\t//g' | sed 's/github.com\///g')
 COSMOS_PROTO_URL    = https://raw.githubusercontent.com/regen-network/cosmos-proto/master
 
