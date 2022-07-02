@@ -101,17 +101,11 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/crypto"
 
-	"github.com/teleport-network/teleport/adapter"
 	adbank "github.com/teleport-network/teleport/adapter/bank"
-	adgov "github.com/teleport-network/teleport/adapter/gov"
-	adstaking "github.com/teleport-network/teleport/adapter/staking"
 	_ "github.com/teleport-network/teleport/client/docs/statik"
 	gabci "github.com/teleport-network/teleport/grpc_abci"
 	syscontracts "github.com/teleport-network/teleport/syscontracts"
 	wtelecontract "github.com/teleport-network/teleport/syscontracts/wtele"
-	agentcontract "github.com/teleport-network/teleport/syscontracts/xibc_agent"
-	endpointcontract "github.com/teleport-network/teleport/syscontracts/xibc_endpoint"
-	packetcontract "github.com/teleport-network/teleport/syscontracts/xibc_packet"
 	"github.com/teleport-network/teleport/types"
 	"github.com/teleport-network/teleport/x/aggregate"
 	aggregateclient "github.com/teleport-network/teleport/x/aggregate/client"
@@ -295,9 +289,6 @@ type Teleport struct {
 
 	// the module manager
 	mm *module.Manager
-
-	// the adapter manager
-	am *adapter.Manager
 
 	// simulation manager
 	sm *module.SimulationManager
@@ -632,11 +623,6 @@ func NewTeleport(
 	app.configurator = module.NewConfigurator(app.appCodec, app.MsgServiceRouter(), app.GRPCQueryRouter())
 	app.mm.RegisterServices(app.configurator)
 
-	// create the adapter manager
-	stakingHook := adstaking.NewHookAdapter(&app.AccountKeeper, &app.StakingKeeper, app.MsgServiceRouter())
-	govHook := adgov.NewHookAdapter(&app.AccountKeeper, app.MsgServiceRouter())
-	app.am = adapter.NewManager(stakingHook, govHook)
-
 	// add test gRPC service for testing gRPC queries in isolation
 	// testdata.RegisterTestServiceServer(app.GRPCQueryRouter(), testdata.TestServiceImpl{})
 
@@ -728,15 +714,8 @@ func (app *Teleport) InitChainer(ctx sdk.Context, req abci.RequestInitChain) abc
 	}
 	app.UpgradeKeeper.SetModuleVersionMap(ctx, app.mm.GetVersionMap())
 	res := app.mm.InitGenesis(ctx, app.appCodec, genesisState)
-	if err := app.am.InitGenesis(ctx); err != nil {
-		panic(err)
-	}
 
 	app.SetEVMCode(ctx, common.HexToAddress(syscontracts.WTELEContractAddress), wtelecontract.WTELEContract.Bin)
-	app.SetEVMCode(ctx, common.HexToAddress(syscontracts.AgentContractAddress), agentcontract.AgentContract.Bin)
-	app.SetEVMCode(ctx, common.HexToAddress(syscontracts.PacketContractAddress), packetcontract.PacketContract.Bin)
-	app.SetEVMCode(ctx, common.HexToAddress(syscontracts.EndpointContractAddress), endpointcontract.EndpointContract.Bin)
-	app.SetEVMCode(ctx, common.HexToAddress(syscontracts.ExecuteContractAddress), endpointcontract.ExecuteContract.Bin)
 
 	return res
 }
