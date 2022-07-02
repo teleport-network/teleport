@@ -2,6 +2,7 @@ package app
 
 import (
 	"encoding/json"
+	bitante "github.com/teleport-network/teleport/app/ante"
 	"io"
 	"net/http"
 	"os"
@@ -671,11 +672,11 @@ func NewTeleport(
 	//if err := options.Validate(); err != nil {
 	//	panic(err)
 	//}
-	if err := validate(options); err != nil {
+	if err := bitante.Validate(options); err != nil {
 		panic(err)
 	}
 
-	app.SetAnteHandler(ante.NewAnteHandler(options))
+	app.SetAnteHandler(bitante.NewAnteHandler(options))
 	app.SetEndBlocker(app.EndBlocker)
 	app.registerUpgradeHandlers()
 
