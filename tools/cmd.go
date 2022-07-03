@@ -59,7 +59,7 @@ will not be able to be queried via rpc/p2p server built upon it.
 func NewRollbackCmd(storeKeys map[string]*sdk.KVStoreKey) *cobra.Command {
 	var height int64
 	cmd := &cobra.Command{
-		Use:   "rollback",
+		Use:   "rollback-any",
 		Short: "rollback cosmos-sdk and tendermint state to specified height",
 		Long: `
 A state rollback is performed to recover from an incorrect application state transition,
