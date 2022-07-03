@@ -1,7 +1,7 @@
 syntax = "proto3";
 package xibc.core.commitment.v1;
 
-option go_package = "github.com/teleport-network/teleport/x/xibc/core/commitment/types";
+option go_package = "github.com/bitdao-io/bitchain/x/xibc/core/commitment/types";
 
 import "gogoproto/gogo.proto";
 import "confio/proofs.proto";

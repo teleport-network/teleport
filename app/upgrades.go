@@ -10,7 +10,7 @@ import (
 )
 
 // nolint: ignore
-func (app *Teleport) registerUpgradeHandlers() {
+func (app *Bitchain) registerUpgradeHandlers() {
 	// v0.2 upgrade handler
 	app.UpgradeKeeper.SetUpgradeHandler(
 		"v0.2",

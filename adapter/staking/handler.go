@@ -8,9 +8,9 @@ import (
 
 	ethtypes "github.com/ethereum/go-ethereum/core/types"
 
-	"github.com/teleport-network/teleport/adapter/common"
-	"github.com/teleport-network/teleport/syscontracts"
-	"github.com/teleport-network/teleport/syscontracts/staking"
+	"github.com/bitdao-io/bitchain/adapter/common"
+	"github.com/bitdao-io/bitchain/syscontracts"
+	"github.com/bitdao-io/bitchain/syscontracts/staking"
 )
 
 func (h *HookAdapter) HandleDelegated(ctx sdk.Context, log *ethtypes.Log) error {

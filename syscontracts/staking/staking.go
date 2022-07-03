@@ -8,7 +8,7 @@ import (
 
 	evmtypes "github.com/evmos/ethermint/x/evm/types"
 
-	"github.com/teleport-network/teleport/syscontracts"
+	"github.com/bitdao-io/bitchain/syscontracts"
 )
 
 var (

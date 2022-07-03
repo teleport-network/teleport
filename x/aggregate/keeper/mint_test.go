@@ -8,7 +8,7 @@ import (
 
 	"github.com/evmos/ethermint/tests"
 
-	"github.com/teleport-network/teleport/x/aggregate/types"
+	"github.com/bitdao-io/bitchain/x/aggregate/types"
 )
 
 func (suite *KeeperTestSuite) TestMintingEnabled() {

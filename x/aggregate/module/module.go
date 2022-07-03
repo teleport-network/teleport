@@ -20,10 +20,10 @@ import (
 	simtypes "github.com/cosmos/cosmos-sdk/types/simulation"
 	authkeeper "github.com/cosmos/cosmos-sdk/x/auth/keeper"
 
-	"github.com/teleport-network/teleport/x/aggregate"
-	cli "github.com/teleport-network/teleport/x/aggregate/client/cli"
-	"github.com/teleport-network/teleport/x/aggregate/keeper"
-	"github.com/teleport-network/teleport/x/aggregate/types"
+	"github.com/bitdao-io/bitchain/x/aggregate"
+	cli "github.com/bitdao-io/bitchain/x/aggregate/client/cli"
+	"github.com/bitdao-io/bitchain/x/aggregate/keeper"
+	"github.com/bitdao-io/bitchain/x/aggregate/types"
 )
 
 // type check to ensure the interface is properly implemented

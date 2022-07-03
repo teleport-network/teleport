@@ -7,8 +7,8 @@ import (
 	svrcmd "github.com/cosmos/cosmos-sdk/server/cmd"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/teleport-network/teleport/app"
-	cmdcfg "github.com/teleport-network/teleport/cmd/config"
+	"github.com/bitdao-io/bitchain/app"
+	cmdcfg "github.com/bitdao-io/bitchain/cmd/config"
 )
 
 func main() {

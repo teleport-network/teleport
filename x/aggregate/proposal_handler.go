@@ -5,8 +5,8 @@ import (
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
 
-	"github.com/teleport-network/teleport/x/aggregate/keeper"
-	"github.com/teleport-network/teleport/x/aggregate/types"
+	"github.com/bitdao-io/bitchain/x/aggregate/keeper"
+	"github.com/bitdao-io/bitchain/x/aggregate/types"
 )
 
 // NewAggregateProposalHandler creates a governance handler to manage new proposal types.

@@ -9,7 +9,7 @@ import (
 	"github.com/cosmos/ibc-go/v3/modules/core/exported"
 	"github.com/ethereum/go-ethereum/common"
 
-	"github.com/teleport-network/teleport/x/aggregate/types"
+	"github.com/bitdao-io/bitchain/x/aggregate/types"
 
 	transfertypes "github.com/cosmos/ibc-go/v3/modules/apps/transfer/types"
 )

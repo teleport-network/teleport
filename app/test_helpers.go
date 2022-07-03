@@ -26,7 +26,7 @@ import (
 	feemarkettypes "github.com/evmos/ethermint/x/feemarket/types"
 )
 
-// DefaultConsensusParams defines the default Tendermint consensus params used in Teleport testing.
+// DefaultConsensusParams defines the default Tendermint consensus params used in Bitchain testing.
 var DefaultConsensusParams = &abci.ConsensusParams{
 	Block: &abci.BlockParams{
 		MaxBytes: 200000,
@@ -44,10 +44,10 @@ var DefaultConsensusParams = &abci.ConsensusParams{
 	},
 }
 
-// Setup initializes a new Teleport. A Nop logger is set in Teleport.
-func Setup(isCheckTx bool, feemarketGenesis *feemarkettypes.GenesisState) *Teleport {
+// Setup initializes a new Bitchain. A Nop logger is set in Bitchain.
+func Setup(isCheckTx bool, feemarketGenesis *feemarkettypes.GenesisState) *Bitchain {
 	db := dbm.NewMemDB()
-	app := NewTeleport(log.NewNopLogger(), db, nil, true, map[int64]bool{}, DefaultNodeHome, 5, encoding.MakeConfig(ModuleBasics), simapp.EmptyAppOptions{})
+	app := NewBitchain(log.NewNopLogger(), db, nil, true, map[int64]bool{}, DefaultNodeHome, 5, encoding.MakeConfig(ModuleBasics), simapp.EmptyAppOptions{})
 	if !isCheckTx {
 		// init chain must be called to stop deliverState from being nil
 		genesisState := NewDefaultGenesisState()
@@ -69,7 +69,7 @@ func Setup(isCheckTx bool, feemarketGenesis *feemarkettypes.GenesisState) *Telep
 		// Initialize the chain
 		app.InitChain(
 			abci.RequestInitChain{
-				ChainId:         "teleport_9000-1",
+				ChainId:         "bitchain_9000-1",
 				Validators:      []abci.ValidatorUpdate{},
 				ConsensusParams: DefaultConsensusParams,
 				AppStateBytes:   stateBytes,
@@ -121,6 +121,6 @@ func SignAndDeliver(
 func SetupTestingApp() (ibctesting.TestingApp, map[string]json.RawMessage) {
 	db := dbm.NewMemDB()
 	cfg := encoding.MakeConfig(ModuleBasics)
-	app := NewTeleport(log.NewNopLogger(), db, nil, true, map[int64]bool{}, DefaultNodeHome, 5, cfg, simapp.EmptyAppOptions{})
+	app := NewBitchain(log.NewNopLogger(), db, nil, true, map[int64]bool{}, DefaultNodeHome, 5, cfg, simapp.EmptyAppOptions{})
 	return app, NewDefaultGenesisState()
 }

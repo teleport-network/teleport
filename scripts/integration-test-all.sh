@@ -17,10 +17,10 @@ RPC_PORT="854"
 IP_ADDR="0.0.0.0"
 
 KEY="mykey"
-CHAINID="teleport_9000-1"
+CHAINID="bitchain_9000-1"
 MONIKER="mymoniker"
 
-## default port prefixes for teleport
+## default port prefixes for bitchain
 NODE_P2P_PORT="2660"
 NODE_PORT="2663"
 NODE_RPC_PORT="2666"
@@ -52,29 +52,29 @@ done
 
 set -euxo pipefail
 
-DATA_DIR=$(mktemp -d -t teleport-datadir.XXXXX)
+DATA_DIR=$(mktemp -d -t bitchain-datadir.XXXXX)
 
 if [[ ! "$DATA_DIR" ]]; then
     echo "Could not create $DATA_DIR"
     exit 1
 fi
 
-# Compile teleport
-echo "compiling teleport"
+# Compile bitchain
+echo "compiling bitchain"
 make build
 
 # PID array declaration
 arr=()
 
 init_func() {
-    "$PWD"/build/teleport keys add $KEY"$i" --keyring-backend test --home "$DATA_DIR$i" --no-backup --algo "eth_secp256k1"
-    "$PWD"/build/teleport init $MONIKER --chain-id $CHAINID --home "$DATA_DIR$i"
-    "$PWD"/build/teleport add-genesis-account \
-    "$("$PWD"/build/teleport keys show "$KEY$i" --keyring-backend test -a --home "$DATA_DIR$i")" 1000000000000000000atele,1000000000000000000stake \
+    "$PWD"/build/bitchain keys add $KEY"$i" --keyring-backend test --home "$DATA_DIR$i" --no-backup --algo "eth_secp256k1"
+    "$PWD"/build/bitchain init $MONIKER --chain-id $CHAINID --home "$DATA_DIR$i"
+    "$PWD"/build/bitchain add-genesis-account \
+    "$("$PWD"/build/bitchain keys show "$KEY$i" --keyring-backend test -a --home "$DATA_DIR$i")" 1000000000000000000atele,1000000000000000000stake \
     --keyring-backend test --home "$DATA_DIR$i"
-    "$PWD"/build/teleport gentx "$KEY$i" 1000000000000000000stake --chain-id $CHAINID --keyring-backend test --home "$DATA_DIR$i"
-    "$PWD"/build/teleport collect-gentxs --home "$DATA_DIR$i"
-    "$PWD"/build/teleport validate-genesis --home "$DATA_DIR$i"
+    "$PWD"/build/bitchain gentx "$KEY$i" 1000000000000000000stake --chain-id $CHAINID --keyring-backend test --home "$DATA_DIR$i"
+    "$PWD"/build/bitchain collect-gentxs --home "$DATA_DIR$i"
+    "$PWD"/build/bitchain validate-genesis --home "$DATA_DIR$i"
 
     if [[ $MODE == "pending" ]]; then
       ls $DATA_DIR$i
@@ -103,15 +103,15 @@ init_func() {
 }
 
 start_func() {
-    echo "starting teleport node $i in background ..."
-    "$PWD"/build/teleport start --pruning=nothing --rpc.unsafe \
+    echo "starting bitchain node $i in background ..."
+    "$PWD"/build/bitchain start --pruning=nothing --rpc.unsafe \
     --p2p.laddr tcp://$IP_ADDR:$NODE_P2P_PORT"$i" --address tcp://$IP_ADDR:$NODE_PORT"$i" --rpc.laddr tcp://$IP_ADDR:$NODE_RPC_PORT"$i" \
     --json-rpc.address=$IP_ADDR:$RPC_PORT"$i" \
     --keyring-backend test --home "$DATA_DIR$i" \
     >"$DATA_DIR"/node"$i".log 2>&1 & disown
 
     TELEPORT_PID=$!
-    echo "started teleport node, pid=$TELEPORT_PID"
+    echo "started bitchain node, pid=$TELEPORT_PID"
     # add PID to array
     arr+=("$TELEPORT_PID")
 
@@ -147,7 +147,7 @@ if [[ -z $TEST || $TEST == "rpc" ||  $TEST == "pending" ]]; then
 
     for i in $(seq 1 "$TEST_QTD"); do
         HOST_RPC=http://$IP_ADDR:$RPC_PORT"$i"
-        echo "going to test teleport node $HOST_RPC ..."
+        echo "going to test bitchain node $HOST_RPC ..."
         MODE=$MODE HOST=$HOST_RPC go test ./tests/... -timeout=$time_out -v -short
 
         RPC_FAIL=$?
@@ -159,7 +159,7 @@ stop_func() {
     TELEPORT_PID=$i
     echo "shutting down node, pid=$TELEPORT_PID ..."
 
-    # Shutdown teleport node
+    # Shutdown bitchain node
     kill -9 "$TELEPORT_PID"
     wait "$TELEPORT_PID"
 

@@ -8,7 +8,7 @@ import (
 
 	evmtypes "github.com/evmos/ethermint/x/evm/types"
 
-	"github.com/teleport-network/teleport/x/aggregate/types"
+	"github.com/bitdao-io/bitchain/x/aggregate/types"
 )
 
 var _ types.MsgServer = &Keeper{}

@@ -1,10 +1,10 @@
 swagger: '2.0'
 info:
-  title: Teleport Chain - Legacy REST and gRPC Gateway docs
+  title: Bitchain Chain - Legacy REST and gRPC Gateway docs
   description: A REST interface for state queries, legacy transactions
   version: 0.1.0-alpha2
 paths:
-  /teleport/aggregate/v1/params:
+  /bitchain/aggregate/v1/params:
     get:
       summary: Params retrieves the aggregate module params
       operationId: AggregateParams
@@ -62,7 +62,7 @@ paths:
                       format: byte
       tags:
         - Query
-  /teleport/aggregate/v1/token_pairs:
+  /bitchain/aggregate/v1/token_pairs:
     get:
       summary: Retrieves registered token pairs
       operationId: TokenPairs
@@ -225,7 +225,7 @@ paths:
           format: boolean
       tags:
         - Query
-  /teleport/aggregate/v1/token_pairs/{token}:
+  /bitchain/aggregate/v1/token_pairs/{token}:
     get:
       summary: Retrieves a registered token pair
       operationId: TokenPair
@@ -309,7 +309,7 @@ paths:
           type: string
       tags:
         - Query
-  /teleport/rvesting/v1/params:
+  /bitchain/rvesting/v1/params:
     get:
       summary: Params returns the total set of parameters.
       operationId: RvestingParams
@@ -372,7 +372,7 @@ paths:
                       format: byte
       tags:
         - Query
-  /teleport/rvesting/v1/remaining:
+  /bitchain/rvesting/v1/remaining:
     get:
       operationId: Remaining
       responses:
@@ -31826,7 +31826,7 @@ definitions:
                   "@type": "type.googleapis.com/google.protobuf.Duration",
                   "value": "1.212s"
                 }
-  teleport.aggregate.v1.Owner:
+  bitchain.aggregate.v1.Owner:
     type: string
     enum:
       - OWNER_UNSPECIFIED
@@ -31838,7 +31838,7 @@ definitions:
        - OWNER_MODULE: OWNER_MODULE erc20 is owned by the intrarelayer module account
        - OWNER_EXTERNAL: EXTERNAL erc20 is owned by an external account
     title: Owner enumerates the ownership of a ERC20 contract
-  teleport.aggregate.v1.Params:
+  bitchain.aggregate.v1.Params:
     type: object
     properties:
       enable_aggregate:
@@ -31855,7 +31855,7 @@ definitions:
           Coin by transferring the Tokens through a MsgEthereumTx to the
           ModuleAddress Ethereum address.
     title: Params defines the aggregate module params
-  teleport.aggregate.v1.QueryParamsResponse:
+  bitchain.aggregate.v1.QueryParamsResponse:
     type: object
     properties:
       params:
@@ -31879,7 +31879,7 @@ definitions:
               ModuleAddress Ethereum address.
         title: Params defines the aggregate module params
     title: QueryParamsResponse is the response type for the Query/Params RPC method
-  teleport.aggregate.v1.QueryTokenPairResponse:
+  bitchain.aggregate.v1.QueryTokenPairResponse:
     type: object
     properties:
       token_pair:
@@ -31920,7 +31920,7 @@ definitions:
     title: |-
       QueryTokenPairResponse is the response type for the Query/TokenPair RPC
       method
-  teleport.aggregate.v1.QueryTokenPairsResponse:
+  bitchain.aggregate.v1.QueryTokenPairsResponse:
     type: object
     properties:
       token_pairs:
@@ -31989,7 +31989,7 @@ definitions:
     title: |-
       QueryTokenPairsResponse is the response type for the Query/TokenPairs RPC
       method
-  teleport.aggregate.v1.TokenPair:
+  bitchain.aggregate.v1.TokenPair:
     type: object
     properties:
       erc20_address:
@@ -32034,7 +32034,7 @@ definitions:
 
       NOTE: The amount field is an Int which implements the custom method
       signatures required by gogoproto.
-  teleport.rvesting.v1.Params:
+  bitchain.rvesting.v1.Params:
     type: object
     properties:
       enable_vesting:
@@ -32056,7 +32056,7 @@ definitions:
             NOTE: The amount field is an Int which implements the custom method
             signatures required by gogoproto.
     title: Params defines the rvesting module params
-  teleport.rvesting.v1.QueryParamsResponse:
+  bitchain.rvesting.v1.QueryParamsResponse:
     type: object
     properties:
       params:
@@ -32086,7 +32086,7 @@ definitions:
                 signatures required by gogoproto.
         title: Params defines the rvesting module params
     description: QueryParamsResponse is the response type for the Query/Params RPC method.
-  teleport.rvesting.v1.QueryRemainingResponse:
+  bitchain.rvesting.v1.QueryRemainingResponse:
     type: object
     properties:
       address:

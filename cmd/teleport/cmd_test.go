@@ -10,17 +10,17 @@ import (
 	svrcmd "github.com/cosmos/cosmos-sdk/server/cmd"
 	"github.com/cosmos/cosmos-sdk/x/genutil/client/cli"
 
-	"github.com/teleport-network/teleport/app"
-	teleport "github.com/teleport-network/teleport/cmd/teleport"
+	"github.com/bitdao-io/bitchain/app"
+	bitchain "github.com/bitdao-io/bitchain/cmd/bitchain"
 )
 
 func TestInitCmd(t *testing.T) {
-	rootCmd, _ := teleport.NewRootCmd()
+	rootCmd, _ := bitchain.NewRootCmd()
 	rootCmd.SetArgs([]string{
 		"init",          // Test the init cmd
-		"teleport-test", // Moniker
+		"bitchain-test", // Moniker
 		fmt.Sprintf("--%s=%s", cli.FlagOverwrite, "true"), // Overwrite genesis.json, in case it already exists
-		fmt.Sprintf("--%s=%s", flags.FlagChainID, "teleport_9000-1"),
+		fmt.Sprintf("--%s=%s", flags.FlagChainID, "bitchain_9000-1"),
 	})
 
 	err := svrcmd.Execute(rootCmd, app.DefaultNodeHome)
@@ -28,7 +28,7 @@ func TestInitCmd(t *testing.T) {
 }
 
 func TestAddKeyLedgerCmd(t *testing.T) {
-	rootCmd, _ := teleport.NewRootCmd()
+	rootCmd, _ := bitchain.NewRootCmd()
 	rootCmd.SetArgs([]string{
 		"keys",
 		"add",

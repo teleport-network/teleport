@@ -19,8 +19,8 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
 
-	"github.com/teleport-network/teleport/x/rvesting/keeper"
-	"github.com/teleport-network/teleport/x/rvesting/types"
+	"github.com/bitdao-io/bitchain/x/rvesting/keeper"
+	"github.com/bitdao-io/bitchain/x/rvesting/types"
 )
 
 type AppModuleBasic struct{}

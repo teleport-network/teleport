@@ -12,7 +12,7 @@ import (
 
 	ethermint "github.com/evmos/ethermint/types"
 
-	"github.com/teleport-network/teleport/x/aggregate/types"
+	"github.com/bitdao-io/bitchain/x/aggregate/types"
 )
 
 var _ types.QueryServer = Keeper{}

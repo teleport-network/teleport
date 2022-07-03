@@ -1,15 +1,15 @@
 
-rem teleport compile on windows
+rem bitchain compile on windows
 rem install golang , gcc, sed for windows
 rem 1. install msys2 : https://www.msys2.org/
 rem 2. pacman -S mingw-w64-x86_64-toolchain
 rem    pacman -S sed
 rem    pacman -S mingw-w64-x86_64-jq
-rem 3. add path C:\msys64\mingw64\bin  
+rem 3. add path C:\msys64\mingw64\bin
 rem             C:\msys64\usr\bin
 
 set KEY="mykey"
-set CHAINID="teleport_9000-1"
+set CHAINID="bitchain_9000-1"
 set MONIKER="localtestnet"
 set KEYRING="test"
 set KEYALGO="eth_secp256k1"
@@ -17,26 +17,26 @@ set LOGLEVEL="info"
 # to trace evm
 #TRACE="--trace"
 set TRACE=""
-set HOME=%USERPROFILE%\.teleport
+set HOME=%USERPROFILE%\.bitchain
 echo %HOME%
 set ETHCONFIG=%HOME%\config\config.toml
 set GENESIS=%HOME%\config\genesis.json
 set TMPGENESIS=%HOME%\config\tmp_genesis.json
 
 @echo build binary
-go build .\cmd\teleport
+go build .\cmd\bitchain
 
 
 @echo clear home folder
 del /s /q %HOME%
 
-teleport config keyring-backend %KEYRING%
-teleport config chain-id %CHAINID%
+bitchain config keyring-backend %KEYRING%
+bitchain config chain-id %CHAINID%
 
-teleport keys add %KEY% --keyring-backend %KEYRING% --algo %KEYALGO%
+bitchain keys add %KEY% --keyring-backend %KEYRING% --algo %KEYALGO%
 
-rem Set moniker and chain-id for Teleport (Moniker can be anything, chain-id must be an integer)
-teleport init %MONIKER% --chain-id %CHAINID% 
+rem Set moniker and chain-id for Bitchain (Moniker can be anything, chain-id must be an integer)
+bitchain init %MONIKER% --chain-id %CHAINID%
 
 rem Change parameter token denominations to atele
 cat %GENESIS% | jq ".app_state[\"staking\"][\"params\"][\"bond_denom\"]=\"atele\""   >   %TMPGENESIS% && move %TMPGENESIS% %GENESIS%
@@ -55,18 +55,18 @@ rem setup
 sed -i "s/create_empty_blocks = true/create_empty_blocks = false/g" %ETHCONFIG%
 
 rem Allocate genesis accounts (cosmos formatted addresses)
-teleport add-genesis-account %KEY% 100000000000000000000000000atele --keyring-backend %KEYRING%
+bitchain add-genesis-account %KEY% 100000000000000000000000000atele --keyring-backend %KEYRING%
 
 rem Sign genesis transaction
-teleport gentx %KEY% 1000000000000000000000atele --keyring-backend %KEYRING% --chain-id %CHAINID%
+bitchain gentx %KEY% 1000000000000000000000atele --keyring-backend %KEYRING% --chain-id %CHAINID%
 
 rem Collect genesis tx
-teleport collect-gentxs
+bitchain collect-gentxs
 
 rem Run this to ensure everything worked and that the genesis file is setup correctly
-teleport validate-genesis
+bitchain validate-genesis
 
 
 
 rem Start the node (remove the --pruning=nothing flag if historical queries are not needed)
-teleport start --pruning=nothing %TRACE% --log_level %LOGLEVEL% --minimum-gas-prices=0.0001atele
+bitchain start --pruning=nothing %TRACE% --log_level %LOGLEVEL% --minimum-gas-prices=0.0001atele

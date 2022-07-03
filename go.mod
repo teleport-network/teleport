@@ -1,4 +1,4 @@
-module github.com/teleport-network/teleport
+module github.com/bitdao-io/bitchain
 
 go 1.17
 

@@ -7,16 +7,16 @@ TMVERSION := $(shell go list -m github.com/tendermint/tendermint | sed 's:.* ::'
 COMMIT := $(shell git log -1 --format='%H')
 LEDGER_ENABLED ?= true
 BINDIR ?= $(GOPATH)/bin
-TELEPORT_BINARY = teleport
-TELEPORT_DIR = teleport
+TELEPORT_BINARY = bitchain
+TELEPORT_DIR = bitchain
 BUILDDIR ?= $(CURDIR)/build
 SIMAPP = ./app
-HTTPS_GIT := https://github.com/teleport-network/teleport.git
+HTTPS_GIT := https://github.com/bitdao-io/bitchain.git
 DOCKER := $(shell which docker)
 DOCKER_BUF := $(DOCKER) run --rm -v $(CURDIR):/workspace --workdir /workspace bufbuild/buf
 PROJECT_NAME = $(shell git remote get-url origin | xargs basename -s .git)
-NAMESPACE := teleport-network
-PROJECT := teleport
+NAMESPACE := bitdao-io
+PROJECT := bitchain
 DOCKER_IMAGE := $(NAMESPACE)/$(PROJECT)
 COMMIT_HASH := $(shell git rev-parse --short=7 HEAD)
 DOCKER_TAG := $(COMMIT_HASH)
@@ -67,7 +67,7 @@ build_tags_comma_sep := $(subst $(whitespace),$(comma),$(build_tags))
 
 # process linker flags
 
-ldflags = -X github.com/cosmos/cosmos-sdk/version.Name=teleport \
+ldflags = -X github.com/cosmos/cosmos-sdk/version.Name=bitchain \
 		  -X github.com/cosmos/cosmos-sdk/version.AppName=$(TELEPORT_BINARY) \
 		  -X github.com/cosmos/cosmos-sdk/version.Version=$(VERSION) \
 		  -X github.com/cosmos/cosmos-sdk/version.Commit=$(COMMIT) \
@@ -130,12 +130,12 @@ build-docker:
 	docker tag ${DOCKER_IMAGE}:${DOCKER_TAG} ${DOCKER_IMAGE}:latest
 	# docker tag ${DOCKER_IMAGE}:${DOCKER_TAG} ${DOCKER_IMAGE}:${COMMIT_HASH}
 	# update old container
-	docker rm teleport || true
+	docker rm bitchain || true
 	# create a new container from the latest image
-	docker create --name teleport -t -i ${DOCKER_IMAGE}:latest teleport
+	docker create --name bitchain -t -i ${DOCKER_IMAGE}:latest bitchain
 	# move the binaries to the ./build directory
 	mkdir -p ./build/
-	docker cp teleport:/usr/bin/teleport ./build/
+	docker cp bitchain:/usr/bin/bitchain ./build/
 
 push-docker: build-docker
 	docker push ${DOCKER_IMAGE}:${DOCKER_TAG}
@@ -272,7 +272,7 @@ update-swagger-docs: statik
 .PHONY: update-swagger-docs
 
 godocs:
-	@echo "--> Wait a few seconds and visit http://localhost:6060/pkg/github.com/teleport-network/teleport/types"
+	@echo "--> Wait a few seconds and visit http://localhost:6060/pkg/github.com/bitdao-io/bitchain/types"
 	godoc -http=:6060
 
 # Start docs site at localhost:8080
@@ -422,7 +422,7 @@ lint-fix-contracts:
 format:
 	find . -name '*.go' -type f -not -path "./vendor*" -not -path "*.git*" -not -path "./client/docs/statik/statik.go" -not -name '*.pb.go' | xargs gofmt -w -s
 	find . -name '*.go' -type f -not -path "./vendor*" -not -path "*.git*" -not -path "./client/docs/statik/statik.go" -not -name '*.pb.go' | xargs misspell -w
-	find . -name '*.go' -type f -not -path "./vendor*" -not -path "*.git*" -not -path "./client/docs/statik/statik.go" -not -name '*.pb.go' | xargs goimports -w -local github.com/teleport-network/teleport
+	find . -name '*.go' -type f -not -path "./vendor*" -not -path "*.git*" -not -path "./client/docs/statik/statik.go" -not -name '*.pb.go' | xargs goimports -w -local github.com/bitdao-io/bitchain
 .PHONY: format
 
 ###############################################################################
@@ -513,13 +513,13 @@ ifeq ($(OS),Windows_NT)
 	mkdir localnet-setup &
 	@$(MAKE) localnet-build
 
-	IF not exist "build/node0/$(TELEPORT_BINARY)/config/genesis.json" docker run --rm -v $(CURDIR)/build\teleport\Z teleport/node "./teleport testnet --v 4 -o /teleport --keyring-backend=test --ip-addresses teleportnode0,teleportnode1,teleportnode2,teleportnode3"
+	IF not exist "build/node0/$(TELEPORT_BINARY)/config/genesis.json" docker run --rm -v $(CURDIR)/build\bitchain\Z bitchain/node "./bitchain testnet --v 4 -o /bitchain --keyring-backend=test --ip-addresses bitchainnode0,bitchainnode1,bitchainnode2,bitchainnode3"
 	docker-compose up -d
 else
 	mkdir -p localnet-setup
 	@$(MAKE) localnet-build
 
-	if ! [ -f localnet-setup/node0/$(TELEPORT_BINARY)/config/genesis.json ]; then docker run --rm -v $(CURDIR)/localnet-setup:/teleport:Z teleport/node "./teleport testnet --v 4 -o /teleport --keyring-backend=test --ip-addresses teleportnode0,teleportnode1,teleportnode2,teleportnode3"; fi
+	if ! [ -f localnet-setup/node0/$(TELEPORT_BINARY)/config/genesis.json ]; then docker run --rm -v $(CURDIR)/localnet-setup:/bitchain:Z bitchain/node "./bitchain testnet --v 4 -o /bitchain --keyring-backend=test --ip-addresses bitchainnode0,bitchainnode1,bitchainnode2,bitchainnode3"; fi
 	docker-compose up -d
 endif
 
@@ -536,28 +536,28 @@ localnet-clean:
 localnet-unsafe-reset:
 	docker-compose down
 ifeq ($(OS),Windows_NT)
-	@docker run --rm -v $(CURDIR)\localnet-setup\node0\teleport:teleport\Z teleport/node "./teleport unsafe-reset-all --home=/teleport"
-	@docker run --rm -v $(CURDIR)\localnet-setup\node1\teleport:teleport\Z teleport/node "./teleport unsafe-reset-all --home=/teleport"
-	@docker run --rm -v $(CURDIR)\localnet-setup\node2\teleport:teleport\Z teleport/node "./teleport unsafe-reset-all --home=/teleport"
-	@docker run --rm -v $(CURDIR)\localnet-setup\node3\teleport:teleport\Z teleport/node "./teleport unsafe-reset-all --home=/teleport"
+	@docker run --rm -v $(CURDIR)\localnet-setup\node0\bitchain:bitchain\Z bitchain/node "./bitchain unsafe-reset-all --home=/bitchain"
+	@docker run --rm -v $(CURDIR)\localnet-setup\node1\bitchain:bitchain\Z bitchain/node "./bitchain unsafe-reset-all --home=/bitchain"
+	@docker run --rm -v $(CURDIR)\localnet-setup\node2\bitchain:bitchain\Z bitchain/node "./bitchain unsafe-reset-all --home=/bitchain"
+	@docker run --rm -v $(CURDIR)\localnet-setup\node3\bitchain:bitchain\Z bitchain/node "./bitchain unsafe-reset-all --home=/bitchain"
 else
-	@docker run --rm -v $(CURDIR)/localnet-setup/node0/teleport:/teleport:Z teleport/node "./teleport unsafe-reset-all --home=/teleport"
-	@docker run --rm -v $(CURDIR)/localnet-setup/node1/teleport:/teleport:Z teleport/node "./teleport unsafe-reset-all --home=/teleport"
-	@docker run --rm -v $(CURDIR)/localnet-setup/node2/teleport:/teleport:Z teleport/node "./teleport unsafe-reset-all --home=/teleport"
-	@docker run --rm -v $(CURDIR)/localnet-setup/node3/teleport:/teleport:Z teleport/node "./teleport unsafe-reset-all --home=/teleport"
+	@docker run --rm -v $(CURDIR)/localnet-setup/node0/bitchain:/bitchain:Z bitchain/node "./bitchain unsafe-reset-all --home=/bitchain"
+	@docker run --rm -v $(CURDIR)/localnet-setup/node1/bitchain:/bitchain:Z bitchain/node "./bitchain unsafe-reset-all --home=/bitchain"
+	@docker run --rm -v $(CURDIR)/localnet-setup/node2/bitchain:/bitchain:Z bitchain/node "./bitchain unsafe-reset-all --home=/bitchain"
+	@docker run --rm -v $(CURDIR)/localnet-setup/node3/bitchain:/bitchain:Z bitchain/node "./bitchain unsafe-reset-all --home=/bitchain"
 endif
 
 # Clean testnet
 localnet-show-logstream:
 	docker-compose logs --tail=1000 -f
 
-.PHONY: build-docker-local-teleport localnet-start localnet-stop
+.PHONY: build-docker-local-bitchain localnet-start localnet-stop
 
 ###############################################################################
 ###                                Releasing                                ###
 ###############################################################################
 
-PACKAGE_NAME:=github.com/teleport-network/teleport
+PACKAGE_NAME:=github.com/bitdao-io/bitchain
 GOLANG_CROSS_VERSION  = v1.17.1
 GOPATH ?= '$(HOME)/go'
 release-dry-run:

@@ -5,7 +5,7 @@ import (
 	govclient "github.com/cosmos/cosmos-sdk/x/gov/client"
 	"github.com/cosmos/cosmos-sdk/x/gov/client/rest"
 
-	"github.com/teleport-network/teleport/x/aggregate/client/cli"
+	"github.com/bitdao-io/bitchain/x/aggregate/client/cli"
 )
 
 func EmptyProposalRESTHandler(client.Context) rest.ProposalRESTHandler {

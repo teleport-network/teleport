@@ -1,5 +1,5 @@
 {
-    "name": "teleport",
+    "name": "bitchain",
     "version": "1.0.0",
     "description": "<!-- parent:   order: false -->",
     "main": "index.js",
@@ -15,7 +15,7 @@
     "devDependencies": {},
     "repository": {
         "type": "git",
-        "url": "git+github.com/teleport-network/teleport.git"
+        "url": "git+github.com/bitdao-io/bitchain.git"
     },
     "author": "",
     "license": "Apache-2.0"

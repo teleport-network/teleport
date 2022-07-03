@@ -4,60 +4,60 @@
 
 ## Table of Contents
 
-- [teleport/aggregate/v1/aggregate.proto](#teleport/aggregate/v1/aggregate.proto)
-    - [AddCoinProposal](#teleport.aggregate.v1.AddCoinProposal)
-    - [DisableTimeBasedSupplyLimitProposal](#teleport.aggregate.v1.DisableTimeBasedSupplyLimitProposal)
-    - [EnableTimeBasedSupplyLimitProposal](#teleport.aggregate.v1.EnableTimeBasedSupplyLimitProposal)
-    - [RegisterCoinProposal](#teleport.aggregate.v1.RegisterCoinProposal)
-    - [RegisterERC20Proposal](#teleport.aggregate.v1.RegisterERC20Proposal)
-    - [RegisterERC20TraceProposal](#teleport.aggregate.v1.RegisterERC20TraceProposal)
-    - [ToggleTokenRelayProposal](#teleport.aggregate.v1.ToggleTokenRelayProposal)
-    - [TokenPair](#teleport.aggregate.v1.TokenPair)
-    - [UpdateTokenPairERC20Proposal](#teleport.aggregate.v1.UpdateTokenPairERC20Proposal)
+- [bitchain/aggregate/v1/aggregate.proto](#bitchain/aggregate/v1/aggregate.proto)
+    - [AddCoinProposal](#bitchain.aggregate.v1.AddCoinProposal)
+    - [DisableTimeBasedSupplyLimitProposal](#bitchain.aggregate.v1.DisableTimeBasedSupplyLimitProposal)
+    - [EnableTimeBasedSupplyLimitProposal](#bitchain.aggregate.v1.EnableTimeBasedSupplyLimitProposal)
+    - [RegisterCoinProposal](#bitchain.aggregate.v1.RegisterCoinProposal)
+    - [RegisterERC20Proposal](#bitchain.aggregate.v1.RegisterERC20Proposal)
+    - [RegisterERC20TraceProposal](#bitchain.aggregate.v1.RegisterERC20TraceProposal)
+    - [ToggleTokenRelayProposal](#bitchain.aggregate.v1.ToggleTokenRelayProposal)
+    - [TokenPair](#bitchain.aggregate.v1.TokenPair)
+    - [UpdateTokenPairERC20Proposal](#bitchain.aggregate.v1.UpdateTokenPairERC20Proposal)
   
-    - [Owner](#teleport.aggregate.v1.Owner)
+    - [Owner](#bitchain.aggregate.v1.Owner)
   
-- [teleport/aggregate/v1/event.proto](#teleport/aggregate/v1/event.proto)
-    - [EventDisableTimeBasedSupplyLimit](#teleport.aggregate.v1.EventDisableTimeBasedSupplyLimit)
-    - [EventEnableTimeBasedSupplyLimit](#teleport.aggregate.v1.EventEnableTimeBasedSupplyLimit)
-    - [EventIBCAggregate](#teleport.aggregate.v1.EventIBCAggregate)
-    - [EventRegisterTokens](#teleport.aggregate.v1.EventRegisterTokens)
+- [bitchain/aggregate/v1/event.proto](#bitchain/aggregate/v1/event.proto)
+    - [EventDisableTimeBasedSupplyLimit](#bitchain.aggregate.v1.EventDisableTimeBasedSupplyLimit)
+    - [EventEnableTimeBasedSupplyLimit](#bitchain.aggregate.v1.EventEnableTimeBasedSupplyLimit)
+    - [EventIBCAggregate](#bitchain.aggregate.v1.EventIBCAggregate)
+    - [EventRegisterTokens](#bitchain.aggregate.v1.EventRegisterTokens)
   
-    - [Status](#teleport.aggregate.v1.Status)
+    - [Status](#bitchain.aggregate.v1.Status)
   
-- [teleport/aggregate/v1/genesis.proto](#teleport/aggregate/v1/genesis.proto)
-    - [GenesisState](#teleport.aggregate.v1.GenesisState)
-    - [Params](#teleport.aggregate.v1.Params)
+- [bitchain/aggregate/v1/genesis.proto](#bitchain/aggregate/v1/genesis.proto)
+    - [GenesisState](#bitchain.aggregate.v1.GenesisState)
+    - [Params](#bitchain.aggregate.v1.Params)
   
-- [teleport/aggregate/v1/query.proto](#teleport/aggregate/v1/query.proto)
-    - [QueryParamsRequest](#teleport.aggregate.v1.QueryParamsRequest)
-    - [QueryParamsResponse](#teleport.aggregate.v1.QueryParamsResponse)
-    - [QueryTokenPairRequest](#teleport.aggregate.v1.QueryTokenPairRequest)
-    - [QueryTokenPairResponse](#teleport.aggregate.v1.QueryTokenPairResponse)
-    - [QueryTokenPairsRequest](#teleport.aggregate.v1.QueryTokenPairsRequest)
-    - [QueryTokenPairsResponse](#teleport.aggregate.v1.QueryTokenPairsResponse)
+- [bitchain/aggregate/v1/query.proto](#bitchain/aggregate/v1/query.proto)
+    - [QueryParamsRequest](#bitchain.aggregate.v1.QueryParamsRequest)
+    - [QueryParamsResponse](#bitchain.aggregate.v1.QueryParamsResponse)
+    - [QueryTokenPairRequest](#bitchain.aggregate.v1.QueryTokenPairRequest)
+    - [QueryTokenPairResponse](#bitchain.aggregate.v1.QueryTokenPairResponse)
+    - [QueryTokenPairsRequest](#bitchain.aggregate.v1.QueryTokenPairsRequest)
+    - [QueryTokenPairsResponse](#bitchain.aggregate.v1.QueryTokenPairsResponse)
   
-    - [Query](#teleport.aggregate.v1.Query)
+    - [Query](#bitchain.aggregate.v1.Query)
   
-- [teleport/aggregate/v1/tx.proto](#teleport/aggregate/v1/tx.proto)
-    - [MsgConvertCoin](#teleport.aggregate.v1.MsgConvertCoin)
-    - [MsgConvertCoinResponse](#teleport.aggregate.v1.MsgConvertCoinResponse)
-    - [MsgConvertERC20](#teleport.aggregate.v1.MsgConvertERC20)
-    - [MsgConvertERC20Response](#teleport.aggregate.v1.MsgConvertERC20Response)
+- [bitchain/aggregate/v1/tx.proto](#bitchain/aggregate/v1/tx.proto)
+    - [MsgConvertCoin](#bitchain.aggregate.v1.MsgConvertCoin)
+    - [MsgConvertCoinResponse](#bitchain.aggregate.v1.MsgConvertCoinResponse)
+    - [MsgConvertERC20](#bitchain.aggregate.v1.MsgConvertERC20)
+    - [MsgConvertERC20Response](#bitchain.aggregate.v1.MsgConvertERC20Response)
   
-    - [Msg](#teleport.aggregate.v1.Msg)
+    - [Msg](#bitchain.aggregate.v1.Msg)
   
-- [teleport/rvesting/v1/genesis.proto](#teleport/rvesting/v1/genesis.proto)
-    - [GenesisState](#teleport.rvesting.v1.GenesisState)
-    - [Params](#teleport.rvesting.v1.Params)
+- [bitchain/rvesting/v1/genesis.proto](#bitchain/rvesting/v1/genesis.proto)
+    - [GenesisState](#bitchain.rvesting.v1.GenesisState)
+    - [Params](#bitchain.rvesting.v1.Params)
   
-- [teleport/rvesting/v1/query.proto](#teleport/rvesting/v1/query.proto)
-    - [QueryParamsRequest](#teleport.rvesting.v1.QueryParamsRequest)
-    - [QueryParamsResponse](#teleport.rvesting.v1.QueryParamsResponse)
-    - [QueryRemainingRequest](#teleport.rvesting.v1.QueryRemainingRequest)
-    - [QueryRemainingResponse](#teleport.rvesting.v1.QueryRemainingResponse)
+- [bitchain/rvesting/v1/query.proto](#bitchain/rvesting/v1/query.proto)
+    - [QueryParamsRequest](#bitchain.rvesting.v1.QueryParamsRequest)
+    - [QueryParamsResponse](#bitchain.rvesting.v1.QueryParamsResponse)
+    - [QueryRemainingRequest](#bitchain.rvesting.v1.QueryRemainingRequest)
+    - [QueryRemainingResponse](#bitchain.rvesting.v1.QueryRemainingResponse)
   
-    - [Query](#teleport.rvesting.v1.Query)
+    - [Query](#bitchain.rvesting.v1.Query)
   
 - [xibc/clients/tssclient/v1/tssclient.proto](#xibc/clients/tssclient/v1/tssclient.proto)
     - [ClientState](#xibc.clients.tssclient.v1.ClientState)
@@ -162,14 +162,14 @@
 
 
 
-<a name="teleport/aggregate/v1/aggregate.proto"></a>
+<a name="bitchain/aggregate/v1/aggregate.proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
-## teleport/aggregate/v1/aggregate.proto
+## bitchain/aggregate/v1/aggregate.proto
 
 
 
-<a name="teleport.aggregate.v1.AddCoinProposal"></a>
+<a name="bitchain.aggregate.v1.AddCoinProposal"></a>
 
 ### AddCoinProposal
 RegisterCoinProposal is a gov Content type to register a token pair
@@ -187,7 +187,7 @@ RegisterCoinProposal is a gov Content type to register a token pair
 
 
 
-<a name="teleport.aggregate.v1.DisableTimeBasedSupplyLimitProposal"></a>
+<a name="bitchain.aggregate.v1.DisableTimeBasedSupplyLimitProposal"></a>
 
 ### DisableTimeBasedSupplyLimitProposal
 DisableTimeBasedSupplyLimitProposal is a gov Content type to disable time
@@ -205,7 +205,7 @@ based supply limit of an ERC20
 
 
 
-<a name="teleport.aggregate.v1.EnableTimeBasedSupplyLimitProposal"></a>
+<a name="bitchain.aggregate.v1.EnableTimeBasedSupplyLimitProposal"></a>
 
 ### EnableTimeBasedSupplyLimitProposal
 EnableTimeBasedSupplyLimitProposal is a gov Content type to enable time based
@@ -227,7 +227,7 @@ supply limit of an ERC20
 
 
 
-<a name="teleport.aggregate.v1.RegisterCoinProposal"></a>
+<a name="bitchain.aggregate.v1.RegisterCoinProposal"></a>
 
 ### RegisterCoinProposal
 RegisterCoinProposal is a gov Content type to register a token pair
@@ -244,7 +244,7 @@ RegisterCoinProposal is a gov Content type to register a token pair
 
 
 
-<a name="teleport.aggregate.v1.RegisterERC20Proposal"></a>
+<a name="bitchain.aggregate.v1.RegisterERC20Proposal"></a>
 
 ### RegisterERC20Proposal
 RegisterCoinProposal is a gov Content type to register a token pair
@@ -261,7 +261,7 @@ RegisterCoinProposal is a gov Content type to register a token pair
 
 
 
-<a name="teleport.aggregate.v1.RegisterERC20TraceProposal"></a>
+<a name="bitchain.aggregate.v1.RegisterERC20TraceProposal"></a>
 
 ### RegisterERC20TraceProposal
 RegisterERC20TraceProposal is a gov Content type to register a ERC20 trace
@@ -281,7 +281,7 @@ RegisterERC20TraceProposal is a gov Content type to register a ERC20 trace
 
 
 
-<a name="teleport.aggregate.v1.ToggleTokenRelayProposal"></a>
+<a name="bitchain.aggregate.v1.ToggleTokenRelayProposal"></a>
 
 ### ToggleTokenRelayProposal
 ToggleTokenRelayProposal is a gov Content type to toggle the internal
@@ -299,7 +299,7 @@ relaying of a token pair
 
 
 
-<a name="teleport.aggregate.v1.TokenPair"></a>
+<a name="bitchain.aggregate.v1.TokenPair"></a>
 
 ### TokenPair
 TokenPair defines an instance that records pairing consisting of a Cosmos
@@ -311,14 +311,14 @@ native Coin and an ERC20 token address
 | `erc20_address` | [string](#string) |  | address of ERC20 contract token |
 | `denoms` | [string](#string) | repeated | cosmos base denomination to be mapped to |
 | `enabled` | [bool](#bool) |  | shows token mapping enable status |
-| `contract_owner` | [Owner](#teleport.aggregate.v1.Owner) |  | ERC20 owner address ENUM (0 invalid, 1 ModuleAccount, 2 external address) |
+| `contract_owner` | [Owner](#bitchain.aggregate.v1.Owner) |  | ERC20 owner address ENUM (0 invalid, 1 ModuleAccount, 2 external address) |
 
 
 
 
 
 
-<a name="teleport.aggregate.v1.UpdateTokenPairERC20Proposal"></a>
+<a name="bitchain.aggregate.v1.UpdateTokenPairERC20Proposal"></a>
 
 ### UpdateTokenPairERC20Proposal
 UpdateTokenPairERC20Proposal is a gov Content type to update a token pair's
@@ -339,7 +339,7 @@ ERC20 contract address
  <!-- end messages -->
 
 
-<a name="teleport.aggregate.v1.Owner"></a>
+<a name="bitchain.aggregate.v1.Owner"></a>
 
 ### Owner
 Owner enumerates the ownership of a ERC20 contract
@@ -359,14 +359,14 @@ Owner enumerates the ownership of a ERC20 contract
 
 
 
-<a name="teleport/aggregate/v1/event.proto"></a>
+<a name="bitchain/aggregate/v1/event.proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
-## teleport/aggregate/v1/event.proto
+## bitchain/aggregate/v1/event.proto
 
 
 
-<a name="teleport.aggregate.v1.EventDisableTimeBasedSupplyLimit"></a>
+<a name="bitchain.aggregate.v1.EventDisableTimeBasedSupplyLimit"></a>
 
 ### EventDisableTimeBasedSupplyLimit
 Event
@@ -381,7 +381,7 @@ Event
 
 
 
-<a name="teleport.aggregate.v1.EventEnableTimeBasedSupplyLimit"></a>
+<a name="bitchain.aggregate.v1.EventEnableTimeBasedSupplyLimit"></a>
 
 ### EventEnableTimeBasedSupplyLimit
 Event
@@ -400,7 +400,7 @@ Event
 
 
 
-<a name="teleport.aggregate.v1.EventIBCAggregate"></a>
+<a name="bitchain.aggregate.v1.EventIBCAggregate"></a>
 
 ### EventIBCAggregate
 EventIBCAggregate is emitted on IBC Aggregate
@@ -408,7 +408,7 @@ EventIBCAggregate is emitted on IBC Aggregate
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `status` | [Status](#teleport.aggregate.v1.Status) |  |  |
+| `status` | [Status](#bitchain.aggregate.v1.Status) |  |  |
 | `message` | [string](#string) |  |  |
 | `sequence` | [uint64](#uint64) |  |  |
 | `source_channel` | [string](#string) |  |  |
@@ -419,7 +419,7 @@ EventIBCAggregate is emitted on IBC Aggregate
 
 
 
-<a name="teleport.aggregate.v1.EventRegisterTokens"></a>
+<a name="bitchain.aggregate.v1.EventRegisterTokens"></a>
 
 ### EventRegisterTokens
 EventRegisterTokens is emitted on aggregate register coins
@@ -437,7 +437,7 @@ EventRegisterTokens is emitted on aggregate register coins
  <!-- end messages -->
 
 
-<a name="teleport.aggregate.v1.Status"></a>
+<a name="bitchain.aggregate.v1.Status"></a>
 
 ### Status
 Status enumerates the status of IBC Aggregate
@@ -457,14 +457,14 @@ Status enumerates the status of IBC Aggregate
 
 
 
-<a name="teleport/aggregate/v1/genesis.proto"></a>
+<a name="bitchain/aggregate/v1/genesis.proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
-## teleport/aggregate/v1/genesis.proto
+## bitchain/aggregate/v1/genesis.proto
 
 
 
-<a name="teleport.aggregate.v1.GenesisState"></a>
+<a name="bitchain.aggregate.v1.GenesisState"></a>
 
 ### GenesisState
 GenesisState defines the module's genesis state
@@ -472,15 +472,15 @@ GenesisState defines the module's genesis state
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `params` | [Params](#teleport.aggregate.v1.Params) |  | module parameters |
-| `token_pairs` | [TokenPair](#teleport.aggregate.v1.TokenPair) | repeated | registered token pairs |
+| `params` | [Params](#bitchain.aggregate.v1.Params) |  | module parameters |
+| `token_pairs` | [TokenPair](#bitchain.aggregate.v1.TokenPair) | repeated | registered token pairs |
 
 
 
 
 
 
-<a name="teleport.aggregate.v1.Params"></a>
+<a name="bitchain.aggregate.v1.Params"></a>
 
 ### Params
 Params defines the aggregate module params
@@ -505,14 +505,14 @@ Params defines the aggregate module params
 
 
 
-<a name="teleport/aggregate/v1/query.proto"></a>
+<a name="bitchain/aggregate/v1/query.proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
-## teleport/aggregate/v1/query.proto
+## bitchain/aggregate/v1/query.proto
 
 
 
-<a name="teleport.aggregate.v1.QueryParamsRequest"></a>
+<a name="bitchain.aggregate.v1.QueryParamsRequest"></a>
 
 ### QueryParamsRequest
 QueryParamsRequest is the request type for the Query/Params RPC method
@@ -522,7 +522,7 @@ QueryParamsRequest is the request type for the Query/Params RPC method
 
 
 
-<a name="teleport.aggregate.v1.QueryParamsResponse"></a>
+<a name="bitchain.aggregate.v1.QueryParamsResponse"></a>
 
 ### QueryParamsResponse
 QueryParamsResponse is the response type for the Query/Params RPC method
@@ -530,14 +530,14 @@ QueryParamsResponse is the response type for the Query/Params RPC method
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `params` | [Params](#teleport.aggregate.v1.Params) |  |  |
+| `params` | [Params](#bitchain.aggregate.v1.Params) |  |  |
 
 
 
 
 
 
-<a name="teleport.aggregate.v1.QueryTokenPairRequest"></a>
+<a name="bitchain.aggregate.v1.QueryTokenPairRequest"></a>
 
 ### QueryTokenPairRequest
 QueryTokenPairRequest is the request type for the Query/TokenPair RPC method
@@ -552,7 +552,7 @@ QueryTokenPairRequest is the request type for the Query/TokenPair RPC method
 
 
 
-<a name="teleport.aggregate.v1.QueryTokenPairResponse"></a>
+<a name="bitchain.aggregate.v1.QueryTokenPairResponse"></a>
 
 ### QueryTokenPairResponse
 QueryTokenPairResponse is the response type for the Query/TokenPair RPC
@@ -561,14 +561,14 @@ method
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `token_pair` | [TokenPair](#teleport.aggregate.v1.TokenPair) |  |  |
+| `token_pair` | [TokenPair](#bitchain.aggregate.v1.TokenPair) |  |  |
 
 
 
 
 
 
-<a name="teleport.aggregate.v1.QueryTokenPairsRequest"></a>
+<a name="bitchain.aggregate.v1.QueryTokenPairsRequest"></a>
 
 ### QueryTokenPairsRequest
 QueryTokenPairsRequest is the request type for the Query/TokenPairs RPC
@@ -584,7 +584,7 @@ method
 
 
 
-<a name="teleport.aggregate.v1.QueryTokenPairsResponse"></a>
+<a name="bitchain.aggregate.v1.QueryTokenPairsResponse"></a>
 
 ### QueryTokenPairsResponse
 QueryTokenPairsResponse is the response type for the Query/TokenPairs RPC
@@ -593,7 +593,7 @@ method
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `token_pairs` | [TokenPair](#teleport.aggregate.v1.TokenPair) | repeated |  |
+| `token_pairs` | [TokenPair](#bitchain.aggregate.v1.TokenPair) | repeated |  |
 | `pagination` | [cosmos.base.query.v1beta1.PageResponse](#cosmos.base.query.v1beta1.PageResponse) |  | pagination defines the pagination in the response |
 
 
@@ -607,29 +607,29 @@ method
  <!-- end HasExtensions -->
 
 
-<a name="teleport.aggregate.v1.Query"></a>
+<a name="bitchain.aggregate.v1.Query"></a>
 
 ### Query
 Query defines the gRPC querier service
 
 | Method Name | Request Type | Response Type | Description | HTTP Verb | Endpoint |
 | ----------- | ------------ | ------------- | ------------| ------- | -------- |
-| `TokenPairs` | [QueryTokenPairsRequest](#teleport.aggregate.v1.QueryTokenPairsRequest) | [QueryTokenPairsResponse](#teleport.aggregate.v1.QueryTokenPairsResponse) | Retrieves registered token pairs | GET|/teleport/aggregate/v1/token_pairs|
-| `TokenPair` | [QueryTokenPairRequest](#teleport.aggregate.v1.QueryTokenPairRequest) | [QueryTokenPairResponse](#teleport.aggregate.v1.QueryTokenPairResponse) | Retrieves a registered token pair | GET|/teleport/aggregate/v1/token_pairs/{token}|
-| `Params` | [QueryParamsRequest](#teleport.aggregate.v1.QueryParamsRequest) | [QueryParamsResponse](#teleport.aggregate.v1.QueryParamsResponse) | Params retrieves the aggregate module params | GET|/teleport/aggregate/v1/params|
+| `TokenPairs` | [QueryTokenPairsRequest](#bitchain.aggregate.v1.QueryTokenPairsRequest) | [QueryTokenPairsResponse](#bitchain.aggregate.v1.QueryTokenPairsResponse) | Retrieves registered token pairs | GET|/bitchain/aggregate/v1/token_pairs|
+| `TokenPair` | [QueryTokenPairRequest](#bitchain.aggregate.v1.QueryTokenPairRequest) | [QueryTokenPairResponse](#bitchain.aggregate.v1.QueryTokenPairResponse) | Retrieves a registered token pair | GET|/bitchain/aggregate/v1/token_pairs/{token}|
+| `Params` | [QueryParamsRequest](#bitchain.aggregate.v1.QueryParamsRequest) | [QueryParamsResponse](#bitchain.aggregate.v1.QueryParamsResponse) | Params retrieves the aggregate module params | GET|/bitchain/aggregate/v1/params|
 
  <!-- end services -->
 
 
 
-<a name="teleport/aggregate/v1/tx.proto"></a>
+<a name="bitchain/aggregate/v1/tx.proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
-## teleport/aggregate/v1/tx.proto
+## bitchain/aggregate/v1/tx.proto
 
 
 
-<a name="teleport.aggregate.v1.MsgConvertCoin"></a>
+<a name="bitchain.aggregate.v1.MsgConvertCoin"></a>
 
 ### MsgConvertCoin
 MsgConvertCoin defines a Msg to convert a Cosmos Coin to a ERC20 token
@@ -646,7 +646,7 @@ MsgConvertCoin defines a Msg to convert a Cosmos Coin to a ERC20 token
 
 
 
-<a name="teleport.aggregate.v1.MsgConvertCoinResponse"></a>
+<a name="bitchain.aggregate.v1.MsgConvertCoinResponse"></a>
 
 ### MsgConvertCoinResponse
 MsgConvertCoinResponse returns no fields
@@ -656,7 +656,7 @@ MsgConvertCoinResponse returns no fields
 
 
 
-<a name="teleport.aggregate.v1.MsgConvertERC20"></a>
+<a name="bitchain.aggregate.v1.MsgConvertERC20"></a>
 
 ### MsgConvertERC20
 MsgConvertERC20 defines a Msg to convert an ERC20 token to a Cosmos SDK coin.
@@ -675,7 +675,7 @@ MsgConvertERC20 defines a Msg to convert an ERC20 token to a Cosmos SDK coin.
 
 
 
-<a name="teleport.aggregate.v1.MsgConvertERC20Response"></a>
+<a name="bitchain.aggregate.v1.MsgConvertERC20Response"></a>
 
 ### MsgConvertERC20Response
 MsgConvertERC20Response returns no fields
@@ -691,28 +691,28 @@ MsgConvertERC20Response returns no fields
  <!-- end HasExtensions -->
 
 
-<a name="teleport.aggregate.v1.Msg"></a>
+<a name="bitchain.aggregate.v1.Msg"></a>
 
 ### Msg
 Msg defines the aggregate Msg service.
 
 | Method Name | Request Type | Response Type | Description | HTTP Verb | Endpoint |
 | ----------- | ------------ | ------------- | ------------| ------- | -------- |
-| `ConvertCoin` | [MsgConvertCoin](#teleport.aggregate.v1.MsgConvertCoin) | [MsgConvertCoinResponse](#teleport.aggregate.v1.MsgConvertCoinResponse) | ConvertCoin mints a ERC20 representation of the SDK Coin denom that is registered on the token mapping. | GET|/teleport/aggregate/v1/tx/convert_coin|
-| `ConvertERC20` | [MsgConvertERC20](#teleport.aggregate.v1.MsgConvertERC20) | [MsgConvertERC20Response](#teleport.aggregate.v1.MsgConvertERC20Response) | ConvertERC20 mints a Cosmos coin representation of the ERC20 token contract that is registered on the token mapping. | GET|/teleport/aggregate/v1/tx/convert_erc20|
+| `ConvertCoin` | [MsgConvertCoin](#bitchain.aggregate.v1.MsgConvertCoin) | [MsgConvertCoinResponse](#bitchain.aggregate.v1.MsgConvertCoinResponse) | ConvertCoin mints a ERC20 representation of the SDK Coin denom that is registered on the token mapping. | GET|/bitchain/aggregate/v1/tx/convert_coin|
+| `ConvertERC20` | [MsgConvertERC20](#bitchain.aggregate.v1.MsgConvertERC20) | [MsgConvertERC20Response](#bitchain.aggregate.v1.MsgConvertERC20Response) | ConvertERC20 mints a Cosmos coin representation of the ERC20 token contract that is registered on the token mapping. | GET|/bitchain/aggregate/v1/tx/convert_erc20|
 
  <!-- end services -->
 
 
 
-<a name="teleport/rvesting/v1/genesis.proto"></a>
+<a name="bitchain/rvesting/v1/genesis.proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
-## teleport/rvesting/v1/genesis.proto
+## bitchain/rvesting/v1/genesis.proto
 
 
 
-<a name="teleport.rvesting.v1.GenesisState"></a>
+<a name="bitchain.rvesting.v1.GenesisState"></a>
 
 ### GenesisState
 GenesisState defines the module's genesis state
@@ -720,7 +720,7 @@ GenesisState defines the module's genesis state
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `params` | [Params](#teleport.rvesting.v1.Params) |  | module parameters invariant |
+| `params` | [Params](#bitchain.rvesting.v1.Params) |  | module parameters invariant |
 | `from` | [string](#string) |  |  |
 | `init_reward` | [cosmos.base.v1beta1.Coin](#cosmos.base.v1beta1.Coin) | repeated |  |
 
@@ -729,7 +729,7 @@ GenesisState defines the module's genesis state
 
 
 
-<a name="teleport.rvesting.v1.Params"></a>
+<a name="bitchain.rvesting.v1.Params"></a>
 
 ### Params
 Params defines the rvesting module params
@@ -754,14 +754,14 @@ Params defines the rvesting module params
 
 
 
-<a name="teleport/rvesting/v1/query.proto"></a>
+<a name="bitchain/rvesting/v1/query.proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
-## teleport/rvesting/v1/query.proto
+## bitchain/rvesting/v1/query.proto
 
 
 
-<a name="teleport.rvesting.v1.QueryParamsRequest"></a>
+<a name="bitchain.rvesting.v1.QueryParamsRequest"></a>
 
 ### QueryParamsRequest
 QueryParamsRequest is the request type for the Query/Params RPC method.
@@ -771,7 +771,7 @@ QueryParamsRequest is the request type for the Query/Params RPC method.
 
 
 
-<a name="teleport.rvesting.v1.QueryParamsResponse"></a>
+<a name="bitchain.rvesting.v1.QueryParamsResponse"></a>
 
 ### QueryParamsResponse
 QueryParamsResponse is the response type for the Query/Params RPC method.
@@ -779,14 +779,14 @@ QueryParamsResponse is the response type for the Query/Params RPC method.
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `params` | [Params](#teleport.rvesting.v1.Params) |  | params defines the parameters of the module. |
+| `params` | [Params](#bitchain.rvesting.v1.Params) |  | params defines the parameters of the module. |
 
 
 
 
 
 
-<a name="teleport.rvesting.v1.QueryRemainingRequest"></a>
+<a name="bitchain.rvesting.v1.QueryRemainingRequest"></a>
 
 ### QueryRemainingRequest
 
@@ -796,7 +796,7 @@ QueryParamsResponse is the response type for the Query/Params RPC method.
 
 
 
-<a name="teleport.rvesting.v1.QueryRemainingResponse"></a>
+<a name="bitchain.rvesting.v1.QueryRemainingResponse"></a>
 
 ### QueryRemainingResponse
 
@@ -818,15 +818,15 @@ QueryParamsResponse is the response type for the Query/Params RPC method.
  <!-- end HasExtensions -->
 
 
-<a name="teleport.rvesting.v1.Query"></a>
+<a name="bitchain.rvesting.v1.Query"></a>
 
 ### Query
 
 
 | Method Name | Request Type | Response Type | Description | HTTP Verb | Endpoint |
 | ----------- | ------------ | ------------- | ------------| ------- | -------- |
-| `Params` | [QueryParamsRequest](#teleport.rvesting.v1.QueryParamsRequest) | [QueryParamsResponse](#teleport.rvesting.v1.QueryParamsResponse) | Params returns the total set of parameters. | GET|/teleport/rvesting/v1/params|
-| `Remaining` | [QueryRemainingRequest](#teleport.rvesting.v1.QueryRemainingRequest) | [QueryRemainingResponse](#teleport.rvesting.v1.QueryRemainingResponse) |  | GET|/teleport/rvesting/v1/remaining|
+| `Params` | [QueryParamsRequest](#bitchain.rvesting.v1.QueryParamsRequest) | [QueryParamsResponse](#bitchain.rvesting.v1.QueryParamsResponse) | Params returns the total set of parameters. | GET|/bitchain/rvesting/v1/params|
+| `Remaining` | [QueryRemainingRequest](#bitchain.rvesting.v1.QueryRemainingRequest) | [QueryRemainingResponse](#bitchain.rvesting.v1.QueryRemainingResponse) |  | GET|/bitchain/rvesting/v1/remaining|
 
  <!-- end services -->
 

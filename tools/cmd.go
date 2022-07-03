@@ -5,8 +5,8 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/teleport-network/teleport/tools/extract"
-	"github.com/teleport-network/teleport/tools/rb"
+	"github.com/bitdao-io/bitchain/tools/extract"
+	"github.com/bitdao-io/bitchain/tools/rb"
 
 	"github.com/cosmos/cosmos-sdk/server"
 	sdk "github.com/cosmos/cosmos-sdk/types"

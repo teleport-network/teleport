@@ -9,9 +9,9 @@ import (
 
 	ethtypes "github.com/ethereum/go-ethereum/core/types"
 
-	"github.com/teleport-network/teleport/adapter/common"
-	"github.com/teleport-network/teleport/syscontracts"
-	"github.com/teleport-network/teleport/syscontracts/gov"
+	"github.com/bitdao-io/bitchain/adapter/common"
+	"github.com/bitdao-io/bitchain/syscontracts"
+	"github.com/bitdao-io/bitchain/syscontracts/gov"
 )
 
 func (h *HookAdapter) HandleVoted(ctx sdk.Context, log *ethtypes.Log) error {

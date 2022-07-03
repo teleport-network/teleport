@@ -1,6 +1,6 @@
 FROM golang:stretch AS build-env
 
-WORKDIR /go/src/github.com/teleport-network/teleport
+WORKDIR /go/src/github.com/bitdao-io/bitchain
 
 RUN apt update
 RUN apt install git -y
@@ -16,8 +16,8 @@ RUN apt install ca-certificates jq -y
 
 WORKDIR /root
 
-COPY --from=build-env /go/src/github.com/teleport-network/teleport/build/teleport /usr/bin/teleport
+COPY --from=build-env /go/src/github.com/bitdao-io/bitchain/build/bitchain /usr/bin/bitchain
 
 EXPOSE 26656 26657 1317 9090 8545
 
-CMD ["teleport"]
+CMD ["bitchain"]

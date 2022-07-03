@@ -10,15 +10,15 @@ faucet:
   name: bob
   coins: ["10atele"]
 build:
-  binary: "teleport"
+  binary: "bitchain"
 init:
-  home: "$HOME/.teleport"
+  home: "$HOME/.bitchain"
   app:
     evm-rpc:
       address: "0.0.0.0:8545" # change the JSON-RPC address and port
       ws-address: "0.0.0.0:8546" # change the JSON-RPC websocket address and port
 genesis:
-  chain_id: "teleport_9000-1"
+  chain_id: "bitchain_9000-1"
   app_state:
     staking:
       params:

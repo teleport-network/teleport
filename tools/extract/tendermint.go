@@ -1,7 +1,7 @@
 package extract
 
 import (
-	"github.com/teleport-network/teleport/tools/common"
+	"github.com/bitdao-io/bitchain/tools/common"
 )
 
 func CopyBlockStore(home string, targetHome string) {

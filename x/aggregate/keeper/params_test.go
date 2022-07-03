@@ -1,7 +1,7 @@
 package keeper_test
 
 import (
-	"github.com/teleport-network/teleport/x/aggregate/types"
+	"github.com/bitdao-io/bitchain/x/aggregate/types"
 )
 
 func (suite *KeeperTestSuite) TestParams() {

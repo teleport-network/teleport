@@ -6,7 +6,7 @@ import (
 	bk "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 )
 
-// OverwriteBankKeeper extends from the BaseBankKeeper, and overwrites function to adjust the specified features of teleport.
+// OverwriteBankKeeper extends from the BaseBankKeeper, and overwrites function to adjust the specified features of bitchain.
 type OverwriteBankKeeper struct {
 	bk.BaseKeeper
 }

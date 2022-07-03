@@ -37,9 +37,9 @@ import (
 	ethermintserver "github.com/evmos/ethermint/server"
 	servercfg "github.com/evmos/ethermint/server/config"
 
-	"github.com/teleport-network/teleport/app"
-	"github.com/teleport-network/teleport/tools"
-	"github.com/teleport-network/teleport/types"
+	"github.com/bitdao-io/bitchain/app"
+	"github.com/bitdao-io/bitchain/tools"
+	"github.com/bitdao-io/bitchain/types"
 )
 
 const (
@@ -63,7 +63,7 @@ func NewRootCmd() (*cobra.Command, params.EncodingConfig) {
 
 	rootCmd := &cobra.Command{
 		Use:   app.Name,
-		Short: "Teleport Daemon",
+		Short: "Bitchain Daemon",
 		PersistentPreRunE: func(cmd *cobra.Command, _ []string) error {
 			// set the default command outputs
 			cmd.SetOut(cmd.OutOrStdout())
@@ -223,7 +223,7 @@ func (a appCreator) newApp(logger log.Logger, db dbm.DB, traceStore io.Writer, a
 		panic(err)
 	}
 
-	teleportApp := app.NewTeleport(
+	bitchainApp := app.NewBitchain(
 		logger, db, traceStore, true, skipUpgradeHeights,
 		cast.ToString(appOpts.Get(flags.FlagHome)),
 		cast.ToUint(appOpts.Get(sdkserver.FlagInvCheckPeriod)),
@@ -242,7 +242,7 @@ func (a appCreator) newApp(logger log.Logger, db dbm.DB, traceStore io.Writer, a
 		baseapp.SetSnapshotKeepRecent(cast.ToUint32(appOpts.Get(sdkserver.FlagStateSyncSnapshotKeepRecent))),
 	)
 
-	return teleportApp
+	return bitchainApp
 }
 
 // appExport creates a new simapp (optionally at a given height)
@@ -259,21 +259,21 @@ func (a appCreator) appExport(
 	servertypes.ExportedApp,
 	error,
 ) {
-	var teleportApp *app.Teleport
+	var bitchainApp *app.Bitchain
 	homePath, ok := appOpts.Get(flags.FlagHome).(string)
 	if !ok || homePath == "" {
 		return servertypes.ExportedApp{}, errors.New("application home not set")
 	}
 
 	if height != -1 {
-		teleportApp = app.NewTeleport(logger, db, traceStore, false, map[int64]bool{}, "", uint(1), a.encCfg, appOpts)
+		bitchainApp = app.NewBitchain(logger, db, traceStore, false, map[int64]bool{}, "", uint(1), a.encCfg, appOpts)
 
-		if err := teleportApp.LoadHeight(height); err != nil {
+		if err := bitchainApp.LoadHeight(height); err != nil {
 			return servertypes.ExportedApp{}, err
 		}
 	} else {
-		teleportApp = app.NewTeleport(logger, db, traceStore, true, map[int64]bool{}, "", uint(1), a.encCfg, appOpts)
+		bitchainApp = app.NewBitchain(logger, db, traceStore, true, map[int64]bool{}, "", uint(1), a.encCfg, appOpts)
 	}
 
-	return teleportApp.ExportAppStateAndValidators(forZeroHeight, jailAllowedAddrs)
+	return bitchainApp.ExportAppStateAndValidators(forZeroHeight, jailAllowedAddrs)
 }

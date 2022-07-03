@@ -38,5 +38,5 @@ buf protoc \
 # go mod tidy
 
 # move proto files to the right places
-cp -r github.com/teleport-network/teleport/* ./
+cp -r github.com/bitdao-io/bitchain/* ./
 rm -rf github.com

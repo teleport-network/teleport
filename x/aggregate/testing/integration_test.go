@@ -15,8 +15,8 @@ import (
 
 	"github.com/evmos/ethermint/server/config"
 
-	"github.com/teleport-network/teleport/testutil/network"
-	"github.com/teleport-network/teleport/x/aggregate/types"
+	"github.com/bitdao-io/bitchain/testutil/network"
+	"github.com/bitdao-io/bitchain/x/aggregate/types"
 )
 
 // var _ = Describe("E2e", func() {

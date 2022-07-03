@@ -15,9 +15,9 @@ import (
 	ethermint "github.com/evmos/ethermint/types"
 	evmtypes "github.com/evmos/ethermint/x/evm/types"
 
-	adcommon "github.com/teleport-network/teleport/adapter/common"
-	"github.com/teleport-network/teleport/syscontracts"
-	govcontract "github.com/teleport-network/teleport/syscontracts/gov"
+	adcommon "github.com/bitdao-io/bitchain/adapter/common"
+	"github.com/bitdao-io/bitchain/syscontracts"
+	govcontract "github.com/bitdao-io/bitchain/syscontracts/gov"
 )
 
 var _ evmtypes.EvmHooks = &HookAdapter{}

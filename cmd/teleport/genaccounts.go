@@ -6,7 +6,7 @@ import (
 	"errors"
 	"fmt"
 
-	rvestingtypes "github.com/teleport-network/teleport/x/rvesting/types"
+	rvestingtypes "github.com/bitdao-io/bitchain/x/rvesting/types"
 
 	"github.com/spf13/cobra"
 

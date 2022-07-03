@@ -1,13 +1,13 @@
 {
     "swagger": "2.0",
     "info": {
-      "title": "Teleport Chain - Legacy REST and gRPC Gateway docs",
+      "title": "Bitchain Chain - Legacy REST and gRPC Gateway docs",
       "description": "A REST interface for state queries, legacy transactions",
       "version": "0.1.0-alpha2"
     },
     "apis": [
     {
-      "url": "./tmp-swagger-gen/teleport/aggregate/v1/query.swagger.json",
+      "url": "./tmp-swagger-gen/bitchain/aggregate/v1/query.swagger.json",
       "operationIds": {
         "rename": {
           "Params": "AggregateParams"
@@ -15,7 +15,7 @@
       }
     },
     {
-      "url": "./tmp-swagger-gen/teleport/rvesting/v1/query.swagger.json",
+      "url": "./tmp-swagger-gen/bitchain/rvesting/v1/query.swagger.json",
       "operationIds": {
         "rename": {
           "Params": "RvestingParams"

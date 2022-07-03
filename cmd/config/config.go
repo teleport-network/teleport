@@ -5,12 +5,12 @@ import (
 
 	ethermint "github.com/evmos/ethermint/types"
 
-	"github.com/teleport-network/teleport/types"
+	"github.com/bitdao-io/bitchain/types"
 )
 
 const (
 	// Bech32Prefix defines the Bech32 prefix used for EthAccounts
-	Bech32Prefix = "teleport"
+	Bech32Prefix = "bitchain"
 
 	// Bech32PrefixAccAddr defines the Bech32 prefix of an account's address
 	Bech32PrefixAccAddr = Bech32Prefix

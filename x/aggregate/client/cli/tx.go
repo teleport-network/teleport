@@ -18,7 +18,7 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	ethermint "github.com/evmos/ethermint/types"
 
-	"github.com/teleport-network/teleport/x/aggregate/types"
+	"github.com/bitdao-io/bitchain/x/aggregate/types"
 )
 
 // NewTxCmd returns a root CLI command handler for certain modules/aggregate transaction commands.
@@ -151,7 +151,7 @@ The proposal details must be supplied via a JSON file.`,
 Where metadata.json contains (example):
 
 {
-  "description": "staking, gas and governance token of the Teleport testnets",
+  "description": "staking, gas and governance token of the Bitchain testnets",
   "denom_units": [
 		{
 			"denom": "atele",
@@ -246,7 +246,7 @@ The proposal details must be supplied via a JSON file.`,
 Where metadata.json contains (example):
 
 {
-  "description": "staking, gas and governance token of the Teleport testnets",
+  "description": "staking, gas and governance token of the Bitchain testnets",
   "denom_units": [
 		{
 			"denom": "atele",

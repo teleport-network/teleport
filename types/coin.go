@@ -7,18 +7,18 @@ import (
 )
 
 const (
-	// AttoTele defines the default coin denomination used in Teleport in:
+	// AttoTele defines the default coin denomination used in Bitchain in:
 	//
 	// - Staking parameters: denomination used as stake in the dPoS chain
 	// - Mint parameters: denomination minted due to fee distribution rewards
 	// - Governance parameters: denomination used for spam prevention in proposal deposits
 	// - Crisis parameters: constant fee denomination used for spam prevention to check broken invariant
-	// - EVM parameters: denomination used for running EVM state transitions in Teleport.
+	// - EVM parameters: denomination used for running EVM state transitions in Bitchain.
 	AttoTele = "atele"
 
 	// DisplayDenom defines the denomination displayed to users in client applications.
 	DisplayDenom = "tele"
-	// BaseDenom defines to the default denomination used in Teleport (staking, EVN, governance, etc)
+	// BaseDenom defines to the default denomination used in Bitchain (staking, EVN, governance, etc)
 	BaseDenom = AttoTele
 
 	// BaseDenomUnit defines the base denomination unit for Teles.

@@ -34,15 +34,15 @@ import (
 	evm "github.com/evmos/ethermint/x/evm/types"
 	feemarkettypes "github.com/evmos/ethermint/x/feemarket/types"
 
-	"github.com/teleport-network/teleport/app"
-	"github.com/teleport-network/teleport/x/aggregate/types"
+	"github.com/bitdao-io/bitchain/app"
+	"github.com/bitdao-io/bitchain/x/aggregate/types"
 )
 
 type KeeperTestSuite struct {
 	suite.Suite
 
 	ctx              sdk.Context
-	app              *app.Teleport
+	app              *app.Bitchain
 	queryClientEvm   evm.QueryClient
 	queryClient      types.QueryClient
 	address          common.Address
@@ -105,7 +105,7 @@ func (suite *KeeperTestSuite) DoSetupTest(t require.TestingT) {
 		// Initialize the chain
 		suite.app.InitChain(
 			abci.RequestInitChain{
-				ChainId:         "teleport_9000-1",
+				ChainId:         "bitchain_9000-1",
 				Validators:      []abci.ValidatorUpdate{},
 				ConsensusParams: simapp.DefaultConsensusParams,
 				AppStateBytes:   stateBytes,
@@ -115,7 +115,7 @@ func (suite *KeeperTestSuite) DoSetupTest(t require.TestingT) {
 
 	suite.ctx = suite.app.BaseApp.NewContext(checkTx, tmproto.Header{
 		Height:          1,
-		ChainID:         "teleport_9000-1",
+		ChainID:         "bitchain_9000-1",
 		Time:            time.Now().UTC(),
 		ProposerAddress: suite.consAddress.Bytes(),
 

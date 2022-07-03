@@ -4,7 +4,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
 
-	"github.com/teleport-network/teleport/x/rvesting/types"
+	"github.com/bitdao-io/bitchain/x/rvesting/types"
 )
 
 type Keeper struct {

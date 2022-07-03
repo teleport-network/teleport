@@ -4,7 +4,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/teleport-network/teleport/tools/common"
+	"github.com/bitdao-io/bitchain/tools/common"
 
 	cfg "github.com/tendermint/tendermint/config"
 	"github.com/tendermint/tendermint/privval"

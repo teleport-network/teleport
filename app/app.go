@@ -2,7 +2,7 @@ package app
 
 import (
 	"encoding/json"
-	bitante "github.com/teleport-network/teleport/app/ante"
+	bitante "github.com/bitdao-io/bitchain/app/ante"
 	"io"
 	"net/http"
 	"os"
@@ -102,18 +102,18 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/crypto"
 
-	adbank "github.com/teleport-network/teleport/adapter/bank"
-	_ "github.com/teleport-network/teleport/client/docs/statik"
-	gabci "github.com/teleport-network/teleport/grpc_abci"
-	"github.com/teleport-network/teleport/types"
-	"github.com/teleport-network/teleport/x/aggregate"
-	aggregateclient "github.com/teleport-network/teleport/x/aggregate/client"
-	aggregatekeeper "github.com/teleport-network/teleport/x/aggregate/keeper"
-	aggregatemodule "github.com/teleport-network/teleport/x/aggregate/module"
-	aggregatetypes "github.com/teleport-network/teleport/x/aggregate/types"
-	rvestingkeeper "github.com/teleport-network/teleport/x/rvesting/keeper"
-	rvestingmodule "github.com/teleport-network/teleport/x/rvesting/module"
-	rvestingtypes "github.com/teleport-network/teleport/x/rvesting/types"
+	adbank "github.com/bitdao-io/bitchain/adapter/bank"
+	_ "github.com/bitdao-io/bitchain/client/docs/statik"
+	gabci "github.com/bitdao-io/bitchain/grpc_abci"
+	"github.com/bitdao-io/bitchain/types"
+	"github.com/bitdao-io/bitchain/x/aggregate"
+	aggregateclient "github.com/bitdao-io/bitchain/x/aggregate/client"
+	aggregatekeeper "github.com/bitdao-io/bitchain/x/aggregate/keeper"
+	aggregatemodule "github.com/bitdao-io/bitchain/x/aggregate/module"
+	aggregatetypes "github.com/bitdao-io/bitchain/x/aggregate/types"
+	rvestingkeeper "github.com/bitdao-io/bitchain/x/rvesting/keeper"
+	rvestingmodule "github.com/bitdao-io/bitchain/x/rvesting/module"
+	rvestingtypes "github.com/bitdao-io/bitchain/x/rvesting/types"
 	"github.com/evmos/ethermint/app/ante"
 	"github.com/evmos/ethermint/encoding"
 	ethermint "github.com/evmos/ethermint/types"
@@ -128,13 +128,13 @@ func init() {
 		panic(err)
 	}
 
-	DefaultNodeHome = filepath.Join(userHomeDir, ".teleport")
+	DefaultNodeHome = filepath.Join(userHomeDir, ".bitchain")
 
 	sdk.DefaultPowerReduction = types.PowerReduction
 }
 
 // Name defines the application binary name
-const Name = "teleport"
+const Name = "bitchain"
 
 var (
 	// DefaultNodeHome default home directories for the application daemon
@@ -224,23 +224,23 @@ var (
 		icahosttypes.StoreKey,
 		// ethermint keys
 		evmtypes.StoreKey,
-		// teleport keys
+		// bitchain keys
 		aggregatetypes.StoreKey,
 	)
 )
 
 var (
-	_ servertypes.Application = (*Teleport)(nil)
-	_ simapp.App              = (*Teleport)(nil)
-	_ ibctesting.TestingApp   = (*Teleport)(nil)
+	_ servertypes.Application = (*Bitchain)(nil)
+	_ simapp.App              = (*Bitchain)(nil)
+	_ ibctesting.TestingApp   = (*Bitchain)(nil)
 )
 
-// var _ server.Application (*Teleport)(nil)
+// var _ server.Application (*Bitchain)(nil)
 
-// Teleport implements an extended ABCI application. It is an application
+// Bitchain implements an extended ABCI application. It is an application
 // that may process transactions through Ethereum's EVM running atop of
 // Tendermint consensus.
-type Teleport struct {
+type Bitchain struct {
 	*baseapp.BaseApp
 
 	// encoding
@@ -282,7 +282,7 @@ type Teleport struct {
 	ScopedICAControllerKeeper capabilitykeeper.ScopedKeeper
 	ScopedICAHostKeeper       capabilitykeeper.ScopedKeeper
 
-	// Teleport keepers
+	// Bitchain keepers
 	AggregateKeeper *aggregatekeeper.Keeper
 	RVestingKeeper  rvestingkeeper.Keeper
 
@@ -296,8 +296,8 @@ type Teleport struct {
 	configurator module.Configurator
 }
 
-// NewTeleport returns a reference to a new initialized Ethermint application.
-func NewTeleport(
+// NewBitchain returns a reference to a new initialized Ethermint application.
+func NewBitchain(
 	logger log.Logger,
 	db dbm.DB,
 	traceStore io.Writer,
@@ -308,7 +308,7 @@ func NewTeleport(
 	encodingConfig simappparams.EncodingConfig,
 	appOpts servertypes.AppOptions,
 	baseAppOptions ...func(*baseapp.BaseApp),
-) *Teleport {
+) *Bitchain {
 	appCodec := encodingConfig.Marshaler
 	interfaceRegistry := encodingConfig.InterfaceRegistry
 
@@ -328,7 +328,7 @@ func NewTeleport(
 	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey, evmtypes.TransientKey)
 	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
 
-	app := &Teleport{
+	app := &Bitchain{
 		BaseApp:           bApp,
 		appCodec:          appCodec,
 		interfaceRegistry: interfaceRegistry,
@@ -525,7 +525,7 @@ func NewTeleport(
 		ibc.NewAppModule(app.IBCKeeper),
 		ibcTransferModule,
 		icaModule,
-		// teleport app modules
+		// bitchain app modules
 		aggregatemodule.NewAppModule(*app.AggregateKeeper, app.AccountKeeper),
 		rvestingmodule.NewAppModule(app.RVestingKeeper),
 	)
@@ -610,7 +610,7 @@ func NewTeleport(
 		vestingtypes.ModuleName,
 		icatypes.ModuleName,
 		// Ethermint modules
-		// teleport modules
+		// bitchain modules
 		aggregatetypes.ModuleName,
 		rvestingtypes.ModuleName,
 		// NOTE: crisis module must go at the end to check for invariants on each module
@@ -693,20 +693,20 @@ func NewTeleport(
 }
 
 // Name returns the name of the App
-func (app *Teleport) Name() string { return app.BaseApp.Name() }
+func (app *Bitchain) Name() string { return app.BaseApp.Name() }
 
 // BeginBlocker updates every begin block
-func (app *Teleport) BeginBlocker(ctx sdk.Context, req abci.RequestBeginBlock) abci.ResponseBeginBlock {
+func (app *Bitchain) BeginBlocker(ctx sdk.Context, req abci.RequestBeginBlock) abci.ResponseBeginBlock {
 	return app.mm.BeginBlock(ctx, req)
 }
 
 // EndBlocker updates every end block
-func (app *Teleport) EndBlocker(ctx sdk.Context, req abci.RequestEndBlock) abci.ResponseEndBlock {
+func (app *Bitchain) EndBlocker(ctx sdk.Context, req abci.RequestEndBlock) abci.ResponseEndBlock {
 	return app.mm.EndBlock(ctx, req)
 }
 
 // InitChainer updates at chain initialization
-func (app *Teleport) InitChainer(ctx sdk.Context, req abci.RequestInitChain) abci.ResponseInitChain {
+func (app *Bitchain) InitChainer(ctx sdk.Context, req abci.RequestInitChain) abci.ResponseInitChain {
 	var genesisState simapp.GenesisState
 	if err := json.Unmarshal(req.AppStateBytes, &genesisState); err != nil {
 		panic(err)
@@ -718,7 +718,7 @@ func (app *Teleport) InitChainer(ctx sdk.Context, req abci.RequestInitChain) abc
 }
 
 // SetEVMCode set code in evm
-func (app *Teleport) SetEVMCode(ctx sdk.Context, addr common.Address, code []byte) {
+func (app *Bitchain) SetEVMCode(ctx sdk.Context, addr common.Address, code []byte) {
 	codeHash := crypto.Keccak256Hash(code)
 
 	account := app.AccountKeeper.NewAccountWithAddress(ctx, addr.Bytes())
@@ -729,12 +729,12 @@ func (app *Teleport) SetEVMCode(ctx sdk.Context, addr common.Address, code []byt
 }
 
 // LoadHeight loads state at a particular height
-func (app *Teleport) LoadHeight(height int64) error {
+func (app *Bitchain) LoadHeight(height int64) error {
 	return app.LoadVersion(height)
 }
 
 // ModuleAccountAddrs returns all the app's module account addresses.
-func (app *Teleport) ModuleAccountAddrs() map[string]bool {
+func (app *Bitchain) ModuleAccountAddrs() map[string]bool {
 	modAccAddrs := make(map[string]bool)
 	for acc := range maccPerms {
 		modAccAddrs[authtypes.NewModuleAddress(acc).String()] = true
@@ -745,7 +745,7 @@ func (app *Teleport) ModuleAccountAddrs() map[string]bool {
 
 // BlockedAddrs returns all the app's module account addresses that are not
 // allowed to receive external tokens.
-func (app *Teleport) BlockedAddrs() map[string]bool {
+func (app *Bitchain) BlockedAddrs() map[string]bool {
 	blockedAddrs := make(map[string]bool)
 	for acc := range maccPerms {
 		blockedAddrs[authtypes.NewModuleAddress(acc).String()] = !allowedReceivingModAcc[acc]
@@ -753,64 +753,64 @@ func (app *Teleport) BlockedAddrs() map[string]bool {
 	return blockedAddrs
 }
 
-// LegacyAmino returns Teleport's amino codec.
+// LegacyAmino returns Bitchain's amino codec.
 //
 // NOTE: This is solely to be used for testing purposes as it may be desirable
 // for modules to register their own custom testing types.
-func (app *Teleport) LegacyAmino() *codec.LegacyAmino {
+func (app *Bitchain) LegacyAmino() *codec.LegacyAmino {
 	return nil
 }
 
-// AppCodec returns Teleport's app codec.
+// AppCodec returns Bitchain's app codec.
 //
 // NOTE: This is solely to be used for testing purposes as it may be desirable
 // for modules to register their own custom testing types.
-func (app *Teleport) AppCodec() codec.Codec {
+func (app *Bitchain) AppCodec() codec.Codec {
 	return app.appCodec
 }
 
-// InterfaceRegistry returns Teleport's InterfaceRegistry
-func (app *Teleport) InterfaceRegistry() codectypes.InterfaceRegistry {
+// InterfaceRegistry returns Bitchain's InterfaceRegistry
+func (app *Bitchain) InterfaceRegistry() codectypes.InterfaceRegistry {
 	return app.interfaceRegistry
 }
 
 // GetKey returns the KVStoreKey for the provided store key.
 //
 // NOTE: This is solely to be used for testing purposes.
-func (app *Teleport) GetKey(storeKey string) *sdk.KVStoreKey {
+func (app *Bitchain) GetKey(storeKey string) *sdk.KVStoreKey {
 	return app.keys[storeKey]
 }
 
 // GetTKey returns the TransientStoreKey for the provided store key.
 //
 // NOTE: This is solely to be used for testing purposes.
-func (app *Teleport) GetTKey(storeKey string) *sdk.TransientStoreKey {
+func (app *Bitchain) GetTKey(storeKey string) *sdk.TransientStoreKey {
 	return app.tkeys[storeKey]
 }
 
 // GetMemKey returns the MemStoreKey for the provided mem key.
 //
 // NOTE: This is solely used for testing purposes.
-func (app *Teleport) GetMemKey(storeKey string) *sdk.MemoryStoreKey {
+func (app *Bitchain) GetMemKey(storeKey string) *sdk.MemoryStoreKey {
 	return app.memKeys[storeKey]
 }
 
 // GetSubspace returns a param subspace for a given module name.
 //
 // NOTE: This is solely to be used for testing purposes.
-func (app *Teleport) GetSubspace(moduleName string) paramstypes.Subspace {
+func (app *Bitchain) GetSubspace(moduleName string) paramstypes.Subspace {
 	subspace, _ := app.ParamsKeeper.GetSubspace(moduleName)
 	return subspace
 }
 
 // SimulationManager implements the SimulationApp interface
-func (app *Teleport) SimulationManager() *module.SimulationManager {
+func (app *Bitchain) SimulationManager() *module.SimulationManager {
 	return app.sm
 }
 
 // RegisterAPIRoutes registers all application module routes with the provided
 // API server.
-func (app *Teleport) RegisterAPIRoutes(apiSvr *api.Server, apiConfig config.APIConfig) {
+func (app *Bitchain) RegisterAPIRoutes(apiSvr *api.Server, apiConfig config.APIConfig) {
 	clientCtx := apiSvr.ClientCtx
 	rpc.RegisterRoutes(clientCtx, apiSvr.Router)
 
@@ -831,11 +831,11 @@ func (app *Teleport) RegisterAPIRoutes(apiSvr *api.Server, apiConfig config.APIC
 	}
 }
 
-func (app *Teleport) RegisterTxService(clientCtx client.Context) {
+func (app *Bitchain) RegisterTxService(clientCtx client.Context) {
 	authtx.RegisterTxService(app.BaseApp.GRPCQueryRouter(), clientCtx, app.BaseApp.Simulate, app.interfaceRegistry)
 }
 
-func (app *Teleport) RegisterTendermintService(clientCtx client.Context) {
+func (app *Bitchain) RegisterTendermintService(clientCtx client.Context) {
 	tmservice.RegisterTendermintService(app.BaseApp.GRPCQueryRouter(), clientCtx, app.interfaceRegistry)
 	gabci.RegisterGRPCABCIQuery(app.BaseApp.GRPCQueryRouter(), app)
 }
@@ -843,27 +843,27 @@ func (app *Teleport) RegisterTendermintService(clientCtx client.Context) {
 // IBC Go TestingApp functions
 
 // GetBaseApp implements the TestingApp interface.
-func (app *Teleport) GetBaseApp() *baseapp.BaseApp {
+func (app *Bitchain) GetBaseApp() *baseapp.BaseApp {
 	return app.BaseApp
 }
 
 // GetStakingKeeper implements the TestingApp interface.
-func (app *Teleport) GetStakingKeeper() stakingkeeper.Keeper {
+func (app *Bitchain) GetStakingKeeper() stakingkeeper.Keeper {
 	return app.StakingKeeper
 }
 
 // GetIBCKeeper implements the TestingApp interface.
-func (app *Teleport) GetIBCKeeper() *ibckeeper.Keeper {
+func (app *Bitchain) GetIBCKeeper() *ibckeeper.Keeper {
 	return app.IBCKeeper
 }
 
 // GetScopedIBCKeeper implements the TestingApp interface.
-func (app *Teleport) GetScopedIBCKeeper() capabilitykeeper.ScopedKeeper {
+func (app *Bitchain) GetScopedIBCKeeper() capabilitykeeper.ScopedKeeper {
 	return app.ScopedIBCKeeper
 }
 
 // GetTxConfig implements the TestingApp interface.
-func (app *Teleport) GetTxConfig() client.TxConfig {
+func (app *Bitchain) GetTxConfig() client.TxConfig {
 	cfg := encoding.MakeConfig(ModuleBasics)
 	return cfg.TxConfig
 }
@@ -905,7 +905,7 @@ func initParamsKeeper(appCodec codec.BinaryCodec, legacyAmino *codec.LegacyAmino
 	paramsKeeper.Subspace(ibctransfertypes.ModuleName)
 	paramsKeeper.Subspace(icacontrollertypes.SubModuleName)
 	paramsKeeper.Subspace(icahosttypes.SubModuleName)
-	// teleport subspaces
+	// bitchain subspaces
 	paramsKeeper.Subspace(aggregatetypes.ModuleName)
 	paramsKeeper.Subspace(rvestingtypes.ModuleName)
 	return paramsKeeper

@@ -4,7 +4,7 @@ import (
 	"context"
 	"strings"
 
-	"github.com/teleport-network/teleport/grpc_abci/types"
+	"github.com/bitdao-io/bitchain/grpc_abci/types"
 
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
 	gogogrpc "github.com/gogo/protobuf/grpc"
