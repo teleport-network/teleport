@@ -1,0 +1,810 @@
+{
+  "genesis_time": "2022-07-03T03:21:17.950320259Z",
+  "chain_id": "bitchain_7001-1",
+  "initial_height": "1",
+  "consensus_params": {
+    "block": {
+      "max_bytes": "22020096",
+      "max_gas": "-1",
+      "time_iota_ms": "1000"
+    },
+    "evidence": {
+      "max_age_num_blocks": "100000",
+      "max_age_duration": "172800000000000",
+      "max_bytes": "1048576"
+    },
+    "validator": {
+      "pub_key_types": [
+        "ed25519"
+      ]
+    },
+    "version": {}
+  },
+  "app_hash": "",
+  "app_state": {
+    "aggregate": {
+      "params": {
+        "enable_aggregate": true,
+        "enable_evm_hook": true
+      },
+      "token_pairs": []
+    },
+    "auth": {
+      "params": {
+        "max_memo_characters": "256",
+        "tx_sig_limit": "7",
+        "tx_size_cost_per_byte": "10",
+        "sig_verify_cost_ed25519": "590",
+        "sig_verify_cost_secp256k1": "1000"
+      },
+      "accounts": [
+        {
+          "@type": "/ethermint.types.v1.EthAccount",
+          "base_account": {
+            "address": "bitchain1hgf7afchpnu7tf7deeqclj53z4nv7jajlz8yhn",
+            "pub_key": null,
+            "account_number": "0",
+            "sequence": "0"
+          },
+          "code_hash": "0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470"
+        },
+        {
+          "@type": "/ethermint.types.v1.EthAccount",
+          "base_account": {
+            "address": "bitchain1h8ewru77qcyj8e0pxwqmlnl66t4aklvarfjr8n",
+            "pub_key": null,
+            "account_number": "0",
+            "sequence": "0"
+          },
+          "code_hash": "0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470"
+        },
+        {
+          "@type": "/ethermint.types.v1.EthAccount",
+          "base_account": {
+            "address": "bitchain13q0ve3dmrhe93r6292p83equtky223a9l4f05d",
+            "pub_key": null,
+            "account_number": "0",
+            "sequence": "0"
+          },
+          "code_hash": "0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470"
+        },
+        {
+          "@type": "/ethermint.types.v1.EthAccount",
+          "base_account": {
+            "address": "bitchain1ktc3pupaw4fruh0hczxwcuuqj9wx54xg0yrjhg",
+            "pub_key": null,
+            "account_number": "0",
+            "sequence": "0"
+          },
+          "code_hash": "0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470"
+        },
+        {
+          "@type": "/ethermint.types.v1.EthAccount",
+          "base_account": {
+            "address": "bitchain1t4ut446vylw09nasj93vrnsrnd0ls0jpsfsajm",
+            "pub_key": null,
+            "account_number": "0",
+            "sequence": "0"
+          },
+          "code_hash": "0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470"
+        },
+        {
+          "@type": "/ethermint.types.v1.EthAccount",
+          "base_account": {
+            "address": "bitchain14xxdxuydm34c5f8hj33zchs5asxhrq6zxdpgns",
+            "pub_key": null,
+            "account_number": "0",
+            "sequence": "0"
+          },
+          "code_hash": "0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470"
+        },
+        {
+          "@type": "/ethermint.types.v1.EthAccount",
+          "base_account": {
+            "address": "bitchain19dnra8wrnsm9ul603faaekk66lw6s3jtz8mrn7",
+            "pub_key": null,
+            "account_number": "0",
+            "sequence": "0"
+          },
+          "code_hash": "0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470"
+        }
+      ]
+    },
+    "authz": {
+      "authorization": []
+    },
+    "bank": {
+      "params": {
+        "send_enabled": [],
+        "default_send_enabled": true
+      },
+      "balances": [
+        {
+          "address": "bitchain1hgf7afchpnu7tf7deeqclj53z4nv7jajlz8yhn",
+          "coins": [
+            {
+              "denom": "atele",
+              "amount": "100000000000000000000000"
+            }
+          ]
+        },
+        {
+          "address": "bitchain1h8ewru77qcyj8e0pxwqmlnl66t4aklvarfjr8n",
+          "coins": [
+            {
+              "denom": "atele",
+              "amount": "100000000000000000000000"
+            }
+          ]
+        },
+        {
+          "address": "bitchain13q0ve3dmrhe93r6292p83equtky223a9l4f05d",
+          "coins": [
+            {
+              "denom": "atele",
+              "amount": "100000000000000000000000"
+            }
+          ]
+        },
+        {
+          "address": "bitchain1ktc3pupaw4fruh0hczxwcuuqj9wx54xg0yrjhg",
+          "coins": [
+            {
+              "denom": "atele",
+              "amount": "100000000000000000000000"
+            }
+          ]
+        },
+        {
+          "address": "bitchain1t4ut446vylw09nasj93vrnsrnd0ls0jpsfsajm",
+          "coins": [
+            {
+              "denom": "atele",
+              "amount": "100000000000000000000000"
+            }
+          ]
+        },
+        {
+          "address": "bitchain14xxdxuydm34c5f8hj33zchs5asxhrq6zxdpgns",
+          "coins": [
+            {
+              "denom": "atele",
+              "amount": "100000000000000000000000"
+            }
+          ]
+        },
+        {
+          "address": "bitchain19dnra8wrnsm9ul603faaekk66lw6s3jtz8mrn7",
+          "coins": [
+            {
+              "denom": "atele",
+              "amount": "400000000000000000000000"
+            }
+          ]
+        }
+      ],
+      "supply": [],
+      "denom_metadata": []
+    },
+    "capability": {
+      "index": "1",
+      "owners": []
+    },
+    "crisis": {
+      "constant_fee": {
+        "denom": "atele",
+        "amount": "1000"
+      }
+    },
+    "distribution": {
+      "params": {
+        "community_tax": "0.020000000000000000",
+        "base_proposer_reward": "0.010000000000000000",
+        "bonus_proposer_reward": "0.040000000000000000",
+        "withdraw_addr_enabled": true
+      },
+      "fee_pool": {
+        "community_pool": []
+      },
+      "delegator_withdraw_infos": [],
+      "previous_proposer": "",
+      "outstanding_rewards": [],
+      "validator_accumulated_commissions": [],
+      "validator_historical_rewards": [],
+      "validator_current_rewards": [],
+      "delegator_starting_infos": [],
+      "validator_slash_events": []
+    },
+    "evidence": {
+      "evidence": []
+    },
+    "evm": {
+      "accounts": [],
+      "params": {
+        "evm_denom": "atele",
+        "enable_create": true,
+        "enable_call": true,
+        "extra_eips": [],
+        "chain_config": {
+          "homestead_block": "0",
+          "dao_fork_block": "0",
+          "dao_fork_support": true,
+          "eip150_block": "0",
+          "eip150_hash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+          "eip155_block": "0",
+          "eip158_block": "0",
+          "byzantium_block": "0",
+          "constantinople_block": "0",
+          "petersburg_block": "0",
+          "istanbul_block": "0",
+          "muir_glacier_block": "0",
+          "berlin_block": "0",
+          "london_block": "0",
+          "arrow_glacier_block": "0",
+          "merge_fork_block": "0"
+        },
+        "allow_unprotected_txs": false
+      }
+    },
+    "feegrant": {
+      "allowances": []
+    },
+    "genutil": {
+      "gen_txs": [
+        {
+          "body": {
+            "messages": [
+              {
+                "@type": "/cosmos.staking.v1beta1.MsgCreateValidator",
+                "description": {
+                  "moniker": "validator0",
+                  "identity": "",
+                  "website": "",
+                  "security_contact": "",
+                  "details": ""
+                },
+                "commission": {
+                  "rate": "1.000000000000000000",
+                  "max_rate": "1.000000000000000000",
+                  "max_change_rate": "1.000000000000000000"
+                },
+                "min_self_delegation": "1",
+                "delegator_address": "bitchain1hgf7afchpnu7tf7deeqclj53z4nv7jajlz8yhn",
+                "validator_address": "bitchainvaloper1hgf7afchpnu7tf7deeqclj53z4nv7jajkjnua8",
+                "pubkey": {
+                  "@type": "/cosmos.crypto.ed25519.PubKey",
+                  "key": "SY0zu3KOB7K4IKmxtUSWsbOXXFFZurq485RLvv9qn7M="
+                },
+                "value": {
+                  "denom": "atele",
+                  "amount": "1000000000000000000"
+                }
+              }
+            ],
+            "memo": "25279d371f845ea8864d758446c73c313e93e650@172.172.0.2:26656",
+            "timeout_height": "0",
+            "extension_options": [],
+            "non_critical_extension_options": []
+          },
+          "auth_info": {
+            "signer_infos": [
+              {
+                "public_key": {
+                  "@type": "/ethermint.crypto.v1.ethsecp256k1.PubKey",
+                  "key": "Av5LFip0KpsCtYV4K3/EGKHcwKDtHKRBMCkNEHXnDrOi"
+                },
+                "mode_info": {
+                  "single": {
+                    "mode": "SIGN_MODE_DIRECT"
+                  }
+                },
+                "sequence": "0"
+              }
+            ],
+            "fee": {
+              "amount": [],
+              "gas_limit": "0",
+              "payer": "",
+              "granter": ""
+            }
+          },
+          "signatures": [
+            "hW/U6MAX24eKxNFs0XG/uA9nMi+SbAsMHWU6O8G8Z4o+9tAk5m7wkzYqb2rovx3rU8s4VwyDuf6JEqtX9vW3JgE="
+          ]
+        },
+        {
+          "body": {
+            "messages": [
+              {
+                "@type": "/cosmos.staking.v1beta1.MsgCreateValidator",
+                "description": {
+                  "moniker": "validator1",
+                  "identity": "",
+                  "website": "",
+                  "security_contact": "",
+                  "details": ""
+                },
+                "commission": {
+                  "rate": "1.000000000000000000",
+                  "max_rate": "1.000000000000000000",
+                  "max_change_rate": "1.000000000000000000"
+                },
+                "min_self_delegation": "1",
+                "delegator_address": "bitchain1h8ewru77qcyj8e0pxwqmlnl66t4aklvarfjr8n",
+                "validator_address": "bitchainvaloper1h8ewru77qcyj8e0pxwqmlnl66t4aklva2exmd8",
+                "pubkey": {
+                  "@type": "/cosmos.crypto.ed25519.PubKey",
+                  "key": "PM8R2wM31yUuMDu5RiewWLopcOXOwEaqRQS8xWOq+dQ="
+                },
+                "value": {
+                  "denom": "atele",
+                  "amount": "1000000000000000000"
+                }
+              }
+            ],
+            "memo": "95592bc17df12fc302f2f32d23be86bde33f6fc7@172.172.0.3:26656",
+            "timeout_height": "0",
+            "extension_options": [],
+            "non_critical_extension_options": []
+          },
+          "auth_info": {
+            "signer_infos": [
+              {
+                "public_key": {
+                  "@type": "/ethermint.crypto.v1.ethsecp256k1.PubKey",
+                  "key": "A5N7iN55KizzuJRzQVK73A2rfhNn7yglOEkphHI/JX6i"
+                },
+                "mode_info": {
+                  "single": {
+                    "mode": "SIGN_MODE_DIRECT"
+                  }
+                },
+                "sequence": "0"
+              }
+            ],
+            "fee": {
+              "amount": [],
+              "gas_limit": "0",
+              "payer": "",
+              "granter": ""
+            }
+          },
+          "signatures": [
+            "BNytzwPMrhCphVYoHFi3bU/vhY+vKHMNu7NXOG2JZbVCHWsQ4orKkjckpe5HXr8Ai75iKGxPh4l3yf2/6HMhGgE="
+          ]
+        },
+        {
+          "body": {
+            "messages": [
+              {
+                "@type": "/cosmos.staking.v1beta1.MsgCreateValidator",
+                "description": {
+                  "moniker": "validator2",
+                  "identity": "",
+                  "website": "",
+                  "security_contact": "",
+                  "details": ""
+                },
+                "commission": {
+                  "rate": "1.000000000000000000",
+                  "max_rate": "1.000000000000000000",
+                  "max_change_rate": "1.000000000000000000"
+                },
+                "min_self_delegation": "1",
+                "delegator_address": "bitchain13q0ve3dmrhe93r6292p83equtky223a9l4f05d",
+                "validator_address": "bitchainvaloper13q0ve3dmrhe93r6292p83equtky223a9k9ah7e",
+                "pubkey": {
+                  "@type": "/cosmos.crypto.ed25519.PubKey",
+                  "key": "q527J/wttSoI7Au4N5ZYqxxlncDxzxiWOOtbdWXCIGM="
+                },
+                "value": {
+                  "denom": "atele",
+                  "amount": "1000000000000000000"
+                }
+              }
+            ],
+            "memo": "401c16bc4add17fa33e97170181f37bb856efe21@172.172.0.4:26656",
+            "timeout_height": "0",
+            "extension_options": [],
+            "non_critical_extension_options": []
+          },
+          "auth_info": {
+            "signer_infos": [
+              {
+                "public_key": {
+                  "@type": "/ethermint.crypto.v1.ethsecp256k1.PubKey",
+                  "key": "A9iyZ/WPfnkOM7ZtmY82P23P/F0zw9h5KhO3vd+p3DAp"
+                },
+                "mode_info": {
+                  "single": {
+                    "mode": "SIGN_MODE_DIRECT"
+                  }
+                },
+                "sequence": "0"
+              }
+            ],
+            "fee": {
+              "amount": [],
+              "gas_limit": "0",
+              "payer": "",
+              "granter": ""
+            }
+          },
+          "signatures": [
+            "/nVjigKqPQDMzdQpPoJBIXigC9Uc77Nb4XSFJ5tYmX44y69SXwuXViKiRnfbkYwE4bDdPdq5WwzmrboaSbdx3QE="
+          ]
+        },
+        {
+          "body": {
+            "messages": [
+              {
+                "@type": "/cosmos.staking.v1beta1.MsgCreateValidator",
+                "description": {
+                  "moniker": "validator3",
+                  "identity": "",
+                  "website": "",
+                  "security_contact": "",
+                  "details": ""
+                },
+                "commission": {
+                  "rate": "1.000000000000000000",
+                  "max_rate": "1.000000000000000000",
+                  "max_change_rate": "1.000000000000000000"
+                },
+                "min_self_delegation": "1",
+                "delegator_address": "bitchain1ktc3pupaw4fruh0hczxwcuuqj9wx54xg0yrjhg",
+                "validator_address": "bitchainvaloper1ktc3pupaw4fruh0hczxwcuuqj9wx54xgx5h2au",
+                "pubkey": {
+                  "@type": "/cosmos.crypto.ed25519.PubKey",
+                  "key": "gZrs77R6GOUTdPe8VSfQ3WxR+gPAe5RMcTKU9A5j8v0="
+                },
+                "value": {
+                  "denom": "atele",
+                  "amount": "1000000000000000000"
+                }
+              }
+            ],
+            "memo": "eba4526e283836e399bb08d98bc6f39d87389ca4@172.172.0.5:26656",
+            "timeout_height": "0",
+            "extension_options": [],
+            "non_critical_extension_options": []
+          },
+          "auth_info": {
+            "signer_infos": [
+              {
+                "public_key": {
+                  "@type": "/ethermint.crypto.v1.ethsecp256k1.PubKey",
+                  "key": "AjcY4Brhnqg3EA6wpEAP1KpDx5W0JQ7j91UgKeSkYP+u"
+                },
+                "mode_info": {
+                  "single": {
+                    "mode": "SIGN_MODE_DIRECT"
+                  }
+                },
+                "sequence": "0"
+              }
+            ],
+            "fee": {
+              "amount": [],
+              "gas_limit": "0",
+              "payer": "",
+              "granter": ""
+            }
+          },
+          "signatures": [
+            "i2GkppssRiGzac4n4IkffYGw0UT1dUeHe+MtbMVYlLREF+ra9TSNGjyj7/0t4q+y/o57LlUkvLp4aWC5pwHrVgA="
+          ]
+        },
+        {
+          "body": {
+            "messages": [
+              {
+                "@type": "/cosmos.staking.v1beta1.MsgCreateValidator",
+                "description": {
+                  "moniker": "validator4",
+                  "identity": "",
+                  "website": "",
+                  "security_contact": "",
+                  "details": ""
+                },
+                "commission": {
+                  "rate": "1.000000000000000000",
+                  "max_rate": "1.000000000000000000",
+                  "max_change_rate": "1.000000000000000000"
+                },
+                "min_self_delegation": "1",
+                "delegator_address": "bitchain1t4ut446vylw09nasj93vrnsrnd0ls0jpsfsajm",
+                "validator_address": "bitchainvaloper1t4ut446vylw09nasj93vrnsrnd0ls0jpeey9c0",
+                "pubkey": {
+                  "@type": "/cosmos.crypto.ed25519.PubKey",
+                  "key": "eA6RZF4B7Ik3fFZ5+W6BeVZwr3meFVIQtfoAA4dwxXc="
+                },
+                "value": {
+                  "denom": "atele",
+                  "amount": "1000000000000000000"
+                }
+              }
+            ],
+            "memo": "490a7155858945d4c1758253a63c864d30afd5fa@172.172.0.6:26656",
+            "timeout_height": "0",
+            "extension_options": [],
+            "non_critical_extension_options": []
+          },
+          "auth_info": {
+            "signer_infos": [
+              {
+                "public_key": {
+                  "@type": "/ethermint.crypto.v1.ethsecp256k1.PubKey",
+                  "key": "A9nJNyaexnPAVLTaf613ScrPkQvQRclm/jDMBDy81wPg"
+                },
+                "mode_info": {
+                  "single": {
+                    "mode": "SIGN_MODE_DIRECT"
+                  }
+                },
+                "sequence": "0"
+              }
+            ],
+            "fee": {
+              "amount": [],
+              "gas_limit": "0",
+              "payer": "",
+              "granter": ""
+            }
+          },
+          "signatures": [
+            "zn4v4kfPO47XfsMoOChHbiHDpl39CAJyXdVZ3jI63h559ZgP/KPrV8dUR2zpH4F/jLHB+JeEyP62vpEAcPXmEQA="
+          ]
+        },
+        {
+          "body": {
+            "messages": [
+              {
+                "@type": "/cosmos.staking.v1beta1.MsgCreateValidator",
+                "description": {
+                  "moniker": "validator5",
+                  "identity": "",
+                  "website": "",
+                  "security_contact": "",
+                  "details": ""
+                },
+                "commission": {
+                  "rate": "1.000000000000000000",
+                  "max_rate": "1.000000000000000000",
+                  "max_change_rate": "1.000000000000000000"
+                },
+                "min_self_delegation": "1",
+                "delegator_address": "bitchain14xxdxuydm34c5f8hj33zchs5asxhrq6zxdpgns",
+                "validator_address": "bitchainvaloper14xxdxuydm34c5f8hj33zchs5asxhrq6z0a4sey",
+                "pubkey": {
+                  "@type": "/cosmos.crypto.ed25519.PubKey",
+                  "key": "NcKoIgnVXxrsb5/ASyUlnDtMTksdDKUTqTHiUz9rnms="
+                },
+                "value": {
+                  "denom": "atele",
+                  "amount": "1000000000000000000"
+                }
+              }
+            ],
+            "memo": "fd66eb118f6eae8d1d51052e8db438d69c19a740@172.172.0.7:26656",
+            "timeout_height": "0",
+            "extension_options": [],
+            "non_critical_extension_options": []
+          },
+          "auth_info": {
+            "signer_infos": [
+              {
+                "public_key": {
+                  "@type": "/ethermint.crypto.v1.ethsecp256k1.PubKey",
+                  "key": "A+Kxv0o1oiG/2mWHb/B7/NtqIvDL7idfKBT1J25RXZYa"
+                },
+                "mode_info": {
+                  "single": {
+                    "mode": "SIGN_MODE_DIRECT"
+                  }
+                },
+                "sequence": "0"
+              }
+            ],
+            "fee": {
+              "amount": [],
+              "gas_limit": "0",
+              "payer": "",
+              "granter": ""
+            }
+          },
+          "signatures": [
+            "mJd6Ya1EoinIUOb1+zU9x3CrjLcRmTu83CyqwOHL7X4RhLfFdHdYapi9fm+6nu7fyARmz1W+eDFA32at51eZVAE="
+          ]
+        },
+        {
+          "body": {
+            "messages": [
+              {
+                "@type": "/cosmos.staking.v1beta1.MsgCreateValidator",
+                "description": {
+                  "moniker": "validator6",
+                  "identity": "",
+                  "website": "",
+                  "security_contact": "",
+                  "details": ""
+                },
+                "commission": {
+                  "rate": "1.000000000000000000",
+                  "max_rate": "1.000000000000000000",
+                  "max_change_rate": "1.000000000000000000"
+                },
+                "min_self_delegation": "1",
+                "delegator_address": "bitchain19dnra8wrnsm9ul603faaekk66lw6s3jtz8mrn7",
+                "validator_address": "bitchainvaloper19dnra8wrnsm9ul603faaekk66lw6s3jtth0me2",
+                "pubkey": {
+                  "@type": "/cosmos.crypto.ed25519.PubKey",
+                  "key": "nYyZbJI39TSVpFPj9k3Q/BXbwg8sLD+Sp2AqJwln7aU="
+                },
+                "value": {
+                  "denom": "atele",
+                  "amount": "1000000000000000000"
+                }
+              }
+            ],
+            "memo": "f336b7d274f9197a415c6460c033de0bb49a2229@172.172.0.8:26656",
+            "timeout_height": "0",
+            "extension_options": [],
+            "non_critical_extension_options": []
+          },
+          "auth_info": {
+            "signer_infos": [
+              {
+                "public_key": {
+                  "@type": "/ethermint.crypto.v1.ethsecp256k1.PubKey",
+                  "key": "AjIHc8RMNjVEk/OH/kMVogZQRgkvRT0VMhKqvnDeT1nr"
+                },
+                "mode_info": {
+                  "single": {
+                    "mode": "SIGN_MODE_DIRECT"
+                  }
+                },
+                "sequence": "0"
+              }
+            ],
+            "fee": {
+              "amount": [],
+              "gas_limit": "0",
+              "payer": "",
+              "granter": ""
+            }
+          },
+          "signatures": [
+            "qcpHWcGx1lSjck56COikDFpZhcNtaouhojgVh49PwYcoS2S7lxhApdLRlgdXBVmdZe3BU8YgJpo8UMhmbzYVOwA="
+          ]
+        }
+      ]
+    },
+    "gov": {
+      "starting_proposal_id": "1",
+      "deposits": [],
+      "votes": [],
+      "proposals": [],
+      "deposit_params": {
+        "min_deposit": [
+          {
+            "denom": "atele",
+            "amount": "10000000"
+          }
+        ],
+        "max_deposit_period": "172800s"
+      },
+      "voting_params": {
+        "voting_period": "172800s"
+      },
+      "tally_params": {
+        "quorum": "0.334000000000000000",
+        "threshold": "0.500000000000000000",
+        "veto_threshold": "0.334000000000000000"
+      }
+    },
+    "ibc": {
+      "client_genesis": {
+        "clients": [],
+        "clients_consensus": [],
+        "clients_metadata": [],
+        "params": {
+          "allowed_clients": [
+            "06-solomachine",
+            "07-tendermint"
+          ]
+        },
+        "create_localhost": false,
+        "next_client_sequence": "0"
+      },
+      "connection_genesis": {
+        "connections": [],
+        "client_connection_paths": [],
+        "next_connection_sequence": "0",
+        "params": {
+          "max_expected_time_per_block": "30000000000"
+        }
+      },
+      "channel_genesis": {
+        "channels": [],
+        "acknowledgements": [],
+        "commitments": [],
+        "receipts": [],
+        "send_sequences": [],
+        "recv_sequences": [],
+        "ack_sequences": [],
+        "next_channel_sequence": "0"
+      }
+    },
+    "interchainaccounts": {
+      "controller_genesis_state": {
+        "active_channels": [],
+        "interchain_accounts": [],
+        "ports": [],
+        "params": {
+          "controller_enabled": true
+        }
+      },
+      "host_genesis_state": {
+        "active_channels": [],
+        "interchain_accounts": [],
+        "port": "icahost",
+        "params": {
+          "host_enabled": true,
+          "allow_messages": []
+        }
+      }
+    },
+    "params": null,
+    "rvesting": {
+      "params": {
+        "enable_vesting": false,
+        "per_block_reward": [
+          {
+            "denom": "atele",
+            "amount": "100000000000000000"
+          }
+        ]
+      },
+      "from": "",
+      "init_reward": []
+    },
+    "slashing": {
+      "params": {
+        "signed_blocks_window": "100",
+        "min_signed_per_window": "0.500000000000000000",
+        "downtime_jail_duration": "600s",
+        "slash_fraction_double_sign": "0.050000000000000000",
+        "slash_fraction_downtime": "0.010000000000000000"
+      },
+      "signing_infos": [],
+      "missed_blocks": []
+    },
+    "staking": {
+      "params": {
+        "unbonding_time": "1814400s",
+        "max_validators": 100,
+        "max_entries": 7,
+        "historical_entries": 10000,
+        "bond_denom": "atele"
+      },
+      "last_total_power": "0",
+      "last_validator_powers": [],
+      "validators": [],
+      "delegations": [],
+      "unbonding_delegations": [],
+      "redelegations": [],
+      "exported": false
+    },
+    "transfer": {
+      "port_id": "transfer",
+      "denom_traces": [],
+      "params": {
+        "send_enabled": true,
+        "receive_enabled": true
+      }
+    },
+    "upgrade": {},
+    "vesting": {}
+  }
+}
