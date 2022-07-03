@@ -117,7 +117,6 @@ import (
 	"github.com/evmos/ethermint/app/ante"
 	"github.com/evmos/ethermint/encoding"
 	ethermint "github.com/evmos/ethermint/types"
-	"github.com/evmos/ethermint/x/evm"
 	evmrest "github.com/evmos/ethermint/x/evm/client/rest"
 	evmtypes "github.com/evmos/ethermint/x/evm/types"
 )
@@ -179,7 +178,6 @@ var (
 		upgrade.AppModuleBasic{},
 		evidence.AppModuleBasic{},
 		vesting.AppModuleBasic{},
-		evm.AppModuleBasic{},
 		aggregatemodule.AppModuleBasic{},
 		rvestingmodule.AppModuleBasic{},
 	)
@@ -192,7 +190,6 @@ var (
 		stakingtypes.NotBondedPoolName: {authtypes.Burner, authtypes.Staking},
 		govtypes.ModuleName:            {authtypes.Burner},
 		ibctransfertypes.ModuleName:    {authtypes.Minter, authtypes.Burner},
-		evmtypes.ModuleName:            {authtypes.Minter, authtypes.Burner}, // used for secure addition and subtraction of balance using module account
 		aggregatetypes.ModuleName:      {authtypes.Minter, authtypes.Burner},
 		icatypes.ModuleName:            nil,
 		rvestingtypes.ModuleName:       nil,
@@ -222,8 +219,6 @@ var (
 		ibctransfertypes.StoreKey,
 		icacontrollertypes.StoreKey,
 		icahosttypes.StoreKey,
-		// ethermint keys
-		evmtypes.StoreKey,
 		// bitchain keys
 		aggregatetypes.StoreKey,
 	)
