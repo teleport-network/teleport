@@ -110,10 +110,10 @@ start_func() {
     --keyring-backend test --home "$DATA_DIR$i" \
     >"$DATA_DIR"/node"$i".log 2>&1 & disown
 
-    TELEPORT_PID=$!
-    echo "started bitchain node, pid=$TELEPORT_PID"
+    BITCHAIN_PID=$!
+    echo "started bitchain node, pid=$BITCHAIN_PID"
     # add PID to array
-    arr+=("$TELEPORT_PID")
+    arr+=("$BITCHAIN_PID")
 
     if [[ $MODE == "pending" ]]; then
       echo "waiting for the first block..."
@@ -156,12 +156,12 @@ if [[ -z $TEST || $TEST == "rpc" ||  $TEST == "pending" ]]; then
 fi
 
 stop_func() {
-    TELEPORT_PID=$i
-    echo "shutting down node, pid=$TELEPORT_PID ..."
+    BITCHAIN_PID=$i
+    echo "shutting down node, pid=$BITCHAIN_PID ..."
 
     # Shutdown bitchain node
-    kill -9 "$TELEPORT_PID"
-    wait "$TELEPORT_PID"
+    kill -9 "$BITCHAIN_PID"
+    wait "$BITCHAIN_PID"
 
     if [ $REMOVE_DATA_DIR == "true" ]
     then

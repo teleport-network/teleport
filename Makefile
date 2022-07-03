@@ -7,8 +7,8 @@ TMVERSION := $(shell go list -m github.com/tendermint/tendermint | sed 's:.* ::'
 COMMIT := $(shell git log -1 --format='%H')
 LEDGER_ENABLED ?= true
 BINDIR ?= $(GOPATH)/bin
-TELEPORT_BINARY = bitchain
-TELEPORT_DIR = bitchain
+BITCHAIN_BINARY = bitchain
+BITCHAIN_DIR = bitchain
 BUILDDIR ?= $(CURDIR)/build
 SIMAPP = ./app
 HTTPS_GIT := https://github.com/bitdao-io/bitchain.git
@@ -68,7 +68,7 @@ build_tags_comma_sep := $(subst $(whitespace),$(comma),$(build_tags))
 # process linker flags
 
 ldflags = -X github.com/cosmos/cosmos-sdk/version.Name=bitchain \
-		  -X github.com/cosmos/cosmos-sdk/version.AppName=$(TELEPORT_BINARY) \
+		  -X github.com/cosmos/cosmos-sdk/version.AppName=$(BITCHAIN_BINARY) \
 		  -X github.com/cosmos/cosmos-sdk/version.Version=$(VERSION) \
 		  -X github.com/cosmos/cosmos-sdk/version.Commit=$(COMMIT) \
 		  -X "github.com/cosmos/cosmos-sdk/version.BuildTags=$(build_tags_comma_sep)" \
@@ -352,8 +352,8 @@ test-sim-nondeterminism:
 
 test-sim-custom-genesis-fast:
 	@echo "Running custom genesis simulation..."
-	@echo "By default, ${HOME}/.$(TELEPORT_DIR)/config/genesis.json will be used."
-	@go test -mod=readonly $(SIMAPP) -run TestFullAppSimulation -Genesis=${HOME}/.$(TELEPORT_DIR)/config/genesis.json \
+	@echo "By default, ${HOME}/.$(BITCHAIN_DIR)/config/genesis.json will be used."
+	@go test -mod=readonly $(SIMAPP) -run TestFullAppSimulation -Genesis=${HOME}/.$(BITCHAIN_DIR)/config/genesis.json \
 		-Enabled=true -NumBlocks=100 -BlockSize=200 -Commit=true -Seed=99 -Period=5 -v -timeout 24h
 
 test-sim-import-export: runsim
@@ -366,8 +366,8 @@ test-sim-after-import: runsim
 
 test-sim-custom-genesis-multi-seed: runsim
 	@echo "Running multi-seed custom genesis simulation..."
-	@echo "By default, ${HOME}/.$(TELEPORT_DIR)/config/genesis.json will be used."
-	@$(BINDIR)/runsim -Genesis=${HOME}/.$(TELEPORT_DIR)/config/genesis.json -SimAppPkg=$(SIMAPP) -ExitOnFail 400 5 TestFullAppSimulation
+	@echo "By default, ${HOME}/.$(BITCHAIN_DIR)/config/genesis.json will be used."
+	@$(BINDIR)/runsim -Genesis=${HOME}/.$(BITCHAIN_DIR)/config/genesis.json -SimAppPkg=$(SIMAPP) -ExitOnFail 400 5 TestFullAppSimulation
 
 test-sim-multi-seed-long: runsim
 	@echo "Running long multi-seed application simulation. This may take awhile!"
@@ -513,13 +513,13 @@ ifeq ($(OS),Windows_NT)
 	mkdir localnet-setup &
 	@$(MAKE) localnet-build
 
-	IF not exist "build/node0/$(TELEPORT_BINARY)/config/genesis.json" docker run --rm -v $(CURDIR)/build\bitchain\Z bitchain/node "./bitchain testnet --v 4 -o /bitchain --keyring-backend=test --ip-addresses bitchainnode0,bitchainnode1,bitchainnode2,bitchainnode3"
+	IF not exist "build/node0/$(BITCHAIN_BINARY)/config/genesis.json" docker run --rm -v $(CURDIR)/build\bitchain\Z bitchain/node "./bitchain testnet --v 4 -o /bitchain --keyring-backend=test --ip-addresses bitchainnode0,bitchainnode1,bitchainnode2,bitchainnode3"
 	docker-compose up -d
 else
 	mkdir -p localnet-setup
 	@$(MAKE) localnet-build
 
-	if ! [ -f localnet-setup/node0/$(TELEPORT_BINARY)/config/genesis.json ]; then docker run --rm -v $(CURDIR)/localnet-setup:/bitchain:Z bitchain/node "./bitchain testnet --v 4 -o /bitchain --keyring-backend=test --ip-addresses bitchainnode0,bitchainnode1,bitchainnode2,bitchainnode3"; fi
+	if ! [ -f localnet-setup/node0/$(BITCHAIN_BINARY)/config/genesis.json ]; then docker run --rm -v $(CURDIR)/localnet-setup:/bitchain:Z bitchain/node "./bitchain testnet --v 4 -o /bitchain --keyring-backend=test --ip-addresses bitchainnode0,bitchainnode1,bitchainnode2,bitchainnode3"; fi
 	docker-compose up -d
 endif
 
