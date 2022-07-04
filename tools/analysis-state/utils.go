@@ -28,13 +28,15 @@ func findDiffModule(falseDir string, rightDir string) ([]string, []string, []str
 		panic(err)
 	}
 	for _, value := range rightFileList {
-		if _, ok := fileMap[value.Name()]; ok {
+		if v, ok := fileMap[value.Name()]; ok {
+			_ = v
 			delete(fileMap, value.Name())
 		}
 	}
-	for key, _ := range fileMap {
+	for key, value := range fileMap {
 		prefix := strings.Split(key, "_")[0]
 		module = append(module, prefix)
+		_ = value
 	}
 
 	for _, v := range module {
@@ -111,5 +113,4 @@ func ReadLine(fileName string) ([]string, error) {
 		}
 		result = append(result, line)
 	}
-	return result, nil
 }
