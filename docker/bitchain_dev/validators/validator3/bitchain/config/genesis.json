@@ -1,5 +1,5 @@
 {
-  "genesis_time": "2022-07-03T05:37:56.815261668Z",
+  "genesis_time": "2022-07-04T07:15:41.241788703Z",
   "chain_id": "bitchain_7001-1",
   "initial_height": "1",
   "consensus_params": {
@@ -22,13 +22,6 @@
   },
   "app_hash": "",
   "app_state": {
-    "aggregate": {
-      "params": {
-        "enable_aggregate": true,
-        "enable_evm_hook": true
-      },
-      "token_pairs": []
-    },
     "auth": {
       "params": {
         "max_memo_characters": "256",
@@ -41,7 +34,7 @@
         {
           "@type": "/ethermint.types.v1.EthAccount",
           "base_account": {
-            "address": "bitchain16ethf6595ph84yr3k473wsfpxtyv7gjec34jau",
+            "address": "bitchain1leqx6hrgyzwkuvhmx7gs0682mqccamjcfqh8dj",
             "pub_key": null,
             "account_number": "0",
             "sequence": "0"
@@ -51,7 +44,7 @@
         {
           "@type": "/ethermint.types.v1.EthAccount",
           "base_account": {
-            "address": "bitchain1emhcvhn2qvgm5ggj6llapk30etkk9hn2zx9d29",
+            "address": "bitchain1ras5hprt8l2m0egaf3ytve2z9jvss27q0ueun0",
             "pub_key": null,
             "account_number": "0",
             "sequence": "0"
@@ -61,7 +54,7 @@
         {
           "@type": "/ethermint.types.v1.EthAccount",
           "base_account": {
-            "address": "bitchain14u6c42syjvh6kg0fcxasywfv5wggleltq22xn5",
+            "address": "bitchain16340lvdgksrgewsmfzl2l4znc9lzfl8jylv97h",
             "pub_key": null,
             "account_number": "0",
             "sequence": "0"
@@ -71,7 +64,7 @@
         {
           "@type": "/ethermint.types.v1.EthAccount",
           "base_account": {
-            "address": "bitchain14yqgrm8wuls40lgntsvfnjpkw7d24hky4pynqj",
+            "address": "bitchain1d93fz4ftj9gvsrmq0akau7x3va7fw95vffc34n",
             "pub_key": null,
             "account_number": "0",
             "sequence": "0"
@@ -81,7 +74,7 @@
         {
           "@type": "/ethermint.types.v1.EthAccount",
           "base_account": {
-            "address": "bitchain1tzffycff4vevjwgj63csxel4k30s08tnfya2al",
+            "address": "bitchain1qhtza3q4l6g3wzz5vcr6jv8dqmkp3f3atr03g7",
             "pub_key": null,
             "account_number": "0",
             "sequence": "0"
@@ -91,7 +84,7 @@
         {
           "@type": "/ethermint.types.v1.EthAccount",
           "base_account": {
-            "address": "bitchain18v8s39xyfyud2a7rqy7hk2n4uut9fhk56wzawm",
+            "address": "bitchain16xf5gmghm5jeftpry6ruagtmvxqpar5xfk2275",
             "pub_key": null,
             "account_number": "0",
             "sequence": "0"
@@ -101,7 +94,7 @@
         {
           "@type": "/ethermint.types.v1.EthAccount",
           "base_account": {
-            "address": "bitchain1vj6v7nxdqvqgj87qc3nn7py3kdtjpsdqjmva2z",
+            "address": "bitchain1klrupky4f79ssw3ekhqd7uv48vyhym754s4w7z",
             "pub_key": null,
             "account_number": "0",
             "sequence": "0"
@@ -120,7 +113,7 @@
       },
       "balances": [
         {
-          "address": "bitchain16ethf6595ph84yr3k473wsfpxtyv7gjec34jau",
+          "address": "bitchain1leqx6hrgyzwkuvhmx7gs0682mqccamjcfqh8dj",
           "coins": [
             {
               "denom": "atele",
@@ -129,7 +122,7 @@
           ]
         },
         {
-          "address": "bitchain1emhcvhn2qvgm5ggj6llapk30etkk9hn2zx9d29",
+          "address": "bitchain1ras5hprt8l2m0egaf3ytve2z9jvss27q0ueun0",
           "coins": [
             {
               "denom": "atele",
@@ -138,7 +131,7 @@
           ]
         },
         {
-          "address": "bitchain14u6c42syjvh6kg0fcxasywfv5wggleltq22xn5",
+          "address": "bitchain16340lvdgksrgewsmfzl2l4znc9lzfl8jylv97h",
           "coins": [
             {
               "denom": "atele",
@@ -147,7 +140,7 @@
           ]
         },
         {
-          "address": "bitchain14yqgrm8wuls40lgntsvfnjpkw7d24hky4pynqj",
+          "address": "bitchain1d93fz4ftj9gvsrmq0akau7x3va7fw95vffc34n",
           "coins": [
             {
               "denom": "atele",
@@ -156,7 +149,7 @@
           ]
         },
         {
-          "address": "bitchain1tzffycff4vevjwgj63csxel4k30s08tnfya2al",
+          "address": "bitchain1qhtza3q4l6g3wzz5vcr6jv8dqmkp3f3atr03g7",
           "coins": [
             {
               "denom": "atele",
@@ -165,7 +158,7 @@
           ]
         },
         {
-          "address": "bitchain18v8s39xyfyud2a7rqy7hk2n4uut9fhk56wzawm",
+          "address": "bitchain16xf5gmghm5jeftpry6ruagtmvxqpar5xfk2275",
           "coins": [
             {
               "denom": "atele",
@@ -174,7 +167,7 @@
           ]
         },
         {
-          "address": "bitchain1vj6v7nxdqvqgj87qc3nn7py3kdtjpsdqjmva2z",
+          "address": "bitchain1klrupky4f79ssw3ekhqd7uv48vyhym754s4w7z",
           "coins": [
             {
               "denom": "atele",
@@ -241,11 +234,11 @@
                   "max_change_rate": "1.000000000000000000"
                 },
                 "min_self_delegation": "1",
-                "delegator_address": "bitchain16ethf6595ph84yr3k473wsfpxtyv7gjec34jau",
-                "validator_address": "bitchainvaloper16ethf6595ph84yr3k473wsfpxtyv7gje3pp2hg",
+                "delegator_address": "bitchain1leqx6hrgyzwkuvhmx7gs0682mqccamjcfqh8dj",
+                "validator_address": "bitchainvaloper1leqx6hrgyzwkuvhmx7gs0682mqccamjcqsrl8x",
                 "pubkey": {
                   "@type": "/cosmos.crypto.ed25519.PubKey",
-                  "key": "D78w83S68icT9NWqV6OCrvJ22chOrXRH/PqC/cTlu8g="
+                  "key": "HepOIsJ0+QrIKg3Jo6VC6TV+BmSVdf0RHzajMGlX32g="
                 },
                 "value": {
                   "denom": "atele",
@@ -253,7 +246,7 @@
                 }
               }
             ],
-            "memo": "b1a1c211971221ea61df2b4dd1c05ba11c5a1378@172.172.0.2:26656",
+            "memo": "5e1a708a1370b7936de75c8b7fe53f1b6c03b6cd@172.172.0.2:26656",
             "timeout_height": "0",
             "extension_options": [],
             "non_critical_extension_options": []
@@ -263,7 +256,7 @@
               {
                 "public_key": {
                   "@type": "/ethermint.crypto.v1.ethsecp256k1.PubKey",
-                  "key": "AjOe9P1ZNKauwODce7A4ahyn5CeOEUYVM5YwEH6WygrV"
+                  "key": "AmGphFTsWTRjFLwNLEQYlkGNCcc8mpIw9T7vbiK0m+73"
                 },
                 "mode_info": {
                   "single": {
@@ -281,7 +274,7 @@
             }
           },
           "signatures": [
-            "aC8K5vLjwr4KtGMouExqwCPP/SbPebxUf488Gmue7/V0f9X2C6TRgyYzzeGjtAPTOnRV8Qg4cxK9per2i8ipEAE="
+            "1+1z7y+fsCp4wf78cejgNqJfxy6ruFQ9nOBhQTZjeV473MTyHaMMbcA7J6uEmlx/LS9B2cCO36c8RArretPBggA="
           ]
         },
         {
@@ -302,11 +295,11 @@
                   "max_change_rate": "1.000000000000000000"
                 },
                 "min_self_delegation": "1",
-                "delegator_address": "bitchain1emhcvhn2qvgm5ggj6llapk30etkk9hn2zx9d29",
-                "validator_address": "bitchainvaloper1emhcvhn2qvgm5ggj6llapk30etkk9hn2tk34q3",
+                "delegator_address": "bitchain1ras5hprt8l2m0egaf3ytve2z9jvss27q0ueun0",
+                "validator_address": "bitchainvaloper1ras5hprt8l2m0egaf3ytve2z9jvss27qxvdyem",
                 "pubkey": {
                   "@type": "/cosmos.crypto.ed25519.PubKey",
-                  "key": "VMmKzQuhtTB+HgNzK8KrU5pDTkyKR+3vEcYmTsorgxw="
+                  "key": "5kj7yBufFj88Tdjw/Yn0wfnsA+AsR/kYO2hJ2yAZJJ0="
                 },
                 "value": {
                   "denom": "atele",
@@ -314,7 +307,7 @@
                 }
               }
             ],
-            "memo": "2ac1327b22fc6bf576aa81fbbde1d59054cbdd0c@172.172.0.3:26656",
+            "memo": "eb5aab01b8059718dda6b5e15e83037f25f0406d@172.172.0.3:26656",
             "timeout_height": "0",
             "extension_options": [],
             "non_critical_extension_options": []
@@ -324,7 +317,7 @@
               {
                 "public_key": {
                   "@type": "/ethermint.crypto.v1.ethsecp256k1.PubKey",
-                  "key": "AuyEI0806jRrO1PapXyue7+4ZZnxLq0S0umuQ7PoCXsi"
+                  "key": "Ahpzh4QgLN9EAMB/9xQZ9nVF/NYoEBZ1/prYRGa3Y0uh"
                 },
                 "mode_info": {
                   "single": {
@@ -342,7 +335,7 @@
             }
           },
           "signatures": [
-            "07ek7UXEtGZO76NSYfYIc0vrGegRX8chloefrbD2i/daMJv5X5e1GrocYQtiEiuY98o/kPjGQSwSEARElABFVQA="
+            "0VzzT2xCYR4dmjeRHqQVbUkcOdPe3rai8qyHTA3ZEmpXQf9UCKQB7v6OgrL1Oos8P5zxAdZQ8NRXEcWZf8816AA="
           ]
         },
         {
@@ -363,11 +356,11 @@
                   "max_change_rate": "1.000000000000000000"
                 },
                 "min_self_delegation": "1",
-                "delegator_address": "bitchain14u6c42syjvh6kg0fcxasywfv5wggleltq22xn5",
-                "validator_address": "bitchainvaloper14u6c42syjvh6kg0fcxasywfv5wggleltf677eq",
+                "delegator_address": "bitchain16340lvdgksrgewsmfzl2l4znc9lzfl8jylv97h",
+                "validator_address": "bitchainvaloper16340lvdgksrgewsmfzl2l4znc9lzfl8jd0ca5r",
                 "pubkey": {
                   "@type": "/cosmos.crypto.ed25519.PubKey",
-                  "key": "hlIaxCfUjJgeezKTP27TwxePCX1rY77R9aHF8TsJuvY="
+                  "key": "KthV4dhxweXFHrl3pwZybLeNXuOyZ775284u35ujeLo="
                 },
                 "value": {
                   "denom": "atele",
@@ -375,7 +368,7 @@
                 }
               }
             ],
-            "memo": "e324cc39eaa80ad0026e1c4c56b430276107b3d8@172.172.0.4:26656",
+            "memo": "dc8b706c9338c989861971fee1e89cc2cc07b875@172.172.0.4:26656",
             "timeout_height": "0",
             "extension_options": [],
             "non_critical_extension_options": []
@@ -385,7 +378,7 @@
               {
                 "public_key": {
                   "@type": "/ethermint.crypto.v1.ethsecp256k1.PubKey",
-                  "key": "AtYIon1eUIgnzYlZnaKEgdZrNML+f1uuZOVElXVi4x7x"
+                  "key": "Ah+RjEBQTIlbZ1ZZRlyR3qyNHLcQeTJcExDRaAFTelYT"
                 },
                 "mode_info": {
                   "single": {
@@ -403,7 +396,7 @@
             }
           },
           "signatures": [
-            "kwu2WUmDUZspVtqgPD5rA9ePsjcZ0Z4HN9e2Wq7m+voWPMOMak+w+ankhwwuUwuEuQ3SbquXyNoB5TrfxswwTwA="
+            "wgEG8AeN7Fh2+dXuTNNwSakihXbfAvKHUaj3AmdSWMg63mD6pN3VkYZoV/FjTagqfHlh8eYocMh8S+nJwz1gZgE="
           ]
         },
         {
@@ -424,11 +417,11 @@
                   "max_change_rate": "1.000000000000000000"
                 },
                 "min_self_delegation": "1",
-                "delegator_address": "bitchain14yqgrm8wuls40lgntsvfnjpkw7d24hky4pynqj",
-                "validator_address": "bitchainvaloper14yqgrm8wuls40lgntsvfnjpkw7d24hkyu3st2x",
+                "delegator_address": "bitchain1d93fz4ftj9gvsrmq0akau7x3va7fw95vffc34n",
+                "validator_address": "bitchainvaloper1d93fz4ftj9gvsrmq0akau7x3va7fw95vqevfl8",
                 "pubkey": {
                   "@type": "/cosmos.crypto.ed25519.PubKey",
-                  "key": "5JDgXNpS5JKj2ajDdl22T9u5elEz+hvDOXLyBnjtJ7A="
+                  "key": "sy4tipuHhrwI30CsapNHLEk7XndBy3b7BUbSx2SmJEI="
                 },
                 "value": {
                   "denom": "atele",
@@ -436,7 +429,7 @@
                 }
               }
             ],
-            "memo": "ed83cd948951c138b90aa974d4fd19bd0cb4e6e1@172.172.0.5:26656",
+            "memo": "131cb45fe072c46c943ec0702f66f91cbe5419a3@172.172.0.5:26656",
             "timeout_height": "0",
             "extension_options": [],
             "non_critical_extension_options": []
@@ -446,7 +439,7 @@
               {
                 "public_key": {
                   "@type": "/ethermint.crypto.v1.ethsecp256k1.PubKey",
-                  "key": "ArpQfCqW5UACKgfhGrF/2xZuYErzYTjkJGkIN2OE/EVB"
+                  "key": "A0u7pdeCnoyzaiX5VGJSPyO5FGTZZrWPTVIqT5nhSGrd"
                 },
                 "mode_info": {
                   "single": {
@@ -464,7 +457,7 @@
             }
           },
           "signatures": [
-            "msTbNwROdaGRpfSHfEQhoUR3m9FHO3k6IbbwQrkWi5B9jq9aiCeVr41l6lociaXTM42nxTHVrqtxpfQWuIc+mQE="
+            "aL9IpyaLDj55Q2Qfy8LmQR37Nrse7nvcy7h9suYOIxxCy1eCYHI93n0zAugwvXRyfk6caKDawPgQGpdUSwPovQA="
           ]
         },
         {
@@ -485,11 +478,11 @@
                   "max_change_rate": "1.000000000000000000"
                 },
                 "min_self_delegation": "1",
-                "delegator_address": "bitchain1tzffycff4vevjwgj63csxel4k30s08tnfya2al",
-                "validator_address": "bitchainvaloper1tzffycff4vevjwgj63csxel4k30s08tnq5fjht",
+                "delegator_address": "bitchain1qhtza3q4l6g3wzz5vcr6jv8dqmkp3f3atr03g7",
+                "validator_address": "bitchainvaloper1qhtza3q4l6g3wzz5vcr6jv8dqmkp3f3aznmfz2",
                 "pubkey": {
                   "@type": "/cosmos.crypto.ed25519.PubKey",
-                  "key": "wHCIxHAyxKDSExglGX3QWsOt+lD4HrXCN427aiQZdQI="
+                  "key": "uhyMNPX5zTlEKXTPcSZc6LA8RNOLyncjUNGuinFlhb0="
                 },
                 "value": {
                   "denom": "atele",
@@ -497,7 +490,7 @@
                 }
               }
             ],
-            "memo": "6c7b1828a204ff683fc0314c6c9a7aa9b48ff240@172.172.0.6:26656",
+            "memo": "f69ba1429d3c9983e941a9e88be6348125f08bd7@172.172.0.6:26656",
             "timeout_height": "0",
             "extension_options": [],
             "non_critical_extension_options": []
@@ -507,7 +500,7 @@
               {
                 "public_key": {
                   "@type": "/ethermint.crypto.v1.ethsecp256k1.PubKey",
-                  "key": "Aj4uO/KxvufzcIeBoGyjnAXji4IOzYKmPvT5zpfYG0BH"
+                  "key": "At9BIiTp9kVEihBL/NNXHmAIQIeJWv4jpLAwkbRTUlNB"
                 },
                 "mode_info": {
                   "single": {
@@ -525,7 +518,7 @@
             }
           },
           "signatures": [
-            "lfVR89COXJ0LUD76vlYOUyazrmxzjv5clJFhanukSYwOnoyHwZE2NzrIJbiE+r3gulNStujlXGmHOJBub899nQA="
+            "jn/0gzBJ3W1a3EMXqtKiI0bTK9k7BGBQ83XnezuoIfYDVpBrhPxynUz558+6q1a0VN7iqdlZ7vnqxi6cxi4ZRwE="
           ]
         },
         {
@@ -546,11 +539,11 @@
                   "max_change_rate": "1.000000000000000000"
                 },
                 "min_self_delegation": "1",
-                "delegator_address": "bitchain18v8s39xyfyud2a7rqy7hk2n4uut9fhk56wzawm",
-                "validator_address": "bitchainvaloper18v8s39xyfyud2a7rqy7hk2n4uut9fhk5n7k9y0",
+                "delegator_address": "bitchain16xf5gmghm5jeftpry6ruagtmvxqpar5xfk2275",
+                "validator_address": "bitchainvaloper16xf5gmghm5jeftpry6ruagtmvxqpar5xqx7j5q",
                 "pubkey": {
                   "@type": "/cosmos.crypto.ed25519.PubKey",
-                  "key": "YmaCgTABJYQHuLWfe+lCnxsXIzJpZ03DpJcvlZO0nlw="
+                  "key": "QvOONVsPm+SQ3mR/uogl4HIhjzFSf3BcqWWnvoRo/x4="
                 },
                 "value": {
                   "denom": "atele",
@@ -558,7 +551,7 @@
                 }
               }
             ],
-            "memo": "e6926ed0f092f28819251523d36523d602dca4fb@172.172.0.7:26656",
+            "memo": "b35a6303722fa574b88ff932acf087bb17199fd1@172.172.0.7:26656",
             "timeout_height": "0",
             "extension_options": [],
             "non_critical_extension_options": []
@@ -568,7 +561,7 @@
               {
                 "public_key": {
                   "@type": "/ethermint.crypto.v1.ethsecp256k1.PubKey",
-                  "key": "Ao7QJppZqqwZDVsIDlj2mNgdF66PAyZEKxTunH5Z4Hri"
+                  "key": "AzVUlPjvLmaZzXv0ED491auuMrhktVRphM6ql5buOtlk"
                 },
                 "mode_info": {
                   "single": {
@@ -586,7 +579,7 @@
             }
           },
           "signatures": [
-            "lVvQL8iDlUISV6DK9/WDwzNzxeDUhegySHRt8/J+wUlT9yRhp81BgiLJhI2V9X7kUIPv2Ix1R0W4LH67i3HNnwE="
+            "8XH1iNmwqo1Q2+csOTXwgfLRDZTeEJuV5FgRSdmkyXMCZ2+YFGFKYNgBk0K1Ol1ooeDL5eTiEi5FbHOnikb7kAA="
           ]
         },
         {
@@ -607,11 +600,11 @@
                   "max_change_rate": "1.000000000000000000"
                 },
                 "min_self_delegation": "1",
-                "delegator_address": "bitchain1vj6v7nxdqvqgj87qc3nn7py3kdtjpsdqjmva2z",
-                "validator_address": "bitchainvaloper1vj6v7nxdqvqgj87qc3nn7py3kdtjpsdqmtc9qk",
+                "delegator_address": "bitchain1klrupky4f79ssw3ekhqd7uv48vyhym754s4w7z",
+                "validator_address": "bitchainvaloper1klrupky4f79ssw3ekhqd7uv48vyhym75uqpk5k",
                 "pubkey": {
                   "@type": "/cosmos.crypto.ed25519.PubKey",
-                  "key": "bloov9ENL+nHjtIVSWI0aEaXHf8AP/7bv+HPVqMn7Tk="
+                  "key": "lMdf5/u8ppZabqvPvZ5DjaKOklMBlDhavL9DypP/Qm0="
                 },
                 "value": {
                   "denom": "atele",
@@ -619,7 +612,7 @@
                 }
               }
             ],
-            "memo": "c1b7f85c915ea630debc31e0fc13b7e1626911a8@172.172.0.8:26656",
+            "memo": "6528ded70d1f0000df144999c3fc7ff97129712b@172.172.0.8:26656",
             "timeout_height": "0",
             "extension_options": [],
             "non_critical_extension_options": []
@@ -629,7 +622,7 @@
               {
                 "public_key": {
                   "@type": "/ethermint.crypto.v1.ethsecp256k1.PubKey",
-                  "key": "A0HoP6dEid/Q4wUsazfTQdytjpvCRrLeKx8U2aWIW8gv"
+                  "key": "AzkcLcS+qN5MfygizgKaq74HwyptBCIclAj6VNEx7azf"
                 },
                 "mode_info": {
                   "single": {
@@ -647,7 +640,7 @@
             }
           },
           "signatures": [
-            "wmjCa+nm8G3Z3AudJbB4e3L7EGMTJ5Aodq+fF/yLCBggfEQ1bG95gq9HC5oEH9L2i59g5YMX5QNt1JYx/zZc1QA="
+            "85gD7cBHvI25mDfSoG+but+j2Bn4HEP8EA13b/TgvQdYQCHxBxbAuuqzB0krOeTT89O2iRTa/aqIxP5m5fy4UAA="
           ]
         }
       ]

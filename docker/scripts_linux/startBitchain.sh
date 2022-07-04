@@ -19,4 +19,4 @@ docker run -itd  --net bitchain-br7  --ip 172.172.0.7 --name=peer5  -p 26706:266
 docker run -itd  --net bitchain-br7  --ip 172.172.0.8 --name=peer6  -p 26716:26656 -p 26717:26657 -v ~/bitchain_dev/validators/validator6/bitchain/:/root/bitchain  -v ~/go/bin/bitchain:/usr/bin/bitchain ubuntu:20.04  bitchain start --home /root/bitchain --log_level info
 
 
-docker logs -f peer0 --tail=100
+docker logs -f peer0 --tail=200
