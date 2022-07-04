@@ -16,18 +16,17 @@ import (
 	tmrand "github.com/tendermint/tendermint/libs/rand"
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 
-	gaiaapp "github.com/cosmos/gaia/v7/app"
-	gaiahelpers "github.com/cosmos/gaia/v7/app/helpers"
+	bitapp "github.com/bitdao-io/bitchain/app"
+	bithelpers "github.com/bitdao-io/bitchain/app/helpers"
 )
 
 type IntegrationTestSuite struct {
 	suite.Suite
 
-	app         *gaiaapp.GaiaApp
-	anteHandler sdk.AnteHandler
-	ctx         sdk.Context
-	clientCtx   client.Context
-	txBuilder   client.TxBuilder
+	app       *bitapp.Bitchain
+	ctx       sdk.Context
+	clientCtx client.Context
+	txBuilder client.TxBuilder
 }
 
 func TestIntegrationTestSuite(t *testing.T) {
@@ -35,7 +34,7 @@ func TestIntegrationTestSuite(t *testing.T) {
 }
 
 func (s *IntegrationTestSuite) SetupTest() {
-	app := gaiahelpers.Setup(s.T(), false, 1)
+	app := bithelpers.Setup(s.T(), false, 1)
 	ctx := app.BaseApp.NewContext(false, tmproto.Header{
 		ChainID: fmt.Sprintf("test-chain-%s", tmrand.Str(4)),
 		Height:  1,
