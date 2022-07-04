@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"encoding/hex"
 	"fmt"
-	aggregatetypes "github.com/bitdao-io/bitchain/x/aggregate/types"
 	"github.com/cosmos/cosmos-sdk/store"
 	"github.com/cosmos/cosmos-sdk/store/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -75,8 +74,6 @@ func outputStore(db dbm.DB, height int64, outputDir string) {
 		ibctransfertypes.StoreKey,
 		icacontrollertypes.StoreKey,
 		icahosttypes.StoreKey,
-		// teleport keys
-		aggregatetypes.StoreKey,
 	)
 
 	for _, v := range keys {

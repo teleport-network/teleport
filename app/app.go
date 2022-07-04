@@ -106,11 +106,6 @@ import (
 	_ "github.com/bitdao-io/bitchain/client/docs/statik"
 	gabci "github.com/bitdao-io/bitchain/grpc_abci"
 	"github.com/bitdao-io/bitchain/types"
-	"github.com/bitdao-io/bitchain/x/aggregate"
-	aggregateclient "github.com/bitdao-io/bitchain/x/aggregate/client"
-	aggregatekeeper "github.com/bitdao-io/bitchain/x/aggregate/keeper"
-	aggregatemodule "github.com/bitdao-io/bitchain/x/aggregate/module"
-	aggregatetypes "github.com/bitdao-io/bitchain/x/aggregate/types"
 	rvestingkeeper "github.com/bitdao-io/bitchain/x/rvesting/keeper"
 	rvestingmodule "github.com/bitdao-io/bitchain/x/rvesting/module"
 	rvestingtypes "github.com/bitdao-io/bitchain/x/rvesting/types"
@@ -157,15 +152,6 @@ var (
 			// ibc
 			ibcclientclient.UpdateClientProposalHandler,
 			ibcclientclient.UpgradeProposalHandler,
-			// aggregate
-			aggregateclient.AddCoinProposalHandler,
-			aggregateclient.RegisterCoinProposalHandler,
-			aggregateclient.RegisterERC20PairProposalHandler,
-			aggregateclient.ToggleTokenRelayProposalHandler,
-			aggregateclient.UpdateTokenPairERC20Proposal,
-			aggregateclient.RegisterERC20TraceProposalHandler,
-			aggregateclient.EnableTimeBasedSupplyLimitProposalHandler,
-			aggregateclient.DisableTimeBasedSupplyLimitProposalHandler,
 		),
 		params.AppModuleBasic{},
 		crisis.AppModuleBasic{},
@@ -178,7 +164,6 @@ var (
 		upgrade.AppModuleBasic{},
 		evidence.AppModuleBasic{},
 		vesting.AppModuleBasic{},
-		aggregatemodule.AppModuleBasic{},
 		rvestingmodule.AppModuleBasic{},
 	)
 
@@ -190,7 +175,6 @@ var (
 		stakingtypes.NotBondedPoolName: {authtypes.Burner, authtypes.Staking},
 		govtypes.ModuleName:            {authtypes.Burner},
 		ibctransfertypes.ModuleName:    {authtypes.Minter, authtypes.Burner},
-		aggregatetypes.ModuleName:      {authtypes.Minter, authtypes.Burner},
 		icatypes.ModuleName:            nil,
 		rvestingtypes.ModuleName:       nil,
 	}
@@ -219,8 +203,6 @@ var (
 		ibctransfertypes.StoreKey,
 		icacontrollertypes.StoreKey,
 		icahosttypes.StoreKey,
-		// bitchain keys
-		aggregatetypes.StoreKey,
 	)
 )
 
@@ -278,8 +260,7 @@ type Bitchain struct {
 	ScopedICAHostKeeper       capabilitykeeper.ScopedKeeper
 
 	// Bitchain keepers
-	AggregateKeeper *aggregatekeeper.Keeper
-	RVestingKeeper  rvestingkeeper.Keeper
+	RVestingKeeper rvestingkeeper.Keeper
 
 	// the module manager
 	mm *module.Manager
@@ -397,22 +378,13 @@ func NewBitchain(
 		app.GetSubspace(rvestingtypes.ModuleName), app.BankKeeper, app.AccountKeeper, authtypes.FeeCollectorName,
 	)
 
-	// Aggregate Keeper
-	app.AggregateKeeper = aggregatekeeper.NewKeeper(
-		keys[aggregatetypes.StoreKey],
-		appCodec,
-		app.GetSubspace(aggregatetypes.ModuleName),
-		app.AccountKeeper,
-		app.BankKeeper,
-	)
 	// register the proposal types
 	govRouter := govtypes.NewRouter()
 	govRouter.AddRoute(govtypes.RouterKey, govtypes.ProposalHandler).
 		AddRoute(paramproposal.RouterKey, params.NewParamChangeProposalHandler(app.ParamsKeeper)).
 		AddRoute(distrtypes.RouterKey, distr.NewCommunityPoolSpendProposalHandler(app.DistrKeeper)).
 		AddRoute(upgradetypes.RouterKey, upgrade.NewSoftwareUpgradeProposalHandler(app.UpgradeKeeper)).
-		AddRoute(ibchost.RouterKey, ibcclient.NewClientProposalHandler(app.IBCKeeper.ClientKeeper)).
-		AddRoute(aggregatetypes.GovRouterKey, aggregate.NewAggregateProposalHandler(app.AggregateKeeper))
+		AddRoute(ibchost.RouterKey, ibcclient.NewClientProposalHandler(app.IBCKeeper.ClientKeeper))
 
 	govKeeper := govkeeper.NewKeeper(
 		appCodec,
@@ -431,7 +403,7 @@ func NewBitchain(
 		appCodec,
 		keys[ibctransfertypes.StoreKey],
 		app.GetSubspace(ibctransfertypes.ModuleName),
-		app.AggregateKeeper, // ICS4 Wrapper: IBC middleware
+		app.IBCKeeper.ChannelKeeper,
 		//app.IBCKeeper.ChannelKeeper,
 		app.IBCKeeper.ChannelKeeper,
 		&app.IBCKeeper.PortKeeper,
@@ -439,12 +411,9 @@ func NewBitchain(
 		app.BankKeeper,
 		scopedIBCTransferKeeper,
 	)
-	app.AggregateKeeper.SetICS4Wrapper(app.IBCKeeper.ChannelKeeper)
 
 	ibcTransferModule := ibctransfer.NewAppModule(app.IBCTransferKeeper)
 	ibcTransferIBCModule := ibctransfer.NewIBCModule(app.IBCTransferKeeper)
-	// create IBC module from bottom to top of stack
-	transferStack := aggregate.NewIBCMiddleware(*app.AggregateKeeper, ibcTransferIBCModule)
 
 	app.ICAControllerKeeper = icacontrollerkeeper.NewKeeper(
 		appCodec,
@@ -475,7 +444,7 @@ func NewBitchain(
 
 	// Create static IBC router, add transfer route, then set and seal it
 	ibcRouter := porttypes.NewRouter()
-	ibcRouter.AddRoute(ibctransfertypes.ModuleName, transferStack).
+	ibcRouter.AddRoute(ibctransfertypes.ModuleName, ibcTransferIBCModule).
 		// TODO: uncomment ICA controller once custom logic is supported
 		// AddRoute(icacontrollertypes.SubModuleName, icaControllerIBCModule).
 		AddRoute(icahosttypes.SubModuleName, icaHostIBCModule)
@@ -520,8 +489,6 @@ func NewBitchain(
 		ibc.NewAppModule(app.IBCKeeper),
 		ibcTransferModule,
 		icaModule,
-		// bitchain app modules
-		aggregatemodule.NewAppModule(*app.AggregateKeeper, app.AccountKeeper),
 		rvestingmodule.NewAppModule(app.RVestingKeeper),
 	)
 
@@ -552,7 +519,6 @@ func NewBitchain(
 		feegrant.ModuleName,
 		paramstypes.ModuleName,
 		vestingtypes.ModuleName,
-		aggregatetypes.ModuleName,
 	)
 
 	// NOTE: fee market module must go last in order to retrieve the block gas used.
@@ -576,7 +542,6 @@ func NewBitchain(
 		paramstypes.ModuleName,
 		upgradetypes.ModuleName,
 		vestingtypes.ModuleName,
-		aggregatetypes.ModuleName,
 		rvestingtypes.ModuleName,
 	)
 
@@ -604,9 +569,6 @@ func NewBitchain(
 		upgradetypes.ModuleName,
 		vestingtypes.ModuleName,
 		icatypes.ModuleName,
-		// Ethermint modules
-		// bitchain modules
-		aggregatetypes.ModuleName,
 		rvestingtypes.ModuleName,
 		// NOTE: crisis module must go at the end to check for invariants on each module
 		crisistypes.ModuleName,
@@ -901,7 +863,6 @@ func initParamsKeeper(appCodec codec.BinaryCodec, legacyAmino *codec.LegacyAmino
 	paramsKeeper.Subspace(icacontrollertypes.SubModuleName)
 	paramsKeeper.Subspace(icahosttypes.SubModuleName)
 	// bitchain subspaces
-	paramsKeeper.Subspace(aggregatetypes.ModuleName)
 	paramsKeeper.Subspace(rvestingtypes.ModuleName)
 	return paramsKeeper
 }

@@ -31,7 +31,6 @@ import (
 	genutilcli "github.com/cosmos/cosmos-sdk/x/genutil/client/cli"
 
 	ethermintclient "github.com/evmos/ethermint/client"
-	"github.com/evmos/ethermint/client/debug"
 	"github.com/evmos/ethermint/crypto/hd"
 	"github.com/evmos/ethermint/encoding"
 	ethermintserver "github.com/evmos/ethermint/server"
@@ -109,7 +108,6 @@ func NewRootCmd() (*cobra.Command, params.EncodingConfig) {
 		AddGenesisAccountCmd(app.DefaultNodeHome),
 		tmcli.NewCompletionCmd(rootCmd, true),
 		NewTestnetCmd(app.ModuleBasics, banktypes.GenesisBalancesIterator{}),
-		AddIBCDenomCommand(debug.Cmd()),
 		config.Cmd(),
 		tools.NewRollbackCmd(app.GetStoreKeys()),
 		tools.NewExtractLatestVersionAppCmd(app.GetStoreKeys()),
