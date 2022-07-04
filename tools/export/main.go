@@ -108,7 +108,10 @@ func outputStore(db dbm.DB, height int64, outputDir string) {
 				k, v := itr.Key(), itr.Value()
 				key := hex.EncodeToString(k)
 				value := hex.EncodeToString(v)
-				write.WriteString(fmt.Sprintf("%s,%s\n", key, value))
+				_, err := write.WriteString(fmt.Sprintf("%s,%s\n", key, value))
+				if err != nil {
+					panic(err)
+				}
 			}
 			if err = write.Flush(); err != nil {
 				panic(err)
