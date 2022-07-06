@@ -212,7 +212,7 @@ external_address = ""
 seeds = ""
 
 # Comma separated list of nodes to keep persistent connections to
-persistent_peers = "02c35106a975dc6206a3efca4ac615ad87c938bb@172.172.0.3:26656,451bfb3c97ceed3d61ec5cb4cef5b7532193346c@172.172.0.7:26656,45e353e541d6866726167c837c4f8160264e1bc8@172.172.0.6:26656,47401f456ffd4b553be658d08c71aadd298626f4@172.172.0.4:26656,68610c1f44cb378b8356d49dec24d5c63d82c772@172.172.0.2:26656,ba94aca11966c3cf5c414e8a3459ce43d27723ff@172.172.0.8:26656"
+persistent_peers = "02146360257cfc580ff58cad9b7d1420dcfe74ee@172.172.0.6:26656,5e42358f57a8b561592e6f59cd150b62101d726b@172.172.0.4:26656,73c77b9284f1f7ad21eb1db7f9919b7df514d231@172.172.0.8:26656,b206a0a747cde6074ac6588760b7c4bff6e3c25a@172.172.0.7:26656,c8d6aac5fd93eb76f6e0929eafbb2e200a5ce5ae@172.172.0.3:26656,f714bc0a6550e79c72490b847b61777d05bbb47c@172.172.0.2:26656"
 
 # UPNP port forwarding
 upnp = false
@@ -356,7 +356,7 @@ version = "v0"
 wal_file = "data/cs.wal/wal"
 
 # How long we wait for a proposal block before prevoting nil
-timeout_propose = "1s"
+timeout_propose = "3s"
 # How much timeout_propose increases with each round
 timeout_propose_delta = "500ms"
 # How long we wait after receiving +2/3 prevotes for “anything” (ie. not a single block or nil)
@@ -370,7 +370,7 @@ timeout_precommit_delta = "500ms"
 # How long we wait after committing a block, before starting on the new
 # height (this gives us a chance to receive some more precommits, even
 # though we already have +2/3).
-timeout_commit = "1s"
+timeout_commit = "5s"
 
 # How many blocks to look back to check existence of the node's consensus votes before joining consensus
 # When non-zero, the node will panic upon restart

@@ -4,7 +4,7 @@ set -o errexit -o nounset
 sudo rm -rf ~/.bitchain/
 
 KEYRING="test"
-KEYALGO="secp256k1"
+KEYALGO="eth_secp256k1"
 KEY="mykey"
 
 CHAINID="bitchain_7001-1"
