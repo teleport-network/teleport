@@ -2,6 +2,7 @@ package helpers
 
 import (
 	"encoding/json"
+	"github.com/cosmos/cosmos-sdk/simapp/params"
 	"testing"
 	"time"
 
@@ -67,7 +68,7 @@ func Setup(t *testing.T, isCheckTx bool, invCheckPeriod uint) *bitapp.Bitchain {
 
 func setup(withGenesis bool, invCheckPeriod uint) (*bitapp.Bitchain, bitapp.GenesisState) {
 	db := dbm.NewMemDB()
-	encCdc := bitapp.MakeEncodingConfig()
+	encCdc := params.EncodingConfig{}
 	app := bitapp.NewBitchain(
 		log.NewNopLogger(),
 		db,

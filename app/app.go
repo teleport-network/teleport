@@ -2,6 +2,7 @@ package app
 
 import (
 	"fmt"
+	cfgParams "github.com/cosmos/cosmos-sdk/simapp/params"
 	"io"
 	stdlog "log"
 	"net/http"
@@ -240,7 +241,7 @@ func NewBitchain(
 	skipUpgradeHeights map[int64]bool,
 	homePath string,
 	invCheckPeriod uint,
-	encodingConfig bitappparams.EncodingConfig,
+	encodingConfig cfgParams.EncodingConfig,
 	appOpts servertypes.AppOptions,
 	baseAppOptions ...func(*baseapp.BaseApp),
 ) *Bitchain {
