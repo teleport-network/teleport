@@ -56,7 +56,7 @@ will not be able to be queried via rpc/p2p server built upon it.
 	return cmd
 }
 
-func NewRollbackCmd(storeKeys map[string]*sdk.KVStoreKey) *cobra.Command {
+func NewRollbackAnyCmd(storeKeys map[string]*sdk.KVStoreKey) *cobra.Command {
 	var height int64
 	cmd := &cobra.Command{
 		Use:   "rollback-any",

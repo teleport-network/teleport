@@ -15,6 +15,7 @@ import (
 	evidencetypes "github.com/cosmos/cosmos-sdk/x/evidence/types"
 	"github.com/cosmos/cosmos-sdk/x/feegrant"
 	govtypes "github.com/cosmos/cosmos-sdk/x/gov/types"
+	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
 	paramstypes "github.com/cosmos/cosmos-sdk/x/params/types"
 	slashingtypes "github.com/cosmos/cosmos-sdk/x/slashing/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
@@ -23,6 +24,8 @@ import (
 	icahosttypes "github.com/cosmos/ibc-go/v3/modules/apps/27-interchain-accounts/host/types"
 	ibctransfertypes "github.com/cosmos/ibc-go/v3/modules/apps/transfer/types"
 	ibchost "github.com/cosmos/ibc-go/v3/modules/core/24-host"
+	liquiditytypes "github.com/gravity-devs/liquidity/x/liquidity/types"
+	routertypes "github.com/strangelove-ventures/packet-forward-middleware/v2/router/types"
 	dbm "github.com/tendermint/tm-db"
 	"os"
 	"path/filepath"
@@ -59,21 +62,26 @@ func outputStore(db dbm.DB, height int64, outputDir string) {
 		// SDK keys
 		authtypes.StoreKey,
 		banktypes.StoreKey,
-		stakingtypes.StoreKey,
-		distrtypes.StoreKey,
-		slashingtypes.StoreKey,
-		govtypes.StoreKey,
-		paramstypes.StoreKey,
-		upgradetypes.StoreKey,
-		evidencetypes.StoreKey,
 		capabilitytypes.StoreKey,
-		feegrant.StoreKey,
-		authzkeeper.StoreKey,
+		stakingtypes.StoreKey,
+		slashingtypes.StoreKey,
+		minttypes.StoreKey,
+		distrtypes.StoreKey,
+		govtypes.StoreKey,
+		upgradetypes.StoreKey,
+		paramstypes.StoreKey,
+
 		// ibc keys
 		ibchost.StoreKey,
 		ibctransfertypes.StoreKey,
 		icacontrollertypes.StoreKey,
 		icahosttypes.StoreKey,
+
+		evidencetypes.StoreKey,
+		feegrant.StoreKey,
+		authzkeeper.StoreKey,
+		liquiditytypes.StoreKey,
+		routertypes.StoreKey,
 	)
 
 	for _, v := range keys {

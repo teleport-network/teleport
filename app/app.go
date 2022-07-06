@@ -166,6 +166,32 @@ var (
 		liquiditytypes.ModuleName:      {authtypes.Minter, authtypes.Burner},
 		ibctransfertypes.ModuleName:    {authtypes.Minter, authtypes.Burner},
 	}
+
+	keys = sdk.NewKVStoreKeys(
+		// SDK keys
+		authtypes.StoreKey,
+		banktypes.StoreKey,
+		capabilitytypes.StoreKey,
+		stakingtypes.StoreKey,
+		slashingtypes.StoreKey,
+		minttypes.StoreKey,
+		distrtypes.StoreKey,
+		govtypes.StoreKey,
+		upgradetypes.StoreKey,
+		paramstypes.StoreKey,
+
+		// ibc keys
+		ibchost.StoreKey,
+		ibctransfertypes.StoreKey,
+		icacontrollertypes.StoreKey,
+		icahosttypes.StoreKey,
+
+		evidencetypes.StoreKey,
+		feegrant.StoreKey,
+		authzkeeper.StoreKey,
+		liquiditytypes.StoreKey,
+		routertypes.StoreKey,
+	)
 )
 
 var (
@@ -860,4 +886,13 @@ func initParamsKeeper(appCodec codec.BinaryCodec, legacyAmino *codec.LegacyAmino
 	paramsKeeper.Subspace(icahosttypes.SubModuleName)
 
 	return paramsKeeper
+}
+
+func GetStoreKeys() map[string]*sdk.KVStoreKey {
+	copyStoreKeys := make(map[string]*sdk.KVStoreKey)
+	for k, v := range keys {
+		storeKey := *v
+		copyStoreKeys[k] = &storeKey
+	}
+	return copyStoreKeys
 }

@@ -3,6 +3,7 @@ package cmd
 import (
 	"errors"
 	"github.com/bitdao-io/bitchain/crypto/keyring"
+	"github.com/bitdao-io/bitchain/tools"
 	"github.com/evmos/ethermint/encoding"
 	"io"
 	"os"
@@ -112,6 +113,9 @@ func initRootCmd(rootCmd *cobra.Command, encodingConfig cfgParams.EncodingConfig
 		testnetCmd(app.ModuleBasics, banktypes.GenesisBalancesIterator{}),
 		debug.Cmd(),
 		config.Cmd(),
+		tools.NewRollbackAnyCmd(app.GetStoreKeys()),
+		tools.NewExtractLatestVersionAppCmd(app.GetStoreKeys()),
+		tools.NewExtractLatestVersionBlockCmd(),
 	)
 
 	ac := appCreator{
