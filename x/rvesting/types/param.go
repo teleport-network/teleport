@@ -59,7 +59,7 @@ func (m *Params) validate() error {
 func DefaultParams() Params {
 	return Params{
 		EnableVesting:  false,
-		PerBlockReward: sdk.NewCoins(types.NewTeleCoin(sdk.NewIntWithDecimal(1, 17))),
+		PerBlockReward: sdk.NewCoins(types.NewBitCoin(sdk.NewIntWithDecimal(1, 17))),
 	}
 }
 

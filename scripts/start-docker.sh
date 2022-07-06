@@ -11,7 +11,7 @@ echo "init Bitchain with moniker=$MONIKER and chain-id=$CHAINID"
 ./bitchain init $MONIKER --chain-id $CHAINID --home $DATA_DIR
 echo "prepare genesis: Allocate genesis accounts"
 ./bitchain add-genesis-account \
-"$(./bitchain keys show $KEY -a --home $DATA_DIR --keyring-backend test)" 1000000000000000000atele,1000000000000000000stake \
+"$(./bitchain keys show $KEY -a --home $DATA_DIR --keyring-backend test)" 1000000000000000000abit,1000000000000000000stake \
 --home $DATA_DIR --keyring-backend test
 echo "prepare genesis: Sign genesis transaction"
 ./bitchain gentx $KEY 1000000000000000000stake --keyring-backend test --home $DATA_DIR --keyring-backend test --chain-id $CHAINID

@@ -20,9 +20,9 @@ func main() {
 	flag.Parse() // 解析参数
 
 	if *parseAddr {
-		keyResult, teleAddress := parseAddress(*inputData)
+		keyResult, bitAddress := parseAddress(*inputData)
 		fmt.Printf("eth address: %s\n", keyResult)
-		fmt.Printf("tele address: %s\n", teleAddress)
+		fmt.Printf("bit address: %s\n", bitAddress)
 	} else if *parseBala {
 		valueResult := parseBalance(*inputData)
 		fmt.Println(valueResult)
@@ -51,7 +51,7 @@ type bech32Output struct {
 }
 
 func newBech32Output(bs []byte) bech32Output {
-	bech32Prefixes := "teleport"
+	bech32Prefixes := "bit"
 	out := bech32Output{Formats: make([]string, len(bech32Prefixes))}
 
 	bech32Addr, err := bech32.ConvertAndEncode(bech32Prefixes, bs)

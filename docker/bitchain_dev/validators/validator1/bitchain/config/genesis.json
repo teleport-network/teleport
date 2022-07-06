@@ -1,5 +1,5 @@
 {
-  "genesis_time": "2022-07-06T03:49:37.642581255Z",
+  "genesis_time": "2022-07-06T10:41:54.854907498Z",
   "chain_id": "bitchain_7001-1",
   "initial_height": "1",
   "consensus_params": {
@@ -33,49 +33,49 @@
       "accounts": [
         {
           "@type": "/cosmos.auth.v1beta1.BaseAccount",
-          "address": "cosmos144kghgqlptssezh0vtdhllzla0j7cmcrcgnhaw",
+          "address": "bit1da0y00nevldw4c5t578uuw4arh08caqcukjwzr",
           "pub_key": null,
           "account_number": "0",
           "sequence": "0"
         },
         {
           "@type": "/cosmos.auth.v1beta1.BaseAccount",
-          "address": "cosmos1vxe5y97ergmp4l8rna8pmju38ttjm2p3vglnf2",
+          "address": "bit1tp0g6d0svwk8c00dw98fxkdx08v44htq426gn3",
           "pub_key": null,
           "account_number": "0",
           "sequence": "0"
         },
         {
           "@type": "/cosmos.auth.v1beta1.BaseAccount",
-          "address": "cosmos1hrjq5m8czly0p38lpasynw7w79827qjngjhya0",
+          "address": "bit1a3rw4h2j3cyyunfnqjkcr38xx8e8laj8c9swlf",
           "pub_key": null,
           "account_number": "0",
           "sequence": "0"
         },
         {
           "@type": "/cosmos.auth.v1beta1.BaseAccount",
-          "address": "cosmos1gfvlk2wsxuv0rsfhzchmn34hj2ad24fz4celhy",
+          "address": "bit1u0nfeqepmw0gyv2jjp4700lqf9ayhwxtcxywyz",
           "pub_key": null,
           "account_number": "0",
           "sequence": "0"
         },
         {
           "@type": "/cosmos.auth.v1beta1.BaseAccount",
-          "address": "cosmos1mhk0f8f3xdyqdkk2kwmkw20wzq6kc9yldm6n0s",
+          "address": "bit1fkvdylspaa76hv3hm8y5n5f9jm90kqw89jtz5y",
           "pub_key": null,
           "account_number": "0",
           "sequence": "0"
         },
         {
           "@type": "/cosmos.auth.v1beta1.BaseAccount",
-          "address": "cosmos1gvwwmu6v0s3dleey93wprdz85gzuv75x6gpfrd",
+          "address": "bit1qqdnrl43wjj4yjlszngzhwrae2wthswvus4qvd",
           "pub_key": null,
           "account_number": "0",
           "sequence": "0"
         },
         {
           "@type": "/cosmos.auth.v1beta1.BaseAccount",
-          "address": "cosmos1ngujj20jqz9k9kh8g4cmee3avus23c30zd9n69",
+          "address": "bit1ufqn5p6k8j3vwg5pht63fd8uzgn969dtu3qaqp",
           "pub_key": null,
           "account_number": "0",
           "sequence": "0"
@@ -92,23 +92,10 @@
       },
       "balances": [
         {
-          "address": "cosmos1gfvlk2wsxuv0rsfhzchmn34hj2ad24fz4celhy",
+          "address": "bit1qqdnrl43wjj4yjlszngzhwrae2wthswvus4qvd",
           "coins": [
             {
-              "denom": "stake",
-              "amount": "500000000"
-            },
-            {
-              "denom": "validator3token",
-              "amount": "1000000000"
-            }
-          ]
-        },
-        {
-          "address": "cosmos1gvwwmu6v0s3dleey93wprdz85gzuv75x6gpfrd",
-          "coins": [
-            {
-              "denom": "stake",
+              "denom": "abit",
               "amount": "500000000"
             },
             {
@@ -118,10 +105,23 @@
           ]
         },
         {
-          "address": "cosmos1vxe5y97ergmp4l8rna8pmju38ttjm2p3vglnf2",
+          "address": "bit1fkvdylspaa76hv3hm8y5n5f9jm90kqw89jtz5y",
           "coins": [
             {
-              "denom": "stake",
+              "denom": "abit",
+              "amount": "500000000"
+            },
+            {
+              "denom": "validator4token",
+              "amount": "1000000000"
+            }
+          ]
+        },
+        {
+          "address": "bit1tp0g6d0svwk8c00dw98fxkdx08v44htq426gn3",
+          "coins": [
+            {
+              "denom": "abit",
               "amount": "500000000"
             },
             {
@@ -131,23 +131,10 @@
           ]
         },
         {
-          "address": "cosmos1ngujj20jqz9k9kh8g4cmee3avus23c30zd9n69",
+          "address": "bit1da0y00nevldw4c5t578uuw4arh08caqcukjwzr",
           "coins": [
             {
-              "denom": "stake",
-              "amount": "500000000"
-            },
-            {
-              "denom": "validator6token",
-              "amount": "1000000000"
-            }
-          ]
-        },
-        {
-          "address": "cosmos144kghgqlptssezh0vtdhllzla0j7cmcrcgnhaw",
-          "coins": [
-            {
-              "denom": "stake",
+              "denom": "abit",
               "amount": "500000000"
             },
             {
@@ -157,10 +144,36 @@
           ]
         },
         {
-          "address": "cosmos1hrjq5m8czly0p38lpasynw7w79827qjngjhya0",
+          "address": "bit1ufqn5p6k8j3vwg5pht63fd8uzgn969dtu3qaqp",
           "coins": [
             {
-              "denom": "stake",
+              "denom": "abit",
+              "amount": "500000000"
+            },
+            {
+              "denom": "validator6token",
+              "amount": "1000000000"
+            }
+          ]
+        },
+        {
+          "address": "bit1u0nfeqepmw0gyv2jjp4700lqf9ayhwxtcxywyz",
+          "coins": [
+            {
+              "denom": "abit",
+              "amount": "500000000"
+            },
+            {
+              "denom": "validator3token",
+              "amount": "1000000000"
+            }
+          ]
+        },
+        {
+          "address": "bit1a3rw4h2j3cyyunfnqjkcr38xx8e8laj8c9swlf",
+          "coins": [
+            {
+              "denom": "abit",
               "amount": "500000000"
             },
             {
@@ -168,24 +181,11 @@
               "amount": "1000000000"
             }
           ]
-        },
-        {
-          "address": "cosmos1mhk0f8f3xdyqdkk2kwmkw20wzq6kc9yldm6n0s",
-          "coins": [
-            {
-              "denom": "stake",
-              "amount": "500000000"
-            },
-            {
-              "denom": "validator4token",
-              "amount": "1000000000"
-            }
-          ]
         }
       ],
       "supply": [
         {
-          "denom": "stake",
+          "denom": "abit",
           "amount": "3500000000"
         },
         {
@@ -225,7 +225,7 @@
     },
     "crisis": {
       "constant_fee": {
-        "denom": "stake",
+        "denom": "abit",
         "amount": "1000"
       }
     },
@@ -274,19 +274,19 @@
                   "max_change_rate": "1.000000000000000000"
                 },
                 "min_self_delegation": "1",
-                "delegator_address": "cosmos144kghgqlptssezh0vtdhllzla0j7cmcrcgnhaw",
-                "validator_address": "cosmosvaloper144kghgqlptssezh0vtdhllzla0j7cmcrau8z3a",
+                "delegator_address": "bit1da0y00nevldw4c5t578uuw4arh08caqcukjwzr",
+                "validator_address": "bitvaloper1da0y00nevldw4c5t578uuw4arh08caqct49les",
                 "pubkey": {
                   "@type": "/cosmos.crypto.ed25519.PubKey",
-                  "key": "NUaiLX/PTrYyMDs/2Ggo0iwN2212YaA6C9VhleXVqFo="
+                  "key": "ZXwP12prtUGo+Lz95zZTr/yRo5eizCsB20MZq+fC50I="
                 },
                 "value": {
-                  "denom": "stake",
+                  "denom": "abit",
                   "amount": "100000000"
                 }
               }
             ],
-            "memo": "f714bc0a6550e79c72490b847b61777d05bbb47c@172.172.0.2:26656",
+            "memo": "02b7ac906ce03e642f7375d5145acc98a243d286@172.172.0.2:26656",
             "timeout_height": "0",
             "extension_options": [],
             "non_critical_extension_options": []
@@ -296,7 +296,7 @@
               {
                 "public_key": {
                   "@type": "/ethermint.crypto.v1.ethsecp256k1.PubKey",
-                  "key": "A5n+/kGsNIBG7OhlNmmNmRHTO12qWWVV+36kxbvRlWC3"
+                  "key": "A+Qx+aZEItbNcVloeufEeDeprRBGJc+hNqm3+qKGUcog"
                 },
                 "mode_info": {
                   "single": {
@@ -314,7 +314,7 @@
             }
           },
           "signatures": [
-            "bJN3q22c8cOeCaJ+F6sLgzJJy3l8qZiJ8343Gyq2UstJk4rTuVx3f/YZm3XAIVoxQ/V/hYaTEGnyvZiTl2X8nQE="
+            "NZskbcnSiQSPiFCBmZdVNgkElrHwcbuTS3Ymcc64/P4BpFgDhbwqcihtQJsugbhOGy+oT+FcGl29zKMrCpsuRgA="
           ]
         },
         {
@@ -335,19 +335,19 @@
                   "max_change_rate": "1.000000000000000000"
                 },
                 "min_self_delegation": "1",
-                "delegator_address": "cosmos1vxe5y97ergmp4l8rna8pmju38ttjm2p3vglnf2",
-                "validator_address": "cosmosvaloper1vxe5y97ergmp4l8rna8pmju38ttjm2p3futx9e",
+                "delegator_address": "bit1tp0g6d0svwk8c00dw98fxkdx08v44htq426gn3",
+                "validator_address": "bitvaloper1tp0g6d0svwk8c00dw98fxkdx08v44htqzfdegz",
                 "pubkey": {
                   "@type": "/cosmos.crypto.ed25519.PubKey",
-                  "key": "w86jEzlALe3RjGI7D7e7d9ST0be1OKVRKch98xasz2Y="
+                  "key": "MLwA6sEDcTx+Ie/bx4vdM3dFZ3sgMaZZC5cximMN15E="
                 },
                 "value": {
-                  "denom": "stake",
+                  "denom": "abit",
                   "amount": "100000000"
                 }
               }
             ],
-            "memo": "c8d6aac5fd93eb76f6e0929eafbb2e200a5ce5ae@172.172.0.3:26656",
+            "memo": "88a648547c60dde5068a74fd8592f9ff9bebf131@172.172.0.3:26656",
             "timeout_height": "0",
             "extension_options": [],
             "non_critical_extension_options": []
@@ -357,7 +357,7 @@
               {
                 "public_key": {
                   "@type": "/ethermint.crypto.v1.ethsecp256k1.PubKey",
-                  "key": "A0bKvp2mSu0yMcbm4AvhBpP4m3BC3ZmkTZHX5VIX/o1V"
+                  "key": "AxG3FpDPXqTq5TU05/If8qAEFirYqFf5h31pNnoE8PIn"
                 },
                 "mode_info": {
                   "single": {
@@ -375,7 +375,7 @@
             }
           },
           "signatures": [
-            "tDniLbeXFa5cs5/wbi9m4d+ZFMwu80/o1NOuFFtkmJcfJHUKBMwfJ3yg7oq6851pMU6ByKYZ2s1IevRQkgtPhAA="
+            "ScP54DOp2vFsytahVIJqQ/hTGN/s2pVl3jkd5X309K80jY9Gs7neXeIgDMqd2aOXcfHoTPxt3eNy58mx0aYIYQA="
           ]
         },
         {
@@ -396,19 +396,19 @@
                   "max_change_rate": "1.000000000000000000"
                 },
                 "min_self_delegation": "1",
-                "delegator_address": "cosmos1hrjq5m8czly0p38lpasynw7w79827qjngjhya0",
-                "validator_address": "cosmosvaloper1hrjq5m8czly0p38lpasynw7w79827qjndxr33u",
+                "delegator_address": "bit1a3rw4h2j3cyyunfnqjkcr38xx8e8laj8c9swlf",
+                "validator_address": "bitvaloper1a3rw4h2j3cyyunfnqjkcr38xx8e8laj80x8ly6",
                 "pubkey": {
                   "@type": "/cosmos.crypto.ed25519.PubKey",
-                  "key": "+/8SCVwnqs2mZgNX4+Dz9yYI6859gDbMsHOT6+ZNAZQ="
+                  "key": "NkDvlPtzTZit0KF3zw2bERmxp3xW0ZEAoHee+0Q5dlY="
                 },
                 "value": {
-                  "denom": "stake",
+                  "denom": "abit",
                   "amount": "100000000"
                 }
               }
             ],
-            "memo": "5e42358f57a8b561592e6f59cd150b62101d726b@172.172.0.4:26656",
+            "memo": "a946cea99f9ee099cef03220c2b82a7177d8d0ee@172.172.0.4:26656",
             "timeout_height": "0",
             "extension_options": [],
             "non_critical_extension_options": []
@@ -418,7 +418,7 @@
               {
                 "public_key": {
                   "@type": "/ethermint.crypto.v1.ethsecp256k1.PubKey",
-                  "key": "A0wB7xDDRPBfHEg/aSNVz5BlPzB8Fo1PnGDNAUckwGJl"
+                  "key": "AxUmJ+fnTGquVzKgQPLLl2QJ3Cdve6xoaAkjyrHbUeTp"
                 },
                 "mode_info": {
                   "single": {
@@ -436,7 +436,7 @@
             }
           },
           "signatures": [
-            "c8KdSSksvDH0CkpwVd+MeLU2SUaN5Ijyf/EBA34V0uIZa5UlaCXbKXPzed5dcDRf8N7d3KiRAGflJAdVWfEaBAA="
+            "PyqFGk+a6rDtI8mpyHxPxHNIP9Uwf+E91Fd0g6MDU+luaMKIum44tAbDiydcgbdf1ZPXfPWknYyZs9QCkgmoAAE="
           ]
         },
         {
@@ -457,19 +457,19 @@
                   "max_change_rate": "1.000000000000000000"
                 },
                 "min_self_delegation": "1",
-                "delegator_address": "cosmos1gfvlk2wsxuv0rsfhzchmn34hj2ad24fz4celhy",
-                "validator_address": "cosmosvaloper1gfvlk2wsxuv0rsfhzchmn34hj2ad24fzsvd2mh",
+                "delegator_address": "bit1u0nfeqepmw0gyv2jjp4700lqf9ayhwxtcxywyz",
+                "validator_address": "bitvaloper1u0nfeqepmw0gyv2jjp4700lqf9ayhwxt09nll3",
                 "pubkey": {
                   "@type": "/cosmos.crypto.ed25519.PubKey",
-                  "key": "T7K2ohsVldf94W1sswwBfhp3omIOh1/rz1Cpwu4TbUU="
+                  "key": "G5cQsqbUeqzfHyEi8VeiOMN0g9fRZ/XzoxPh7S+cTc0="
                 },
                 "value": {
-                  "denom": "stake",
+                  "denom": "abit",
                   "amount": "100000000"
                 }
               }
             ],
-            "memo": "3cbb1a8810801f8615768b3559fae2ac090911b7@172.172.0.5:26656",
+            "memo": "ab8bd36661a9f0e9876968fe55c6880852e1c8a1@172.172.0.5:26656",
             "timeout_height": "0",
             "extension_options": [],
             "non_critical_extension_options": []
@@ -479,7 +479,7 @@
               {
                 "public_key": {
                   "@type": "/ethermint.crypto.v1.ethsecp256k1.PubKey",
-                  "key": "AsvjXTzgQhILiImk/ukiiHItTEEZhH5tMleFuR2M7X/v"
+                  "key": "AtJN2vltqpt9hPWriwyIxZEqXUfNXD6OwSOygcLc8+Kj"
                 },
                 "mode_info": {
                   "single": {
@@ -497,7 +497,7 @@
             }
           },
           "signatures": [
-            "2Se/d1gbYq79xe5806xBqYHh0Vg92lPagMDdqm2Ntb46ILS2jmmmk4FCxwB8Up2e4Z1TpXgFPuj6zGwwniMM/gE="
+            "FHzcfZ2K9beFycKKPykEaOmAqE8RdjuIY/3IuYyonvh21cGN2Y3bFunRu1YRxhJ1rwLJ/OrNb5M0BL4bX6c7CwE="
           ]
         },
         {
@@ -518,19 +518,19 @@
                   "max_change_rate": "1.000000000000000000"
                 },
                 "min_self_delegation": "1",
-                "delegator_address": "cosmos1mhk0f8f3xdyqdkk2kwmkw20wzq6kc9yldm6n0s",
-                "validator_address": "cosmosvaloper1mhk0f8f3xdyqdkk2kwmkw20wzq6kc9ylg0wxrr",
+                "delegator_address": "bit1fkvdylspaa76hv3hm8y5n5f9jm90kqw89jtz5y",
+                "validator_address": "bitvaloper1fkvdylspaa76hv3hm8y5n5f9jm90kqw8j3un0h",
                 "pubkey": {
                   "@type": "/cosmos.crypto.ed25519.PubKey",
-                  "key": "ZzXzo9V9BMbOfIHakbIEey8XI1+g1TzNQdhP98CjBE8="
+                  "key": "XHr17grsGgcEqGbBUIK9j+LR9q5Qv00Eq1Svj0tsF9k="
                 },
                 "value": {
-                  "denom": "stake",
+                  "denom": "abit",
                   "amount": "100000000"
                 }
               }
             ],
-            "memo": "02146360257cfc580ff58cad9b7d1420dcfe74ee@172.172.0.6:26656",
+            "memo": "6e48f9d226e472769b17a7a49f9c48ce9538a693@172.172.0.6:26656",
             "timeout_height": "0",
             "extension_options": [],
             "non_critical_extension_options": []
@@ -540,7 +540,7 @@
               {
                 "public_key": {
                   "@type": "/ethermint.crypto.v1.ethsecp256k1.PubKey",
-                  "key": "AoUg2syodbWjWSHMXmjOI0qX6K0ByYgGvl8b1XW04Ww1"
+                  "key": "AmmtOmHkA9C0ROFBeLwCMN7Xncea+bW5C9xVFzjJRB2Z"
                 },
                 "mode_info": {
                   "single": {
@@ -558,7 +558,7 @@
             }
           },
           "signatures": [
-            "buKERLb37iGeyuH2D2GLjKV8cKIFZceri9gHg1/MAug28N4sf5Oqcl18PMgj3lNa6eBi0k/pY58HHBDc/gTdCgE="
+            "/5an6u66V8a/kUWoF1ptjVzMpXf7pwmVEYV9yiExQaMGLhj4YxeHO+pc5Kv8KOxYwcrbqa9P8f1k46uhbNZj6QA="
           ]
         },
         {
@@ -579,19 +579,19 @@
                   "max_change_rate": "1.000000000000000000"
                 },
                 "min_self_delegation": "1",
-                "delegator_address": "cosmos1gvwwmu6v0s3dleey93wprdz85gzuv75x6gpfrd",
-                "validator_address": "cosmosvaloper1gvwwmu6v0s3dleey93wprdz85gzuv75xlu4u07",
+                "delegator_address": "bit1qqdnrl43wjj4yjlszngzhwrae2wthswvus4qvd",
+                "validator_address": "bitvaloper1qqdnrl43wjj4yjlszngzhwrae2wthswvtnz3h7",
                 "pubkey": {
                   "@type": "/cosmos.crypto.ed25519.PubKey",
-                  "key": "DOxJ2h7jPcy1qj6Wt23eUqKydzflrwMbPrVbXIJoVic="
+                  "key": "ExQMIL+uZOOwTL7kDtegrPTtEmrzKFAooWc1pX07Qvo="
                 },
                 "value": {
-                  "denom": "stake",
+                  "denom": "abit",
                   "amount": "100000000"
                 }
               }
             ],
-            "memo": "b206a0a747cde6074ac6588760b7c4bff6e3c25a@172.172.0.7:26656",
+            "memo": "13251885bd3e587132def4a82aa1df52646997de@172.172.0.7:26656",
             "timeout_height": "0",
             "extension_options": [],
             "non_critical_extension_options": []
@@ -601,7 +601,7 @@
               {
                 "public_key": {
                   "@type": "/ethermint.crypto.v1.ethsecp256k1.PubKey",
-                  "key": "A+5ya1b9sXRq1X1FEHM0u4bTZdWFnFliqEngzwKVWqyW"
+                  "key": "Anmx6qZ8sAbYS+ojI7Y225wC9qyfTB2ga8ACDjqDETtc"
                 },
                 "mode_info": {
                   "single": {
@@ -619,7 +619,7 @@
             }
           },
           "signatures": [
-            "yVfpwnm4Je9af4zbKoPZilO05VonNaYKxCxUYp/t8KY9WzVgBAM83GMJZdBgFwtt6mkI7332U4MycAVYnrAjvwE="
+            "pG3LhixiOMHgLz9Zqh5+RAi1d0omtaqd7rmyU77SjAwJsIq4iaHcln9PdZipw4rVhrxymIPxHgbgCL/NIRsgtwA="
           ]
         },
         {
@@ -640,19 +640,19 @@
                   "max_change_rate": "1.000000000000000000"
                 },
                 "min_self_delegation": "1",
-                "delegator_address": "cosmos1ngujj20jqz9k9kh8g4cmee3avus23c30zd9n69",
-                "validator_address": "cosmosvaloper1ngujj20jqz9k9kh8g4cmee3avus23c308e3xkk",
+                "delegator_address": "bit1ufqn5p6k8j3vwg5pht63fd8uzgn969dtu3qaqp",
+                "validator_address": "bitvaloper1ufqn5p6k8j3vwg5pht63fd8uzgn969dttjhvmj",
                 "pubkey": {
                   "@type": "/cosmos.crypto.ed25519.PubKey",
-                  "key": "Ha0KRwsiTllrVmQdKHxhPgWsOfd4pVnakdF1PCAA66Q="
+                  "key": "/03c+jHefX2b3uQbrt6z52qwNQ4pQmgXYvzS1fK1+z0="
                 },
                 "value": {
-                  "denom": "stake",
+                  "denom": "abit",
                   "amount": "100000000"
                 }
               }
             ],
-            "memo": "73c77b9284f1f7ad21eb1db7f9919b7df514d231@172.172.0.8:26656",
+            "memo": "d20ab96c0996868c2e9bc1314e1772a27a277921@172.172.0.8:26656",
             "timeout_height": "0",
             "extension_options": [],
             "non_critical_extension_options": []
@@ -662,7 +662,7 @@
               {
                 "public_key": {
                   "@type": "/ethermint.crypto.v1.ethsecp256k1.PubKey",
-                  "key": "ArGGrjX7YT3BslCYbgzUo5kHgh4/BnXQSgjCVMpNkT2x"
+                  "key": "A0ovtEqvpoqAtguoUXehvjCJqnL1fkSXTS5G36ufosLc"
                 },
                 "mode_info": {
                   "single": {
@@ -680,7 +680,7 @@
             }
           },
           "signatures": [
-            "NuTFhSOE2h9LjKOWBEdLZELYyRlzthrgHdlYKgMih8hkpCMkhOB9kvS9m9x1bOqT1e9OsUSldFOXalXIBTqQCQE="
+            "0JQ93lTWGSeEQRRj0hGgKv84X3U8sANIuiUtiQongrZmL3hRxOaCwtEl6PPrJqnBpphxkdO0vg6njuy6i89WAQE="
           ]
         }
       ]
@@ -693,7 +693,7 @@
       "deposit_params": {
         "min_deposit": [
           {
-            "denom": "stake",
+            "denom": "abit",
             "amount": "10000000"
           }
         ],
@@ -776,7 +776,7 @@
         "max_reserve_coin_amount": "0",
         "pool_creation_fee": [
           {
-            "denom": "stake",
+            "denom": "abit",
             "amount": "40000000"
           }
         ],
@@ -794,7 +794,7 @@
         "annual_provisions": "0.000000000000000000"
       },
       "params": {
-        "mint_denom": "stake",
+        "mint_denom": "abit",
         "inflation_rate_change": "0.130000000000000000",
         "inflation_max": "0.200000000000000000",
         "inflation_min": "0.070000000000000000",
@@ -825,7 +825,7 @@
         "max_validators": 100,
         "max_entries": 7,
         "historical_entries": 10000,
-        "bond_denom": "stake"
+        "bond_denom": "abit"
       },
       "last_total_power": "0",
       "last_validator_powers": [],

@@ -70,7 +70,7 @@ init_func() {
     "$PWD"/build/bitchain keys add $KEY"$i" --keyring-backend test --home "$DATA_DIR$i" --no-backup --algo "eth_secp256k1"
     "$PWD"/build/bitchain init $MONIKER --chain-id $CHAINID --home "$DATA_DIR$i"
     "$PWD"/build/bitchain add-genesis-account \
-    "$("$PWD"/build/bitchain keys show "$KEY$i" --keyring-backend test -a --home "$DATA_DIR$i")" 1000000000000000000atele,1000000000000000000stake \
+    "$("$PWD"/build/bitchain keys show "$KEY$i" --keyring-backend test -a --home "$DATA_DIR$i")" 1000000000000000000abit,1000000000000000000stake \
     --keyring-backend test --home "$DATA_DIR$i"
     "$PWD"/build/bitchain gentx "$KEY$i" 1000000000000000000stake --chain-id $CHAINID --keyring-backend test --home "$DATA_DIR$i"
     "$PWD"/build/bitchain collect-gentxs --home "$DATA_DIR$i"

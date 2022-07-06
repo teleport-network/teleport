@@ -1,14 +1,14 @@
 accounts:
   - name: alice
-    coins: ["100000000uatom", "100000000000000000000atele"]
+    coins: ["100000000uatom", "100000000000000000000abit"]
   - name: bob
-    coins: ["5000000000000atele"]
+    coins: ["5000000000000abit"]
 validator:
   name: alice
-  staked: "100000000000000000000atele"
+  staked: "100000000000000000000abit"
 faucet:
   name: bob
-  coins: ["10atele"]
+  coins: ["10abit"]
 build:
   binary: "bitchain"
 init:
@@ -22,18 +22,18 @@ genesis:
   app_state:
     staking:
       params:
-        bond_denom: "atele"
+        bond_denom: "abit"
     mint:
       params:
-        mint_denom: "atele"
+        mint_denom: "abit"
     crisis:
       constant_fee:
-        denom: "atele"
+        denom: "abit"
     gov:
       deposit_params:
         min_deposit:
           - amount: "10000000"
-            denom: "atele"
+            denom: "abit"
     evm:
       params:
-        evm_denom: "atele"
+        evm_denom: "abit"
