@@ -68,7 +68,7 @@ func Setup(t *testing.T, isCheckTx bool, invCheckPeriod uint) *bitapp.Bitchain {
 
 func setup(withGenesis bool, invCheckPeriod uint) (*bitapp.Bitchain, bitapp.GenesisState) {
 	db := dbm.NewMemDB()
-	encCdc := params.EncodingConfig{}
+	encCdc := params.MakeTestEncodingConfig()
 	app := bitapp.NewBitchain(
 		log.NewNopLogger(),
 		db,
