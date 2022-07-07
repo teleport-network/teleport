@@ -1,7 +1,7 @@
 package extract
 
 import (
-	"github.com/bitdao-io/bitchain/tools/common"
+	"github.com/bitdao-io/bitnetwork/tools/common"
 )
 
 func CopyBlockStore(home string, targetHome string) {

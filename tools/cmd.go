@@ -5,8 +5,8 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/bitdao-io/bitchain/tools/extract"
-	"github.com/bitdao-io/bitchain/tools/rb"
+	"github.com/bitdao-io/bitnetwork/tools/extract"
+	"github.com/bitdao-io/bitnetwork/tools/rb"
 
 	"github.com/cosmos/cosmos-sdk/server"
 	sdk "github.com/cosmos/cosmos-sdk/types"

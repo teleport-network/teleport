@@ -13,12 +13,12 @@ import (
 	tmtypes "github.com/tendermint/tendermint/types"
 	dbm "github.com/tendermint/tm-db"
 
-	bitapp "github.com/bitdao-io/bitchain/app"
+	bitapp "github.com/bitdao-io/bitnetwork/app"
 )
 
 // SimAppChainID hardcoded chainID for simulation
 const (
-	SimAppChainID = "bitchain-app"
+	SimAppChainID = "bitnetwork-app"
 )
 
 // DefaultConsensusParams defines the default Tendermint consensus params used
@@ -44,7 +44,7 @@ type EmptyAppOptions struct{}
 
 func (EmptyAppOptions) Get(o string) interface{} { return nil }
 
-func Setup(t *testing.T, isCheckTx bool, invCheckPeriod uint) *bitapp.Bitchain {
+func Setup(t *testing.T, isCheckTx bool, invCheckPeriod uint) *bitapp.BitNetwork {
 	t.Helper()
 
 	app, genesisState := setup(!isCheckTx, invCheckPeriod)
@@ -66,10 +66,10 @@ func Setup(t *testing.T, isCheckTx bool, invCheckPeriod uint) *bitapp.Bitchain {
 	return app
 }
 
-func setup(withGenesis bool, invCheckPeriod uint) (*bitapp.Bitchain, bitapp.GenesisState) {
+func setup(withGenesis bool, invCheckPeriod uint) (*bitapp.BitNetwork, bitapp.GenesisState) {
 	db := dbm.NewMemDB()
 	encCdc := params.MakeTestEncodingConfig()
-	app := bitapp.NewBitchain(
+	app := bitapp.NewBitNetwork(
 		log.NewNopLogger(),
 		db,
 		nil,

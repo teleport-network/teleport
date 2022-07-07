@@ -16,7 +16,7 @@ import (
 
 func init() {
 	cfg := sdk.GetConfig()
-	cfg.SetBech32PrefixForAccount("bitchain", "bitchainpub")
+	cfg.SetBech32PrefixForAccount("bitnetwork", "bitnetworkpub")
 }
 
 func TestIsSupportedKeys(t *testing.T) {

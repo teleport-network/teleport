@@ -3,7 +3,7 @@ package keeper
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/bitdao-io/bitchain/x/rvesting/types"
+	"github.com/bitdao-io/bitnetwork/x/rvesting/types"
 )
 
 // SetParams sets the auth module's parameters.

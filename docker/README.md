@@ -2,7 +2,7 @@
 
 In this directory, we supported a demo for developments.
 
-run `source startBitChain` and it will setup a bitchain network which include 7 nodes.
+run `source startBitNetwork` and it will setup a bitnetwork network which include 7 nodes.
 
 
 **Cautions**:

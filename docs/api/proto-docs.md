@@ -4,30 +4,30 @@
 
 ## Table of Contents
 
-- [bitchain/rvesting/v1/genesis.proto](#bitchain/rvesting/v1/genesis.proto)
-    - [GenesisState](#bitchain.rvesting.v1.GenesisState)
-    - [Params](#bitchain.rvesting.v1.Params)
+- [bitnetwork/rvesting/v1/genesis.proto](#bitnetwork/rvesting/v1/genesis.proto)
+    - [GenesisState](#bitnetwork.rvesting.v1.GenesisState)
+    - [Params](#bitnetwork.rvesting.v1.Params)
   
-- [bitchain/rvesting/v1/query.proto](#bitchain/rvesting/v1/query.proto)
-    - [QueryParamsRequest](#bitchain.rvesting.v1.QueryParamsRequest)
-    - [QueryParamsResponse](#bitchain.rvesting.v1.QueryParamsResponse)
-    - [QueryRemainingRequest](#bitchain.rvesting.v1.QueryRemainingRequest)
-    - [QueryRemainingResponse](#bitchain.rvesting.v1.QueryRemainingResponse)
+- [bitnetwork/rvesting/v1/query.proto](#bitnetwork/rvesting/v1/query.proto)
+    - [QueryParamsRequest](#bitnetwork.rvesting.v1.QueryParamsRequest)
+    - [QueryParamsResponse](#bitnetwork.rvesting.v1.QueryParamsResponse)
+    - [QueryRemainingRequest](#bitnetwork.rvesting.v1.QueryRemainingRequest)
+    - [QueryRemainingResponse](#bitnetwork.rvesting.v1.QueryRemainingResponse)
   
-    - [Query](#bitchain.rvesting.v1.Query)
+    - [Query](#bitnetwork.rvesting.v1.Query)
   
 - [Scalar Value Types](#scalar-value-types)
 
 
 
-<a name="bitchain/rvesting/v1/genesis.proto"></a>
+<a name="bitnetwork/rvesting/v1/genesis.proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
-## bitchain/rvesting/v1/genesis.proto
+## bitnetwork/rvesting/v1/genesis.proto
 
 
 
-<a name="bitchain.rvesting.v1.GenesisState"></a>
+<a name="bitnetwork.rvesting.v1.GenesisState"></a>
 
 ### GenesisState
 GenesisState defines the module's genesis state
@@ -35,7 +35,7 @@ GenesisState defines the module's genesis state
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `params` | [Params](#bitchain.rvesting.v1.Params) |  | module parameters invariant |
+| `params` | [Params](#bitnetwork.rvesting.v1.Params) |  | module parameters invariant |
 | `from` | [string](#string) |  |  |
 | `init_reward` | [cosmos.base.v1beta1.Coin](#cosmos.base.v1beta1.Coin) | repeated |  |
 
@@ -44,7 +44,7 @@ GenesisState defines the module's genesis state
 
 
 
-<a name="bitchain.rvesting.v1.Params"></a>
+<a name="bitnetwork.rvesting.v1.Params"></a>
 
 ### Params
 Params defines the rvesting module params
@@ -69,14 +69,14 @@ Params defines the rvesting module params
 
 
 
-<a name="bitchain/rvesting/v1/query.proto"></a>
+<a name="bitnetwork/rvesting/v1/query.proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
-## bitchain/rvesting/v1/query.proto
+## bitnetwork/rvesting/v1/query.proto
 
 
 
-<a name="bitchain.rvesting.v1.QueryParamsRequest"></a>
+<a name="bitnetwork.rvesting.v1.QueryParamsRequest"></a>
 
 ### QueryParamsRequest
 QueryParamsRequest is the request type for the Query/Params RPC method.
@@ -86,7 +86,7 @@ QueryParamsRequest is the request type for the Query/Params RPC method.
 
 
 
-<a name="bitchain.rvesting.v1.QueryParamsResponse"></a>
+<a name="bitnetwork.rvesting.v1.QueryParamsResponse"></a>
 
 ### QueryParamsResponse
 QueryParamsResponse is the response type for the Query/Params RPC method.
@@ -94,14 +94,14 @@ QueryParamsResponse is the response type for the Query/Params RPC method.
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| `params` | [Params](#bitchain.rvesting.v1.Params) |  | params defines the parameters of the module. |
+| `params` | [Params](#bitnetwork.rvesting.v1.Params) |  | params defines the parameters of the module. |
 
 
 
 
 
 
-<a name="bitchain.rvesting.v1.QueryRemainingRequest"></a>
+<a name="bitnetwork.rvesting.v1.QueryRemainingRequest"></a>
 
 ### QueryRemainingRequest
 
@@ -111,7 +111,7 @@ QueryParamsResponse is the response type for the Query/Params RPC method.
 
 
 
-<a name="bitchain.rvesting.v1.QueryRemainingResponse"></a>
+<a name="bitnetwork.rvesting.v1.QueryRemainingResponse"></a>
 
 ### QueryRemainingResponse
 
@@ -133,15 +133,15 @@ QueryParamsResponse is the response type for the Query/Params RPC method.
  <!-- end HasExtensions -->
 
 
-<a name="bitchain.rvesting.v1.Query"></a>
+<a name="bitnetwork.rvesting.v1.Query"></a>
 
 ### Query
 
 
 | Method Name | Request Type | Response Type | Description | HTTP Verb | Endpoint |
 | ----------- | ------------ | ------------- | ------------| ------- | -------- |
-| `Params` | [QueryParamsRequest](#bitchain.rvesting.v1.QueryParamsRequest) | [QueryParamsResponse](#bitchain.rvesting.v1.QueryParamsResponse) | Params returns the total set of parameters. | GET|/bitchain/rvesting/v1/params|
-| `Remaining` | [QueryRemainingRequest](#bitchain.rvesting.v1.QueryRemainingRequest) | [QueryRemainingResponse](#bitchain.rvesting.v1.QueryRemainingResponse) |  | GET|/bitchain/rvesting/v1/remaining|
+| `Params` | [QueryParamsRequest](#bitnetwork.rvesting.v1.QueryParamsRequest) | [QueryParamsResponse](#bitnetwork.rvesting.v1.QueryParamsResponse) | Params returns the total set of parameters. | GET|/bitnetwork/rvesting/v1/params|
+| `Remaining` | [QueryRemainingRequest](#bitnetwork.rvesting.v1.QueryRemainingRequest) | [QueryRemainingResponse](#bitnetwork.rvesting.v1.QueryRemainingResponse) |  | GET|/bitnetwork/rvesting/v1/remaining|
 
  <!-- end services -->
 

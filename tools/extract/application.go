@@ -3,7 +3,7 @@ package extract
 import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/bitdao-io/bitchain/tools/common"
+	"github.com/bitdao-io/bitnetwork/tools/common"
 
 	dbm "github.com/tendermint/tm-db"
 

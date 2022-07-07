@@ -5,7 +5,7 @@ import (
 
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/bitdao-io/bitchain/x/rvesting/types"
+	"github.com/bitdao-io/bitnetwork/x/rvesting/types"
 )
 
 var _ types.QueryServer = Keeper{}

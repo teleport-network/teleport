@@ -3,7 +3,7 @@ package extract
 import (
 	"fmt"
 
-	"github.com/bitdao-io/bitchain/tools/common"
+	"github.com/bitdao-io/bitnetwork/tools/common"
 
 	"github.com/tendermint/tendermint/store"
 	"github.com/tendermint/tendermint/types"

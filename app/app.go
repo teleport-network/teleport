@@ -109,8 +109,8 @@ import (
 	routerkeeper "github.com/strangelove-ventures/packet-forward-middleware/v2/router/keeper"
 	routertypes "github.com/strangelove-ventures/packet-forward-middleware/v2/router/types"
 
-	bitante "github.com/bitdao-io/bitchain/ante"
-	bitappparams "github.com/bitdao-io/bitchain/app/params"
+	bitante "github.com/bitdao-io/bitnetwork/ante"
+	bitappparams "github.com/bitdao-io/bitnetwork/app/params"
 
 	// unnamed import of statik for swagger UI support
 	_ "github.com/cosmos/cosmos-sdk/client/docs/statik"
@@ -195,14 +195,14 @@ var (
 )
 
 var (
-	_ simapp.App              = (*Bitchain)(nil)
-	_ servertypes.Application = (*Bitchain)(nil)
+	_ simapp.App              = (*BitNetwork)(nil)
+	_ servertypes.Application = (*BitNetwork)(nil)
 )
 
-// Bitchain extends an ABCI application, but with most of its parameters exported.
+// BitNetwork extends an ABCI application, but with most of its parameters exported.
 // They are exported for convenience in creating helper functions, as object
 // capabilities aren't needed for testing.
-type Bitchain struct { // nolint: golint
+type BitNetwork struct { // nolint: golint
 	*baseapp.BaseApp
 	legacyAmino       *codec.LegacyAmino
 	appCodec          codec.Codec
@@ -256,11 +256,11 @@ func init() {
 		stdlog.Println("Failed to get home dir %2", err)
 	}
 
-	DefaultNodeHome = filepath.Join(userHomeDir, ".bitchain")
+	DefaultNodeHome = filepath.Join(userHomeDir, ".bitnetwork")
 }
 
-// NewBitchain returns a reference to an initialized Gaia.
-func NewBitchain(
+// NewBitNetwork returns a reference to an initialized Gaia.
+func NewBitNetwork(
 	logger log.Logger,
 	db dbm.DB, traceStore io.Writer,
 	loadLatest bool,
@@ -270,7 +270,7 @@ func NewBitchain(
 	encodingConfig cfgParams.EncodingConfig,
 	appOpts servertypes.AppOptions,
 	baseAppOptions ...func(*baseapp.BaseApp),
-) *Bitchain {
+) *BitNetwork {
 
 	appCodec := encodingConfig.Marshaler
 	legacyAmino := encodingConfig.Amino
@@ -291,7 +291,7 @@ func NewBitchain(
 	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
 	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
 
-	app := &Bitchain{
+	app := &BitNetwork{
 		BaseApp:           bApp,
 		legacyAmino:       legacyAmino,
 		appCodec:          appCodec,
@@ -730,20 +730,20 @@ func NewBitchain(
 }
 
 // Name returns the name of the App
-func (app *Bitchain) Name() string { return app.BaseApp.Name() }
+func (app *BitNetwork) Name() string { return app.BaseApp.Name() }
 
 // BeginBlocker application updates every begin block
-func (app *Bitchain) BeginBlocker(ctx sdk.Context, req abci.RequestBeginBlock) abci.ResponseBeginBlock {
+func (app *BitNetwork) BeginBlocker(ctx sdk.Context, req abci.RequestBeginBlock) abci.ResponseBeginBlock {
 	return app.mm.BeginBlock(ctx, req)
 }
 
 // EndBlocker application updates every end block
-func (app *Bitchain) EndBlocker(ctx sdk.Context, req abci.RequestEndBlock) abci.ResponseEndBlock {
+func (app *BitNetwork) EndBlocker(ctx sdk.Context, req abci.RequestEndBlock) abci.ResponseEndBlock {
 	return app.mm.EndBlock(ctx, req)
 }
 
 // InitChainer application update at chain initialization
-func (app *Bitchain) InitChainer(ctx sdk.Context, req abci.RequestInitChain) abci.ResponseInitChain {
+func (app *BitNetwork) InitChainer(ctx sdk.Context, req abci.RequestInitChain) abci.ResponseInitChain {
 	var genesisState GenesisState
 	if err := tmjson.Unmarshal(req.AppStateBytes, &genesisState); err != nil {
 		panic(err)
@@ -755,12 +755,12 @@ func (app *Bitchain) InitChainer(ctx sdk.Context, req abci.RequestInitChain) abc
 }
 
 // LoadHeight loads a particular height
-func (app *Bitchain) LoadHeight(height int64) error {
+func (app *BitNetwork) LoadHeight(height int64) error {
 	return app.LoadVersion(height)
 }
 
 // ModuleAccountAddrs returns all the app's module account addresses.
-func (app *Bitchain) ModuleAccountAddrs() map[string]bool {
+func (app *BitNetwork) ModuleAccountAddrs() map[string]bool {
 	modAccAddrs := make(map[string]bool)
 	for acc := range maccPerms {
 		modAccAddrs[authtypes.NewModuleAddress(acc).String()] = true
@@ -769,11 +769,11 @@ func (app *Bitchain) ModuleAccountAddrs() map[string]bool {
 	return modAccAddrs
 }
 
-// LegacyAmino returns Bitchain's amino codec.
+// LegacyAmino returns BitNetwork's amino codec.
 //
 // NOTE: This is solely to be used for testing purposes as it may be desirable
 // for modules to register their own custom testing types.
-func (app *Bitchain) LegacyAmino() *codec.LegacyAmino {
+func (app *BitNetwork) LegacyAmino() *codec.LegacyAmino {
 	return app.legacyAmino
 }
 
@@ -781,52 +781,52 @@ func (app *Bitchain) LegacyAmino() *codec.LegacyAmino {
 //
 // NOTE: This is solely to be used for testing purposes as it may be desirable
 // for modules to register their own custom testing types.
-func (app *Bitchain) AppCodec() codec.Codec {
+func (app *BitNetwork) AppCodec() codec.Codec {
 	return app.appCodec
 }
 
 // InterfaceRegistry returns Gaia's InterfaceRegistry
-func (app *Bitchain) InterfaceRegistry() types.InterfaceRegistry {
+func (app *BitNetwork) InterfaceRegistry() types.InterfaceRegistry {
 	return app.interfaceRegistry
 }
 
 // GetKey returns the KVStoreKey for the provided store key.
 //
 // NOTE: This is solely to be used for testing purposes.
-func (app *Bitchain) GetKey(storeKey string) *sdk.KVStoreKey {
+func (app *BitNetwork) GetKey(storeKey string) *sdk.KVStoreKey {
 	return app.keys[storeKey]
 }
 
 // GetTKey returns the TransientStoreKey for the provided store key.
 //
 // NOTE: This is solely to be used for testing purposes.
-func (app *Bitchain) GetTKey(storeKey string) *sdk.TransientStoreKey {
+func (app *BitNetwork) GetTKey(storeKey string) *sdk.TransientStoreKey {
 	return app.tkeys[storeKey]
 }
 
 // GetMemKey returns the MemStoreKey for the provided mem key.
 //
 // NOTE: This is solely used for testing purposes.
-func (app *Bitchain) GetMemKey(storeKey string) *sdk.MemoryStoreKey {
+func (app *BitNetwork) GetMemKey(storeKey string) *sdk.MemoryStoreKey {
 	return app.memKeys[storeKey]
 }
 
 // GetSubspace returns a param subspace for a given module name.
 //
 // NOTE: This is solely to be used for testing purposes.
-func (app *Bitchain) GetSubspace(moduleName string) paramstypes.Subspace {
+func (app *BitNetwork) GetSubspace(moduleName string) paramstypes.Subspace {
 	subspace, _ := app.ParamsKeeper.GetSubspace(moduleName)
 	return subspace
 }
 
 // SimulationManager implements the SimulationApp interface
-func (app *Bitchain) SimulationManager() *module.SimulationManager {
+func (app *BitNetwork) SimulationManager() *module.SimulationManager {
 	return app.sm
 }
 
 // RegisterAPIRoutes registers all application module routes with the provided
 // API server.
-func (app *Bitchain) RegisterAPIRoutes(apiSvr *api.Server, apiConfig config.APIConfig) {
+func (app *BitNetwork) RegisterAPIRoutes(apiSvr *api.Server, apiConfig config.APIConfig) {
 	clientCtx := apiSvr.ClientCtx
 	rpc.RegisterRoutes(clientCtx, apiSvr.Router)
 	// Register legacy tx routes.
@@ -847,12 +847,12 @@ func (app *Bitchain) RegisterAPIRoutes(apiSvr *api.Server, apiConfig config.APIC
 }
 
 // RegisterTxService implements the Application.RegisterTxService method.
-func (app *Bitchain) RegisterTxService(clientCtx client.Context) {
+func (app *BitNetwork) RegisterTxService(clientCtx client.Context) {
 	authtx.RegisterTxService(app.BaseApp.GRPCQueryRouter(), clientCtx, app.BaseApp.Simulate, app.interfaceRegistry)
 }
 
 // RegisterTendermintService implements the Application.RegisterTendermintService method.
-func (app *Bitchain) RegisterTendermintService(clientCtx client.Context) {
+func (app *BitNetwork) RegisterTendermintService(clientCtx client.Context) {
 	tmservice.RegisterTendermintService(app.BaseApp.GRPCQueryRouter(), clientCtx, app.interfaceRegistry)
 }
 

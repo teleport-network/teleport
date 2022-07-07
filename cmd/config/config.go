@@ -5,7 +5,7 @@ import (
 
 	ethermint "github.com/evmos/ethermint/types"
 
-	"github.com/bitdao-io/bitchain/types"
+	"github.com/bitdao-io/bitnetwork/types"
 )
 
 const (

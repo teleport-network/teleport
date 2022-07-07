@@ -1,7 +1,7 @@
 package app
 
 import (
-	"github.com/bitdao-io/bitchain/app/params"
+	"github.com/bitdao-io/bitnetwork/app/params"
 
 	"github.com/cosmos/cosmos-sdk/std"
 )

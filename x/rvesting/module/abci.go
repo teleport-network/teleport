@@ -6,8 +6,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/telemetry"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 
-	"github.com/bitdao-io/bitchain/x/rvesting/keeper"
-	"github.com/bitdao-io/bitchain/x/rvesting/types"
+	"github.com/bitdao-io/bitnetwork/x/rvesting/keeper"
+	"github.com/bitdao-io/bitnetwork/x/rvesting/types"
 )
 
 func BeginBlocker(ctx sdk.Context, k keeper.Keeper) {

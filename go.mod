@@ -1,4 +1,4 @@
-module github.com/bitdao-io/bitchain
+module github.com/bitdao-io/bitnetwork
 
 go 1.17
 

@@ -7,18 +7,18 @@ import (
 )
 
 const (
-	// AttoBit defines the default coin denomination used in Bitchain in:
+	// AttoBit defines the default coin denomination used in BitNetwork in:
 	//
 	// - Staking parameters: denomination used as stake in the dPoS chain
 	// - Mint parameters: denomination minted due to fee distribution rewards
 	// - Governance parameters: denomination used for spam prevention in proposal deposits
 	// - Crisis parameters: constant fee denomination used for spam prevention to check broken invariant
-	// - EVM parameters: denomination used for running EVM state transitions in Bitchain.
+	// - EVM parameters: denomination used for running EVM state transitions in BitNetwork.
 	AttoBit = "abit"
 
 	// DisplayDenom defines the denomination displayed to users in client applications.
 	DisplayDenom = "bit"
-	// BaseDenom defines to the default denomination used in Bitchain (staking, EVN, governance, etc)
+	// BaseDenom defines to the default denomination used in BitNetwork (staking, EVN, governance, etc)
 	BaseDenom = AttoBit
 
 	// BaseDenomUnit defines the base denomination unit for Bits.

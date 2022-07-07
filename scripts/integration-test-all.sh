@@ -17,10 +17,10 @@ RPC_PORT="854"
 IP_ADDR="0.0.0.0"
 
 KEY="mykey"
-CHAINID="bitchain_9000-1"
+CHAINID="bitnetwork_9000-1"
 MONIKER="mymoniker"
 
-## default port prefixes for bitchain
+## default port prefixes for bitnetwork
 NODE_P2P_PORT="2660"
 NODE_PORT="2663"
 NODE_RPC_PORT="2666"
@@ -52,29 +52,29 @@ done
 
 set -euxo pipefail
 
-DATA_DIR=$(mktemp -d -t bitchain-datadir.XXXXX)
+DATA_DIR=$(mktemp -d -t bitnetwork-datadir.XXXXX)
 
 if [[ ! "$DATA_DIR" ]]; then
     echo "Could not create $DATA_DIR"
     exit 1
 fi
 
-# Compile bitchain
-echo "compiling bitchain"
+# Compile bitnetwork
+echo "compiling bitnetwork"
 make build
 
 # PID array declaration
 arr=()
 
 init_func() {
-    "$PWD"/build/bitchain keys add $KEY"$i" --keyring-backend test --home "$DATA_DIR$i" --no-backup --algo "eth_secp256k1"
-    "$PWD"/build/bitchain init $MONIKER --chain-id $CHAINID --home "$DATA_DIR$i"
-    "$PWD"/build/bitchain add-genesis-account \
-    "$("$PWD"/build/bitchain keys show "$KEY$i" --keyring-backend test -a --home "$DATA_DIR$i")" 1000000000000000000abit,1000000000000000000stake \
+    "$PWD"/build/bitnetwork keys add $KEY"$i" --keyring-backend test --home "$DATA_DIR$i" --no-backup --algo "eth_secp256k1"
+    "$PWD"/build/bitnetwork init $MONIKER --chain-id $CHAINID --home "$DATA_DIR$i"
+    "$PWD"/build/bitnetwork add-genesis-account \
+    "$("$PWD"/build/bitnetwork keys show "$KEY$i" --keyring-backend test -a --home "$DATA_DIR$i")" 1000000000000000000abit,1000000000000000000stake \
     --keyring-backend test --home "$DATA_DIR$i"
-    "$PWD"/build/bitchain gentx "$KEY$i" 1000000000000000000stake --chain-id $CHAINID --keyring-backend test --home "$DATA_DIR$i"
-    "$PWD"/build/bitchain collect-gentxs --home "$DATA_DIR$i"
-    "$PWD"/build/bitchain validate-genesis --home "$DATA_DIR$i"
+    "$PWD"/build/bitnetwork gentx "$KEY$i" 1000000000000000000stake --chain-id $CHAINID --keyring-backend test --home "$DATA_DIR$i"
+    "$PWD"/build/bitnetwork collect-gentxs --home "$DATA_DIR$i"
+    "$PWD"/build/bitnetwork validate-genesis --home "$DATA_DIR$i"
 
     if [[ $MODE == "pending" ]]; then
       ls $DATA_DIR$i
@@ -103,17 +103,17 @@ init_func() {
 }
 
 start_func() {
-    echo "starting bitchain node $i in background ..."
-    "$PWD"/build/bitchain start --pruning=nothing --rpc.unsafe \
+    echo "starting bitnetwork node $i in background ..."
+    "$PWD"/build/bitnetwork start --pruning=nothing --rpc.unsafe \
     --p2p.laddr tcp://$IP_ADDR:$NODE_P2P_PORT"$i" --address tcp://$IP_ADDR:$NODE_PORT"$i" --rpc.laddr tcp://$IP_ADDR:$NODE_RPC_PORT"$i" \
     --json-rpc.address=$IP_ADDR:$RPC_PORT"$i" \
     --keyring-backend test --home "$DATA_DIR$i" \
     >"$DATA_DIR"/node"$i".log 2>&1 & disown
 
-    BITCHAIN_PID=$!
-    echo "started bitchain node, pid=$BITCHAIN_PID"
+    BITNETWORK_PID=$!
+    echo "started bitnetwork node, pid=$BITNETWORK_PID"
     # add PID to array
-    arr+=("$BITCHAIN_PID")
+    arr+=("$BITNETWORK_PID")
 
     if [[ $MODE == "pending" ]]; then
       echo "waiting for the first block..."
@@ -147,7 +147,7 @@ if [[ -z $TEST || $TEST == "rpc" ||  $TEST == "pending" ]]; then
 
     for i in $(seq 1 "$TEST_QTD"); do
         HOST_RPC=http://$IP_ADDR:$RPC_PORT"$i"
-        echo "going to test bitchain node $HOST_RPC ..."
+        echo "going to test bitnetwork node $HOST_RPC ..."
         MODE=$MODE HOST=$HOST_RPC go test ./tests/... -timeout=$time_out -v -short
 
         RPC_FAIL=$?
@@ -156,12 +156,12 @@ if [[ -z $TEST || $TEST == "rpc" ||  $TEST == "pending" ]]; then
 fi
 
 stop_func() {
-    BITCHAIN_PID=$i
-    echo "shutting down node, pid=$BITCHAIN_PID ..."
+    BITNETWORK_PID=$i
+    echo "shutting down node, pid=$BITNETWORK_PID ..."
 
-    # Shutdown bitchain node
-    kill -9 "$BITCHAIN_PID"
-    wait "$BITCHAIN_PID"
+    # Shutdown bitnetwork node
+    kill -9 "$BITNETWORK_PID"
+    wait "$BITNETWORK_PID"
 
     if [ $REMOVE_DATA_DIR == "true" ]
     then

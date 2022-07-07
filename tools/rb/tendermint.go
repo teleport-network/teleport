@@ -4,7 +4,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/bitdao-io/bitchain/tools/common"
+	"github.com/bitdao-io/bitnetwork/tools/common"
 
 	cfg "github.com/tendermint/tendermint/config"
 	"github.com/tendermint/tendermint/privval"

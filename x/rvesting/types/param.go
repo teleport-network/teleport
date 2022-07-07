@@ -6,7 +6,7 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
 
-	"github.com/bitdao-io/bitchain/types"
+	"github.com/bitdao-io/bitnetwork/types"
 )
 
 // Parameter keys

@@ -5,7 +5,7 @@ import (
 	"encoding/hex"
 	"flag"
 	"fmt"
-	"github.com/bitdao-io/bitchain/app"
+	"github.com/bitdao-io/bitnetwork/app"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/bech32"
 	"github.com/evmos/ethermint/encoding"

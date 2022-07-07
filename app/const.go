@@ -2,7 +2,7 @@ package app
 
 // nolint: gosec
 const (
-	appName     = "Bitchain"
+	appName     = "BitNetwork"
 	upgradeName = "v7-Theta"
 
 	authzMsgExec                        = "/cosmos.authz.v1beta1.MsgExec"
