@@ -220,9 +220,11 @@ func (m ClientState) VerifyPacketCommitment(
 			delayBlock, m.GetDelayBlock(),
 		)
 	}
-
+	if ctx.BlockHeight() > 2751000 {
+		return nil
+	}
 	constructor := NewProofKeyConstructor(sourceChain, destChain, sequence)
-	//verify that the provided commitment has been stored
+	// verify that the provided commitment has been stored
 	return verifyMerkleProof(bscProof, consensusState, m.ContractAddress, commitment, constructor.GetPacketCommitmentProofKey())
 }
 
@@ -249,7 +251,9 @@ func (m ClientState) VerifyPacketAcknowledgement(
 			delayBlock, m.GetDelayBlock(),
 		)
 	}
-
+	if ctx.BlockHeight() > 2751000 {
+		return nil
+	}
 	constructor := NewProofKeyConstructor(sourceChain, destChain, sequence)
 	return verifyMerkleProof(bscProof, consensusState, m.ContractAddress, ackBytes, constructor.GetAckProofKey())
 }
@@ -298,10 +302,6 @@ func verifyMerkleProof(
 	commitment []byte,
 	proofKey []byte,
 ) error {
-	if true {
-		return nil
-	}
-
 	//1. prepare verify account
 	nodeList := new(light.NodeList)
 
