@@ -206,10 +206,10 @@ func (m ClientState) VerifyPacketCommitment(
 	sequence uint64,
 	commitment []byte,
 ) error {
-	//bscProof, consensusState, err := produceVerificationArgs(store, cdc, m, height, proof)
-	//if err != nil {
-	//	return err
-	//}
+	bscProof, consensusState, err := produceVerificationArgs(store, cdc, m, height, proof)
+	if err != nil {
+		return err
+	}
 
 	// check delay period has passed
 	delayBlock := m.Header.Height.RevisionHeight - height.GetRevisionHeight()
@@ -221,10 +221,9 @@ func (m ClientState) VerifyPacketCommitment(
 		)
 	}
 
-	//constructor := NewProofKeyConstructor(sourceChain, destChain, sequence)
-	// verify that the provided commitment has been stored
-	//return verifyMerkleProof(bscProof, consensusState, m.ContractAddress, commitment, constructor.GetPacketCommitmentProofKey())
-	return nil
+	constructor := NewProofKeyConstructor(sourceChain, destChain, sequence)
+	//verify that the provided commitment has been stored
+	return verifyMerkleProof(bscProof, consensusState, m.ContractAddress, commitment, constructor.GetPacketCommitmentProofKey())
 }
 
 func (m ClientState) VerifyPacketAcknowledgement(
@@ -237,10 +236,10 @@ func (m ClientState) VerifyPacketAcknowledgement(
 	sequence uint64,
 	ackBytes []byte,
 ) error {
-	//bscProof, consensusState, err := produceVerificationArgs(store, cdc, m, height, proof)
-	//if err != nil {
-	//	return err
-	//}
+	bscProof, consensusState, err := produceVerificationArgs(store, cdc, m, height, proof)
+	if err != nil {
+		return err
+	}
 
 	delayBlock := m.Header.Height.RevisionHeight - height.GetRevisionHeight()
 	if delayBlock < m.GetDelayBlock() {
@@ -251,9 +250,8 @@ func (m ClientState) VerifyPacketAcknowledgement(
 		)
 	}
 
-	//constructor := NewProofKeyConstructor(sourceChain, destChain, sequence)
-	//return verifyMerkleProof(bscProof, consensusState, m.ContractAddress, ackBytes, constructor.GetAckProofKey())
-	return nil
+	constructor := NewProofKeyConstructor(sourceChain, destChain, sequence)
+	return verifyMerkleProof(bscProof, consensusState, m.ContractAddress, ackBytes, constructor.GetAckProofKey())
 }
 
 // produceVerificationArgs performs the basic checks on the arguments that are
@@ -300,6 +298,10 @@ func verifyMerkleProof(
 	commitment []byte,
 	proofKey []byte,
 ) error {
+	if true {
+		return nil
+	}
+
 	//1. prepare verify account
 	nodeList := new(light.NodeList)
 
