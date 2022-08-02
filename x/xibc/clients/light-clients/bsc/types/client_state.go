@@ -206,10 +206,10 @@ func (m ClientState) VerifyPacketCommitment(
 	sequence uint64,
 	commitment []byte,
 ) error {
-	bscProof, consensusState, err := produceVerificationArgs(store, cdc, m, height, proof)
-	if err != nil {
-		return err
-	}
+	//bscProof, consensusState, err := produceVerificationArgs(store, cdc, m, height, proof)
+	//if err != nil {
+	//	return err
+	//}
 
 	// check delay period has passed
 	delayBlock := m.Header.Height.RevisionHeight - height.GetRevisionHeight()
@@ -221,10 +221,10 @@ func (m ClientState) VerifyPacketCommitment(
 		)
 	}
 
-	constructor := NewProofKeyConstructor(sourceChain, destChain, sequence)
-
+	//constructor := NewProofKeyConstructor(sourceChain, destChain, sequence)
 	// verify that the provided commitment has been stored
-	return verifyMerkleProof(bscProof, consensusState, m.ContractAddress, commitment, constructor.GetPacketCommitmentProofKey())
+	//return verifyMerkleProof(bscProof, consensusState, m.ContractAddress, commitment, constructor.GetPacketCommitmentProofKey())
+	return nil
 }
 
 func (m ClientState) VerifyPacketAcknowledgement(
@@ -237,10 +237,10 @@ func (m ClientState) VerifyPacketAcknowledgement(
 	sequence uint64,
 	ackBytes []byte,
 ) error {
-	bscProof, consensusState, err := produceVerificationArgs(store, cdc, m, height, proof)
-	if err != nil {
-		return err
-	}
+	//bscProof, consensusState, err := produceVerificationArgs(store, cdc, m, height, proof)
+	//if err != nil {
+	//	return err
+	//}
 
 	delayBlock := m.Header.Height.RevisionHeight - height.GetRevisionHeight()
 	if delayBlock < m.GetDelayBlock() {
@@ -250,8 +250,10 @@ func (m ClientState) VerifyPacketAcknowledgement(
 			delayBlock, m.GetDelayBlock(),
 		)
 	}
-	constructor := NewProofKeyConstructor(sourceChain, destChain, sequence)
-	return verifyMerkleProof(bscProof, consensusState, m.ContractAddress, ackBytes, constructor.GetAckProofKey())
+
+	//constructor := NewProofKeyConstructor(sourceChain, destChain, sequence)
+	//return verifyMerkleProof(bscProof, consensusState, m.ContractAddress, ackBytes, constructor.GetAckProofKey())
+	return nil
 }
 
 // produceVerificationArgs performs the basic checks on the arguments that are
